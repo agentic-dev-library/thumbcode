@@ -136,7 +136,7 @@ async function generateAll(): Promise<void> {
 }
 
 // Run if called directly
-if (__filename === process.argv[1]) {
+if (typeof process !== 'undefined' && typeof process.argv[1] === 'string' && new URL(import.meta.url).pathname === process.argv[1]) {
   generateAll().catch((error) => {
     console.error('\n❌ Icon generation failed:', error);
     process.exit(1);
