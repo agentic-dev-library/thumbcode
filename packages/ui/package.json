@@ -1,0 +1,12 @@
+{
+  "name": "@thumbcode/ui",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "dependencies": {
+    "nativewind": "^4.1.0",
+    "react-native": "0.76.0"
+  },
+  "devDependencies": {
+    "@types/react-native": "^0.72.2"
+  }
+}
