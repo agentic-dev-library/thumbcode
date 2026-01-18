@@ -9,6 +9,8 @@ import { Button, Card, Input, Text } from '../src/components/ui';
  *
  * @returns The landing page JSX element containing hero, features, demo form, and tech stack.
  */
+const TECH_STACK = ['Expo 52', 'React Native', 'NativeWind', 'Zustand', 'isomorphic-git'];
+
 export default function Index() {
   return (
     <ScrollView className="flex-1 bg-neutral-50">
@@ -79,7 +81,7 @@ export default function Index() {
             Built With
           </Text>
           <View className="flex-row flex-wrap gap-2">
-            {['Expo 52', 'React Native', 'NativeWind', 'Zustand', 'isomorphic-git'].map((tech) => (
+            {TECH_STACK.map((tech) => (
               <View
                 key={tech}
                 className="bg-teal-100 px-3 py-2 rounded-[0.375rem_0.5rem_0.625rem_0.25rem]"
