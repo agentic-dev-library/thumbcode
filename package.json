@@ -25,8 +25,9 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "generate:tokens": "node scripts/generate-tokens.js",
-    "postinstall": "pnpm run generate:tokens"
+    "generate:tokens": "pnpm --filter @thumbcode/dev-tools run generate:tokens",
+    "generate:icons": "pnpm --filter @thumbcode/dev-tools run generate:icons",
+    "generate:all": "pnpm --filter @thumbcode/dev-tools run generate:all"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
@@ -71,6 +72,8 @@
   "devDependencies": {
     "@babel/core": "^7.25.0",
     "@biomejs/biome": "2.3.11",
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
     "@testing-library/jest-native": "^5.4.0",
     "@testing-library/react-native": "^12.8.0",
     "@types/diff": "^6.0.0",
