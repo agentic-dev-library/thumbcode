@@ -63,7 +63,12 @@ export function Badge({
   return (
     <View
       className={`flex-row items-center ${colors.bg} ${sizing.px} ${sizing.py}`}
-      style={{ borderRadius: '6px 8px 6px 10px' }}
+      style={{
+        borderTopLeftRadius: 6,
+        borderTopRightRadius: 8,
+        borderBottomRightRadius: 6,
+        borderBottomLeftRadius: 10,
+      }}
     >
       {icon && <Text className={`mr-1 ${sizing.text}`}>{icon}</Text>}
       <Text className={`font-body font-medium ${colors.text} ${sizing.text}`}>{children}</Text>
