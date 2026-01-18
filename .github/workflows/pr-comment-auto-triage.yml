@@ -87,8 +87,8 @@ jobs:
       needs.detect-ai-agent.outputs.pr_number != ''
 
     steps:
-      - name: Get PR details
-        id: pr
+      - name: Verify PR is not from fork
+        id: security-check
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
@@ -100,18 +100,21 @@ jobs:
 
             const isSameRepo = pr.data.head.repo.full_name === `${context.repo.owner}/${context.repo.repo}`;
             if (!isSameRepo || pr.data.head.repo.fork) {
-              core.setFailed('Refusing to run auto-triage on forked PR code.');
+              core.setFailed('Refusing to run auto-triage on forked PR code for security reasons.');
               return;
             }
 
+            console.log(`Security check passed: PR is from same repo`);
+            core.setOutput('is_safe', 'true');
             core.setOutput('branch', pr.data.head.ref);
             core.setOutput('base', pr.data.base.ref);
             core.setOutput('title', pr.data.title);
 
       - name: Checkout PR branch
+        if: steps.security-check.outputs.is_safe == 'true'
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          ref: ${{ steps.pr.outputs.branch }}
+          ref: ${{ steps.security-check.outputs.branch }}
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -137,9 +140,9 @@ jobs:
 
             **PR Details:**
             - **Number:** #${{ needs.detect-ai-agent.outputs.pr_number }}
-            - **Title:** ${{ steps.pr.outputs.title }}
-            - **Branch:** ${{ steps.pr.outputs.branch }}
-            - **Base:** ${{ steps.pr.outputs.base }}
+            - **Title:** ${{ steps.security-check.outputs.title }}
+            - **Branch:** ${{ steps.security-check.outputs.branch }}
+            - **Base:** ${{ steps.security-check.outputs.base }}
 
             **AI Agent Comment:**
             ```
@@ -231,7 +234,7 @@ jobs:
             Auto-implemented by Claude PR Comment Triage workflow
             PR: #${{ needs.detect-ai-agent.outputs.pr_number }}"
 
-            git push origin ${{ steps.pr.outputs.branch }}
+            git push origin ${{ steps.security-check.outputs.branch }}
             ```
 
             ### 6. REPLY TO COMMENT
@@ -257,7 +260,7 @@ jobs:
             - ✅ Tests passing
             - ✅ Build successful
 
-            The fixes have been pushed to \`${{ steps.pr.outputs.branch }}\`.
+            The fixes have been pushed to \`${{ steps.security-check.outputs.branch }}\`.
 
             🤖 *Auto-implemented by Claude PR Comment Triage*
             EOF

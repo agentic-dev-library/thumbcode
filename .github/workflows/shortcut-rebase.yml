@@ -61,6 +61,13 @@ jobs:
               pull_number: prNumber
             });
 
+            // Security: Refuse to run on forked PRs
+            const isSameRepo = pr.data.head.repo.full_name === `${context.repo.owner}/${context.repo.repo}`;
+            if (!isSameRepo || pr.data.head.repo.fork) {
+              core.setFailed('Refusing to run @rebase on forked PR code for security reasons.');
+              return;
+            }
+
             core.setOutput('pr_number', prNumber);
             core.setOutput('base_branch', pr.data.base.ref);
             core.setOutput('head_branch', pr.data.head.ref);
