@@ -266,24 +266,117 @@ export default function EditorSettingsScreen() {
                 PREVIEW
               </Text>
             </View>
-            <View className="p-4 bg-charcoal m-4 rounded-lg">
+            <View
+              className={`p-4 m-4 rounded-lg ${
+                theme === 'light'
+                  ? 'bg-neutral-100'
+                  : theme === 'high-contrast'
+                    ? 'bg-black'
+                    : 'bg-charcoal'
+              }`}
+            >
               <Text
-                className="text-teal-400 font-mono"
+                className={`font-mono ${
+                  theme === 'light'
+                    ? 'text-teal-700'
+                    : theme === 'high-contrast'
+                      ? 'text-cyan-400'
+                      : 'text-teal-400'
+                }`}
                 style={{ fontSize: parseInt(fontSize, 10) }}
               >
                 {lineNumbers ? '1  ' : ''}
-                <Text className="text-coral-500">function</Text>{' '}
-                <Text className="text-gold-400">greet</Text>
-                <Text className="text-white">(name: </Text>
-                <Text className="text-teal-400">string</Text>
-                <Text className="text-white">) {'{'}</Text>
+                <Text
+                  className={
+                    theme === 'light'
+                      ? 'text-coral-700'
+                      : theme === 'high-contrast'
+                        ? 'text-yellow-400'
+                        : 'text-coral-500'
+                  }
+                >
+                  function
+                </Text>{' '}
+                <Text
+                  className={
+                    theme === 'light'
+                      ? 'text-gold-700'
+                      : theme === 'high-contrast'
+                        ? 'text-green-400'
+                        : 'text-gold-400'
+                  }
+                >
+                  greet
+                </Text>
+                <Text
+                  className={
+                    theme === 'light'
+                      ? 'text-neutral-800'
+                      : theme === 'high-contrast'
+                        ? 'text-white'
+                        : 'text-white'
+                  }
+                >
+                  (name:{' '}
+                </Text>
+                <Text
+                  className={
+                    theme === 'light'
+                      ? 'text-teal-700'
+                      : theme === 'high-contrast'
+                        ? 'text-cyan-400'
+                        : 'text-teal-400'
+                  }
+                >
+                  string
+                </Text>
+                <Text
+                  className={
+                    theme === 'light'
+                      ? 'text-neutral-800'
+                      : theme === 'high-contrast'
+                        ? 'text-white'
+                        : 'text-white'
+                  }
+                >
+                  ) {'{'}
+                </Text>
               </Text>
-              <Text className="text-white font-mono" style={{ fontSize: parseInt(fontSize, 10) }}>
+              <Text
+                className={`font-mono ${
+                  theme === 'light'
+                    ? 'text-neutral-800'
+                    : theme === 'high-contrast'
+                      ? 'text-white'
+                      : 'text-white'
+                }`}
+                style={{ fontSize: parseInt(fontSize, 10) }}
+              >
                 {lineNumbers ? '2  ' : ''}
                 {'  '}
-                <Text className="text-coral-500">return</Text> `Hello, ${'{'}name{'}'}`
+                <Text
+                  className={
+                    theme === 'light'
+                      ? 'text-coral-700'
+                      : theme === 'high-contrast'
+                        ? 'text-yellow-400'
+                        : 'text-coral-500'
+                  }
+                >
+                  return
+                </Text>{' '}
+                {`\`Hello, \${name}\``}
               </Text>
-              <Text className="text-white font-mono" style={{ fontSize: parseInt(fontSize, 10) }}>
+              <Text
+                className={`font-mono ${
+                  theme === 'light'
+                    ? 'text-neutral-800'
+                    : theme === 'high-contrast'
+                      ? 'text-white'
+                      : 'text-white'
+                }`}
+                style={{ fontSize: parseInt(fontSize, 10) }}
+              >
                 {lineNumbers ? '3  ' : ''}
                 {'}'}
               </Text>

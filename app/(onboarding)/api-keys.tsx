@@ -133,12 +133,12 @@ export default function ApiKeysScreen() {
             <View className="flex-row items-center mb-2">
               <Text className="text-lg mr-2">🔐</Text>
               <Text weight="semibold" className="text-teal-400">
-                Secure Storage
+                Your Keys, Your Device
               </Text>
             </View>
             <Text size="sm" className="text-neutral-400">
-              Keys are stored in your device's hardware-backed secure enclave. They never leave your
-              phone and are not accessible to us.
+              Keys will be stored securely on your device. They never leave your phone and are not
+              accessible to us.
             </Text>
           </View>
 

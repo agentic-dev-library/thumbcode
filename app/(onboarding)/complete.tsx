@@ -10,6 +10,7 @@ import { Animated, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { useOnboarding } from '@/contexts/onboarding';
 
 const CAPABILITIES = [
   { icon: '🤖', title: 'AI Agent Teams', description: 'Multi-agent collaboration ready' },
@@ -21,6 +22,7 @@ const CAPABILITIES = [
 export default function CompleteScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { completeOnboarding } = useOnboarding();
   const scaleAnim = useRef(new Animated.Value(0.5)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -41,8 +43,9 @@ export default function CompleteScreen() {
     ]).start();
   }, [scaleAnim, fadeAnim]);
 
-  const handleGetStarted = () => {
-    // TODO: Mark onboarding as complete in storage
+  const handleGetStarted = async () => {
+    // Mark onboarding as complete in storage
+    await completeOnboarding();
     router.replace('/(tabs)');
   };
 

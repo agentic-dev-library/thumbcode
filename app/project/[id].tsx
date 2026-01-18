@@ -97,8 +97,8 @@ export default function ProjectDetailScreen() {
   const [activeTab, setActiveTab] = useState<Tab>('files');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
-  const progress =
-    (MOCK_PROJECT.completedTasks / (MOCK_PROJECT.completedTasks + MOCK_PROJECT.pendingTasks)) * 100;
+  const totalTasks = MOCK_PROJECT.completedTasks + MOCK_PROJECT.pendingTasks;
+  const progress = totalTasks > 0 ? (MOCK_PROJECT.completedTasks / totalTasks) * 100 : 0;
 
   return (
     <>

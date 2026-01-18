@@ -98,6 +98,16 @@ interface ApiKeyInputProps {
 function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: ApiKeyInputProps) {
   const [isEditing, setIsEditing] = useState(false);
 
+  const handleSave = () => {
+    // Only mark as set if the key is not empty
+    if (value.trim()) {
+      onSave();
+      setIsEditing(false);
+    }
+  };
+
+  const canSave = value.trim().length > 0;
+
   return (
     <View className="py-4">
       <HStack justify="between" align="center" className="mb-2">
@@ -133,11 +143,9 @@ function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: Api
           </View>
           <HStack spacing="sm">
             <Pressable
-              onPress={() => {
-                onSave();
-                setIsEditing(false);
-              }}
-              className="flex-1 bg-teal-600 py-3 active:bg-teal-700"
+              onPress={handleSave}
+              disabled={!canSave}
+              className={`flex-1 py-3 ${canSave ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}
               style={{
                 borderTopLeftRadius: 10,
                 borderTopRightRadius: 8,
@@ -145,7 +153,11 @@ function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: Api
                 borderBottomLeftRadius: 6,
               }}
             >
-              <Text className="text-center text-white font-semibold">Save</Text>
+              <Text
+                className={`text-center font-semibold ${canSave ? 'text-white' : 'text-neutral-500'}`}
+              >
+                Save
+              </Text>
             </Pressable>
             {isSet && (
               <Pressable

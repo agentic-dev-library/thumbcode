@@ -69,7 +69,8 @@ export default function CreateProjectScreen() {
   };
 
   const handleCreate = async () => {
-    if (!selectedRepo || !projectName) return;
+    // Guard against double-submit
+    if (isLoading || !selectedRepo || !projectName) return;
 
     setIsLoading(true);
     // TODO: Create project via service
@@ -161,9 +162,9 @@ export default function CreateProjectScreen() {
             ))}
           </VStack>
 
-          {/* Create New Option */}
-          <Pressable
-            className="mt-4 p-4 border border-dashed border-neutral-600"
+          {/* Create New Option (Coming Soon) */}
+          <View
+            className="mt-4 p-4 border border-dashed border-neutral-700 opacity-50"
             style={{
               borderTopLeftRadius: 14,
               borderTopRightRadius: 12,
@@ -172,9 +173,9 @@ export default function CreateProjectScreen() {
             }}
           >
             <View className="flex-row items-center justify-center">
-              <Text className="text-neutral-400">+ Create new repository</Text>
+              <Text className="text-neutral-500">+ Create new repository (coming soon)</Text>
             </View>
-          </Pressable>
+          </View>
         </Container>
       </ScrollView>
 

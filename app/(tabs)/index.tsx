@@ -220,8 +220,11 @@ export default function HomeScreen() {
           </HStack>
           <ProgressBar
             value={
-              (MOCK_STATS.completedToday / (MOCK_STATS.completedToday + MOCK_STATS.pendingTasks)) *
-              100
+              MOCK_STATS.completedToday + MOCK_STATS.pendingTasks > 0
+                ? (MOCK_STATS.completedToday /
+                    (MOCK_STATS.completedToday + MOCK_STATS.pendingTasks)) *
+                  100
+                : 0
             }
             color="secondary"
           />
