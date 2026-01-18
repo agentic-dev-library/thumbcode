@@ -136,11 +136,20 @@ async function generateAll(): Promise<void> {
 }
 
 // Run if called directly
-if (typeof process !== 'undefined' && typeof process.argv[1] === 'string' && new URL(import.meta.url).pathname === process.argv[1]) {
-  generateAll().catch((error) => {
-    console.error('\n❌ Icon generation failed:', error);
-    process.exit(1);
-  });
+try {
+  if (
+    typeof process !== 'undefined' &&
+    Array.isArray(process.argv) &&
+    typeof process.argv[1] === 'string' &&
+    process.argv[1] === __filename
+  ) {
+    generateAll().catch((error) => {
+      console.error('\n❌ Icon generation failed:', error);
+      process.exit(1);
+    });
+  }
+} catch {
+  // Ignore errors when detecting direct script execution in non-Node environments
 }
 
 export { generateAll, generateIcon, ICON_SPECS };
