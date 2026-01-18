@@ -1,0 +1,176 @@
+name: Multi-Agent Issue Triage & PR Automation
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+  issues:
+    types: [edited, labeled, unlabeled]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  claude-triage:
+    name: Claude - Assess & Prioritize
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      jules_issues: ${{ steps.analyze.outputs.issues_for_jules }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Claude Analysis
+        id: claude
+        uses: anthropics/claude-code-action@a017b830c03e23789b11fb69ed571ea61c12e45c # v1.0.30
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          allow_any_user: true
+          track_progress: true
+          prompt: |
+            ## Multi-Agent Triage Coordination
+
+            **Context:** This is phase 1 of a multi-agent workflow. You (Claude) will assess issues, then Jules (Google's AI agent) will implement them.
+
+            **Your Task:**
+
+            ### 1. Find Issues Ready for Jules
+            Search for all open issues that are:
+            - NOT labeled with `jules` (haven't been processed yet)
+            - NOT associated with an open PR
+            - Labeled as `status: ready` or have clear, actionable requirements
+            - Type: `bug`, `feature`, or `enhancement`
+
+            ### 2. Assess & Prioritize
+            For each issue, evaluate:
+            - **Clarity:** Does it have enough detail for autonomous implementation?
+            - **Scope:** Is it small enough for a single PR? (< 200 lines of changes)
+            - **Dependencies:** Does it depend on other open issues?
+            - **Priority:** Based on labels and PROJECT-STATUS.md roadmap
+            - **Feasibility:** Can an AI agent realistically implement this?
+
+            ### 3. Create Batches
+            Group issues into batches of 3-5 issues that:
+            - Can be worked on in parallel (no dependencies)
+            - Are similar in nature (e.g., all UI bugs, or all documentation)
+            - Fit the current phase from PROJECT-STATUS.md
+
+            ### 4. Label & Document
+            For the NEXT BATCH (highest priority 3-5 issues):
+            - Add label `jules` to mark them for Jules processing
+            - Add label `batch: YYYY-MM-DD` with today's date
+            - Add a comment with:
+              - Summary of what needs to be done
+              - Link to relevant documentation (CLAUDE.md, ARCHITECTURE.md, etc.)
+              - Any specific requirements or constraints
+              - Expected file changes
+
+            ### 5. Output for Jules
+            Create a JSON summary in a comment on THIS workflow run:
+            ```json
+            {
+              "batch_id": "2026-01-18-batch-1",
+              "issues": [
+                {
+                  "number": 123,
+                  "title": "...",
+                  "type": "bug|feature|enhancement",
+                  "files_to_modify": ["path/to/file.ts"],
+                  "requirements": "Brief summary"
+                }
+              ]
+            }
+            ```
+
+            **Important:**
+            - Only select issues you're confident can be automated
+            - Prefer bugs and small enhancements over large features
+            - Check PROJECT-STATUS.md to align with current priorities
+            - Avoid issues that need human decision-making
+            - Maximum 5 issues per batch
+
+      - name: Parse Claude Output
+        id: analyze
+        run: |
+          # Extract JSON from Claude's output
+          # This will be used by Jules in the next job
+          echo "issues_for_jules={}" >> $GITHUB_OUTPUT
+
+  jules-implementation:
+    name: Jules - Implement PRs
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: claude-triage
+    if: needs.claude-triage.outputs.jules_issues != '{}'
+
+    strategy:
+      max-parallel: 3
+      matrix:
+        # This will be dynamically populated from Claude's output
+        issue: ${{ fromJSON(needs.claude-triage.outputs.jules_issues).issues || fromJSON('[]') }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Jules Implementation
+        uses: google-labs-code/jules-action@v1
+        with:
+          jules_api_key: ${{ secrets.GOOGLE_JULES_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          starting_branch: main
+          prompt: |
+            Implement issue #${{ matrix.issue.number }}: ${{ matrix.issue.title }}
+
+            ## Requirements
+            ${{ matrix.issue.requirements }}
+
+            ## Expected Changes
+            Files to modify: ${{ join(matrix.issue.files_to_modify, ', ') }}
+
+            ## Guidelines
+            - Follow CLAUDE.md playbook strictly
+            - Use design tokens from design-system/tokens.json (no hardcoded colors)
+            - Apply organic styling (asymmetric border-radius)
+            - Use Warm Technical palette (Coral/Teal/Gold)
+            - Write TypeScript with strict types
+            - Add tests for new functionality
+            - Update documentation if needed
+
+            ## Process
+            1. Read the issue for full context
+            2. Review related files and architecture
+            3. Implement the fix/feature
+            4. Run tests locally
+            5. Create a PR with:
+               - Title: "fix(scope): brief description" or "feat(scope): brief description"
+               - Body: Fixes #${{ matrix.issue.number }}
+               - Checkbox list of changes made
+
+  update-labels:
+    name: Update Issue Labels
+    runs-on: ubuntu-latest
+    needs: [claude-triage, jules-implementation]
+    if: always()
+
+    steps:
+      - name: Update Processed Issues
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // Add 'jules-processing' label to issues being worked on
+            // Add 'jules-complete' when PR is created
+            // This script will be populated based on actual execution
+            console.log('Issue labels updated');
