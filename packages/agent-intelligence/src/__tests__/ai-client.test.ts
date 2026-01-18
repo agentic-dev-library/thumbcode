@@ -4,6 +4,22 @@
 
 import { createAIClient, getDefaultModel, getAvailableModels, ANTHROPIC_MODELS, OPENAI_MODELS } from '../services/ai';
 
+// Helper to create async iterator from array
+function createMockAsyncIterator<T>(items: T[]) {
+  let index = 0;
+  return {
+    async next(): Promise<IteratorResult<T>> {
+      if (index < items.length) {
+        return { value: items[index++], done: false };
+      }
+      return { value: undefined as T, done: true };
+    },
+    [Symbol.asyncIterator]() {
+      return this;
+    },
+  };
+}
+
 // Mock the Anthropic SDK
 jest.mock('@anthropic-ai/sdk', () => {
   return jest.fn().mockImplementation(() => ({
@@ -18,33 +34,36 @@ jest.mock('@anthropic-ai/sdk', () => {
           output_tokens: 5,
         },
       }),
-      stream: jest.fn().mockImplementation(() => ({
-        [Symbol.asyncIterator]: async function* () {
-          yield { type: 'message_start' };
-          yield {
+      stream: jest.fn().mockImplementation(() => {
+        const events = [
+          { type: 'message_start' },
+          {
             type: 'content_block_start',
             index: 0,
             content_block: { type: 'text', text: '' },
-          };
-          yield {
+          },
+          {
             type: 'content_block_delta',
             delta: { type: 'text_delta', text: 'Hello' },
-          };
-          yield { type: 'content_block_stop' };
-          yield { type: 'message_delta', usage: { output_tokens: 5 } };
-          yield { type: 'message_stop' };
-        },
-        finalMessage: jest.fn().mockResolvedValue({
-          id: 'msg_123',
-          content: [{ type: 'text', text: 'Hello' }],
-          model: 'claude-3-5-sonnet-20241022',
-          stop_reason: 'end_turn',
-          usage: {
-            input_tokens: 10,
-            output_tokens: 5,
           },
-        }),
-      })),
+          { type: 'content_block_stop' },
+          { type: 'message_delta', usage: { output_tokens: 5 } },
+          { type: 'message_stop' },
+        ];
+        return {
+          ...createMockAsyncIterator(events),
+          finalMessage: jest.fn().mockResolvedValue({
+            id: 'msg_123',
+            content: [{ type: 'text', text: 'Hello' }],
+            model: 'claude-3-5-sonnet-20241022',
+            stop_reason: 'end_turn',
+            usage: {
+              input_tokens: 10,
+              output_tokens: 5,
+            },
+          }),
+        };
+      }),
     },
   }));
 });
@@ -56,45 +75,44 @@ jest.mock('openai', () => {
       completions: {
         create: jest.fn().mockImplementation((params) => {
           if (params.stream) {
-            return {
-              [Symbol.asyncIterator]: async function* () {
-                yield {
-                  id: 'chatcmpl-123',
-                  model: 'gpt-4o',
-                  choices: [
-                    {
-                      delta: { content: 'Hello' },
-                      finish_reason: null,
-                    },
-                  ],
-                };
-                yield {
-                  id: 'chatcmpl-123',
-                  model: 'gpt-4o',
-                  choices: [
-                    {
-                      delta: { content: ', world!' },
-                      finish_reason: null,
-                    },
-                  ],
-                };
-                yield {
-                  id: 'chatcmpl-123',
-                  model: 'gpt-4o',
-                  choices: [
-                    {
-                      delta: {},
-                      finish_reason: 'stop',
-                    },
-                  ],
-                  usage: {
-                    prompt_tokens: 10,
-                    completion_tokens: 5,
-                    total_tokens: 15,
+            const streamEvents = [
+              {
+                id: 'chatcmpl-123',
+                model: 'gpt-4o',
+                choices: [
+                  {
+                    delta: { content: 'Hello' },
+                    finish_reason: null,
                   },
-                };
+                ],
               },
-            };
+              {
+                id: 'chatcmpl-123',
+                model: 'gpt-4o',
+                choices: [
+                  {
+                    delta: { content: ', world!' },
+                    finish_reason: null,
+                  },
+                ],
+              },
+              {
+                id: 'chatcmpl-123',
+                model: 'gpt-4o',
+                choices: [
+                  {
+                    delta: {},
+                    finish_reason: 'stop',
+                  },
+                ],
+                usage: {
+                  prompt_tokens: 10,
+                  completion_tokens: 5,
+                  total_tokens: 15,
+                },
+              },
+            ];
+            return createMockAsyncIterator(streamEvents);
           }
           return Promise.resolve({
             id: 'chatcmpl-123',

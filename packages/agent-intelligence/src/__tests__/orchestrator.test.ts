@@ -5,6 +5,22 @@
 import type { AgentContext } from '../services/agents/base-agent';
 import { AgentOrchestrator } from '../services/orchestrator';
 
+// Helper to create async iterator from array
+function createMockAsyncIterator(items: unknown[]) {
+  let index = 0;
+  return {
+    async next() {
+      if (index < items.length) {
+        return { value: items[index++], done: false };
+      }
+      return { value: undefined, done: true };
+    },
+    [Symbol.asyncIterator]() {
+      return this;
+    },
+  };
+}
+
 // Mock the AI SDKs
 jest.mock('@anthropic-ai/sdk', () => {
   return jest.fn().mockImplementation(() => ({
@@ -16,22 +32,25 @@ jest.mock('@anthropic-ai/sdk', () => {
         stop_reason: 'end_turn',
         usage: { input_tokens: 100, output_tokens: 50 },
       }),
-      stream: jest.fn().mockImplementation(() => ({
-        [Symbol.asyncIterator]: async function* () {
-          yield { type: 'message_start' };
-          yield { type: 'content_block_start', index: 0, content_block: { type: 'text' } };
-          yield { type: 'content_block_delta', delta: { type: 'text_delta', text: 'Done' } };
-          yield { type: 'content_block_stop' };
-          yield { type: 'message_stop' };
-        },
-        finalMessage: jest.fn().mockResolvedValue({
-          id: 'msg_123',
-          content: [{ type: 'text', text: 'Done' }],
-          model: 'claude-3-5-sonnet-20241022',
-          stop_reason: 'end_turn',
-          usage: { input_tokens: 100, output_tokens: 50 },
-        }),
-      })),
+      stream: jest.fn().mockImplementation(() => {
+        const events = [
+          { type: 'message_start' },
+          { type: 'content_block_start', index: 0, content_block: { type: 'text' } },
+          { type: 'content_block_delta', delta: { type: 'text_delta', text: 'Done' } },
+          { type: 'content_block_stop' },
+          { type: 'message_stop' },
+        ];
+        return {
+          ...createMockAsyncIterator(events),
+          finalMessage: jest.fn().mockResolvedValue({
+            id: 'msg_123',
+            content: [{ type: 'text', text: 'Done' }],
+            model: 'claude-3-5-sonnet-20241022',
+            stop_reason: 'end_turn',
+            usage: { input_tokens: 100, output_tokens: 50 },
+          }),
+        };
+      }),
     },
   }));
 });
