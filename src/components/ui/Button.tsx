@@ -5,6 +5,7 @@ interface ButtonProps extends PressableProps {
   variant?: 'primary' | 'secondary' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
+  className?: string;
   children: React.ReactNode;
 }
 
