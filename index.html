@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThumbCode — Code with your thumbs</title>
+  <meta name="description" content="Direct a team of AI agents to build mobile apps. From your phone. No laptop required.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1&family=Cabin:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/logos/favicon.svg">
+  
+  <style>
+    /* ═══════════════════════════════════════════════════════════════════════
+       THUMBCODE FOUNDATION - P3 "Warm Technical" Design System
+       ═══════════════════════════════════════════════════════════════════════ */
+    
+    :root {
+      /* Colors */
+      --coral-400: #FF8A7A;
+      --coral-500: #FF7059;
+      --coral-600: #E85A4F;
+      --coral-700: #C74840;
+      --coral-800: #A33832;
+      
+      --teal-400: #2DD4BF;
+      --teal-500: #14B8A6;
+      --teal-600: #0D9488;
+      --teal-700: #0F766E;
+      --teal-800: #115E59;
+      
+      --gold-300: #FDE68A;
+      --gold-400: #F5D563;
+      --gold-500: #EAB308;
+      
+      --charcoal: #151820;
+      --surface: #1E293B;
+      --surface-elevated: #334155;
+      
+      --neutral-50: #F8FAFC;
+      --neutral-100: #F1F5F9;
+      --neutral-400: #94A3B8;
+      --neutral-500: #64748B;
+      
+      /* Typography */
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-body: 'Cabin', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      /* Organic shapes */
+      --radius-organic: 50px 45px 50px 48px / 26px 28px 26px 24px;
+      --radius-organic-card: 20px 18px 22px 16px / 16px 20px 18px 22px;
+      
+      /* Shadows */
+      --shadow-organic: 0 2px 4px rgba(13, 148, 136, 0.08), 0 8px 24px rgba(21, 24, 32, 0.12), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-organic-coral: 0 4px 12px rgba(255, 112, 89, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font-body);
+      background: var(--charcoal);
+      color: var(--neutral-50);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════════════
+       HEADER
+       ═══════════════════════════════════════════════════════════════════════ */
+    
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: rgba(21, 24, 32, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(13, 148, 136, 0.1);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+    
+    .logo-mark {
+      width: 40px;
+      height: 40px;
+    }
+    
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--coral-500);
+      letter-spacing: -0.02em;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    
+    .nav-links a {
+      color: var(--neutral-400);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .nav-links a:hover {
+      color: var(--coral-500);
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════════════
+       HERO
+       ═══════════════════════════════════════════════════════════════════════ */
+    
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Organic background blob */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 10%;
+      right: -20%;
+      width: 60vw;
+      height: 60vw;
+      background: radial-gradient(ellipse, rgba(255, 112, 89, 0.15) 0%, transparent 70%);
+      filter: blur(60px);
+      animation: float 20s ease-in-out infinite;
+    }
+    
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 10%;
+      left: -10%;
+      width: 40vw;
+      height: 40vw;
+      background: radial-gradient(ellipse, rgba(13, 148, 136, 0.12) 0%, transparent 70%);
+      filter: blur(50px);
+      animation: float 25s ease-in-out infinite reverse;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(5%, 5%) scale(1.05); }
+      50% { transform: translate(0, 10%) scale(0.95); }
+      75% { transform: translate(-5%, 5%) scale(1.02); }
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+    }
+    
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 8vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.03em;
+    }
+    
+    .hero h1 .highlight {
+      color: var(--coral-500);
+      position: relative;
+    }
+    
+    .hero h1 .highlight::after {
+      content: '';
+      position: absolute;
+      bottom: 0.1em;
+      left: 0;
+      right: 0;
+      height: 0.15em;
+      background: var(--teal-600);
+      border-radius: 2px;
+      opacity: 0.6;
+    }
+    
+    .hero .tagline {
+      font-size: 1.5rem;
+      color: var(--neutral-400);
+      margin-bottom: 2rem;
+    }
+    
+    .hero .tagline strong {
+      color: var(--teal-400);
+    }
+    
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════════════
+       BUTTONS - Organic Style
+       ═══════════════════════════════════════════════════════════════════════ */
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+      background: var(--coral-500);
+      color: var(--charcoal);
+      border-radius: var(--radius-organic);
+      box-shadow: var(--shadow-organic-coral);
+    }
+    
+    .btn-primary:hover {
+      background: var(--coral-400);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 112, 89, 0.4);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(1px) scale(0.98);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: var(--teal-400);
+      border: 2px solid var(--teal-600);
+      border-radius: var(--radius-organic);
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(13, 148, 136, 0.1);
+      border-color: var(--teal-400);
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════════════
+       FEATURE CARDS
+       ═══════════════════════════════════════════════════════════════════════ */
+    
+    .features {
+      padding: 6rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .features h2 {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 3rem;
+      color: var(--neutral-50);
+    }
+    
+    .features h2 span {
+      color: var(--teal-400);
+    }
+    
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+    
+    .feature-card {
+      background: var(--surface);
+      padding: 2rem;
+      border-radius: var(--radius-organic-card);
+      box-shadow: var(--shadow-organic);
+      transform: rotate(-0.3deg);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .feature-card:nth-child(even) {
+      transform: rotate(0.3deg);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-4px) rotate(0deg);
+      box-shadow: 0 4px 8px rgba(13, 148, 136, 0.1), 0 16px 40px rgba(21, 24, 32, 0.2);
+    }
+    
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 112, 89, 0.15);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+    
+    .feature-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+      color: var(--coral-500);
+    }
+    
+    .feature-card p {
+      color: var(--neutral-400);
+      font-size: 0.95rem;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════════════
+       HOW IT WORKS
+       ═══════════════════════════════════════════════════════════════════════ */
+    
+    .how-it-works {
+      padding: 6rem 2rem;
+      background: var(--surface);
+    }
+    
+    .how-it-works-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .how-it-works h2 {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    
+    .step {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+    
+    .step-number {
+      width: 48px;
+      height: 48px;
+      background: var(--coral-500);
+      color: var(--charcoal);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    
+    .step-content h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--teal-400);
+    }
+    
+    .step-content p {
+      color: var(--neutral-400);
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════════════
+       AGENT SHOWCASE
+       ═══════════════════════════════════════════════════════════════════════ */
+    
+    .agents {
+      padding: 6rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .agents h2 {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    
+    .agents .subtitle {
+      text-align: center;
+      color: var(--neutral-400);
+      margin-bottom: 3rem;
+    }
+    
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+    
+    @media (max-width: 640px) {
+      .agent-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .agent-card {
+      background: var(--surface);
+      padding: 1.5rem;
+      border-radius: var(--radius-organic-card);
+      border-left: 3px solid var(--coral-500);
+      transition: all 0.2s;
+    }
+    
+    .agent-card:nth-child(2) { border-left-color: var(--teal-600); }
+    .agent-card:nth-child(3) { border-left-color: var(--gold-400); }
+    .agent-card:nth-child(4) { border-left-color: var(--teal-400); }
+    
+    .agent-card:hover {
+      background: var(--surface-elevated);
+    }
+    
+    .agent-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .agent-card p {
+      color: var(--neutral-400);
+      font-size: 0.9rem;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════════════
+       CTA SECTION
+       ═══════════════════════════════════════════════════════════════════════ */
+    
+    .cta-section {
+      padding: 6rem 2rem;
+      text-align: center;
+      background: linear-gradient(to bottom, var(--charcoal), rgba(13, 148, 136, 0.05));
+    }
+    
+    .cta-section h2 {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .cta-section p {
+      color: var(--neutral-400);
+      margin-bottom: 2rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════════════════ */
+    
+    footer {
+      padding: 3rem 2rem;
+      border-top: 1px solid rgba(13, 148, 136, 0.1);
+      text-align: center;
+    }
+    
+    footer p {
+      color: var(--neutral-500);
+      font-size: 0.875rem;
+    }
+    
+    footer a {
+      color: var(--teal-400);
+      text-decoration: none;
+    }
+    
+    footer a:hover {
+      text-decoration: underline;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════════════════════════════════ */
+    
+    @media (max-width: 768px) {
+      header {
+        padding: 1rem;
+      }
+      
+      .nav-links {
+        display: none;
+      }
+      
+      .hero {
+        padding: 6rem 1rem 3rem;
+      }
+      
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero .tagline {
+        font-size: 1.1rem;
+      }
+      
+      .hero-cta {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <a href="/" class="logo">
+      <svg class="logo-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="daube" x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="42" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+        </defs>
+        <rect x="4" y="8" width="6" height="24" rx="3" fill="#FF7059" filter="url(#daube)"/>
+        <rect x="30" y="8" width="6" height="24" rx="3" fill="#FF7059" filter="url(#daube)"/>
+        <rect x="14" y="4" width="12" height="6" rx="3" fill="#0D9488" filter="url(#daube)"/>
+        <rect x="14" y="30" width="12" height="6" rx="3" fill="#0D9488" filter="url(#daube)"/>
+        <circle cx="20" cy="20" r="4" fill="#F5D563" filter="url(#daube)"/>
+      </svg>
+      <span class="logo-text">ThumbCode</span>
+    </a>
+    
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#agents">Agents</a></li>
+        <li><a href="https://github.com/thumbcode" target="_blank">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>
+        <span class="highlight">Code</span> with your thumbs
+      </h1>
+      <p class="tagline">
+        Direct a team of <strong>AI agents</strong> to build mobile apps.<br>
+        From your phone. No laptop required.
+      </p>
+      <div class="hero-cta">
+        <a href="#waitlist" class="btn btn-primary">
+          Join the Waitlist →
+        </a>
+        <a href="#how-it-works" class="btn btn-secondary">
+          See How It Works
+        </a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Features -->
+  <section id="features" class="features">
+    <h2>Ship apps <span>from anywhere</span></h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>Multi-Agent Development</h3>
+        <p>Architect, Implementer, Reviewer, and Tester agents work in parallel — like a real engineering team.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔑</div>
+        <h3>Bring Your Own Keys</h3>
+        <p>Use your Anthropic, OpenAI, or other API keys. We never touch your credentials.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>Mobile-First UX</h3>
+        <p>Built for thumbs. Swipe to approve commits, tap to review PRs, voice to describe features.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔗</div>
+        <h3>Git Native</h3>
+        <p>Full GitHub/GitLab integration. Create repos, manage branches, push changes — all from your phone.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Zero Server Cost</h3>
+        <p>Everything runs client-side. No subscriptions to our servers. Your keys, your usage, your control.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>Visual Verification</h3>
+        <p>Agents can "see" what they build. Screenshots compared against your design specs automatically.</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- How It Works -->
+  <section id="how-it-works" class="how-it-works">
+    <div class="how-it-works-inner">
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Connect Your Keys</h3>
+            <p>Add your Anthropic API key and connect to GitHub. Keys stay securely on your device.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Describe Your App</h3>
+            <p>Tell your Architect agent what you want to build. It plans the structure and tasks.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Watch Agents Work</h3>
+            <p>Implementer agents write code. Reviewer agents check quality. Tester agents verify.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3>Approve & Ship</h3>
+            <p>Review changes, approve commits, and deploy — all with a few taps on your phone.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Agents -->
+  <section id="agents" class="agents">
+    <h2>Your AI Engineering Team</h2>
+    <p class="subtitle">Specialized agents with focused responsibilities</p>
+    <div class="agent-grid">
+      <div class="agent-card">
+        <h3>🏗️ Architect</h3>
+        <p>Plans features, designs APIs, creates file structures. Writes the blueprint.</p>
+      </div>
+      <div class="agent-card">
+        <h3>⚡ Implementer</h3>
+        <p>Writes feature code following the Architect's plan. Handles the actual coding.</p>
+      </div>
+      <div class="agent-card">
+        <h3>🔍 Reviewer</h3>
+        <p>Evaluates code quality, brand compliance, and security. Guards the gates.</p>
+      </div>
+      <div class="agent-card">
+        <h3>🧪 Tester</h3>
+        <p>Writes tests, runs coverage, catches bugs. Ensures it actually works.</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- CTA -->
+  <section id="waitlist" class="cta-section">
+    <h2>Ready to code with your thumbs?</h2>
+    <p>Join the waitlist to get early access when we launch.</p>
+    <a href="mailto:hello@thumbcode.dev?subject=Waitlist" class="btn btn-primary">
+      Get Early Access →
+    </a>
+  </section>
+  
+  <!-- Footer -->
+  <footer>
+    <p>
+      © 2026 ThumbCode. Built by agents, for humans.<br>
+      <a href="https://github.com/thumbcode">GitHub</a> · 
+      <a href="/design-tokens/tokens.json">Design Tokens</a> · 
+      <a href="/CLAUDE.md">Agent Playbook</a>
+    </p>
+  </footer>
+</body>
+</html>

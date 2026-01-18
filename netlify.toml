@@ -1,0 +1,54 @@
+# ThumbCode Foundation - Netlify Configuration
+
+[build]
+  # Build command
+  command = "npm run build"
+  
+  # Directory with built files
+  publish = "public"
+
+# Redirect index
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
+
+# Headers for static files
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Cache design tokens (agents need fast access)
+[[headers]]
+  for = "/design-tokens/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+    Access-Control-Allow-Origin = "*"
+
+# CORS for agent access
+[[headers]]
+  for = "/CLAUDE.md"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Content-Type = "text/markdown; charset=utf-8"
+
+[[headers]]
+  for = "/AGENTS.md"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Content-Type = "text/markdown; charset=utf-8"
+
+# Development redirect
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# 404 fallback
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 404

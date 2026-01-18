@@ -1,0 +1,22 @@
+{
+  "name": "thumbcode-foundation",
+  "version": "0.1.0",
+  "description": "ThumbCode Foundation - Agent playbook and design system",
+  "private": true,
+  "scripts": {
+    "dev": "serve src/pages -l 3000",
+    "build": "npm run copy-files",
+    "copy-files": "cp -r src/pages/* public/ && cp -r design-tokens public/ && cp CLAUDE.md public/ && cp AGENTS.md public/ && cp -r memory-bank public/"
+  },
+  "keywords": [
+    "thumbcode",
+    "ai-agents",
+    "mobile-development",
+    "design-system"
+  ],
+  "author": "ThumbCode",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}
