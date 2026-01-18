@@ -2,12 +2,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-interface Message {
-  id: string;
-  text: string;
-  sender: 'user' | 'agent';
-  timestamp: Date;
-}
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Message } from '../../stores/chatStore';
+
+const ChatBubble = ({ message }: { message: Message }) => {
 
 const ChatBubble = ({ message }: { message: Message }) => {
   const isUser = message.sender === 'user';
