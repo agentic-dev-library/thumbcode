@@ -197,5 +197,119 @@ describe('PerformanceMonitor', () => {
       // Frame tracking happens over time, so we just verify no errors
       expect(() => monitor.recordFrame()).not.toThrow();
     });
+
+    it('should not track frames when disabled', () => {
+      const disabledMonitor = new PerformanceMonitor({ enabled: false });
+      disabledMonitor.startFrameTracking();
+      disabledMonitor.recordFrame();
+
+      // Should not throw and metrics should be empty
+      expect(disabledMonitor.getMetrics().length).toBe(0);
+    });
+  });
+
+  describe('startReporting', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('should start periodic reporting', () => {
+      monitor.startReporting();
+
+      // Verify timer was started
+      jest.advanceTimersByTime(10000);
+
+      // Should not throw
+      monitor.stopReporting();
+    });
+
+    it('should not start multiple timers', () => {
+      monitor.startReporting();
+      monitor.startReporting(); // Second call should be no-op
+
+      // Should still only have one timer
+      jest.advanceTimersByTime(10000);
+
+      monitor.stopReporting();
+    });
+  });
+
+  describe('stopReporting', () => {
+    it('should not throw when called without starting', () => {
+      expect(() => monitor.stopReporting()).not.toThrow();
+    });
+  });
+
+  describe('trackRender when disabled', () => {
+    it('should not track render when disabled', () => {
+      const disabledMonitor = new PerformanceMonitor({ enabled: false });
+      disabledMonitor.trackRender('TestComponent', 100);
+
+      expect(disabledMonitor.getSummary().componentStats.length).toBe(0);
+    });
+  });
+
+  describe('trackMount advanced', () => {
+    it('should update existing component mount time', () => {
+      monitor.trackRender('TestComponent', 10);
+      monitor.trackMount('TestComponent', 50);
+
+      const summary = monitor.getSummary();
+      const component = summary.componentStats.find(
+        (c) => c.componentName === 'TestComponent'
+      );
+
+      expect(component?.mountTime).toBe(50);
+      expect(component?.renderTime).toBe(10);
+    });
+
+    it('should not track mount when disabled', () => {
+      const disabledMonitor = new PerformanceMonitor({ enabled: false });
+      disabledMonitor.trackMount('TestComponent', 100);
+
+      expect(disabledMonitor.getSummary().componentStats.length).toBe(0);
+    });
+
+    it('should log slow mounts', () => {
+      const { logger } = require('../logger');
+      monitor.configure({ slowRenderThreshold: 10 });
+      monitor.trackMount('SlowComponent', 100); // Way above 3x threshold
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        'Slow mount: SlowComponent',
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('slow render logging', () => {
+    it('should log slow renders', () => {
+      const { logger } = require('../logger');
+      monitor.configure({ slowRenderThreshold: 10 });
+      monitor.trackRender('SlowComponent', 50);
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        'Slow render: SlowComponent',
+        expect.objectContaining({
+          renderTime: expect.any(String),
+          threshold: expect.any(String),
+        })
+      );
+    });
+  });
+
+  describe('getSummary with fps metrics', () => {
+    it('should calculate average fps', () => {
+      monitor.record('fps1', 60, 'fps');
+      monitor.record('fps2', 55, 'fps');
+      monitor.record('fps3', 50, 'fps');
+
+      const summary = monitor.getSummary();
+      expect(summary.averageFps).toBe(55);
+    });
   });
 });
