@@ -8,8 +8,8 @@
  * Run: pnpm run generate:icons
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
@@ -111,14 +111,14 @@ async function generateAll(): Promise<void> {
     try {
       await generateIcon(filename, spec);
       successCount++;
-    } catch (error) {
+    } catch (_error) {
       failCount++;
     }
   }
 
   const duration = ((Date.now() - startTime) / 1000).toFixed(2);
 
-  console.log('\n' + '━'.repeat(60));
+  console.log(`\n${'━'.repeat(60)}`);
   console.log(`\n✨ Icon generation complete in ${duration}s`);
   console.log(`   Success: ${successCount}/${Object.keys(ICON_SPECS).length}`);
 
@@ -131,7 +131,9 @@ async function generateAll(): Promise<void> {
   console.log('   Check app.json to ensure paths match:\n');
   console.log('   "icon": "./assets/icon.png"');
   console.log('   "splash": { "image": "./assets/splash.png" }');
-  console.log('   "android": { "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png" } }');
+  console.log(
+    '   "android": { "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png" } }'
+  );
   console.log('   "web": { "favicon": "./assets/favicon.png" }\n');
 }
 

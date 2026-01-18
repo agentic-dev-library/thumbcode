@@ -1,18 +1,21 @@
 /**
  * Theme Provider
- * 
+ *
  * Provides design tokens to all child components
  * Programmatically loads from tokens.json
  */
 
-import React, { createContext, useContext, useMemo } from 'react';
+import type { ReactNode } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import tokens from '../../../design-system/tokens.json';
-import React, { createContext, useContext, useMemo } from 'react';
-import tokens from '../../../design-system/tokens.json';
+
+interface ColorValue {
+  [key: string]: string;
+}
 
 interface ThemeContextValue {
   tokens: typeof tokens;
-  colors: Record<string, any>;
+  colors: Record<string, string | ColorValue>;
   spacing: Record<string, string>;
   typography: typeof tokens.typography;
 }
@@ -26,10 +29,10 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
  *
  * @returns A React element that supplies the theme context to its children.
  */
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const value = useMemo(() => {
     // Process colors into flat structure
-    const colors: Record<string, any> = {};
+    const colors: Record<string, string | ColorValue> = {};
     Object.entries(tokens.colors).forEach(([colorName, colorData]) => {
       if (typeof colorData === 'string') {
         colors[colorName] = colorData;
@@ -40,7 +43,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         });
       }
     });
-    
+
     return {
       tokens,
       colors,
@@ -48,12 +51,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       typography: tokens.typography,
     };
   }, []);
-  
-  return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
-  );
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 /**
@@ -79,11 +78,11 @@ export function useTheme() {
  */
 export function useColor(colorName: string, shade: string = '500'): string {
   const { colors } = useTheme();
-  
+
   if (typeof colors[colorName] === 'string') {
     return colors[colorName];
   }
-  
+
   return colors[colorName]?.[shade] || '#000000';
 }
 

@@ -10,8 +10,8 @@
  * Run: pnpm run generate:tokens
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -56,7 +56,8 @@ interface Tokens {
  * Generate CSS custom properties from design tokens
  */
 function generateCSSVariables(tokens: Tokens): void {
-  let css = '/**\n * Design Tokens - CSS Custom Properties\n * Auto-generated from tokens.json\n * DO NOT EDIT MANUALLY\n */\n\n:root {\n';
+  let css =
+    '/**\n * Design Tokens - CSS Custom Properties\n * Auto-generated from tokens.json\n * DO NOT EDIT MANUALLY\n */\n\n:root {\n';
 
   // Colors
   for (const [colorName, colorData] of Object.entries(tokens.colors)) {
@@ -161,7 +162,7 @@ async function generateAll(): Promise<void> {
     generateCSSVariables(tokens);
     generateTailwindColors(tokens);
 
-    console.log('\n' + '━'.repeat(60));
+    console.log(`\n${'━'.repeat(60)}`);
     console.log('\n✅ All artifacts generated successfully!\n');
   } catch (error) {
     console.error('\n❌ Token generation failed:', error);

@@ -12,14 +12,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: [
-      'node_modules/**',
-      '.expo/**',
-      'dist/**',
-      'build/**',
-      '*.config.js',
-      '*.config.ts',
-    ],
+    ignores: ['node_modules/**', '.expo/**', 'dist/**', 'build/**', '*.config.js', '*.config.ts'],
   },
   ...compat.extends('expo'),
   {

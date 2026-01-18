@@ -1,5 +1,5 @@
-import { View, ScrollView } from 'react-native';
-import { Text, Button, Card, Input } from '../src/components/ui';
+import { ScrollView, View } from 'react-native';
+import { Button, Card, Input, Text } from '../src/components/ui';
 
 /**
  * Landing screen component that renders the ThumbCode promotional and demo interface.
@@ -22,13 +22,13 @@ export default function Index() {
             Code with your thumbs. A decentralized multi-agent mobile development platform.
           </Text>
         </View>
-        
+
         {/* Feature Cards */}
         <View className="mb-6">
           <Text variant="display" size="2xl" weight="semibold" className="mb-4">
             Key Features
           </Text>
-          
+
           <Card className="mb-4">
             <Text size="lg" weight="semibold" className="mb-2">
               🤖 Multi-Agent Teams
@@ -37,7 +37,7 @@ export default function Index() {
               Architect, Implementer, Reviewer, Tester agents working in parallel
             </Text>
           </Card>
-          
+
           <Card className="mb-4">
             <Text size="lg" weight="semibold" className="mb-2">
               📱 Mobile-Native Git
@@ -46,7 +46,7 @@ export default function Index() {
               Full git workflow from your phone. Clone, commit, push — powered by isomorphic-git
             </Text>
           </Card>
-          
+
           <Card className="mb-4">
             <Text size="lg" weight="semibold" className="mb-2">
               🔒 Credential Sovereignty
@@ -56,42 +56,31 @@ export default function Index() {
             </Text>
           </Card>
         </View>
-        
+
         {/* Demo Form */}
         <View className="mb-6">
           <Text variant="display" size="2xl" weight="semibold" className="mb-4">
             Get Started
           </Text>
-          
+
           <Card variant="elevated">
-            <Input 
-              label="GitHub Username"
-              placeholder="username"
-              className="mb-4"
-            />
-            <Input 
-              label="API Key"
-              placeholder="sk-..."
-              secureTextEntry
-              className="mb-4"
-            />
+            <Input label="GitHub Username" placeholder="username" className="mb-4" />
+            <Input label="API Key" placeholder="sk-..." secureTextEntry className="mb-4" />
             <Button variant="primary" className="mb-2">
               Connect
             </Button>
-            <Button variant="outline">
-              Learn More
-            </Button>
+            <Button variant="outline">Learn More</Button>
           </Card>
         </View>
-        
+
         {/* Tech Stack */}
         <View className="mb-8">
           <Text variant="display" size="2xl" weight="semibold" className="mb-4">
             Built With
           </Text>
           <View className="flex-row flex-wrap gap-2">
-            {['Expo 52', 'React Native', 'NativeWind', 'Zustand', 'isomorphic-git'].map(tech => (
-              <View 
+            {['Expo 52', 'React Native', 'NativeWind', 'Zustand', 'isomorphic-git'].map((tech) => (
+              <View
                 key={tech}
                 className="bg-teal-100 px-3 py-2 rounded-[0.375rem_0.5rem_0.625rem_0.25rem]"
               >

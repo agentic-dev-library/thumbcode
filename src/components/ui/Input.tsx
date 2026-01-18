@@ -1,4 +1,8 @@
-import { TextInput as RNTextInput, TextInputProps as RNTextInputProps, View } from 'react-native';
+import {
+  TextInput as RNTextInput,
+  type TextInputProps as RNTextInputProps,
+  View,
+} from 'react-native';
 import { Text } from './Text';
 
 interface InputProps extends RNTextInputProps {
@@ -17,19 +21,10 @@ interface InputProps extends RNTextInputProps {
  * @param className - Additional class names applied to the input element
  * @returns A React element containing the labeled input and optional error message
  */
-export function Input({ 
-  label,
-  error,
-  className = '',
-  ...props 
-}: InputProps) {
+export function Input({ label, error, className = '', ...props }: InputProps) {
   return (
     <View className="w-full">
-      {label && (
-        <Text className="mb-2 text-neutral-700 font-medium">
-          {label}
-        </Text>
-      )}
+      {label && <Text className="mb-2 text-neutral-700 font-medium">{label}</Text>}
       <RNTextInput
         className={`
           bg-white
@@ -43,11 +38,7 @@ export function Input({
         placeholderTextColor="#94A3B8"
         {...props}
       />
-      {error && (
-        <Text className="mt-1 text-sm text-coral-500">
-          {error}
-        </Text>
-      )}
+      {error && <Text className="mt-1 text-sm text-coral-500">{error}</Text>}
     </View>
   );
 }

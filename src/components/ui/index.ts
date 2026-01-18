@@ -1,5 +1,5 @@
-export { Text } from './Text';
 export { Button } from './Button';
 export { Card } from './Card';
 export { Input } from './Input';
-export { ThemeProvider, useTheme, useColor, useSpacing } from './ThemeProvider';
+export { Text } from './Text';
+export { ThemeProvider, useColor, useSpacing, useTheme } from './ThemeProvider';
