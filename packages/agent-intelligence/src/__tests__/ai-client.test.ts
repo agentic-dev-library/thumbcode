@@ -5,7 +5,7 @@
 import { createAIClient, getDefaultModel, getAvailableModels, ANTHROPIC_MODELS, OPENAI_MODELS } from '../services/ai';
 
 // Helper to create async iterator from array
-function createMockAsyncIterator<T>(items: T[]) {
+function mockCreateAsyncIterator<T>(items: T[]) {
   let index = 0;
   return {
     async next(): Promise<IteratorResult<T>> {
@@ -51,7 +51,7 @@ jest.mock('@anthropic-ai/sdk', () => {
           { type: 'message_stop' },
         ];
         return {
-          ...createMockAsyncIterator(events),
+          ...mockCreateAsyncIterator(events),
           finalMessage: jest.fn().mockResolvedValue({
             id: 'msg_123',
             content: [{ type: 'text', text: 'Hello' }],
@@ -112,7 +112,7 @@ jest.mock('openai', () => {
                 },
               },
             ];
-            return createMockAsyncIterator(streamEvents);
+            return mockCreateAsyncIterator(streamEvents);
           }
           return Promise.resolve({
             id: 'chatcmpl-123',

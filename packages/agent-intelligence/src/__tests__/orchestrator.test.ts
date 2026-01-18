@@ -6,7 +6,7 @@ import type { AgentContext } from '../services/agents/base-agent';
 import { AgentOrchestrator } from '../services/orchestrator';
 
 // Helper to create async iterator from array
-function createMockAsyncIterator(items: unknown[]) {
+function mockCreateAsyncIterator(items: unknown[]) {
   let index = 0;
   return {
     async next() {
@@ -41,7 +41,7 @@ jest.mock('@anthropic-ai/sdk', () => {
           { type: 'message_stop' },
         ];
         return {
-          ...createMockAsyncIterator(events),
+          ...mockCreateAsyncIterator(events),
           finalMessage: jest.fn().mockResolvedValue({
             id: 'msg_123',
             content: [{ type: 'text', text: 'Done' }],
