@@ -602,6 +602,313 @@ uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
 ---
 
+## AI Shortcuts 🚀
+
+**NEW! Trigger powerful AI automation via comment mentions**
+
+ThumbCode now includes AI shortcuts that you can trigger by mentioning them in issue or PR comments. These shortcuts engage Claude AI and CodeRabbit AI for automatic complex tasks.
+
+> **📚 Full documentation:** See [SHORTCUTS.md](./SHORTCUTS.md) for comprehensive guide with examples
+
+### Quick Reference
+
+| Shortcut | Where | What | Duration |
+|----------|-------|------|----------|
+| `@rebase` | PR comments | Auto-rebase with conflict resolution | ~5-15 min |
+| `@triage` | Issue/PR comments | Multi-AI triage and categorization | ~10-20 min |
+| `@review` | PR comments | Collaborative deep code review | ~20-30 min |
+| `@backlog` | Anywhere/Manual | Full backlog analysis and organization | ~20-30 min |
+| `@ready` | Issue/PR comments | Check resolution/comment status | ~10-20 min |
+
+### 9. `@rebase` - Auto-Rebase PR (`shortcut-rebase.yml`) 🔀
+
+**Trigger:** Comment `@rebase` on a pull request
+
+**What It Does:**
+- Fetches latest from base branch
+- Attempts automatic rebase
+- **If conflicts:** Claude resolves them automatically with intelligent merge
+- Verifies all changes (lint, typecheck, test, build)
+- Force-pushes rebased branch
+- Posts summary comment with details
+
+**Use Cases:**
+- PR is behind base branch
+- Need to incorporate latest changes
+- Have merge conflicts to resolve automatically
+
+**Workflow Details:**
+- **Phase 1:** Detect `@rebase` command in comments
+- **Phase 2:** Attempt auto-rebase (no conflicts)
+- **Phase 3:** If conflicts → Claude analyzes both sides, intelligently merges, verifies
+- **Phase 4:** Force-push with `--force-with-lease`
+- **Phase 5:** Comment with resolution summary
+
+**Duration:** ~5-15 minutes (longer with complex conflicts)
+
+**Permissions:**
+- `contents: write` - Push code, force-push
+- `pull-requests: write` - Comment on PR
+
+**Pinned Actions:**
+- `actions/checkout@de0fac2` (v6.0.2)
+- `anthropics/claude-code-action@a017b83` (v1.0.30)
+- `actions/github-script@f28e40c` (v7.1.0)
+
+---
+
+### 10. `@triage` - Multi-AI Triage (`shortcut-triage.yml`) 🔍
+
+**Trigger:** Comment `@triage` on an issue or PR
+
+**What It Does:**
+- Engages **CodeRabbit AI** for technical analysis
+- Engages **Claude** for ThumbCode-specific analysis
+- Both AIs provide complementary, non-duplicate assessments
+- Automatically adds appropriate labels
+- Posts comprehensive triage reports
+
+**On Issues:**
+- **CodeRabbit:** Category, priority, complexity, requirements, implementation approach
+- **Claude:** ThumbCode roadmap alignment (PROJECT-STATUS.md), feasibility, style compliance
+- Auto-labels: type, priority, area, status
+- Duplicate detection across repository
+
+**On PRs:**
+- **CodeRabbit:** Code quality, security, performance, TypeScript, testing
+- **Claude:** CLAUDE.md compliance, design tokens, organic styling, architecture fit
+- Collaborative feedback with specific suggestions
+
+**Duration:** ~10-20 minutes
+
+**Permissions:**
+- `contents: write` - Read codebase and docs
+- `issues: write` - Add labels, comment
+- `pull-requests: write` - Add review comments
+
+**Pinned Actions:**
+- `actions/checkout@de0fac2` (v6.0.2)
+- `anthropics/claude-code-action@a017b83` (v1.0.30)
+- `actions/github-script@f28e40c` (v7.1.0)
+
+---
+
+### 11. `@review` - Collaborative AI Code Review (`shortcut-review.yml`) 🔎
+
+**Trigger:** Comment `@review` on a pull request
+
+**What It Does:**
+- **CodeRabbit** performs comprehensive review:
+  - Code quality (DRY, SOLID, KISS, complexity)
+  - Security (XSS, injection, auth, secrets)
+  - Performance (algorithms, React optimization, memory, bundle size)
+  - TypeScript (type safety, no `any`, proper generics)
+  - Testing (coverage, edge cases, test quality)
+  - Documentation (comments, JSDoc, README)
+  - Line-by-line comments with code examples
+
+- **Claude** performs ThumbCode-specific deep review:
+  - **CLAUDE.md Compliance (CRITICAL):** Design tokens, organic styling, no gradients
+  - **Warm Technical Palette:** Coral (#FF7059), Teal (#0D9488), Gold (#F5D563)
+  - **Typography:** Fraunces (display), Cabin (body), JetBrains Mono (code) - NOT Inter/Roboto
+  - **Architecture Alignment:** Follows ARCHITECTURE.md patterns
+  - **Roadmap Fit:** Aligns with PROJECT-STATUS.md current phase
+  - **Mobile-First:** Touch targets, responsive, performance, accessibility
+  - **React Best Practices:** Hooks, effects, memoization
+
+- Both post detailed reviews with:
+  - 🚨 Critical issues (must fix)
+  - ⚠️ High priority warnings (should fix)
+  - 💡 Suggestions (nice to have)
+  - Code examples for fixes
+
+**Duration:** ~20-30 minutes (comprehensive review)
+
+**Permissions:**
+- `contents: write` - Read all files deeply
+- `pull-requests: write` - Add review comments
+- `checks: write` - Update review status
+
+**When to Use:**
+- PR ready for thorough review before merge
+- Need multiple AI perspectives
+- Want both general + ThumbCode-specific feedback
+- Large/important changes
+
+**Pinned Actions:**
+- `actions/checkout@de0fac2` (v6.0.2)
+- `anthropics/claude-code-action@a017b83` (v1.0.30)
+- `actions/github-script@f28e40c` (v7.1.0)
+
+---
+
+### 12. `@backlog` - Collaborative Backlog Triage (`shortcut-backlog.yml`) 📋
+
+**Trigger:** Comment `@backlog` anywhere OR manual workflow dispatch
+
+**What It Does:**
+- Creates triage coordination issue
+- **CodeRabbit** analyzes entire open backlog:
+  - Priority ranking (impact, urgency, dependencies)
+  - Categorization (type, area, complexity)
+  - Duplicate detection across all issues
+  - Missing information identification
+  - Quick wins (simple, high-value issues)
+  - Technical debt issues
+
+- **Claude** performs strategic planning:
+  - Roadmap alignment with PROJECT-STATUS.md
+  - AI-implementation feasibility assessment (< 200 lines, clear requirements)
+  - Quality impact (code quality, UX, tech debt reduction)
+  - Strategic bucketing
+
+- **Both AIs automatically:**
+  - Apply labels to ALL issues
+  - Assign milestones (v1.0.0, v1.1.0, etc.)
+  - Close duplicates and won't-fix issues
+  - Mark ready issues with `status: ready` for auto-implementation
+
+- Posts comprehensive backlog report with:
+  - 🚀 **High Priority** (X issues) - Do now
+  - ✅ **Ready for AI Auto-Implementation** (X issues) - Queued for auto-impl workflow
+  - 📅 **Backlog - Next Phase** (X issues) - Defer to v1.1.0/v2.0.0
+  - 🔒 **Blocked** (X issues) - Waiting on dependencies
+  - ❌ **Recommended to Close** (X issues) - Duplicates, out of scope
+
+**Duration:** ~20-30 minutes (processes 100+ issues)
+
+**Permissions:**
+- `contents: write` - Read strategic docs
+- `issues: write` - Label, milestone, close, create issues
+
+**When to Use:**
+- Backlog cluttered and needs organization
+- Planning next sprint or phase
+- Want to identify auto-implementable work
+- Monthly backlog cleanup
+
+**Pinned Actions:**
+- `actions/checkout@de0fac2` (v6.0.2)
+- `anthropics/claude-code-action@a017b83` (v1.0.30)
+- `actions/github-script@f28e40c` (v7.1.0)
+
+---
+
+### 13. `@ready` - Readiness Check (`shortcut-ready.yml`) ✅
+
+**Trigger:** Comment `@ready` on an issue or PR
+
+**What It Does:**
+
+**On Issues (Resolution Check):**
+1. Fetches issue details and acceptance criteria
+2. **Comprehensively searches codebase** for implementation:
+   - Keyword search from title/body
+   - Recent commit history (`git log`)
+   - Related file modifications
+   - Implementation patterns
+3. Verifies implementation quality:
+   - Runs: `pnpm biome check .`
+   - Runs: `pnpm tsc --noEmit`
+   - Runs: `pnpm test --passWithNoTests`
+   - Runs: `pnpm expo export:web`
+4. Reports: **RESOLVED** / **PARTIALLY RESOLVED** / **NOT RESOLVED** / **DUPLICATE**
+5. **Auto-closes if fully resolved** with evidence
+
+**On PRs (Comment Resolution Check):**
+1. Fetches all comments, reviews, threads (100+ comments supported)
+2. **Categorizes each comment:**
+   - ✅ **Addressed** - Code changed, question answered, concern resolved
+   - ⚠️ **Acknowledged but Deferred** - Out of scope, tracked in follow-up
+   - ❌ **Unaddressed** - Needs response or implementation
+   - 🤖 **AI Hallucination** - Invalid feedback (incorrect understanding)
+
+3. Verifies code changes against suggestions:
+   - Checks file modifications via `gh pr diff`
+   - Matches changes to comment suggestions
+   - Ensures no test breakage
+
+4. **Auto-resolves AI hallucination threads** (you have permission!)
+   - Uses GitHub GraphQL API to resolve threads
+   - Adds dismissal comment with explanation
+
+5. **Creates follow-up issues** for deferred items:
+   - Tracks good ideas that are out of scope for this PR
+   - Links back to original PR comment
+   - Labels as `enhancement,follow-up`
+
+6. Reports: **READY TO MERGE** / **NEEDS ATTENTION** / **NOT READY**
+
+**Duration:** ~10-20 minutes
+
+**Permissions:**
+- `contents: write` - Read codebase, commit history
+- `issues: write` - Close issues, create follow-ups
+- `pull-requests: write` - **Resolve threads**, comment
+
+**Advanced Capabilities:**
+- Can **resolve review threads** (including invalid AI feedback)
+- Can **auto-close issues** when verified as resolved
+- Can **create follow-up issues** from deferred PR comments
+
+**When to Use Issues:**
+- Old issue might be resolved now
+- Verify implementation completion
+- Backlog cleanup
+
+**When to Use PRs:**
+- Lots of comments, want summary
+- Check if all feedback addressed before merge
+- Need to resolve invalid AI comment threads
+- Want to track deferred items
+
+**Pinned Actions:**
+- `actions/checkout@de0fac2` (v6.0.2)
+- `anthropics/claude-code-action@a017b83` (v1.0.30)
+- `actions/github-script@f28e40c` (v7.1.0)
+
+---
+
+### Shortcut Workflow Combinations
+
+**Complete PR Workflow:**
+```
+1. Create PR
+2. @review          # Get comprehensive review from both AIs
+3. (address feedback)
+4. @ready           # Verify all comments addressed
+5. @rebase          # Update with latest main
+6. Merge!
+```
+
+**Issue Lifecycle:**
+```
+1. Create issue
+2. @triage          # Categorize and prioritize
+3. (Auto-implementation if labeled status: ready)
+4. @ready           # Verify resolution in codebase
+5. (Auto-close if resolved)
+```
+
+**Backlog Management:**
+```
+1. @backlog         # Monthly: analyze all open issues
+2. (Labels applied, ready issues marked)
+3. (Auto-implementation workflow runs for ready issues)
+4. @ready on each   # Verify implementations
+```
+
+**Emergency Merge:**
+```
+1. @review          # Quick comprehensive review
+2. @ready           # Check comments
+3. (Fix any issues)
+4. @rebase          # Ensure up to date
+5. Emergency merge
+```
+
+---
+
 ## Repository Configuration
 
 ### Settings.yml

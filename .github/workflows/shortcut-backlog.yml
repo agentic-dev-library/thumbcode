@@ -1,0 +1,395 @@
+name: "Shortcut: @backlog"
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  checks: write
+
+jobs:
+  detect:
+    name: Detect @backlog Command
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+
+    steps:
+      - name: Check for @backlog command or manual trigger
+        id: check
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            let shouldRun = false;
+
+            if (context.eventName === 'workflow_dispatch') {
+              shouldRun = true;
+            } else {
+              const commentBody = context.payload.comment?.body || '';
+              shouldRun = commentBody.includes('@backlog');
+
+              // Add reaction to indicate processing
+              if (shouldRun && context.payload.comment?.id) {
+                await github.rest.reactions.createForIssueComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: context.payload.comment.id,
+                  content: 'eyes'
+                });
+              }
+            }
+
+            console.log(`Should run: ${shouldRun}`);
+            core.setOutput('should_run', shouldRun);
+
+  backlog-triage:
+    name: Collaborative Backlog Triage
+    needs: detect
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: needs.detect.outputs.should_run == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Get All Open Issues
+        id: issues
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100
+            });
+
+            // Filter out PRs
+            const onlyIssues = issues.data.filter(issue => !issue.pull_request);
+
+            // Count by status
+            const needsTriage = onlyIssues.filter(i =>
+              i.labels.some(l => l.name === 'status: needs-triage') ||
+              i.labels.length === 0
+            ).length;
+
+            const ready = onlyIssues.filter(i =>
+              i.labels.some(l => l.name === 'status: ready')
+            ).length;
+
+            const blocked = onlyIssues.filter(i =>
+              i.labels.some(l => l.name === 'status: blocked')
+            ).length;
+
+            core.setOutput('total', onlyIssues.length);
+            core.setOutput('needs_triage', needsTriage);
+            core.setOutput('ready', ready);
+            core.setOutput('blocked', blocked);
+
+            return {
+              total: onlyIssues.length,
+              needsTriage,
+              ready,
+              blocked
+            };
+
+      - name: Engage CodeRabbit AI for Backlog Analysis
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            // Create a new issue for backlog triage coordination
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[Backlog Triage] ${new Date().toISOString().split('T')[0]}`,
+              body: `# Backlog Triage Session
+
+This is an automated backlog triage session initiated via @backlog shortcut.
+
+## Current Backlog Status
+- **Total Open Issues:** ${{ steps.issues.outputs.total }}
+- **Needs Triage:** ${{ steps.issues.outputs.needs_triage }}
+- **Ready:** ${{ steps.issues.outputs.ready }}
+- **Blocked:** ${{ steps.issues.outputs.blocked }}
+
+@coderabbitai Please analyze the current backlog and provide:
+
+1. **Priority Ranking** - Which issues should be addressed first based on:
+   - Impact on users
+   - Technical urgency
+   - Roadmap alignment
+   - Dependencies
+
+2. **Categorization** - Group issues by:
+   - Type (bug, feature, enhancement, docs)
+   - Area (agents, ui, docs, ci, design, git)
+   - Complexity (simple, moderate, complex)
+
+3. **Duplicate Detection** - Identify any duplicate or related issues that could be consolidated
+
+4. **Missing Information** - List issues that need clarification or more details
+
+5. **Quick Wins** - Identify simple issues that could be resolved quickly
+
+6. **Technical Debt** - Highlight issues related to code quality, refactoring, or infrastructure
+
+7. **Recommendations** - Suggest:
+   - Issues to close (won't fix, duplicates)
+   - Issues to prioritize (high impact)
+   - Issues to defer (low priority)
+   - Issues ready for AI auto-implementation
+
+Please provide your analysis as structured feedback.`,
+              labels: ['backlog-triage', 'ai-analysis']
+            });
+
+            core.setOutput('triage_issue', issue.data.number);
+            return issue.data.number;
+
+      - name: Claude Backlog Analysis
+        uses: anthropics/claude-code-action@a017b830c03e23789b11fb69ed571ea61c12e45c # v1.0.30
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          allow_any_user: true
+          track_progress: true
+          claude_args: |
+            --allowed-tools=edit_file,write_file,read_file,list_directory,search_files,bash
+            --bash-allowlist=git,pnpm,npm,npx,gh,biome,tsc,jest,expo
+          prompt: |
+            📋 COLLABORATIVE BACKLOG TRIAGE WITH CODERABBIT AI
+
+            **Context:** You are collaborating with CodeRabbit AI on a comprehensive backlog triage. CodeRabbit has been engaged for analysis. You should provide complementary ThumbCode-focused strategic planning.
+
+            ## Current Status
+            - **Total Open Issues:** ${{ steps.issues.outputs.total }}
+            - **Needs Triage:** ${{ steps.issues.outputs.needs_triage }}
+            - **Ready:** ${{ steps.issues.outputs.ready }}
+            - **Blocked:** ${{ steps.issues.outputs.blocked }}
+
+            ## YOUR MISSION - STRATEGIC BACKLOG PLANNING:
+
+            ### 1. Fetch All Open Issues
+            ```bash
+            gh issue list --state open --json number,title,labels,body,createdAt,comments --limit 100 > /tmp/all-issues.json
+            ```
+
+            ### 2. Read Strategic Documents
+            - Read PROJECT-STATUS.md for current phase and roadmap
+            - Read VISION.md for long-term goals
+            - Read ARCHITECTURE.md for technical direction
+            - Read CLAUDE.md for quality standards
+
+            ### 3. Analyze Issues Against ThumbCode Strategy
+
+            **A. Roadmap Alignment:**
+            For each issue, evaluate:
+            - Does it align with current project phase?
+            - Is it a priority for the next milestone?
+            - Does it support the core vision?
+            - Does it fit technical architecture?
+
+            **B. AI-Implementation Feasibility:**
+            - Can this be auto-implemented by AI?
+            - What's the complexity (< 200 lines)?
+            - Are requirements clear enough?
+            - Any human decisions needed?
+
+            **C. ThumbCode Quality Impact:**
+            - Does it improve code quality?
+            - Does it enhance user experience?
+            - Does it reduce technical debt?
+            - Does it improve developer experience?
+
+            ### 4. Create Strategic Triage Plan
+
+            Group issues into buckets:
+
+            **🚀 HIGH PRIORITY (Do Now)**
+            - Critical bugs affecting core functionality
+            - Roadmap-aligned features for current phase
+            - Technical debt blocking progress
+            - Security vulnerabilities
+
+            **✅ READY FOR AI IMPLEMENTATION**
+            - Clear requirements
+            - Small scope (< 200 lines)
+            - No human decisions needed
+            - Adds value to project
+
+            **📅 BACKLOG (Do Later)**
+            - Good ideas but not current priority
+            - Aligns with future phases
+            - Requires more planning
+            - Lower impact
+
+            **🔒 BLOCKED**
+            - Depends on other issues
+            - Needs external input
+            - Waiting for decisions
+            - Technical blockers
+
+            **❌ CLOSE/WON'T FIX**
+            - Out of scope
+            - Duplicates
+            - No longer relevant
+            - Conflicts with vision
+
+            ### 5. Apply Labels and Organize
+
+            For each issue, use gh CLI to:
+            ```bash
+            # Add appropriate labels
+            gh issue edit <number> --add-label "priority: high,status: ready,area: ui"
+
+            # Add milestone if applicable
+            gh issue edit <number> --milestone "v1.0.0 - MVP"
+
+            # Close if won't fix
+            gh issue close <number> --comment "Closing as won't fix: [reason]"
+            ```
+
+            ### 6. Create Comprehensive Report
+
+            Comment on the triage coordination issue with your analysis:
+            ```bash
+            gh issue comment <triage-issue-number> --body "$(cat <<'EOF'
+            ## 🤖 Claude Strategic Backlog Analysis
+
+            ### ThumbCode Roadmap Alignment
+
+            #### Current Phase Focus
+            [What's the current phase from PROJECT-STATUS.md]
+
+            #### Issues Aligned with Current Phase
+            1. #X - [Title] - [Why it's aligned]
+            2. #Y - [Title] - [Why it's aligned]
+
+            ### Triage Buckets
+
+            #### 🚀 HIGH PRIORITY (X issues)
+            Immediate action needed:
+            - #N - [Title] - [Why priority] - [Est: X hours]
+            - #M - [Title] - [Why priority] - [Est: X hours]
+
+            #### ✅ READY FOR AI AUTO-IMPLEMENTATION (X issues)
+            Can be auto-implemented by AI agents:
+            - #A - [Title] - [Complexity: Simple] - [Est: 2 hours]
+            - #B - [Title] - [Complexity: Moderate] - [Est: 4 hours]
+
+            **Action:** These will be labeled `status: ready` for auto-implementation workflow
+
+            #### 📅 BACKLOG - Next Phase (X issues)
+            Good ideas, defer to next phase:
+            - #P - [Title] - [Phase: v1.1.0]
+            - #Q - [Title] - [Phase: v2.0.0]
+
+            #### 🔒 BLOCKED (X issues)
+            Cannot proceed without:
+            - #R - [Title] - [Blocked by: #S]
+            - #T - [Title] - [Blocked by: External decision]
+
+            #### ❌ RECOMMENDED TO CLOSE (X issues)
+            Should be closed because:
+            - #U - [Title] - [Reason: Duplicate of #V]
+            - #W - [Title] - [Reason: Out of scope]
+
+            ### Quality Metrics
+
+            #### Technical Debt Issues
+            - #D1 - [Refactoring needed]
+            - #D2 - [Code quality improvement]
+
+            #### Security Issues
+            - #S1 - [Security vulnerability]
+            - #S2 - [Auth improvement]
+
+            #### User Experience Issues
+            - #UX1 - [UI improvement]
+            - #UX2 - [Mobile optimization]
+
+            ### Recommendations
+
+            #### Immediate Actions (Next 7 Days)
+            1. [Action with specific issues]
+            2. [Action with specific issues]
+            3. [Action with specific issues]
+
+            #### This Sprint (Next 14 Days)
+            1. [Action with specific issues]
+            2. [Action with specific issues]
+
+            #### Next Month
+            1. [Strategic initiative with issues]
+            2. [Strategic initiative with issues]
+
+            ### Labels Applied
+            - Applied `status: ready` to X issues for AI auto-implementation
+            - Applied `priority: high` to X critical issues
+            - Applied milestones to X issues
+            - Closed X issues (duplicates, won't fix)
+
+            ### Collaboration Notes
+            This analysis complements CodeRabbit AI's backlog review with:
+            - ThumbCode roadmap alignment verification
+            - Strategic prioritization based on vision and architecture
+            - AI-implementation feasibility assessment
+            - Quality and technical debt evaluation
+
+            Please review both AI analyses for comprehensive backlog planning.
+
+            ---
+
+            🤖 *Executed via @backlog shortcut - Claude strategic analysis*
+            EOF
+            )"
+            ```
+
+            ### 7. Auto-Label Ready Issues
+
+            For all issues you marked as "Ready for AI Implementation", add the label:
+            ```bash
+            gh issue edit <number> --add-label "status: ready"
+            ```
+
+            This will queue them for the auto-implementation workflow.
+
+            ## CRITICAL RULES:
+            - **STRATEGIC FOCUS** - Align with PROJECT-STATUS.md roadmap
+            - **QUALITY FIRST** - Prioritize issues that improve overall quality
+            - **AI-READY LABELING** - Mark clear, small issues as `status: ready`
+            - **CLOSE AGGRESSIVELY** - Don't let backlog bloat with low-value issues
+            - **COMPLEMENT CODERABBIT** - Add strategic/roadmap perspective
+            - **BE SPECIFIC** - Reference exact issue numbers and provide rationale
+            - You have full write permissions to label, milestone, and close issues
+
+      - name: Summary Comment
+        if: success()
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            const triageIssue = ${{ steps.issues.outputs.triage_issue || 'null' }};
+
+            if (context.eventName === 'issue_comment' && context.payload.comment?.id) {
+              await github.rest.reactions.createForIssueComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: context.payload.comment.id,
+                content: '+1'
+              });
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                body: `✅ **Backlog triage complete!**\n\nComprehensive analysis from both CodeRabbit AI and Claude has been posted to #${triageIssue}.\n\n🤖 *Executed via @backlog shortcut*`
+              });
+            }
