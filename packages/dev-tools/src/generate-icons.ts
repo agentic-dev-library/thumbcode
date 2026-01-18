@@ -24,28 +24,28 @@ const OUTPUT_DIR = join(ROOT_DIR, 'assets');
 const ICON_SPECS = {
   // App icon (used by Expo for all platforms if specific ones aren't provided)
   'icon.png': {
-    source: 'public/assets/icons/app/ThumbCode_AppIcon_1024.svg',
+    source: 'assets/icons/app/ThumbCode_AppIcon_1024.svg',
     size: 1024,
     description: 'Main app icon',
   },
 
   // Splash screen (can be same as icon, or custom)
   'splash.png': {
-    source: 'public/assets/icons/app/ThumbCode_AppIcon_1024.svg',
+    source: 'assets/icons/app/ThumbCode_AppIcon_1024.svg',
     size: 2048,
     description: 'Splash screen image',
   },
 
   // Android adaptive icon
   'adaptive-icon.png': {
-    source: 'public/assets/icons/app/ThumbCode_AppIcon_1024.svg',
+    source: 'assets/icons/app/ThumbCode_AppIcon_1024.svg',
     size: 1024,
     description: 'Android adaptive icon (safe zone: 66% circle)',
   },
 
   // Favicon (for web/PWA)
   'favicon.png': {
-    source: 'public/assets/icons/app/favicon-organic.svg',
+    source: 'assets/icons/app/favicon-organic.svg',
     size: 48,
     description: 'Web favicon',
   },
