@@ -135,8 +135,8 @@ async function generateAll(): Promise<void> {
   console.log('   "web": { "favicon": "./assets/favicon.png" }\n');
 }
 
-// Run if called directly (Node ESM)
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Run if called directly (cross-platform compatible)
+if (fileURLToPath(import.meta.url) === process.argv[1]) {
   generateAll().catch((error) => {
     console.error('\n❌ Icon generation failed:', error);
     process.exit(1);
