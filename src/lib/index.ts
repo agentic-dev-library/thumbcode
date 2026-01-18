@@ -35,7 +35,31 @@ export {
   type LogLevel,
   logger,
 } from './logger';
-
+// Performance utilities
+export {
+  createMemoizedRenderItem,
+  defaultListItemPropsAreEqual,
+  OptimizedList,
+  type OptimizedListProps,
+  type PerformanceMetric,
+  PerformanceMonitor,
+  perfMonitor,
+  type RenderMetric,
+  useDebouncedCallback,
+  useDebouncedValue,
+  useIntersectionObserver,
+  useLazyValue,
+  useMountTime,
+  usePerformanceTracking,
+  usePrevious,
+  useRenderTime,
+  useStableArray,
+  useStableCallback,
+  useStableObject,
+  useThrottledCallback,
+  useWindowDimensions,
+  withListItemMemo,
+} from './performance';
 // Retry utilities
 export {
   isNetworkError,
