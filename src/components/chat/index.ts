@@ -1,14 +1,13 @@
 /**
  * Chat Components
  *
- * Components for the chat interface.
+ * UI components for the real-time chat interface.
+ * Supports multi-agent collaboration with approval workflows.
  */
 
-// Export chat components here as they are created
-// Example:
-// export { ChatBubble } from './ChatBubble';
-// export { ChatInput } from './ChatInput';
-// export { CodeBlock } from './CodeBlock';
-// export { ActionButton } from './ActionButton';
-
-export {};
+export { ApprovalCard } from './ApprovalCard';
+export { ChatInput } from './ChatInput';
+export { ChatMessage } from './ChatMessage';
+export { ChatThread } from './ChatThread';
+export { CodeBlock } from './CodeBlock';
+export { ThreadList } from './ThreadList';

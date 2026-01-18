@@ -4,6 +4,18 @@
  * All ThumbCode services are exported from here.
  */
 
+// Chat service for human-agent collaboration
+export {
+  type ApprovalMessage,
+  type ChatEvent,
+  type ChatEventType,
+  ChatService,
+  type ChatThread,
+  type CodeMessage,
+  type Message,
+  type SendMessageOptions,
+  type StreamingResponse,
+} from './chat';
 // Credential management service
 export {
   type BiometricResult,
