@@ -206,6 +206,34 @@ describe('PerformanceMonitor', () => {
       // Should not throw and metrics should be empty
       expect(disabledMonitor.getMetrics().length).toBe(0);
     });
+
+    it('should record fps and log warning for low frame rates', () => {
+      const { logger } = require('../logger');
+      jest.clearAllMocks();
+
+      // Use a custom mock for performance.now to simulate time passing
+      let mockTime = 0;
+      jest.spyOn(performance, 'now').mockImplementation(() => mockTime);
+
+      monitor.startFrameTracking();
+
+      // Simulate recording frames over 1 second with low fps (30 fps)
+      for (let i = 0; i < 30; i++) {
+        monitor.recordFrame();
+      }
+
+      // Advance time to trigger fps calculation (1000ms elapsed)
+      mockTime = 1001;
+      monitor.recordFrame();
+
+      // Should have recorded fps metric and logged warning for low fps
+      const fpsMetrics = monitor.getMetrics().filter((m) => m.unit === 'fps');
+      expect(fpsMetrics.length).toBeGreaterThan(0);
+      expect(logger.warn).toHaveBeenCalledWith('Low frame rate detected', expect.any(Object));
+
+      // Restore performance.now
+      (performance.now as jest.Mock).mockRestore();
+    });
   });
 
   describe('startReporting', () => {
@@ -233,6 +261,34 @@ describe('PerformanceMonitor', () => {
 
       // Should still only have one timer
       jest.advanceTimersByTime(10000);
+
+      monitor.stopReporting();
+    });
+
+    it('should log performance report with slow components', () => {
+      const { logger } = require('../logger');
+      jest.clearAllMocks();
+
+      // Add slow components to trigger reporting
+      monitor.configure({ slowRenderThreshold: 10 });
+      monitor.trackRender('SlowComponent1', 50);
+      monitor.trackRender('SlowComponent2', 100);
+      monitor.record('fps', 60, 'fps');
+
+      // Start reporting and wait for interval
+      monitor.startReporting();
+      jest.advanceTimersByTime(10000);
+
+      // Should have logged performance report
+      expect(logger.info).toHaveBeenCalledWith(
+        'Performance report',
+        expect.objectContaining({
+          avgRenderTime: expect.any(String),
+          slowRenders: expect.any(Number),
+          avgFps: expect.any(String),
+          slowComponents: expect.any(Array),
+        })
+      );
 
       monitor.stopReporting();
     });

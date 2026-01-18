@@ -6,6 +6,7 @@ import { act, renderHook } from '@testing-library/react-native';
 import {
   useDebouncedCallback,
   useDebouncedValue,
+  useIntersectionObserver,
   useLazyValue,
   useMountTime,
   usePerformanceTracking,
@@ -421,8 +422,6 @@ describe('Performance Hooks', () => {
     let addEventListenerSpy: jest.SpyInstance;
     let removeEventListenerSpy: jest.SpyInstance;
     const originalWindow = global.window;
-    const _originalInnerWidth = global.window?.innerWidth;
-    const _originalInnerHeight = global.window?.innerHeight;
 
     beforeEach(() => {
       // Set up window properties and spies
@@ -469,6 +468,199 @@ describe('Performance Hooks', () => {
       unmount();
 
       expect(removeEventListenerSpy).toHaveBeenCalledWith('resize', expect.any(Function));
+    });
+
+    it('should update dimensions on resize', () => {
+      // Store the resize handler to call it manually
+      let resizeHandler: (() => void) | null = null;
+      jest.spyOn(global.window, 'addEventListener').mockImplementation((event, handler) => {
+        if (event === 'resize') {
+          resizeHandler = handler as () => void;
+        }
+      });
+
+      const { result } = renderHook(() => useWindowDimensions());
+
+      expect(result.current).toEqual({ width: 1024, height: 768 });
+
+      // Simulate resize
+      Object.defineProperty(global.window, 'innerWidth', { value: 800, writable: true });
+      Object.defineProperty(global.window, 'innerHeight', { value: 600, writable: true });
+
+      act(() => {
+        resizeHandler?.();
+      });
+
+      expect(result.current).toEqual({ width: 800, height: 600 });
+    });
+  });
+
+  describe('useIntersectionObserver', () => {
+    let mockObserver: {
+      observe: jest.Mock;
+      disconnect: jest.Mock;
+      unobserve: jest.Mock;
+    };
+    let observerCallback: (entries: IntersectionObserverEntry[]) => void;
+    let mockElement: Element;
+
+    beforeEach(() => {
+      // Create a mock element
+      mockElement = {
+        nodeType: 1,
+        nodeName: 'DIV',
+      } as unknown as Element;
+
+      mockObserver = {
+        observe: jest.fn(),
+        disconnect: jest.fn(),
+        unobserve: jest.fn(),
+      };
+
+      (global as unknown as { IntersectionObserver: unknown }).IntersectionObserver = jest.fn(
+        (callback) => {
+          observerCallback = callback;
+          return mockObserver;
+        }
+      );
+    });
+
+    afterEach(() => {
+      delete (global as unknown as { IntersectionObserver?: unknown }).IntersectionObserver;
+    });
+
+    it('should return a ref and initial visibility as false', () => {
+      const { result } = renderHook(() => useIntersectionObserver());
+
+      expect(result.current[0]).toEqual({ current: null });
+      expect(result.current[1]).toBe(false);
+    });
+
+    it('should observe element when ref is set and update visibility', () => {
+      const { result, rerender } = renderHook(() => {
+        const [ref, isVisible] = useIntersectionObserver();
+        return { ref, isVisible };
+      });
+
+      // Initially not visible
+      expect(result.current.isVisible).toBe(false);
+
+      // Set the ref to mock element
+      act(() => {
+        (result.current.ref as React.MutableRefObject<Element | null>).current = mockElement;
+      });
+
+      // Re-render to trigger effect
+      rerender({});
+
+      // Observer should be created and observing
+      expect(IntersectionObserver).toHaveBeenCalled();
+      expect(mockObserver.observe).toHaveBeenCalledWith(mockElement);
+
+      // Simulate intersection callback
+      act(() => {
+        observerCallback?.([{ isIntersecting: true } as IntersectionObserverEntry]);
+      });
+
+      expect(result.current.isVisible).toBe(true);
+    });
+
+    it('should disconnect observer on unmount', () => {
+      const { result, unmount, rerender } = renderHook(() => {
+        const [ref] = useIntersectionObserver();
+        return ref;
+      });
+
+      // Set element
+      act(() => {
+        (result.current as React.MutableRefObject<Element | null>).current = mockElement;
+      });
+
+      rerender({});
+
+      // Observer should be created
+      expect(mockObserver.observe).toHaveBeenCalled();
+
+      unmount();
+
+      expect(mockObserver.disconnect).toHaveBeenCalled();
+    });
+
+    it('should not observe when element is null', () => {
+      renderHook(() => useIntersectionObserver());
+
+      // Observer should be created but not observe anything
+      expect(mockObserver.observe).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('useThrottledCallback cleanup', () => {
+    it('should clear pending timeout on unmount', () => {
+      const callback = jest.fn();
+      const { result, unmount } = renderHook(() => useThrottledCallback(callback, 500));
+
+      // First call executes immediately
+      act(() => {
+        result.current('call1');
+      });
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      // Second call schedules a trailing call
+      act(() => {
+        result.current('call2');
+      });
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      // Unmount before timeout fires
+      unmount();
+
+      // Advance time past the delay
+      act(() => {
+        jest.advanceTimersByTime(600);
+      });
+
+      // Callback should still only have been called once (cleanup cleared the timeout)
+      expect(callback).toHaveBeenCalledTimes(1);
+    });
+
+    it('should clear timeout and execute immediately when delay has fully elapsed', () => {
+      const callback = jest.fn();
+      const { result } = renderHook(() => useThrottledCallback(callback, 500));
+
+      // First call - executes immediately
+      act(() => {
+        result.current('call1');
+      });
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      // Second call while still throttled - schedules trailing
+      act(() => {
+        result.current('call2');
+      });
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      // Wait for delay to fully elapse plus some extra time
+      act(() => {
+        jest.advanceTimersByTime(600);
+      });
+
+      // Trailing call executed
+      expect(callback).toHaveBeenCalledTimes(2);
+      expect(callback).toHaveBeenLastCalledWith('call2');
+
+      // Wait more time so next call is after full delay
+      act(() => {
+        jest.advanceTimersByTime(500);
+      });
+
+      // Now call again - this exercises the remaining <= 0 branch
+      act(() => {
+        result.current('call3');
+      });
+
+      // Should execute immediately since delay has elapsed
+      expect(callback).toHaveBeenCalledTimes(3);
+      expect(callback).toHaveBeenLastCalledWith('call3');
     });
   });
 });
