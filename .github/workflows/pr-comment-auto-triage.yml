@@ -1,0 +1,280 @@
+name: Auto-Triage PR Comments from AI Agents
+
+on:
+  issue_comment:
+    types: [created, edited]
+  pull_request_review_comment:
+    types: [created, edited]
+  pull_request_review:
+    types: [submitted, edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+  workflows: write
+  checks: write
+
+jobs:
+  detect-ai-agent:
+    name: Detect AI Agent Comments
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      is_ai_agent: ${{ steps.check.outputs.is_ai_agent }}
+      pr_number: ${{ steps.check.outputs.pr_number }}
+      comment_body: ${{ steps.check.outputs.comment_body }}
+
+    steps:
+      - name: Check if comment is from AI agent
+        id: check
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            const aiAgents = [
+              'claude-bot[bot]',
+              'jules[bot]',
+              'github-actions[bot]',
+              'copilot[bot]',
+              'codex[bot]',
+              'coderabbit[bot]',
+              'sweep-ai[bot]',
+              'deepsource-autofix[bot]',
+              'renovate[bot]',
+              'dependabot[bot]'
+            ];
+
+            let commentAuthor = '';
+            let commentBody = '';
+            let prNumber = null;
+
+            // Check different event types
+            if (context.eventName === 'issue_comment') {
+              commentAuthor = context.payload.comment.user.login;
+              commentBody = context.payload.comment.body;
+              // Check if issue is actually a PR
+              if (context.payload.issue.pull_request) {
+                prNumber = context.payload.issue.number;
+              }
+            } else if (context.eventName === 'pull_request_review_comment') {
+              commentAuthor = context.payload.comment.user.login;
+              commentBody = context.payload.comment.body;
+              prNumber = context.payload.pull_request.number;
+            } else if (context.eventName === 'pull_request_review') {
+              commentAuthor = context.payload.review.user.login;
+              commentBody = context.payload.review.body || '';
+              prNumber = context.payload.pull_request.number;
+            }
+
+            const isAiAgent = aiAgents.includes(commentAuthor);
+
+            console.log(`Comment author: ${commentAuthor}`);
+            console.log(`Is AI agent: ${isAiAgent}`);
+            console.log(`PR number: ${prNumber}`);
+
+            core.setOutput('is_ai_agent', isAiAgent);
+            core.setOutput('pr_number', prNumber || '');
+            core.setOutput('comment_body', commentBody);
+
+  auto-triage:
+    name: Claude Auto-Triage & Fix
+    needs: detect-ai-agent
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: |
+      needs.detect-ai-agent.outputs.is_ai_agent == 'true' &&
+      needs.detect-ai-agent.outputs.pr_number != ''
+
+    steps:
+      - name: Get PR details
+        id: pr
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: ${{ needs.detect-ai-agent.outputs.pr_number }}
+            });
+
+            core.setOutput('branch', pr.data.head.ref);
+            core.setOutput('base', pr.data.base.ref);
+            core.setOutput('title', pr.data.title);
+
+      - name: Checkout PR branch
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ steps.pr.outputs.branch }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "claude-bot[bot]"
+          git config user.email "claude-bot[bot]@users.noreply.github.com"
+
+      - name: Claude Auto-Triage & Implement
+        uses: anthropics/claude-code-action@a017b830c03e23789b11fb69ed571ea61c12e45c # v1.0.30
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          allow_any_user: true
+          track_progress: true
+          claude_args: |
+            --allowed-tools=edit_file,write_file,read_file,list_directory,search_files,bash
+            --bash-allowlist=git,pnpm,npm,npx,gh,biome,tsc,jest,expo
+          prompt: |
+            🤖 AUTOMATIC PR COMMENT TRIAGE & IMPLEMENTATION 🤖
+
+            An AI agent has left a comment on PR #${{ needs.detect-ai-agent.outputs.pr_number }}. You MUST automatically analyze and implement ALL actionable suggestions.
+
+            **PR Details:**
+            - **Number:** #${{ needs.detect-ai-agent.outputs.pr_number }}
+            - **Title:** ${{ steps.pr.outputs.title }}
+            - **Branch:** ${{ steps.pr.outputs.branch }}
+            - **Base:** ${{ steps.pr.outputs.base }}
+
+            **AI Agent Comment:**
+            ```
+            ${{ needs.detect-ai-agent.outputs.comment_body }}
+            ```
+
+            ## YOUR MISSION - AUTO-IMPLEMENT EVERYTHING:
+
+            ### 1. ANALYZE THE COMMENT
+            Categorize the feedback:
+            - **Code Quality Issues**: Refactoring, DRY violations, complexity
+            - **Security Vulnerabilities**: XSS, injection, auth issues, secrets exposure
+            - **Performance Problems**: Inefficient algorithms, memory leaks, re-renders
+            - **Type Errors**: Missing types, any types, TypeScript issues
+            - **Test Gaps**: Missing tests, inadequate coverage
+            - **Documentation**: Missing comments, outdated docs
+            - **Style Violations**: Design tokens, organic styling, brand guidelines (CLAUDE.md)
+            - **Bugs**: Logic errors, edge cases, incorrect behavior
+
+            ### 2. FETCH FULL PR CONTEXT
+            Use gh CLI to get all PR details:
+            ```bash
+            gh pr view ${{ needs.detect-ai-agent.outputs.pr_number }} --json files,comments,reviews
+            gh pr diff ${{ needs.detect-ai-agent.outputs.pr_number }}
+            ```
+
+            ### 3. AUTO-IMPLEMENT ALL FIXES (NO ASKING)
+            For EACH issue mentioned:
+
+            **Security Issues:**
+            - Fix XSS vulnerabilities (sanitize inputs, escape output)
+            - Fix injection risks (parameterized queries, input validation)
+            - Remove hardcoded secrets, use environment variables
+            - Add proper authentication/authorization checks
+
+            **Code Quality:**
+            - Refactor duplicated code into reusable functions
+            - Simplify complex logic
+            - Add proper error handling
+            - Fix TypeScript types (never use `any`)
+
+            **Performance:**
+            - Optimize algorithms (reduce complexity)
+            - Add React.memo, useMemo, useCallback where needed
+            - Fix memory leaks (cleanup effects, unsubscribe)
+            - Lazy load heavy components
+
+            **ThumbCode Style (CRITICAL):**
+            - Replace hardcoded colors with design tokens
+            - Apply organic styling (asymmetric border-radius)
+            - Use Warm Technical palette (Coral/Teal/Gold)
+            - Remove gradients, add organic daubes
+            - Use Fraunces/Cabin fonts, never Inter/Roboto
+
+            **Tests:**
+            - Add missing test cases
+            - Update snapshots if needed
+            - Fix broken tests
+
+            **Documentation:**
+            - Add JSDoc comments for complex functions
+            - Update README if API changed
+            - Add inline comments for non-obvious logic
+
+            ### 4. VERIFY ALL FIXES
+            Run these commands to ensure nothing breaks:
+            ```bash
+            pnpm biome check --write .
+            pnpm tsc --noEmit
+            pnpm test --passWithNoTests
+            pnpm expo export:web
+            ```
+
+            ### 5. COMMIT & PUSH
+            ```bash
+            git add .
+            git commit -m "fix: auto-implement AI agent feedback
+
+            Implemented all suggestions from AI agent review comment.
+
+            Changes:
+            - Fixed security vulnerabilities
+            - Improved code quality
+            - Optimized performance
+            - Added missing tests
+            - Updated documentation
+            - Applied ThumbCode style guidelines
+
+            Auto-implemented by Claude PR Comment Triage workflow
+            PR: #${{ needs.detect-ai-agent.outputs.pr_number }}"
+
+            git push origin ${{ steps.pr.outputs.branch }}
+            ```
+
+            ### 6. REPLY TO COMMENT
+            Use gh CLI to add a reply comment:
+            ```bash
+            gh pr comment ${{ needs.detect-ai-agent.outputs.pr_number }} --body "$(cat <<'EOF'
+            ✅ **Auto-implemented all suggestions**
+
+            I've automatically implemented all the feedback from the AI agent review. Here's what I did:
+
+            ## Changes Made
+            - [ ] Fixed security vulnerabilities
+            - [ ] Improved code quality
+            - [ ] Optimized performance
+            - [ ] Added missing tests
+            - [ ] Updated documentation
+            - [ ] Applied ThumbCode style guidelines
+
+            ## Verification
+            All changes have been verified:
+            - ✅ Biome linting passed
+            - ✅ TypeScript type checking passed
+            - ✅ Tests passing
+            - ✅ Build successful
+
+            The fixes have been pushed to \`${{ steps.pr.outputs.branch }}\`.
+
+            🤖 *Auto-implemented by Claude PR Comment Triage*
+            EOF
+            )"
+            ```
+
+            ## CRITICAL RULES:
+            - **NO RECOMMENDATIONS** - Only implementations
+            - **FIX EVERYTHING** - Don't skip any issues
+            - **COMMIT & PUSH** - Always push your changes
+            - **REPLY** - Always acknowledge what you did
+            - You have full write permissions to all files and workflows
+            - You are authorized to modify any code, including workflows
+            - ALWAYS follow CLAUDE.md playbook for style guidelines
+            - If you can't fix something, explain why in the reply comment
+
+      - name: Label PR as auto-healed
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ needs.detect-ai-agent.outputs.pr_number }},
+              labels: ['auto-healed', 'ai-triage']
+            });
