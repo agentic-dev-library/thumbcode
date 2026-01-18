@@ -4,6 +4,8 @@
   "description": "Code with your thumbs. A decentralized multi-agent mobile development platform.",
   "main": "expo-router/entry",
   "scripts": {
+    "setup": "./scripts/setup.sh",
+    "dev": "expo start --dev-client",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",

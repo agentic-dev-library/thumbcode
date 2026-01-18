@@ -1,24 +1,42 @@
 # ThumbCode Development Guide
 
+## Quick Start
+
+The fastest way to get started:
+
+```bash
+# Run automated setup
+pnpm setup
+
+# Start development server
+pnpm dev
+```
+
+See [ENVIRONMENT.md](./ENVIRONMENT.md) for detailed environment configuration.
+
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 20+
-- Expo CLI: `pnpm add -g expo-cli`
+- Node.js 18+
+- pnpm (installed automatically by setup script)
 - iOS Simulator (Mac) or Android Emulator
 
 ### Installation
 
 ```bash
-# Install dependencies
+# Option 1: Automated setup (recommended)
+./scripts/setup.sh
+
+# Option 2: Manual setup
+cp .env.example .env.local
 pnpm install
 
 # Generate design tokens
 pnpm run generate:tokens
 
 # Start development server
-pnpm start
+pnpm dev
 ```
 
 ### Development Commands
