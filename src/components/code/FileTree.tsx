@@ -185,7 +185,15 @@ export function FileTree({
   }, [data]);
 
   return (
-    <View className="bg-surface overflow-hidden" style={{ borderRadius: '12px 10px 14px 8px' }}>
+    <View
+      className="bg-surface overflow-hidden"
+      style={{
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 10,
+        borderBottomRightRadius: 14,
+        borderBottomLeftRadius: 8,
+      }}
+    >
       {sortedData.map((node) => (
         <FileTreeNode
           key={node.path}
