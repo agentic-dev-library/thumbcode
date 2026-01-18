@@ -32,6 +32,11 @@
     "generate:all": "pnpm --filter @thumbcode/dev-tools run generate:all"
   },
   "dependencies": {
+    "@thumbcode/config": "workspace:*",
+    "@thumbcode/core": "workspace:*",
+    "@thumbcode/state": "workspace:*",
+    "@thumbcode/types": "workspace:*",
+    "@thumbcode/ui": "workspace:*",
     "@anthropic-ai/sdk": "^0.32.0",
     "@react-native-async-storage/async-storage": "^2.0.0",
     "@react-navigation/native": "^7.0.0",

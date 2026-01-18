@@ -6,7 +6,7 @@
  *
  * Usage:
  * ```typescript
- * import { GitService } from '@/services/git';
+ * import { GitService } from '@thumbcode/core/git';
  *
  * // Clone a repository
  * const result = await GitService.clone({
@@ -17,15 +17,15 @@
  * });
  *
  * // Get status
- * const status = await GitService.status({ dir: '/path/to/local/repo' });
+ * const status = await GitService.status('/path/to/local/repo');
  * ```
  */
 
 import * as FileSystem from 'expo-file-system';
+import * as Diff from 'diff';
 import git from 'isomorphic-git';
 import http from 'isomorphic-git/http/web';
 
-import { CredentialService } from '../credentials';
 import type {
   BranchInfo,
   BranchOptions,
@@ -34,7 +34,9 @@ import type {
   CommitInfo,
   CommitOptions,
   DiffResult,
+  DiffStats,
   FetchOptions,
+  FileDiff,
   FileStatus,
   GitCredentials,
   GitResult,
@@ -133,33 +135,49 @@ const fs = {
 };
 
 /**
- * Determine file status from isomorphic-git status matrix values.
- * Extracted to reduce cognitive complexity in status() method.
- *
- * Status matrix format: [HEAD, WORKDIR, STAGE]
- * - 0 = absent
- * - 1 = present in tree/staged to be removed
- * - 2 = present in tree/staged to be added
- * - 3 = staged with modifications
+ * Helper to read file content from a tree at specific commit
  */
-function determineFileStatus(
-  head: number,
-  workdir: number,
-  stage: number
-): { status: FileStatus['status']; staged: boolean } {
-  // Use a lookup map for common status patterns to avoid complex if-else chains
-  const statusKey = `${head}-${workdir}-${stage}`;
-  const statusMap: Record<string, { status: FileStatus['status']; staged: boolean }> = {
-    '0-2-0': { status: 'untracked', staged: false },
-    '0-2-2': { status: 'added', staged: true },
-    '1-0-0': { status: 'deleted', staged: false },
-    '1-0-3': { status: 'deleted', staged: true },
-    '1-2-1': { status: 'modified', staged: false },
-    '1-2-2': { status: 'modified', staged: true },
-    '1-1-1': { status: 'unmodified', staged: false },
-  };
+async function readBlobContent(
+  dir: string,
+  oid: string,
+  filepath: string
+): Promise<string | null> {
+  try {
+    const { blob } = await git.readBlob({
+      fs,
+      dir,
+      oid,
+      filepath,
+    });
+    return new TextDecoder().decode(blob);
+  } catch {
+    return null;
+  }
+}
 
-  return statusMap[statusKey] ?? { status: 'modified', staged: false };
+/**
+ * Generate unified diff patch between two strings
+ */
+function createUnifiedPatch(
+  filepath: string,
+  oldContent: string,
+  newContent: string
+): { patch: string; additions: number; deletions: number } {
+  const patch = Diff.createPatch(filepath, oldContent, newContent, 'old', 'new');
+
+  // Count additions and deletions
+  let additions = 0;
+  let deletions = 0;
+  const lines = patch.split('\n');
+  for (const line of lines) {
+    if (line.startsWith('+') && !line.startsWith('+++')) {
+      additions++;
+    } else if (line.startsWith('-') && !line.startsWith('---')) {
+      deletions++;
+    }
+  }
+
+  return { patch, additions, deletions };
 }
 
 /**
@@ -171,26 +189,6 @@ class GitServiceClass {
    */
   getRepoBaseDir(): string {
     return `${FileSystem.documentDirectory}repos`;
-  }
-
-  /**
-   * Get credentials from CredentialService for a provider
-   */
-  async getCredentialsForProvider(
-    provider: 'github' | 'gitlab' | 'bitbucket'
-  ): Promise<GitCredentials | undefined> {
-    try {
-      const { secret } = await CredentialService.retrieve(provider);
-      if (secret) {
-        return {
-          username: 'x-access-token',
-          password: secret,
-        };
-      }
-    } catch (error) {
-      console.error(`Failed to get credentials for ${provider}:`, error);
-    }
-    return undefined;
   }
 
   /**
@@ -599,8 +597,37 @@ class GitServiceClass {
       const matrix = await git.statusMatrix({ fs, dir });
 
       const statuses: FileStatus[] = matrix.map(([filepath, head, workdir, stage]) => {
-        const { status, staged } = determineFileStatus(head, workdir, stage);
-        return { path: filepath, status, staged };
+        let status: FileStatus['status'];
+        let staged = false;
+
+        // Interpret status matrix
+        // [HEAD, WORKDIR, STAGE]
+        if (head === 0 && workdir === 2 && stage === 0) {
+          status = 'untracked';
+        } else if (head === 0 && workdir === 2 && stage === 2) {
+          status = 'added';
+          staged = true;
+        } else if (head === 1 && workdir === 0 && stage === 0) {
+          status = 'deleted';
+        } else if (head === 1 && workdir === 0 && stage === 3) {
+          status = 'deleted';
+          staged = true;
+        } else if (head === 1 && workdir === 2 && stage === 1) {
+          status = 'modified';
+        } else if (head === 1 && workdir === 2 && stage === 2) {
+          status = 'modified';
+          staged = true;
+        } else if (head === 1 && workdir === 1 && stage === 1) {
+          status = 'unmodified';
+        } else {
+          status = 'modified';
+        }
+
+        return {
+          path: filepath,
+          status,
+          staged,
+        };
       });
 
       // Filter out unmodified files for cleaner output
@@ -653,24 +680,190 @@ class GitServiceClass {
   }
 
   /**
-   * Get diff between two refs (commits, branches, etc.)
+   * Get diff between two commits using tree walking
+   * Performs full recursive tree comparison and generates unified diffs
    */
   async diff(dir: string, commitA: string, commitB: string): Promise<GitResult<DiffResult>> {
     try {
-      // Get the trees for both commits
-      const [_treeA, _treeB] = await Promise.all([
-        git.readCommit({ fs, dir, oid: commitA }),
-        git.readCommit({ fs, dir, oid: commitB }),
-      ]);
+      // Resolve refs to commit OIDs
+      const oidA = await git.resolveRef({ fs, dir, ref: commitA });
+      const oidB = await git.resolveRef({ fs, dir, ref: commitB });
 
-      // Walk both trees and compare
-      const files: DiffResult['files'] = [];
-      const additions = 0;
-      const deletions = 0;
+      // Read commit objects to get tree OIDs
+      const commitObjA = await git.readCommit({ fs, dir, oid: oidA });
+      const commitObjB = await git.readCommit({ fs, dir, oid: oidB });
 
-      // This is a simplified diff - full implementation would need
-      // to walk trees recursively and compare blobs
-      // For now, we'll use statusMatrix as a workaround for working tree diffs
+      const treeA = commitObjA.commit.tree;
+      const treeB = commitObjB.commit.tree;
+
+      // Walk both trees simultaneously to find differences
+      const files: FileDiff[] = [];
+      const filesInA = new Map<string, string>(); // filepath -> blob oid
+      const filesInB = new Map<string, string>(); // filepath -> blob oid
+
+      // Walk tree A recursively
+      await this.walkTree(dir, treeA, '', filesInA);
+      // Walk tree B recursively
+      await this.walkTree(dir, treeB, '', filesInB);
+
+      // Find all unique files
+      const allFiles = new Set([...filesInA.keys(), ...filesInB.keys()]);
+
+      let totalAdditions = 0;
+      let totalDeletions = 0;
+
+      // Compare each file
+      for (const filepath of allFiles) {
+        const blobA = filesInA.get(filepath);
+        const blobB = filesInB.get(filepath);
+
+        if (blobA === blobB) {
+          // File unchanged
+          continue;
+        }
+
+        let type: FileDiff['type'];
+        let oldContent = '';
+        let newContent = '';
+
+        if (!blobA && blobB) {
+          // File added in B
+          type = 'add';
+          newContent = (await readBlobContent(dir, oidB, filepath)) || '';
+        } else if (blobA && !blobB) {
+          // File deleted in B
+          type = 'delete';
+          oldContent = (await readBlobContent(dir, oidA, filepath)) || '';
+        } else {
+          // File modified
+          type = 'modify';
+          oldContent = (await readBlobContent(dir, oidA, filepath)) || '';
+          newContent = (await readBlobContent(dir, oidB, filepath)) || '';
+        }
+
+        // Generate unified diff
+        const { patch, additions, deletions } = createUnifiedPatch(
+          filepath,
+          oldContent,
+          newContent
+        );
+
+        totalAdditions += additions;
+        totalDeletions += deletions;
+
+        files.push({
+          path: filepath,
+          type,
+          additions,
+          deletions,
+          patch,
+        });
+      }
+
+      const stats: DiffStats = {
+        filesChanged: files.length,
+        additions: totalAdditions,
+        deletions: totalDeletions,
+      };
+
+      return {
+        success: true,
+        data: {
+          files,
+          stats,
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to generate diff',
+      };
+    }
+  }
+
+  /**
+   * Recursively walk a git tree and collect all file paths with their blob OIDs
+   */
+  private async walkTree(
+    dir: string,
+    treeOid: string,
+    prefix: string,
+    result: Map<string, string>
+  ): Promise<void> {
+    const tree = await git.readTree({ fs, dir, oid: treeOid });
+
+    for (const entry of tree.tree) {
+      const fullPath = prefix ? `${prefix}/${entry.path}` : entry.path;
+
+      if (entry.type === 'blob') {
+        result.set(fullPath, entry.oid);
+      } else if (entry.type === 'tree') {
+        // Recursively walk subtrees
+        await this.walkTree(dir, entry.oid, fullPath, result);
+      }
+    }
+  }
+
+  /**
+   * Get diff for working directory changes (staged and unstaged)
+   */
+  async diffWorkingDir(dir: string): Promise<GitResult<DiffResult>> {
+    try {
+      const matrix = await git.statusMatrix({ fs, dir });
+      const headOid = await git.resolveRef({ fs, dir, ref: 'HEAD' });
+
+      const files: FileDiff[] = [];
+      let totalAdditions = 0;
+      let totalDeletions = 0;
+
+      for (const [filepath, head, workdir, _stage] of matrix) {
+        // Skip unmodified files
+        if (head === 1 && workdir === 1) continue;
+
+        let type: FileDiff['type'];
+        let oldContent = '';
+        let newContent = '';
+
+        if (head === 0 && workdir === 2) {
+          // New file (untracked or added)
+          type = 'add';
+          try {
+            newContent = await FileSystem.readAsStringAsync(`${dir}/${filepath}`);
+          } catch {
+            newContent = '';
+          }
+        } else if (head === 1 && workdir === 0) {
+          // Deleted file
+          type = 'delete';
+          oldContent = (await readBlobContent(dir, headOid, filepath)) || '';
+        } else {
+          // Modified file
+          type = 'modify';
+          oldContent = (await readBlobContent(dir, headOid, filepath)) || '';
+          try {
+            newContent = await FileSystem.readAsStringAsync(`${dir}/${filepath}`);
+          } catch {
+            newContent = '';
+          }
+        }
+
+        const { patch, additions, deletions } = createUnifiedPatch(
+          filepath,
+          oldContent,
+          newContent
+        );
+
+        totalAdditions += additions;
+        totalDeletions += deletions;
+
+        files.push({
+          path: filepath,
+          type,
+          additions,
+          deletions,
+          patch,
+        });
+      }
 
       return {
         success: true,
@@ -678,15 +871,15 @@ class GitServiceClass {
           files,
           stats: {
             filesChanged: files.length,
-            additions,
-            deletions,
+            additions: totalAdditions,
+            deletions: totalDeletions,
           },
         },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to generate diff',
+        error: error instanceof Error ? error.message : 'Failed to generate working directory diff',
       };
     }
   }

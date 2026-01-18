@@ -1,13 +1,24 @@
 {
   "name": "@thumbcode/state",
   "version": "1.0.0",
+  "description": "State management for ThumbCode using Zustand",
+  "private": true,
   "main": "src/index.ts",
-  "dependencies": {
-    "zustand": "^5.0.0",
-    "immer": "^10.0.0",
-    "@react-native-async-storage/async-storage": "^2.0.0"
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agentStore.ts",
+    "./chat": "./src/chatStore.ts",
+    "./credential": "./src/credentialStore.ts",
+    "./project": "./src/projectStore.ts",
+    "./user": "./src/userStore.ts"
   },
-  "devDependencies": {
-    "@types/react-native": "^0.72.2"
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.0.0",
+    "immer": "^10.2.0",
+    "zustand": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
   }
 }

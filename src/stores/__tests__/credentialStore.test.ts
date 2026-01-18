@@ -71,7 +71,7 @@ describe('CredentialStore', () => {
     it('should remove a credential by ID', () => {
       const { result } = renderHook(() => useCredentialStore());
 
-      let credId: string;
+      let credId = '';
       act(() => {
         credId = result.current.addCredential({
           provider: 'openai',
@@ -83,7 +83,7 @@ describe('CredentialStore', () => {
       expect(result.current.credentials).toHaveLength(1);
 
       act(() => {
-        result.current.removeCredential(credId!);
+        result.current.removeCredential(credId);
       });
 
       expect(result.current.credentials).toHaveLength(0);
@@ -94,7 +94,7 @@ describe('CredentialStore', () => {
     it('should update credential status', () => {
       const { result } = renderHook(() => useCredentialStore());
 
-      let credId: string;
+      let credId = '';
       act(() => {
         credId = result.current.addCredential({
           provider: 'anthropic',
@@ -104,7 +104,7 @@ describe('CredentialStore', () => {
       });
 
       act(() => {
-        result.current.setCredentialStatus(credId!, 'valid');
+        result.current.setCredentialStatus(credId, 'valid');
       });
 
       expect(result.current.credentials[0].status).toBe('valid');
@@ -116,7 +116,7 @@ describe('CredentialStore', () => {
     it('should update credential with validation result', () => {
       const { result } = renderHook(() => useCredentialStore());
 
-      let credId: string;
+      let credId = '';
       act(() => {
         credId = result.current.addCredential({
           provider: 'github',
@@ -126,7 +126,7 @@ describe('CredentialStore', () => {
       });
 
       act(() => {
-        result.current.setValidationResult(credId!, {
+        result.current.setValidationResult(credId, {
           isValid: true,
           expiresAt: '2025-12-31T23:59:59Z',
           metadata: {
@@ -146,7 +146,7 @@ describe('CredentialStore', () => {
     it('should set invalid status on validation failure', () => {
       const { result } = renderHook(() => useCredentialStore());
 
-      let credId: string;
+      let credId = '';
       act(() => {
         credId = result.current.addCredential({
           provider: 'openai',
@@ -156,7 +156,7 @@ describe('CredentialStore', () => {
       });
 
       act(() => {
-        result.current.setValidationResult(credId!, {
+        result.current.setValidationResult(credId, {
           isValid: false,
           message: 'Invalid API key',
         });
@@ -196,7 +196,7 @@ describe('CredentialStore', () => {
     it('hasValidCredential should return correct boolean', () => {
       const { result } = renderHook(() => useCredentialStore());
 
-      let credId: string;
+      let credId = '';
       act(() => {
         credId = result.current.addCredential({
           provider: 'github',
@@ -208,7 +208,7 @@ describe('CredentialStore', () => {
       expect(result.current.hasValidCredential('github')).toBe(false);
 
       act(() => {
-        result.current.setCredentialStatus(credId!, 'valid');
+        result.current.setCredentialStatus(credId, 'valid');
       });
 
       expect(result.current.hasValidCredential('github')).toBe(true);

@@ -1,29 +1,49 @@
-import { styled } from 'nativewind';
-import { TextInput } from 'react-native';
+import {
+  TextInput as RNTextInput,
+  type TextInputProps as RNTextInputProps,
+  View,
+} from 'react-native';
+import { Text } from '../primitives/Text';
 
-const StyledTextInput = styled(TextInput);
-
-interface InputProps {
-  value: string;
-  onChangeText: (text: string) => void;
-  placeholder: string;
-  secureTextEntry?: boolean;
+interface InputProps extends RNTextInputProps {
+  label?: string;
+  error?: string;
+  variant?: 'default' | 'filled';
 }
 
-const Input = ({ value, onChangeText, placeholder, secureTextEntry = false }: InputProps) => {
-  return (
-    <StyledTextInput
-      className="bg-transparent border-2 border-teal-600 p-3 text-white font-body"
-      style={{
-        borderRadius: '0.5rem 0.625rem 0.5rem 0.75rem',
-      }}
-      placeholderTextColor="#94A3B8"
-      value={value}
-      onChangeText={onChangeText}
-      placeholder={placeholder}
-      secureTextEntry={secureTextEntry}
-    />
-  );
-};
+/**
+ * Renders a text input with an optional label and error message.
+ * Uses ThumbCode's organic P3 "Warm Technical" styling with asymmetric border-radius.
+ *
+ * @param label - Optional label text displayed above the input
+ * @param error - Optional error message displayed below the input; also changes the input's border styling
+ * @param variant - Visual variant: 'default' (light) or 'filled' (dark background)
+ * @param className - Additional class names applied to the input element
+ * @returns A React element containing the labeled input and optional error message
+ */
+export function Input({ label, error, variant = 'default', className = '', ...props }: InputProps) {
+  const variantClasses = {
+    default: 'bg-white text-neutral-900',
+    filled: 'bg-charcoal text-white',
+  }[variant];
 
-export default Input;
+  return (
+    <View className="w-full">
+      {label && <Text className="mb-2 text-neutral-700 font-medium">{label}</Text>}
+      <RNTextInput
+        className={`
+          ${variantClasses}
+          border-2
+          ${error ? 'border-coral-500' : 'border-neutral-200'}
+          rounded-[0.5rem_0.625rem_0.5rem_0.75rem]
+          px-4 py-3
+          font-body text-base
+          ${className}
+        `}
+        placeholderTextColor="#94A3B8"
+        {...props}
+      />
+      {error && <Text className="mt-1 text-sm text-coral-500">{error}</Text>}
+    </View>
+  );
+}

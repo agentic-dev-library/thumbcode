@@ -1,39 +1,45 @@
 import { Ionicons } from '@expo/vector-icons';
-import { styled } from 'nativewind';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import { Text } from '../primitives/Text';
 
-const StyledView = styled(View);
-const StyledText = styled(Text);
+type AlertType = 'success' | 'error' | 'warning' | 'info';
 
 interface AlertProps {
   message: string;
-  type: 'success' | 'error' | 'warning';
+  type: AlertType;
+  title?: string;
 }
 
-const Alert = ({ message, type }: AlertProps) => {
-  const containerClasses = {
-    success: 'bg-teal-600',
-    error: 'bg-coral-500',
-    warning: 'bg-gold-400',
-  };
-
-  const icon = {
-    success: 'checkmark-circle',
-    error: 'alert-circle',
-    warning: 'warning',
-  };
+/**
+ * An alert component for displaying status messages.
+ * Uses ThumbCode's P3 color palette for different alert types.
+ *
+ * @param message - The alert message to display.
+ * @param type - The type of alert: 'success', 'error', 'warning', or 'info'.
+ * @param title - Optional title text displayed above the message.
+ * @returns A View element styled as an alert with icon and message.
+ */
+export function Alert({ message, type, title }: AlertProps) {
+  const config = {
+    success: { bg: 'bg-teal-600', icon: 'checkmark-circle' as const },
+    error: { bg: 'bg-coral-500', icon: 'alert-circle' as const },
+    warning: { bg: 'bg-gold-400', icon: 'warning' as const },
+    info: { bg: 'bg-neutral-600', icon: 'information-circle' as const },
+  }[type];
 
   return (
-    <StyledView
-      className={`${containerClasses[type]} p-4 rounded-lg flex-row items-center`}
-      style={{
-        borderRadius: '0.6rem 0.8rem 0.7rem 0.9rem',
-      }}
+    <View
+      className={`${config.bg} p-4 flex-row items-center rounded-[0.6rem_0.8rem_0.7rem_0.9rem]`}
     >
-      <Ionicons name={icon[type]} size={24} color="white" className="mr-2" />
-      <StyledText className="text-white font-body">{message}</StyledText>
-    </StyledView>
+      <Ionicons name={config.icon} size={24} color="white" />
+      <View className="ml-3 flex-1">
+        {title && (
+          <Text weight="semibold" className="text-white mb-1">
+            {title}
+          </Text>
+        )}
+        <Text className="text-white">{message}</Text>
+      </View>
+    </View>
   );
-};
-
-export default Alert;
+}
