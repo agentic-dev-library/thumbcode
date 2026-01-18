@@ -81,12 +81,12 @@ jobs:
             **Branch:** ${{ github.event.workflow_run.head_branch }}
             **Repository:** ${{ github.repository }}
 
-            **Error Logs:**
-            ```
-            $(cat ${{ steps.logs.outputs.logs_path }} 2>/dev/null || echo "Could not read logs")
-            ```
+            **Error Logs Path:** ${{ steps.logs.outputs.logs_path }}
+
+            Please use the read_file tool to open this file and analyze the error logs.
 
             Please:
+            1. Analyze the failure logs to identify root causes
             1. Analyze the failure logs to identify root causes
             2. Fix the issues in the code
             3. Run the failing commands locally to verify fixes
