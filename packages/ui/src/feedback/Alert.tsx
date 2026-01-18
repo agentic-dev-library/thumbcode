@@ -27,8 +27,12 @@ export function Alert({ message, type, title }: AlertProps) {
     info: { bg: 'bg-neutral-600', icon: 'information-circle' as const },
   }[type];
 
+  const accessibilityLabel = title ? `${title}, ${message}` : message;
+
   return (
     <View
+      accessibilityRole="alert"
+      accessibilityLabel={accessibilityLabel}
       className={`${config.bg} p-4 flex-row items-center rounded-[0.6rem_0.8rem_0.7rem_0.9rem]`}
     >
       <Ionicons name={config.icon} size={24} color="white" />

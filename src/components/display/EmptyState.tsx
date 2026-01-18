@@ -78,6 +78,7 @@ export function EmptyState({
               }}
               accessibilityRole="button"
               accessibilityLabel={secondaryAction.label}
+              accessibilityHint={`Perform the action: ${secondaryAction.label}`}
             >
               <Text className="font-body text-neutral-200">{secondaryAction.label}</Text>
             </Pressable>
@@ -94,6 +95,7 @@ export function EmptyState({
               }}
               accessibilityRole="button"
               accessibilityLabel={action.label}
+              accessibilityHint={`Perform the action: ${action.label}`}
             >
               <Text className="font-body text-white font-semibold">{action.label}</Text>
             </Pressable>

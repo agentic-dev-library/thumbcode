@@ -47,6 +47,7 @@ export function Button({
 
   return (
     <Pressable
+      accessibilityRole="button"
       disabled={disabled || loading}
       className={`
         ${variantClasses}

@@ -86,7 +86,12 @@ export function Tooltip({ content, children, position = 'top', delay = 500 }: To
 
   return (
     <View onLayout={(e) => setLayout(e.nativeEvent.layout)} className="relative">
-      <Pressable onLongPress={showTooltip} onPressOut={hideTooltip} delayLongPress={delay}>
+      <Pressable
+        onLongPress={showTooltip}
+        onPressOut={hideTooltip}
+        delayLongPress={delay}
+        accessibilityHint="Long press for more info"
+      >
         {children}
       </Pressable>
 
@@ -127,6 +132,8 @@ export function InfoTip({ content, size = 'sm' }: InfoTipProps) {
       <View
         className="items-center justify-center bg-neutral-700 rounded-full"
         style={{ width: dimension, height: dimension }}
+        accessibilityRole="button"
+        accessibilityLabel="Information"
       >
         <Text className="font-body text-neutral-300" style={{ fontSize, lineHeight: fontSize + 2 }}>
           ?

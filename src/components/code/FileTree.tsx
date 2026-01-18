@@ -70,11 +70,28 @@ function getStatusColor(node: FileNode): string {
   return '';
 }
 
+function getStatusText(node: FileNode): string {
+  if (node.added) return 'added';
+  if (node.modified) return 'modified';
+  if (node.deleted) return 'deleted';
+  return '';
+}
+
 function getStatusLabel(node: FileNode): string {
   if (node.added) return 'A';
   if (node.modified) return 'M';
   if (node.deleted) return 'D';
   return '';
+}
+
+function getAccessibilityHint(
+  isFolder: boolean,
+  hasChildren: boolean,
+  isExpanded: boolean
+): string {
+  if (!isFolder) return 'Open file';
+  if (!hasChildren) return 'Empty folder';
+  return isExpanded ? 'Collapse folder' : 'Expand folder';
 }
 
 function FileTreeNodeRow({
@@ -86,6 +103,8 @@ function FileTreeNodeRow({
   hasChildren,
   statusColor,
   onPress,
+  accessibilityLabel,
+  accessibilityHint,
 }: {
   node: FileNode;
   depth: number;
@@ -95,6 +114,8 @@ function FileTreeNodeRow({
   hasChildren: boolean;
   statusColor: string;
   onPress: () => void;
+  accessibilityLabel: string;
+  accessibilityHint: string;
 }) {
   const icon = isFolder ? (isExpanded ? '📂' : '📁') : getFileIcon(node.name);
   const rowClass = isSelected ? 'bg-teal-600/20' : 'active:bg-neutral-700';
@@ -103,6 +124,9 @@ function FileTreeNodeRow({
   return (
     <Pressable
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
       className={`flex-row items-center py-1.5 px-2 ${rowClass}`}
       style={{ paddingLeft: 8 + depth * 16 }}
     >
@@ -144,6 +168,11 @@ function FileTreeNode({
 
   const shouldShowStatus = showStatus && Boolean(node.added || node.modified || node.deleted);
 
+  // Accessibility labels for screen readers
+  const accessibilityLabel = [node.name, isFolder ? 'folder' : 'file', getStatusText(node)]
+    .filter(Boolean)
+    .join(', ');
+
   return (
     <View>
       <View className="flex-row items-center">
@@ -157,6 +186,8 @@ function FileTreeNode({
             hasChildren={hasChildren}
             statusColor={statusColor}
             onPress={handlePress}
+            accessibilityLabel={accessibilityLabel}
+            accessibilityHint={getAccessibilityHint(isFolder, hasChildren, isExpanded)}
           />
         </View>
         {shouldShowStatus && (
@@ -225,6 +256,8 @@ export function FileTree({
 
   return (
     <View
+      accessibilityRole="list"
+      accessibilityLabel="File tree"
       className="bg-surface overflow-hidden"
       style={{
         borderTopLeftRadius: 12,

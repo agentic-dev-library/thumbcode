@@ -41,6 +41,9 @@ export function CodeBlock({ code, language, filename }: CodeBlockProps) {
           onPress={handleCopy}
           className="px-2 py-1 active:bg-neutral-700"
           style={{ borderRadius: '4px 6px 4px 6px' }}
+          accessibilityRole="button"
+          accessibilityLabel="Copy code"
+          accessibilityHint="Copy the code to the clipboard"
         >
           <Text className="text-xs font-body text-neutral-400">{copied ? 'Copied!' : 'Copy'}</Text>
         </Pressable>

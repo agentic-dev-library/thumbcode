@@ -77,6 +77,9 @@ export function ApprovalCard({ message, onApprove, onReject }: ApprovalCardProps
             onPress={onReject}
             className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
             style={{ borderRadius: '8px 10px 8px 12px' }}
+            accessibilityRole="button"
+            accessibilityLabel="Reject"
+            accessibilityHint="Reject this action"
           >
             <Text className="font-body text-sm text-neutral-200">Reject</Text>
           </Pressable>
@@ -84,6 +87,9 @@ export function ApprovalCard({ message, onApprove, onReject }: ApprovalCardProps
             onPress={onApprove}
             className="px-4 py-2 bg-teal-600 active:bg-teal-700 ml-2"
             style={{ borderRadius: '8px 10px 8px 12px' }}
+            accessibilityRole="button"
+            accessibilityLabel="Approve"
+            accessibilityHint="Approve this action"
           >
             <Text className="font-body text-sm text-white font-semibold">Approve</Text>
           </Pressable>
