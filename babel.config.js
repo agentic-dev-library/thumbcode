@@ -13,6 +13,12 @@ module.exports = (api) => {
       // nativewind/babel which returns an invalid plugin wrapper
       ...(!isTest ? ['react-native-css-interop/dist/babel-plugin'] : []),
       ...(!isTest ? ['react-native-reanimated/plugin'] : []),
+      [
+        'react-native-web',
+        {
+          testID: 'data-testid',
+        },
+      ],
     ],
   };
 };

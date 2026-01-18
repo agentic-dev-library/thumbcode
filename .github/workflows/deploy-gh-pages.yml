@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build POC Site
+    name: Build Staging Web App
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -25,27 +25,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build web app
+        run: npx expo export --platform web
+
       - name: Setup Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
-
-      - name: Create build directory
-        run: |
-          mkdir -p _site
-          cp index.html _site/
-          # Copy assets if they exist
-          if [ -d "public" ]; then
-            cp -r public _site/ || true
-          fi
-          if [ -d "assets" ]; then
-            cp -r assets _site/ || true
-          fi
-          # Create a simple 404 page
-          echo '<!DOCTYPE html><html><head><title>404 - ThumbCode</title></head><body><h1>404 - Page Not Found</h1><p><a href="/">Return to Home</a></p></body></html>' > _site/404.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
-          path: '_site'
+          path: 'dist'
 
   deploy:
     name: Deploy to GitHub Pages

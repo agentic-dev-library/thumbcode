@@ -140,3 +140,8 @@ vite.config.ts.timestamp-*
 
 # Generated assets (auto-generated from SVGs during postinstall)
 /assets/*.png
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/

@@ -59,7 +59,10 @@ export function Button({
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'outline' ? '#1E293B' : '#FFFFFF'} />
+        <ActivityIndicator
+          testID="activity-indicator"
+          color={variant === 'outline' ? '#1E293B' : '#FFFFFF'}
+        />
       ) : (
         <Text className={`${textColorClass} text-center font-semibold`}>{children}</Text>
       )}
