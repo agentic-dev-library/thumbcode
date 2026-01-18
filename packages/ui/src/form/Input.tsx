@@ -14,8 +14,11 @@ interface InputProps {
 const Input = ({ value, onChangeText, placeholder, secureTextEntry = false }: InputProps) => {
   return (
     <StyledTextInput
-      className="bg-transparent border-2 border-digital-teal rounded-lg p-3 text-white font-cabin"
-      placeholderTextColor="#a0a0a0"
+      className="bg-transparent border-2 border-teal-600 p-3 text-white font-body"
+      style={{
+        borderRadius: '0.5rem 0.625rem 0.5rem 0.75rem',
+      }}
+      placeholderTextColor="#94A3B8"
       value={value}
       onChangeText={onChangeText}
       placeholder={placeholder}

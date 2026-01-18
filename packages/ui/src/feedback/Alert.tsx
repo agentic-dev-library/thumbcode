@@ -13,9 +13,9 @@ interface AlertProps {
 
 const Alert = ({ message, type }: AlertProps) => {
   const containerClasses = {
-    success: 'bg-digital-teal',
+    success: 'bg-teal-600',
     error: 'bg-coral-500',
-    warning: 'bg-soft-gold',
+    warning: 'bg-gold-400',
   };
 
   const icon = {
@@ -32,7 +32,7 @@ const Alert = ({ message, type }: AlertProps) => {
       }}
     >
       <Ionicons name={icon[type]} size={24} color="white" className="mr-2" />
-      <StyledText className="text-white font-cabin">{message}</StyledText>
+      <StyledText className="text-white font-body">{message}</StyledText>
     </StyledView>
   );
 };

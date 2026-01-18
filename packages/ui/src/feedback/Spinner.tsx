@@ -8,7 +8,7 @@ const Spinner = () => {
   return (
     <StyledActivityIndicator
       size="large"
-      className="text-primary-400"
+      color="#FF7059"
     />
   );
 };

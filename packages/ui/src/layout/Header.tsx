@@ -23,7 +23,7 @@ const Header = ({ title, canGoBack = false }: HeaderProps) => {
           <Ionicons name="arrow-back" size={24} color="white" />
         </StyledTouchableOpacity>
       )}
-      <StyledText className="font-fraunces text-2xl text-white">{title}</StyledText>
+      <StyledText className="font-display text-2xl text-white">{title}</StyledText>
       <StyledView className="w-10" />
     </StyledView>
   );
