@@ -90,6 +90,21 @@ function OptionSelector({ title, options, selected, onSelect }: OptionSelectorPr
   );
 }
 
+// Theme color helper functions to reduce cognitive complexity
+type Theme = 'light' | 'dark' | 'high-contrast';
+
+const themeColors = {
+  keyword: { light: 'text-coral-700', dark: 'text-coral-500', 'high-contrast': 'text-yellow-400' },
+  function: { light: 'text-gold-700', dark: 'text-gold-400', 'high-contrast': 'text-green-400' },
+  type: { light: 'text-teal-700', dark: 'text-teal-400', 'high-contrast': 'text-cyan-400' },
+  text: { light: 'text-neutral-800', dark: 'text-white', 'high-contrast': 'text-white' },
+  background: { light: 'bg-neutral-100', dark: 'bg-charcoal', 'high-contrast': 'bg-black' },
+} as const;
+
+function getThemeColor(theme: Theme, type: keyof typeof themeColors): string {
+  return themeColors[type][theme];
+}
+
 export default function EditorSettingsScreen() {
   const insets = useSafeAreaInsets();
 
@@ -266,115 +281,29 @@ export default function EditorSettingsScreen() {
                 PREVIEW
               </Text>
             </View>
-            <View
-              className={`p-4 m-4 rounded-lg ${
-                theme === 'light'
-                  ? 'bg-neutral-100'
-                  : theme === 'high-contrast'
-                    ? 'bg-black'
-                    : 'bg-charcoal'
-              }`}
-            >
+            <View className={`p-4 m-4 rounded-lg ${getThemeColor(theme as Theme, 'background')}`}>
               <Text
-                className={`font-mono ${
-                  theme === 'light'
-                    ? 'text-teal-700'
-                    : theme === 'high-contrast'
-                      ? 'text-cyan-400'
-                      : 'text-teal-400'
-                }`}
+                className={`font-mono ${getThemeColor(theme as Theme, 'type')}`}
                 style={{ fontSize: parseInt(fontSize, 10) }}
               >
                 {lineNumbers ? '1  ' : ''}
-                <Text
-                  className={
-                    theme === 'light'
-                      ? 'text-coral-700'
-                      : theme === 'high-contrast'
-                        ? 'text-yellow-400'
-                        : 'text-coral-500'
-                  }
-                >
-                  function
-                </Text>{' '}
-                <Text
-                  className={
-                    theme === 'light'
-                      ? 'text-gold-700'
-                      : theme === 'high-contrast'
-                        ? 'text-green-400'
-                        : 'text-gold-400'
-                  }
-                >
-                  greet
-                </Text>
-                <Text
-                  className={
-                    theme === 'light'
-                      ? 'text-neutral-800'
-                      : theme === 'high-contrast'
-                        ? 'text-white'
-                        : 'text-white'
-                  }
-                >
-                  (name:{' '}
-                </Text>
-                <Text
-                  className={
-                    theme === 'light'
-                      ? 'text-teal-700'
-                      : theme === 'high-contrast'
-                        ? 'text-cyan-400'
-                        : 'text-teal-400'
-                  }
-                >
-                  string
-                </Text>
-                <Text
-                  className={
-                    theme === 'light'
-                      ? 'text-neutral-800'
-                      : theme === 'high-contrast'
-                        ? 'text-white'
-                        : 'text-white'
-                  }
-                >
-                  ) {'{'}
-                </Text>
+                <Text className={getThemeColor(theme as Theme, 'keyword')}>function</Text>{' '}
+                <Text className={getThemeColor(theme as Theme, 'function')}>greet</Text>
+                <Text className={getThemeColor(theme as Theme, 'text')}>(name: </Text>
+                <Text className={getThemeColor(theme as Theme, 'type')}>string</Text>
+                <Text className={getThemeColor(theme as Theme, 'text')}>) {'{'}</Text>
               </Text>
               <Text
-                className={`font-mono ${
-                  theme === 'light'
-                    ? 'text-neutral-800'
-                    : theme === 'high-contrast'
-                      ? 'text-white'
-                      : 'text-white'
-                }`}
+                className={`font-mono ${getThemeColor(theme as Theme, 'text')}`}
                 style={{ fontSize: parseInt(fontSize, 10) }}
               >
                 {lineNumbers ? '2  ' : ''}
                 {'  '}
-                <Text
-                  className={
-                    theme === 'light'
-                      ? 'text-coral-700'
-                      : theme === 'high-contrast'
-                        ? 'text-yellow-400'
-                        : 'text-coral-500'
-                  }
-                >
-                  return
-                </Text>{' '}
+                <Text className={getThemeColor(theme as Theme, 'keyword')}>return</Text>{' '}
                 {`\`Hello, \${name}\``}
               </Text>
               <Text
-                className={`font-mono ${
-                  theme === 'light'
-                    ? 'text-neutral-800'
-                    : theme === 'high-contrast'
-                      ? 'text-white'
-                      : 'text-white'
-                }`}
+                className={`font-mono ${getThemeColor(theme as Theme, 'text')}`}
                 style={{ fontSize: parseInt(fontSize, 10) }}
               >
                 {lineNumbers ? '3  ' : ''}

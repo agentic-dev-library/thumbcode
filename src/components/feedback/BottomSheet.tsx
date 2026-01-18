@@ -189,10 +189,7 @@ export function ActionSheet({
       {(title || message) && (
         <View className="items-center mb-4 pb-4 border-b border-neutral-700">
           {title && (
-            <Text
-              className="font-display text-base text-white mb-1"
-              accessibilityRole="header"
-            >
+            <Text className="font-display text-base text-white mb-1" accessibilityRole="header">
               {title}
             </Text>
           )}

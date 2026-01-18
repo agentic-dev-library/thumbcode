@@ -77,10 +77,7 @@ export function Modal({
           {/* Header */}
           {title && (
             <View className="flex-row items-center justify-between px-5 py-4 border-b border-neutral-700">
-              <Text
-                className="font-display text-lg text-white flex-1"
-                accessibilityRole="header"
-              >
+              <Text className="font-display text-lg text-white flex-1" accessibilityRole="header">
                 {title}
               </Text>
               <Pressable

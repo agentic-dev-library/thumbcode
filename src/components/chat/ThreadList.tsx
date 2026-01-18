@@ -57,10 +57,7 @@ function getParticipantBadge(participant: ChatThread['participants'][number]) {
 
 function ThreadItem({ thread, onPress }: ThreadItemProps) {
   const hasUnread = thread.unreadCount > 0;
-  const accessibilityLabel = [
-    thread.title,
-    hasUnread ? `${thread.unreadCount} unread` : '',
-  ]
+  const accessibilityLabel = [thread.title, hasUnread ? `${thread.unreadCount} unread` : '']
     .filter(Boolean)
     .join(', ');
 
