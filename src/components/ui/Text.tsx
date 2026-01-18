@@ -4,6 +4,7 @@ interface TextProps extends RNTextProps {
   variant?: 'display' | 'body' | 'mono';
   size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
   weight?: 'normal' | 'medium' | 'semibold' | 'bold';
+  className?: string;
 }
 
 /**
