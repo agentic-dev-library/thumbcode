@@ -7,7 +7,8 @@
 
 import React, { createContext, useContext, useMemo } from 'react';
 import tokens from '../../../design-system/tokens.json';
-import { getCSSCustomProperties } from '../../utils/design-tokens';
+import React, { createContext, useContext, useMemo } from 'react';
+import tokens from '../../../design-system/tokens.json';
 
 interface ThemeContextValue {
   tokens: typeof tokens;
