@@ -72,7 +72,10 @@ export function TextArea({
         className={`bg-neutral-800 text-white font-body px-4 py-3 border ${borderColor}`}
         placeholderTextColor="#6B7280"
         style={{
-          borderRadius: '12px 14px 12px 16px',
+          borderTopLeftRadius: 12,
+          borderTopRightRadius: 14,
+          borderBottomRightRadius: 12,
+          borderBottomLeftRadius: 16,
           minHeight,
           maxHeight,
           textAlignVertical: 'top',
