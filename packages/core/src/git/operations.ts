@@ -1,5 +1,5 @@
-import git from './client';
 import * as FileSystem from 'expo-file-system';
+import git from './client';
 
 const getRepoDir = (repoName: string) => {
   const dir = FileSystem.documentDirectory;
@@ -19,7 +19,11 @@ export const clone = async (url: string, repoName: string) => {
   });
 };
 
-export const commit = async (repoName: string, author: { name: string; email: string }, message: string) => {
+export const commit = async (
+  repoName: string,
+  author: { name: string; email: string },
+  message: string
+) => {
   const repoDir = getRepoDir(repoName);
   const status = await git.statusMatrix({ dir: repoDir });
 
@@ -70,11 +74,9 @@ export const diff = async (repoName: string, filepath: string) => {
   }
 
   try {
-    const newContent = await FileSystem.readAsStringAsync(
-      `${repoDir}/${filepath}`
-    );
+    const newContent = await FileSystem.readAsStringAsync(`${repoDir}/${filepath}`);
     return { oldContent, newContent };
-  } catch (e) {
+  } catch (_e) {
     // If the file doesn't exist in the working directory, it means it was deleted.
     return { oldContent, newContent: '' };
   }
