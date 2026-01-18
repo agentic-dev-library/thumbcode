@@ -318,7 +318,7 @@ Add these to your GitHub repository secrets:
 
 ### 2. Google Jules API Key
 
-> Note: Jules is an experimental Google Labs integration and `https://jules.google.com` may only be available to users with special or internal access. If you cannot access this URL, skip this step or consult your project administrator.
+> Note: Jules is an experimental Google Labs integration and `https://jules.google.com` may only be available to users with special or internal access. The GitHub Action reference `google-labs-code/jules-action@v1` in example workflows is a placeholder and may not correspond to a real, publicly available action. If you cannot access this URL or the action, skip this step, replace the placeholder with your own implementation, or consult your project administrator.
 
 1. Visit [jules.google.com](https://jules.google.com)
 2. Authenticate and generate an API key (if you have access)
