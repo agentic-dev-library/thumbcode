@@ -60,7 +60,9 @@
       "!**/.next",
       "!**/coverage",
       "!**/*.generated.*",
-      "!**/design-system/generated"
+      "!**/design-system/generated",
+      "!**/packages",
+      "!index.html"
     ]
   }
 }
