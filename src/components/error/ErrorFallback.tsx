@@ -5,7 +5,7 @@
  * Follows ThumbCode's organic design language.
  */
 
-import { Pressable, View } from 'react-native';
+import { Alert, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
@@ -14,6 +14,7 @@ interface ErrorFallbackProps {
   error: Error | null;
   componentStack?: string | null;
   onRetry?: () => void;
+  onReportIssue?: () => void;
   title?: string;
   message?: string;
 }
@@ -22,11 +23,21 @@ export function ErrorFallback({
   error,
   componentStack,
   onRetry,
+  onReportIssue,
   title = 'Something went wrong',
   message = "We're sorry, but something unexpected happened. Please try again.",
 }: ErrorFallbackProps) {
   const insets = useSafeAreaInsets();
   const isDev = __DEV__;
+
+  const handleReportIssue = () => {
+    if (onReportIssue) {
+      onReportIssue();
+    } else {
+      // TODO: Implement proper issue reporting (e.g., open GitHub issues URL)
+      Alert.alert('Report Issue', 'Issue reporting will be available in a future update.');
+    }
+  };
 
   return (
     <View
@@ -100,7 +111,7 @@ export function ErrorFallback({
           )}
 
           {/* Secondary Action */}
-          <Pressable className="py-2">
+          <Pressable className="py-2" onPress={handleReportIssue}>
             <Text size="sm" className="text-teal-500">
               Report Issue
             </Text>

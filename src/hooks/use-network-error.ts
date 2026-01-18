@@ -5,7 +5,7 @@
  */
 
 import NetInfo, { type NetInfoState } from '@react-native-community/netinfo';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { type AppError, createAppError, ErrorCodes, handleError } from '@/lib/error-handler';
 import { logger } from '@/lib/logger';
 
@@ -37,25 +37,32 @@ export function useNetworkError(): NetworkErrorState {
   const [error, setErrorState] = useState<AppError | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Use a ref to track previous connection state to avoid stale closure issues
+  const prevIsConnectedRef = useRef<boolean | null>(true);
+
   // Subscribe to network state changes
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state: NetInfoState) => {
+      // Log network state changes using ref (not state) to avoid stale closure
+      if (state.isConnected === false && prevIsConnectedRef.current !== false) {
+        logger.warn('Device went offline', { type: state.type });
+      } else if (state.isConnected === true && prevIsConnectedRef.current === false) {
+        logger.info('Device came back online', { type: state.type });
+      }
+
+      // Update the ref with current connection state
+      prevIsConnectedRef.current = state.isConnected;
+
       setNetwork({
         isConnected: state.isConnected,
         isInternetReachable: state.isInternetReachable,
         type: state.type,
       });
-
-      // Log network state changes
-      if (state.isConnected === false) {
-        logger.warn('Device went offline', { type: state.type });
-      } else if (state.isConnected === true && network.isConnected === false) {
-        logger.info('Device came back online', { type: state.type });
-      }
     });
 
     // Get initial state
     NetInfo.fetch().then((state) => {
+      prevIsConnectedRef.current = state.isConnected;
       setNetwork({
         isConnected: state.isConnected,
         isInternetReachable: state.isInternetReachable,
@@ -64,7 +71,7 @@ export function useNetworkError(): NetworkErrorState {
     });
 
     return unsubscribe;
-  }, [network.isConnected]);
+  }, []);
 
   const isOffline = network.isConnected === false || network.isInternetReachable === false;
 

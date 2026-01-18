@@ -6,8 +6,8 @@ import {
   isNetworkError,
   isRateLimitError,
   networkRetryable,
-  retry,
   RetryPresets,
+  retry,
   withRetry,
 } from '../retry';
 
@@ -76,11 +76,22 @@ describe('Retry Utility', () => {
       expect(fn).toHaveBeenCalledTimes(5);
     });
 
+    it('should normalize maxAttempts to at least 1', async () => {
+      const fn = jest.fn().mockRejectedValue(new Error('Fail'));
+
+      await expect(
+        retry(fn, {
+          maxAttempts: 0,
+          initialDelay: 10,
+        })
+      ).rejects.toThrow();
+
+      // Should have been normalized to 1 attempt
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
     it('should call onRetry callback', async () => {
-      const fn = jest
-        .fn()
-        .mockRejectedValueOnce(new Error('Fail'))
-        .mockResolvedValue('success');
+      const fn = jest.fn().mockRejectedValueOnce(new Error('Fail')).mockResolvedValue('success');
       const onRetry = jest.fn();
 
       await retry(fn, {

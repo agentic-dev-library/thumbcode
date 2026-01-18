@@ -10,7 +10,6 @@ import {
   isAppError,
   onError,
   parseError,
-  type AppError,
 } from '../error-handler';
 
 // Mock the logger to prevent console output during tests

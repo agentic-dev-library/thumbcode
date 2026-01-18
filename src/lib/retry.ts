@@ -71,10 +71,13 @@ function sleep(ms: number): Promise<void> {
  */
 export async function retry<T>(fn: () => Promise<T>, options: RetryOptions = {}): Promise<T> {
   const config = { ...DEFAULT_OPTIONS, ...options };
-  const { maxAttempts, initialDelay, maxDelay, backoffMultiplier, jitter, isRetryable } = config;
+  const { initialDelay, maxDelay, backoffMultiplier, jitter, isRetryable } = config;
   const operationName = options.operationName || 'operation';
 
-  let lastError: unknown;
+  // Validate and normalize maxAttempts to at least 1
+  const maxAttempts = Math.max(1, config.maxAttempts);
+
+  let lastError: unknown = new Error(`${operationName} failed with no attempts`);
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
