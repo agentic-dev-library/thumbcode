@@ -15,7 +15,7 @@ const ChatInput = () => {
   const handleSend = () => {
     if (text.trim()) {
       addMessage({
-        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
         text,
         sender: 'user',
         timestamp: new Date(),

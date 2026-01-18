@@ -167,11 +167,11 @@ export const useAgentStore = create<AgentState>()(
 
         resetAllAgents: () =>
           set((state) => {
-            state.agents.forEach((agent) => {
+            for (const agent of state.agents) {
               agent.status = 'idle';
               agent.currentTaskId = undefined;
               agent.errorMessage = undefined;
-            });
+            }
           }),
 
         clearTasks: () =>

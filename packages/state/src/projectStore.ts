@@ -100,7 +100,7 @@ interface ProjectState {
 export const useProjectStore = create<ProjectState>()(
   devtools(
     persist(
-      immer((set, _get) => ({
+      immer((set) => ({
         projects: [],
         activeProjectId: null,
         workspace: null,

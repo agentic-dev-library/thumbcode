@@ -161,7 +161,7 @@ describe('AgentStore', () => {
         result.current.addAgent(agent);
       });
 
-      let taskId: string;
+      let taskId = '';
       act(() => {
         taskId = result.current.addTask({
           agentId: 'test-agent-1',
@@ -172,7 +172,7 @@ describe('AgentStore', () => {
 
       expect(result.current.tasks).toHaveLength(1);
       expect(result.current.tasks[0].description).toBe('Implement feature X');
-      expect(result.current.agents[0].currentTaskId).toBe(taskId!);
+      expect(result.current.agents[0].currentTaskId).toBe(taskId);
     });
 
     it('should complete a task and reset agent status', () => {
@@ -190,7 +190,7 @@ describe('AgentStore', () => {
         result.current.addAgent(agent);
       });
 
-      let taskId: string;
+      let taskId = '';
       act(() => {
         taskId = result.current.addTask({
           agentId: 'test-agent-1',
@@ -200,7 +200,7 @@ describe('AgentStore', () => {
       });
 
       act(() => {
-        result.current.completeTask(taskId!, 'Feature implemented successfully');
+        result.current.completeTask(taskId, 'Feature implemented successfully');
       });
 
       expect(result.current.tasks[0].status).toBe('completed');

@@ -4,5 +4,5 @@
 packages:
   # Main app remains at root
   - '.'
-  # Development tooling package
+  # All packages in the packages directory
   - 'packages/*'

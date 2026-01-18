@@ -176,9 +176,9 @@ export const useCredentialStore = create<CredentialState>()(
 
         invalidateAll: () =>
           set((state) => {
-            state.credentials.forEach((credential) => {
+            for (const credential of state.credentials) {
               credential.status = 'unknown';
-            });
+            }
           }),
       })),
       {
