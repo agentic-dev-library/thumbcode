@@ -25,6 +25,8 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable a GitHub check run that is updated as Claude reviews files, so maintainers can see progress
+          # without adding extra intermediate PR comments. See docs: https://github.com/anthropics/claude-code-action
           track_progress: true
           prompt: |
             Review this pull request with focus on:
