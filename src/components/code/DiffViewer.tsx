@@ -126,7 +126,15 @@ export function DiffViewer({
   };
 
   return (
-    <View className="bg-charcoal overflow-hidden" style={{ borderRadius: '12px 10px 14px 8px' }}>
+    <View 
+      className="bg-charcoal overflow-hidden" 
+      style={{ 
+        borderTopLeftRadius: 12, 
+        borderTopRightRadius: 10, 
+        borderBottomRightRadius: 14, 
+        borderBottomLeftRadius: 8 
+      }}
+    >
       {/* Header */}
       <Pressable
         onPress={() => setCollapsed(!collapsed)}
