@@ -141,7 +141,12 @@ export function ConfirmDialog({
           <Pressable
             onPress={onClose}
             className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
-            style={{ borderRadius: '8px 10px 8px 12px' }}
+            style={{
+              borderTopLeftRadius: 8,
+              borderTopRightRadius: 10,
+              borderBottomRightRadius: 8,
+              borderBottomLeftRadius: 12,
+            }}
           >
             <Text className="font-body text-white">{cancelText}</Text>
           </Pressable>
@@ -151,7 +156,12 @@ export function ConfirmDialog({
               onClose();
             }}
             className={`px-4 py-2 ${confirmColor} active:opacity-80`}
-            style={{ borderRadius: '8px 10px 8px 12px' }}
+            style={{
+              borderTopLeftRadius: 8,
+              borderTopRightRadius: 10,
+              borderBottomRightRadius: 8,
+              borderBottomLeftRadius: 12,
+            }}
           >
             <Text className="font-body text-white font-semibold">{confirmText}</Text>
           </Pressable>

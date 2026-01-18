@@ -135,7 +135,10 @@ export function Toast({
       <View
         className={`flex-row items-start p-4 ${styles.bg}`}
         style={{
-          borderRadius: '14px 12px 16px 10px',
+          borderTopLeftRadius: 14,
+          borderTopRightRadius: 12,
+          borderBottomRightRadius: 16,
+          borderBottomLeftRadius: 10,
           borderLeftWidth: 4,
           borderLeftColor: styles.border,
         }}

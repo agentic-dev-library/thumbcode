@@ -60,7 +60,12 @@ export function Select({
         className={`flex-row items-center justify-between bg-neutral-800 px-4 py-3 border ${
           hasError ? 'border-coral-500' : 'border-neutral-600'
         } ${disabled ? 'opacity-50' : ''}`}
-        style={{ borderRadius: 14 }}
+        style={{
+          borderTopLeftRadius: 12,
+          borderTopRightRadius: 14,
+          borderBottomRightRadius: 12,
+          borderBottomLeftRadius: 16,
+        }}
         accessibilityRole="combobox"
         accessibilityLabel={label || placeholder}
         accessibilityState={{ expanded: isOpen, disabled }}
@@ -87,7 +92,12 @@ export function Select({
           <Pressable onPress={(e) => e.stopPropagation()}>
             <View
               className="bg-surface m-4 max-h-80 overflow-hidden"
-              style={{ borderRadius: '20px 16px 20px 18px' }}
+              style={{
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 16,
+                borderBottomRightRadius: 20,
+                borderBottomLeftRadius: 18,
+              }}
             >
               <View className="p-4 border-b border-neutral-700">
                 <Text className="font-display text-lg text-white text-center">

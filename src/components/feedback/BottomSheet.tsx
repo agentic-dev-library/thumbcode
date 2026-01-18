@@ -215,7 +215,12 @@ export function ActionSheet({
         <Pressable
           onPress={onClose}
           className="mt-2 py-4 bg-neutral-800 active:bg-neutral-700"
-          style={{ borderRadius: '12px 14px 12px 16px' }}
+          style={{
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 14,
+            borderBottomRightRadius: 12,
+            borderBottomLeftRadius: 16,
+          }}
         >
           <Text className="font-body text-center text-neutral-300 font-semibold">{cancelText}</Text>
         </Pressable>

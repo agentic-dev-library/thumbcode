@@ -70,7 +70,12 @@ export function EmptyState({
             <Pressable
               onPress={secondaryAction.onPress}
               className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
-              style={{ borderRadius: 10 }}
+              style={{
+                borderTopLeftRadius: 8,
+                borderTopRightRadius: 10,
+                borderBottomRightRadius: 8,
+                borderBottomLeftRadius: 12,
+              }}
               accessibilityRole="button"
               accessibilityLabel={secondaryAction.label}
             >
@@ -81,7 +86,12 @@ export function EmptyState({
             <Pressable
               onPress={action.onPress}
               className="px-4 py-2 bg-coral-500 active:bg-coral-600"
-              style={{ borderRadius: 10 }}
+              style={{
+                borderTopLeftRadius: 8,
+                borderTopRightRadius: 10,
+                borderBottomRightRadius: 8,
+                borderBottomLeftRadius: 12,
+              }}
               accessibilityRole="button"
               accessibilityLabel={action.label}
             >

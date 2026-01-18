@@ -205,7 +205,12 @@ export function StepsProgress({ totalSteps, currentStep, labels }: StepsProgress
                 className={`w-8 h-8 items-center justify-center ${
                   isCompleted ? 'bg-teal-600' : isCurrent ? 'bg-coral-500' : 'bg-neutral-700'
                 }`}
-                style={{ borderRadius: '8px 10px 8px 12px' }}
+                style={{
+                  borderTopLeftRadius: 8,
+                  borderTopRightRadius: 10,
+                  borderBottomRightRadius: 8,
+                  borderBottomLeftRadius: 12,
+                }}
               >
                 <Text className="font-body text-sm text-white font-semibold">
                   {isCompleted ? '✓' : stepNum}

@@ -64,12 +64,19 @@ function parseDiff(oldContent: string, newContent: string): DiffLine[] {
       oldIndex++;
       newIndex++;
     } else {
+      // Lines differ - emit both remove and add
       result.push({
         type: 'remove',
         content: oldLines[oldIndex],
         oldLineNumber: oldIndex + 1,
       });
+      result.push({
+        type: 'add',
+        content: newLines[newIndex],
+        newLineNumber: newIndex + 1,
+      });
       oldIndex++;
+      newIndex++;
     }
   }
 
@@ -126,13 +133,13 @@ export function DiffViewer({
   };
 
   return (
-    <View 
-      className="bg-charcoal overflow-hidden" 
-      style={{ 
-        borderTopLeftRadius: 12, 
-        borderTopRightRadius: 10, 
-        borderBottomRightRadius: 14, 
-        borderBottomLeftRadius: 8 
+    <View
+      className="bg-charcoal overflow-hidden"
+      style={{
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 10,
+        borderBottomRightRadius: 14,
+        borderBottomLeftRadius: 8,
       }}
     >
       {/* Header */}

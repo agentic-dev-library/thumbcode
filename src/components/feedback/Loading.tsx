@@ -133,7 +133,12 @@ export function LoadingOverlay({ visible, message }: LoadingOverlayProps) {
     <View className="absolute inset-0 bg-charcoal/80 items-center justify-center z-50">
       <View
         className="bg-surface-elevated p-6 items-center"
-        style={{ borderRadius: '16px 14px 18px 12px' }}
+        style={{
+          borderTopLeftRadius: 16,
+          borderTopRightRadius: 14,
+          borderBottomRightRadius: 18,
+          borderBottomLeftRadius: 12,
+        }}
       >
         <Spinner size="lg" />
         {message && <Text className="font-body text-white mt-4 text-center">{message}</Text>}
