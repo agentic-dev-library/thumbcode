@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
+    "@thumbcode/state": "workspace:*",
     "@thumbcode/types": "workspace:*",
     "openai": "^4.73.0",
     "react": "18.3.1",
