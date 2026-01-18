@@ -254,7 +254,7 @@ User Prompt → Chat Store → Agent Store → AI Service (Anthropic)
 ## Security Architecture
 
 ### Credential Storage
-- **API Keys**: `expo-secure-store` with biometric unlock
+- **API Keys**: `expo-secure-store` with optional biometric/OS-level authentication (platform-dependent; requires explicit config)
 - **OAuth Tokens**: `expo-secure-store` with encryption at rest
 - **Temporary Data**: In-memory only, never persisted
 
