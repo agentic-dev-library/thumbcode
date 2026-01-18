@@ -1,26 +1,36 @@
-// packages/agent-intelligence/src/components/chat/CodeBlock.tsx
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
+import { styled } from 'nativewind';
 
-const CodeBlock = ({ code }: { code: string }) => {
+const StyledView = styled(View);
+const StyledText = styled(Text);
+const StyledScrollView = styled(ScrollView);
+
+interface CodeBlockProps {
+  code: string;
+  language?: string;
+}
+
+const CodeBlock = ({ code, language }: CodeBlockProps) => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.code}>{code}</Text>
-    </View>
+    <StyledView
+      className="bg-charcoal my-2 p-3 shadow-organic-card"
+      style={{
+        borderRadius: '0.5rem 0.75rem 0.625rem 0.5rem',
+      }}
+    >
+      {language && (
+        <StyledText className="text-neutral-400 font-mono text-xs mb-2">
+          {language}
+        </StyledText>
+      )}
+      <StyledScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <StyledText className="text-neutral-50 font-mono text-sm">
+          {code}
+        </StyledText>
+      </StyledScrollView>
+    </StyledView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#151820',
-    borderRadius: 8,
-    padding: 12,
-    marginVertical: 8,
-  },
-  code: {
-    color: '#FFFFFF',
-    fontFamily: 'monospace',
-  },
-});
 
 export default CodeBlock;

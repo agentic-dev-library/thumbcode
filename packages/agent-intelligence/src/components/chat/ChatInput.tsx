@@ -1,7 +1,12 @@
-// packages/agent-intelligence/src/components/chat/ChatInput.tsx
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text } from 'react-native';
+import { styled } from 'nativewind';
 import { useChatStore } from '../../stores/chatStore';
+
+const StyledView = styled(View);
+const StyledTextInput = styled(TextInput);
+const StyledTouchableOpacity = styled(TouchableOpacity);
+const StyledText = styled(Text);
 
 const ChatInput = () => {
   const [text, setText] = useState('');
@@ -20,33 +25,28 @@ const ChatInput = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
+    <StyledView className="flex-row p-2 border-t border-neutral-200 bg-surface">
+      <StyledTextInput
+        className="flex-1 border border-neutral-300 bg-neutral-800 text-white font-body px-3 mr-2"
+        style={{
+          borderRadius: '0.5rem 0.625rem 0.5rem 0.75rem',
+        }}
         value={text}
         onChangeText={setText}
         placeholder="Type a message..."
+        placeholderTextColor="#94A3B8"
       />
-      <Button title="Send" onPress={handleSend} />
-    </View>
+      <StyledTouchableOpacity
+        className="bg-coral-500 px-4 justify-center active:bg-coral-700"
+        style={{
+          borderRadius: '0.5rem 0.75rem 0.625rem 0.875rem',
+        }}
+        onPress={handleSend}
+      >
+        <StyledText className="text-white font-body font-semibold">Send</StyledText>
+      </StyledTouchableOpacity>
+    </StyledView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    padding: 8,
-    borderTopWidth: 1,
-    borderColor: '#CCC',
-  },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#CCC',
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    marginRight: 8,
-  },
-});
 
 export default ChatInput;

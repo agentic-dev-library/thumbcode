@@ -1,6 +1,9 @@
-// packages/agent-intelligence/src/components/chat/ActionButton.tsx
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text } from 'react-native';
+import { styled } from 'nativewind';
+
+const StyledTouchableOpacity = styled(TouchableOpacity);
+const StyledText = styled(Text);
 
 interface ActionButtonProps {
   title: string;
@@ -9,24 +12,18 @@ interface ActionButtonProps {
 
 const ActionButton = ({ title, onPress }: ActionButtonProps) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.text}>{title}</Text>
-    </TouchableOpacity>
+    <StyledTouchableOpacity
+      className="bg-gold-400 py-2 px-3 mx-1 active:bg-gold-600"
+      style={{
+        borderRadius: '0.375rem 0.5rem 0.625rem 0.25rem',
+      }}
+      onPress={onPress}
+    >
+      <StyledText className="text-charcoal font-body font-bold text-sm">
+        {title}
+      </StyledText>
+    </StyledTouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    backgroundColor: '#F5D563',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    marginHorizontal: 4,
-  },
-  text: {
-    color: '#151820',
-    fontWeight: 'bold',
-  },
-});
 
 export default ActionButton;

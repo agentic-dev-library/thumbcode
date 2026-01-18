@@ -1,45 +1,33 @@
-// packages/agent-intelligence/src/components/chat/ChatBubble.tsx
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
+import { styled } from 'nativewind';
 import { Message } from '../../stores/chatStore';
 
-const ChatBubble = ({ message }: { message: Message }) => {
+const StyledView = styled(View);
+const StyledText = styled(Text);
 
-const ChatBubble = ({ message }: { message: Message }) => {
+interface ChatBubbleProps {
+  message: Message;
+}
+
+const ChatBubble = ({ message }: ChatBubbleProps) => {
   const isUser = message.sender === 'user';
+
   return (
-    <View
-      style={[
-        styles.container,
-        isUser ? styles.userBubble : styles.agentBubble,
-      ]}
+    <StyledView
+      className={`
+        p-3 my-1 max-w-[80%]
+        ${isUser ? 'bg-teal-600 self-end' : 'bg-coral-500 self-start'}
+      `}
+      style={{
+        borderRadius: isUser
+          ? '16px 4px 16px 16px'
+          : '4px 16px 16px 16px',
+      }}
     >
-      <Text style={styles.text}>{message.text}</Text>
-    </View>
+      <StyledText className="text-white font-body">{message.text}</StyledText>
+    </StyledView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: 12,
-    padding: 12,
-    marginVertical: 4,
-    maxWidth: '80%',
-  },
-  userBubble: {
-    backgroundColor: '#0D9488',
-    alignSelf: 'flex-end',
-  },
-  agentBubble: {
-    backgroundColor: '#FF7059',
-    alignSelf: 'flex-start',
-  },
-  text: {
-    color: '#FFFFFF',
-  },
-});
 
 export default ChatBubble;
