@@ -4,6 +4,7 @@
  * Collects AI provider API keys (Anthropic/OpenAI).
  */
 
+import { CredentialService } from '@thumbcode/core/src/credentials/CredentialService';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
@@ -36,21 +37,13 @@ export default function ApiKeysScreen() {
   });
 
   const validateAnthropicKey = async (key: string) => {
-    if (!key.startsWith('sk-ant-')) {
-      return { isValid: false, error: 'Key should start with sk-ant-' };
-    }
-    // TODO: Actual API validation
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    return { isValid: true };
+    const result = await CredentialService.validateCredential('anthropic', key);
+    return { isValid: result.isValid, error: result.message };
   };
 
   const validateOpenAIKey = async (key: string) => {
-    if (!key.startsWith('sk-')) {
-      return { isValid: false, error: 'Key should start with sk-' };
-    }
-    // TODO: Actual API validation
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    return { isValid: true };
+    const result = await CredentialService.validateCredential('openai', key);
+    return { isValid: result.isValid, error: result.message };
   };
 
   const handleAnthropicChange = async (value: string) => {
@@ -89,8 +82,13 @@ export default function ApiKeysScreen() {
     router.push('/(onboarding)/create-project');
   };
 
-  const handleContinue = () => {
-    // TODO: Save keys to SecureStore
+  const handleContinue = async () => {
+    if (anthropicKey.isValid) {
+      await CredentialService.store('anthropic', anthropicKey.key);
+    }
+    if (openaiKey.isValid) {
+      await CredentialService.store('openai', openaiKey.key);
+    }
     router.push('/(onboarding)/create-project');
   };
 
