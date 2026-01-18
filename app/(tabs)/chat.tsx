@@ -10,12 +10,46 @@ const ChatScreen = () => {
 
   return (
     <View style={styles.container}>
+import React, { useRef, useEffect } from 'react';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { useChatStore } from '@/store/chatStore';
+import { ChatBubble } from '@/components/ChatBubble';
+import { ChatInput } from '@/components/ChatInput';
+
+const ChatScreen = () => {
+  const messages = useChatStore((state) => state.messages);
+  const flatListRef = useRef<FlatList>(null);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      flatListRef.current?.scrollToEnd({ animated: true });
+    }
+  }, [messages]);
+
+  return (
+    <View style={styles.container}>
       <FlatList
+        ref={flatListRef}
         data={messages}
         renderItem={({ item }) => <ChatBubble message={item} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
       />
+      <ChatInput />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  list: {
+    paddingBottom: 16,
+  },
+});
+
+export default ChatScreen;
       <ChatInput />
     </View>
   );
