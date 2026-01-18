@@ -10,7 +10,7 @@
     "./credentials": "./src/credentials/index.ts"
   },
   "dependencies": {
-    "diff": "^7.0.0",
+    "diff": "^8.0.3",
     "expo-file-system": "~18.0.0",
     "expo-local-authentication": "~15.0.0",
     "expo-secure-store": "~14.0.0",
