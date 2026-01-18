@@ -1,7 +1,7 @@
 // packages/agent-intelligence/src/stores/chatStore.ts
 import { create } from 'zustand';
 
-interface Message {
+export interface Message {
   id: string;
   text: string;
   sender: 'user' | 'agent';
