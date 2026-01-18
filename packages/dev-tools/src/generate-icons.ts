@@ -148,8 +148,15 @@ try {
       process.exit(1);
     });
   }
-} catch {
-  // Ignore errors when detecting direct script execution in non-Node environments
+} catch (error) {
+  // Log a debug message instead of silently suppressing errors,
+  // while still tolerating non-Node environments.
+  if (typeof console !== 'undefined' && typeof console.debug === 'function') {
+    console.debug(
+      'Skipping direct execution of generate-icons script due to environment error:',
+      error
+    );
+  }
 }
 
 export { generateAll, generateIcon, ICON_SPECS };
