@@ -17,7 +17,7 @@
     "generate:all": "pnpm run generate:tokens && pnpm run generate:icons"
   },
   "dependencies": {
-    "sharp": "^0.34.0"
+    "sharp": "~0.34.0"
   },
   "devDependencies": {
     "tsx": "^4.19.2",
