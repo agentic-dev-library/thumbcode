@@ -17,6 +17,10 @@
 **Code with your thumbs.**
 Professional software development, reimagined for mobile.
 
+<!-- Build & Quality Badges -->
+[![CI](https://github.com/agentic-dev-library/thumbcode/actions/workflows/ci.yml/badge.svg)](https://github.com/agentic-dev-library/thumbcode/actions/workflows/ci.yml)
+[![Coverage Status](https://coveralls.io/repos/github/agentic-dev-library/thumbcode/badge.svg?branch=main)](https://coveralls.io/github/agentic-dev-library/thumbcode?branch=main)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=agentic-dev-library_thumbcode&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=agentic-dev-library_thumbcode)
 [![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Deployed-0D9488?style=for-the-badge&logo=github&logoColor=white)](https://agentic-dev-library.github.io/thumbcode)
 
 <!-- Brand Colors -->

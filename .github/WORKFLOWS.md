@@ -14,6 +14,40 @@ All actions are pinned to exact commit SHAs for security and reproducibility.
 
 ---
 
+## Reusable Components
+
+### Composite Action: `setup-thumbcode`
+
+**Location:** `.github/actions/setup-thumbcode/action.yml`
+
+**Purpose:** DRY (Don't Repeat Yourself) setup for all workflows
+
+**What it does:**
+1. Setup Node.js with pnpm cache
+2. Install pnpm
+3. Install dependencies with frozen lockfile
+4. Optionally generate design tokens
+5. Optionally generate icons
+
+**Usage in workflows:**
+```yaml
+- name: Setup ThumbCode environment
+  uses: ./.github/actions/setup-thumbcode
+  with:
+    node-version: '20'      # optional, defaults to 20
+    pnpm-version: '10'      # optional, defaults to 10
+    generate-tokens: 'true' # optional, defaults to true
+    generate-icons: 'false' # optional, defaults to false
+```
+
+**Benefits:**
+- Eliminates 20+ lines of duplicate setup code per workflow
+- Ensures consistent setup across all workflows
+- Single source of truth for environment configuration
+- Easier to update Node/pnpm versions
+
+---
+
 ## Workflows
 
 ### 1. CI (`ci.yml`)
@@ -22,16 +56,23 @@ All actions are pinned to exact commit SHAs for security and reproducibility.
 
 **Jobs:**
 - **Lint & Type Check** - Biome linting + TypeScript validation
-- **Test** - Jest tests with coverage upload to Codecov
+- **Test** - Jest tests with coverage upload to Codecov, Coveralls, and SonarCloud
 - **Build** - Expo web build with artifact upload
+- **Coveralls Finish** - Finalizes parallel Coveralls build
+
+**Coverage & Quality:**
+- ✅ Codecov - Test coverage tracking (legacy)
+- ✅ Coveralls - Modern test coverage with badges
+- ✅ SonarCloud - Code quality, security vulnerabilities, code smells, duplication
 
 **Duration:** ~10-15 minutes
 
 **Pinned Actions:**
 - `actions/checkout@de0fac2` (v6.0.2)
-- `actions/setup-node@6044e13` (v6.2.0)
-- `pnpm/action-setup@41ff726` (v4.2.0)
+- Uses composite action: `.github/actions/setup-thumbcode` (DRY setup)
 - `codecov/codecov-action@5a10915` (v5.5.1)
+- `coverallsapp/github-action@643bc37` (v2.3.0)
+- `SonarSource/sonarcloud-github-action@e44258b` (v2.3.0)
 - `actions/upload-artifact@ea165f8` (v4.6.2)
 
 ---
@@ -258,7 +299,9 @@ Add these to your GitHub repository secrets:
 |--------|-------------|--------------|
 | `ANTHROPIC_API_KEY` | Claude API key | PR review, CI auto-fix, issue triage, multi-agent workflow |
 | `GOOGLE_JULES_API_KEY` | Jules API key from jules.google.com | Multi-agent workflow |
-| `CODECOV_TOKEN` | Codecov upload token | CI (optional) |
+| `COVERALLS_REPO_TOKEN` | Coveralls coverage tracking token | CI test coverage reporting |
+| `SONAR_TOKEN` | SonarCloud code quality token | CI code quality analysis |
+| `CODECOV_TOKEN` | Codecov upload token | CI (optional, legacy) |
 | `GITHUB_TOKEN` | Auto-provided by GitHub Actions | All workflows (automatic) |
 
 ---
@@ -281,7 +324,49 @@ Add these to your GitHub repository secrets:
    - Name: `GOOGLE_JULES_API_KEY`
    - Value: Your Jules API key
 
-### 3. Codecov (Optional)
+### 3. Coveralls Coverage Tracking
+
+1. Sign up at [coveralls.io](https://coveralls.io) with your GitHub account
+2. Add your repository: **+ ADD REPOS** → Find `agentic-dev-library/thumbcode` → Toggle ON
+3. Click on the repository name to view details
+4. Copy the **REPO TOKEN** from the repo settings
+5. Add to GitHub: Settings → Secrets → Actions → New secret
+   - Name: `COVERALLS_REPO_TOKEN`
+   - Value: Your Coveralls repo token
+
+**What you get:**
+- Beautiful coverage badges with percentage
+- Historical coverage trends
+- PR coverage diffs
+- Branch coverage comparison
+
+### 4. SonarCloud Code Quality
+
+1. Sign up at [sonarcloud.io](https://sonarcloud.io) with your GitHub account
+2. Import your organization: **Analyze new project** → Import from GitHub
+3. Select `agentic-dev-library/thumbcode`
+4. Configure analysis:
+   - Choose **GitHub Actions** as analysis method
+   - Project key will be auto-generated: `agentic-dev-library_thumbcode`
+5. Copy the **SONAR_TOKEN** from the setup instructions
+6. Add to GitHub: Settings → Secrets → Actions → New secret
+   - Name: `SONAR_TOKEN`
+   - Value: Your SonarCloud token
+
+**What you get:**
+- Code quality score (A-E rating)
+- Security vulnerability detection
+- Code smell identification
+- Technical debt estimation
+- Code duplication analysis
+- PR quality gates
+
+**Configuration:**
+- Project settings are in `sonar-project.properties`
+- Customize quality gates in SonarCloud dashboard
+- Default: Code coverage, duplications, maintainability, reliability, security
+
+### 5. Codecov (Optional, Legacy)
 
 1. Sign up at [codecov.io](https://codecov.io)
 2. Add your repository
