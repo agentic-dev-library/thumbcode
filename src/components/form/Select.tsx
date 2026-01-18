@@ -60,7 +60,11 @@ export function Select({
         className={`flex-row items-center justify-between bg-neutral-800 px-4 py-3 border ${
           hasError ? 'border-coral-500' : 'border-neutral-600'
         } ${disabled ? 'opacity-50' : ''}`}
-        style={{ borderRadius: '12px 14px 12px 16px' }}
+        style={{ borderRadius: 14 }}
+        accessibilityRole="combobox"
+        accessibilityLabel={label || placeholder}
+        accessibilityState={{ expanded: isOpen, disabled }}
+        accessibilityHint="Double tap to open options"
       >
         <Text
           className={`font-body flex-1 ${selectedOption ? 'text-white' : 'text-neutral-500'}`}
