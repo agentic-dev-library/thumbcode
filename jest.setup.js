@@ -27,6 +27,11 @@ jest.mock('expo-local-authentication', () => ({
   },
 }));
 
+// Mock expo-device
+jest.mock('expo-device', () => ({
+  isRootedExperimentalAsync: jest.fn(() => Promise.resolve(false)),
+}));
+
 // Mock expo-router
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),

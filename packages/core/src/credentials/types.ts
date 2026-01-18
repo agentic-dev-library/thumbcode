@@ -13,7 +13,8 @@ export type CredentialType =
   | 'openai'
   | 'gitlab'
   | 'bitbucket'
-  | 'mcp_server';
+  | 'mcp_server'
+  | 'mcp_signing_secret';
 
 /**
  * Credential stored in SecureStore
