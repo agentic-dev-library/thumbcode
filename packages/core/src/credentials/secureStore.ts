@@ -16,6 +16,7 @@ export const getCredential = async (key: string) => {
 
 export const deleteCredential = async (key: string) => {
   await SecureStore.deleteItemAsync(key, {
+    requireAuthentication: true,
     keychainService: 'thumbcode',
   });
 };
