@@ -19,7 +19,10 @@ if (!fs.existsSync(OUTPUT_DIR)) {
 }
 
 /**
- * Generate CSS Custom Properties
+ * Generate a CSS file of design token custom properties.
+ *
+ * Produces CSS custom properties for colors (including shades), spacing, typography font sizes,
+ * border radii, and shadows from the loaded tokens and writes the result to OUTPUT_DIR/variables.css.
  */
 function generateCSSVariables() {
   let css = '/**\n * Design Tokens - CSS Custom Properties\n * Auto-generated from tokens.json\n * DO NOT EDIT MANUALLY\n */\n\n:root {\n';
@@ -60,7 +63,11 @@ function generateCSSVariables() {
 }
 
 /**
- * Generate Tailwind Colors Config
+ * Generate a Tailwind-compatible colors module from design tokens.
+ *
+ * Produces a JavaScript file at OUTPUT_DIR/tailwind-colors.js that exports a `colors` object constructed from `tokens.colors`.
+ * - If a color token is a string, the color name maps directly to that value.
+ * - If a color token has a `values` object, the color name maps to an object of shades (shade -> hex).
  */
 function generateTailwindColors() {
   const colors = {};

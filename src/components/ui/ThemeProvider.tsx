@@ -18,6 +18,13 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
+/**
+ * Provides theme tokens, flattened color map, spacing, and typography to descendant components via ThemeContext.
+ *
+ * The provider loads design tokens and exposes `tokens`, `colors` (flat map with either hex strings or shade maps), `spacing`, and `typography` to all children.
+ *
+ * @returns A React element that supplies the theme context to its children.
+ */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo(() => {
     // Process colors into flat structure
@@ -48,6 +55,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Accesses the current theme context value.
+ *
+ * @returns The ThemeContextValue containing `tokens`, `colors`, `spacing`, and `typography`.
+ * @throws Error if called outside of a ThemeProvider.
+ */
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (!context) {
@@ -57,7 +70,11 @@ export function useTheme() {
 }
 
 /**
- * Hook to get a specific color
+ * Retrieve a color value from the current theme by name and optional shade.
+ *
+ * @param colorName - The color name or color group key defined in the theme's colors.
+ * @param shade - The shade key within a color group (defaults to `'500'`).
+ * @returns The resolved color string (e.g., hex value). Returns `'#000000'` if the color or shade is not found.
  */
 export function useColor(colorName: string, shade: string = '500'): string {
   const { colors } = useTheme();
@@ -70,7 +87,10 @@ export function useColor(colorName: string, shade: string = '500'): string {
 }
 
 /**
- * Hook to get spacing value
+ * Retrieve a spacing token value by key from the theme.
+ *
+ * @param key - The spacing token key (for example, `"sm"`, `"md"`, `"lg"`)
+ * @returns The spacing value for the given key, or `'0px'` if the key is not present
  */
 export function useSpacing(key: string): string {
   const { spacing } = useTheme();

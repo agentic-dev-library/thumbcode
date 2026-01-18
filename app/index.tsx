@@ -1,6 +1,14 @@
 import { View, ScrollView } from 'react-native';
 import { Text, Button, Card, Input } from '../src/components/ui';
 
+/**
+ * Landing screen component that renders the ThumbCode promotional and demo interface.
+ *
+ * Renders a scrollable page containing a hero section, key feature cards, a demo "Get Started"
+ * card with inputs and action buttons, and a dynamically generated tech stack badge list.
+ *
+ * @returns The landing page JSX element containing hero, features, demo form, and tech stack.
+ */
 export default function Index() {
   return (
     <ScrollView className="flex-1 bg-neutral-50">

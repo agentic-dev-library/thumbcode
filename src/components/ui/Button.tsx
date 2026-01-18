@@ -8,6 +8,19 @@ interface ButtonProps extends PressableProps {
   children: React.ReactNode;
 }
 
+/**
+ * Render a styled Pressable button supporting variants, sizes, and a loading state.
+ *
+ * Renders an interactive Pressable that is disabled while `disabled` or `loading` is true.
+ *
+ * @param variant - Visual style of the button: 'primary', 'secondary', or 'outline' (default 'primary')
+ * @param size - Size of the button: 'sm', 'md', or 'lg' (default 'md')
+ * @param loading - When true, shows a spinner instead of the label and disables interaction
+ * @param disabled - When true, disables interaction and reduces opacity
+ * @param className - Additional class names appended to the computed button classes
+ * @param children - Button label or content rendered when not loading
+ * @returns A Pressable element that shows an ActivityIndicator when loading or the provided children as the label otherwise
+ */
 export function Button({ 
   variant = 'primary',
   size = 'md',
