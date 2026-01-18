@@ -87,11 +87,11 @@ jobs:
 
             Please:
             1. Analyze the failure logs to identify root causes
-            1. Analyze the failure logs to identify root causes
-            2. Fix the issues in the code
-            3. Run the failing commands locally to verify fixes
-            4. Commit the changes with a descriptive message
-            5. Push to the branch: ${{ steps.branch.outputs.branch_name }}
+            2. Analyze the failure logs to identify root causes
+            3. Fix the issues in the code
+            4. Run the failing commands locally to verify fixes
+            5. Commit the changes with a descriptive message
+            6. Push to the branch: ${{ steps.branch.outputs.branch_name }}
 
             Focus on:
             - Lint errors (fix with Biome)
