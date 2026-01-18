@@ -163,7 +163,7 @@ async function generateAll(): Promise<void> {
 }
 
 // Run if called directly
-if (__filename === process.argv[1]) {
+if (fileURLToPath(import.meta.url) === process.argv[1]) {
   generateAll().catch((error) => {
     console.error('Token generation error:', error);
     process.exit(1);
