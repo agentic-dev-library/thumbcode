@@ -1,20 +1,9 @@
 // app/(tabs)/chat.tsx
-import React from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
-import ChatBubble from '@thumbcode/agent-intelligence/src/components/chat/ChatBubble';
-import ChatInput from '@thumbcode/agent-intelligence/src/components/chat/ChatInput';
-import { useChatStore } from '@thumbcode/agent-intelligence/src/stores/chatStore';
-
-const ChatScreen = () => {
-  const messages = useChatStore((state) => state.messages);
-
-  return (
-    <View style={styles.container}>
-import React, { useRef, useEffect } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
-import { useChatStore } from '@/store/chatStore';
+import { useEffect, useRef } from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { ChatBubble } from '@/components/ChatBubble';
 import { ChatInput } from '@/components/ChatInput';
+import { useChatStore } from '@/store/chatStore';
 
 const ChatScreen = () => {
   const messages = useChatStore((state) => state.messages);
@@ -46,22 +35,6 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: 16,
-  },
-});
-
-export default ChatScreen;
-      <ChatInput />
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  list: {
-    padding: 8,
   },
 });
 

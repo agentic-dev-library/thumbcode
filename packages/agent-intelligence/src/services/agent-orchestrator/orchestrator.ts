@@ -1,6 +1,6 @@
 // packages/agent-intelligence/src/services/agent-orchestrator/orchestrator.ts
 
-import { Agent, AgentLifecycle, AgentStatus } from './types';
+import { type Agent, type AgentLifecycle, AgentStatus } from './types';
 
 // Mock implementation of the Agent Orchestrator service
 export const AgentOrchestrator: AgentLifecycle = {

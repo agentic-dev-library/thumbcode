@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text } from 'react-native';
 import { styled } from 'nativewind';
+import { useState } from 'react';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useChatStore } from '../../stores/chatStore';
 
 const StyledView = styled(View);

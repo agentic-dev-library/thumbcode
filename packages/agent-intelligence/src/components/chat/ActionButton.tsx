@@ -1,6 +1,5 @@
-import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
 import { styled } from 'nativewind';
+import { Text, TouchableOpacity } from 'react-native';
 
 const StyledTouchableOpacity = styled(TouchableOpacity);
 const StyledText = styled(Text);
@@ -19,9 +18,7 @@ const ActionButton = ({ title, onPress }: ActionButtonProps) => {
       }}
       onPress={onPress}
     >
-      <StyledText className="text-charcoal font-body font-bold text-sm">
-        {title}
-      </StyledText>
+      <StyledText className="text-charcoal font-body font-bold text-sm">{title}</StyledText>
     </StyledTouchableOpacity>
   );
 };

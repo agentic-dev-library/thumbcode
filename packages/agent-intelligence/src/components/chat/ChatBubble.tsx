@@ -1,7 +1,6 @@
-import React from 'react';
-import { View, Text } from 'react-native';
 import { styled } from 'nativewind';
-import { Message } from '../../stores/chatStore';
+import { Text, View } from 'react-native';
+import type { Message } from '../../stores/chatStore';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -20,9 +19,7 @@ const ChatBubble = ({ message }: ChatBubbleProps) => {
         ${isUser ? 'bg-teal-600 self-end' : 'bg-coral-500 self-start'}
       `}
       style={{
-        borderRadius: isUser
-          ? '16px 4px 16px 16px'
-          : '4px 16px 16px 16px',
+        borderRadius: isUser ? '16px 4px 16px 16px' : '4px 16px 16px 16px',
       }}
     >
       <StyledText className="text-white font-body">{message.text}</StyledText>

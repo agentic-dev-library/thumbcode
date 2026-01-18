@@ -1,6 +1,5 @@
-import React from 'react';
-import { View, Text, ScrollView } from 'react-native';
 import { styled } from 'nativewind';
+import { ScrollView, Text, View } from 'react-native';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -20,14 +19,10 @@ const CodeBlock = ({ code, language }: CodeBlockProps) => {
       }}
     >
       {language && (
-        <StyledText className="text-neutral-400 font-mono text-xs mb-2">
-          {language}
-        </StyledText>
+        <StyledText className="text-neutral-400 font-mono text-xs mb-2">{language}</StyledText>
       )}
       <StyledScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <StyledText className="text-neutral-50 font-mono text-sm">
-          {code}
-        </StyledText>
+        <StyledText className="text-neutral-50 font-mono text-sm">{code}</StyledText>
       </StyledScrollView>
     </StyledView>
   );
