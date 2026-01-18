@@ -13,7 +13,6 @@ permissions:
   issues: write
   pull-requests: write
   id-token: write
-  workflows: write
   checks: write
   actions: read
   statuses: write

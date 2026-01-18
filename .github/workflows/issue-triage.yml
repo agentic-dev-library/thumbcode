@@ -5,12 +5,7 @@ on:
     types: [opened]
 
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
-  id-token: write
-permissions:
-  contents: write
+  contents: read
   issues: write
   pull-requests: write
   id-token: write

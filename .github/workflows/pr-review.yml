@@ -5,13 +5,10 @@ on:
     types: [opened, synchronize, ready_for_review, reopened]
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
   issues: write
   id-token: write
-  issues: write
-  id-token: write
-  checks: write
   checks: write
 
 jobs:

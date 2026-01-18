@@ -13,7 +13,6 @@ permissions:
   pull-requests: write
   issues: write
   id-token: write
-  workflows: write
   checks: write
 
 jobs:
@@ -98,17 +97,20 @@ jobs:
               pull_number: ${{ needs.detect-ai-agent.outputs.pr_number }}
             });
 
+            // SECURITY: Verify this is not a fork PR (enhanced check)
             const isSameRepo = pr.data.head.repo.full_name === `${context.repo.owner}/${context.repo.repo}`;
             if (!isSameRepo || pr.data.head.repo.fork) {
-              core.setFailed('Refusing to run auto-triage on forked PR code.');
+              core.setFailed('Security: Auto-triage does not run on PRs from forks');
               return;
             }
 
             core.setOutput('branch', pr.data.head.ref);
             core.setOutput('base', pr.data.base.ref);
             core.setOutput('title', pr.data.title);
+            core.setOutput('is_same_repo', isSameRepo);
 
       - name: Checkout PR branch
+        if: steps.pr.outputs.is_same_repo == 'true'
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ steps.pr.outputs.branch }}

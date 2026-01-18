@@ -101,7 +101,7 @@ jobs:
                - Type errors: Fix TypeScript types manually
                - Test failures: Fix logic OR update snapshots/tests
                - Build errors: Fix imports, add missing dependencies
-               - If workflow files need fixing, fix them too (you have workflows: write permission)
+               - **DO NOT modify workflow files** - These require human review for security
 
             4. **VERIFY FIXES**: Run the failing commands locally:
                ```bash
@@ -171,6 +171,7 @@ jobs:
             - **COMMIT & PUSH** - Always commit and push your changes
             - **CREATE PR** - Always create the PR
             - **AUTO-HEAL** - Fix everything automatically
-            - You have full permissions: contents:write, workflows:write, pull-requests:write
-            - You are authorized to modify ANY file including workflows
+            - **SECURITY** - Do NOT modify workflow files (.github/workflows/*) - human review required
+            - You have permissions: contents:write, pull-requests:write, actions:read
+            - You are authorized to modify code files, configs, tests, docs - NOT workflows
             - Bot users (claude-bot[bot]) are allowed to push

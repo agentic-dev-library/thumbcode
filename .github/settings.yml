@@ -69,13 +69,9 @@ branches:
   # Protect main branch
   - name: main
     protection:
-      required_pull_request_reviews:
-        required_approving_review_count: 0
-        dismiss_stale_reviews: false
-        require_code_owner_reviews: false
-        dismissal_restrictions:
-          users: []
-          teams: []
+      # CRITICAL: No required reviews to allow bot auto-merges
+      # Bots can push directly when CI passes
+      required_pull_request_reviews: null
 
       required_status_checks:
         strict: false
@@ -89,13 +85,11 @@ branches:
       allow_force_pushes: false
       allow_deletions: false
 
+      # No restrictions - allow all bots listed in collaborators
       restrictions:
         users: []
         teams: []
         apps: []
-
-      # If bots must bypass PR reviews, prefer a supported bypass list
-      # or use a dedicated bot-only branch pattern.
 
   # Claude auto-fix branches - minimal protection
   - name: "claude/auto-fix-ci-*"

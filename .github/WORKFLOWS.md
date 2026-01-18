@@ -168,7 +168,7 @@ All actions are pinned to exact commit SHAs for security and reproducibility.
 - Resolves TypeScript type issues
 - Fixes test failures
 - Resolves build errors
-- Can modify workflow files if needed (workflows: write permission)
+- **Does NOT modify workflow files** - Security: workflow changes require human review
 - Verifies all fixes by running commands locally
 - Creates detailed PR with all changes
 
@@ -180,10 +180,13 @@ All actions are pinned to exact commit SHAs for security and reproducibility.
 **Permissions:**
 - `contents: write` - Commit and push fixes
 - `pull-requests: write` - Create fix PRs
-- `workflows: write` - Modify workflow files if needed
 - `checks: write` - Update check status
 - `issues: write` - Comment on issues
 - `actions: read` - Read CI logs
+
+**Security Note:**
+- Workflow files (`.github/workflows/*`) are excluded from auto-fix for security
+- Any workflow changes require manual human review
 
 **Allowed Tools:**
 - `edit_file`, `write_file`, `read_file`, `list_directory`, `search_files`, `bash`
@@ -265,9 +268,12 @@ All actions are pinned to exact commit SHAs for security and reproducibility.
 **Permissions:**
 - `contents: write` - Commit fixes to PR branch
 - `pull-requests: write` - Comment on PRs, add labels
-- `workflows: write` - Modify workflows if needed
 - `checks: write` - Update check status
 - `issues: write` - Comment on issues
+
+**Security:**
+- Only processes PRs from the same repository (not forks)
+- Fork PRs are rejected to prevent token exposure
 
 **AI Agents Detected:**
 - `claude-bot[bot]`
@@ -365,7 +371,6 @@ For each of the top 3 highest priority issues:
 **Permissions:**
 - `contents: write` - Create branches, commit, push
 - `pull-requests: write` - Create PRs
-- `workflows: write` - Modify workflows if needed
 - `issues: write` - Label and comment on issues
 - `checks: write` - Update check status
 - `actions: read` - Read workflow runs
@@ -969,17 +974,19 @@ Auto-creates all required labels:
 
 ## Permissions Summary
 
-All workflows now have comprehensive permissions to enable full automation:
+All workflows use valid GitHub Actions permissions to enable automation:
 
 | Permission | Purpose |
 |------------|---------|
-| `contents: write` | Create branches, commit, push code |
+| `contents: write` / `read` | Create branches, commit, push code / Read repository |
 | `pull-requests: write` | Create PRs, comment, add labels |
 | `issues: write` | Label issues, add comments |
 | `checks: write` | Update check status |
 | `actions: read` | Read workflow runs and logs |
 | `statuses: write` | Update commit statuses |
 | `id-token: write` | OIDC authentication |
+
+**Note:** All permission keys conform to [GitHub Actions permissions reference](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions). Only valid permission scopes are used.
 
 **Bot Access:**
 - All workflows use `allow_any_user: true` to allow bot accounts
