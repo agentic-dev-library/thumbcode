@@ -61,7 +61,9 @@ export function Avatar({
   const { dimension, fontSize, statusSize } = avatarSizes[size];
   const initials = getInitials(name);
 
-  const accessibilityLabel = `${name}, ${status || 'no status'}`;
+  const accessibilityLabel = [name || 'Unknown', status || 'no status']
+    .filter(Boolean)
+    .join(', ');
 
   return (
     <View

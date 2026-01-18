@@ -105,12 +105,7 @@ export function BottomSheet({
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View className="flex-1 justify-end bg-black/50">
-        <Pressable
-          className="absolute inset-0"
-          onPress={onClose}
-          accessibilityLabel="Close"
-          accessibilityHint="Close the bottom sheet"
-        />
+        <Pressable className="absolute inset-0" onPress={onClose} accessible={false} />
 
         <Animated.View
           className="bg-surface"

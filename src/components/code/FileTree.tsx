@@ -87,15 +87,22 @@ function FileTreeNode({
         ? 'text-coral-400'
         : '';
 
-  const accessibilityLabel = `${node.name}, ${
-    isFolder ? 'folder' : 'file'
-  }, ${
-    node.added ? 'added' : node.modified ? 'modified' : node.deleted ? 'deleted' : ''
-  }`;
+  const status = node.added
+    ? 'added'
+    : node.modified
+      ? 'modified'
+      : node.deleted
+        ? 'deleted'
+        : '';
+  const accessibilityLabel = [node.name, isFolder ? 'folder' : 'file', status]
+    .filter(Boolean)
+    .join(', ');
   const accessibilityHint = isFolder
-    ? isExpanded
-      ? 'Collapse folder'
-      : 'Expand folder'
+    ? hasChildren
+      ? isExpanded
+        ? 'Collapse folder'
+        : 'Expand folder'
+      : 'Empty folder'
     : 'Open file';
 
   return (

@@ -15,7 +15,8 @@
     "generate:tokens": "tsx src/generate-tokens.ts",
     "generate:icons": "tsx src/generate-icons.ts",
     "generate:all": "pnpm run generate:tokens && pnpm run generate:icons",
-    "check:contrast": "tsx src/check-contrast.ts"
+    "check:contrast": "tsx src/check-contrast.ts",
+    "lint:a11y": "eslint ../../ --ext .ts,.tsx"
   },
   "dependencies": {
     "sharp": "~0.34.0"

@@ -147,8 +147,9 @@ export function DiffViewer({
         onPress={() => setCollapsed(!collapsed)}
         className="flex-row items-center justify-between px-3 py-2 bg-neutral-800 border-b border-neutral-700"
         accessibilityRole="button"
-        accessibilityLabel={`${filename}, ${additions} additions, ${deletions} deletions`}
+        accessibilityLabel={`${filename || 'file'}, ${additions} additions, ${deletions} deletions`}
         accessibilityHint={collapsed ? 'Expand the diff' : 'Collapse the diff'}
+        accessibilityState={{ expanded: !collapsed }}
       >
         <View className="flex-row items-center flex-1">
           <Text className="text-neutral-400 mr-2">{collapsed ? '▶' : '▼'}</Text>
