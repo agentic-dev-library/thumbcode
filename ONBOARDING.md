@@ -125,36 +125,6 @@ The onboarding flow guides new users through initial setup: GitHub authenticatio
 ### Screen: GitHub Auth (`github-auth.tsx`)
 
 ```
-┌─────────────────────────────────┐
-│  ←                              │
-│                                 │
-│     Connect your GitHub         │
-│                                 │
-│  ThumbCode needs access to      │
-│  your repositories to clone     │
-│  and push code.                 │
-│                                 │
-│  ┌───────────────────────────┐  │
-│  │                           │  │
-│  │      XXXX-XXXX            │  │
-│  │                           │  │
-│  │     [Copy Code]           │  │
-│  └───────────────────────────┘  │
-│                                 │
-│  1. Copy the code above         │
-│  2. Open GitHub in browser      │
-│  3. Paste when prompted         │
-│                                 │
-│  ┌───────────────────────────┐  │
-│  │    Open GitHub.com/device │  │
-│  └───────────────────────────┘  │
-│                                 │
-│  [====          ] Waiting...    │
-│                                 │
-│        [I'll do this later]     │
-│                                 │
-└─────────────────────────────────┘
-```
 
 **Components:**
 - `Header` - Back button + title
