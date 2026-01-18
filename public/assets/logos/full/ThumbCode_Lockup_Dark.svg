@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" width="400" height="120">
+  <title>ThumbCode Lockup - On Dark</title>
+  
+  <!-- Dark background -->
+  <rect width="400" height="120" fill="#151820" rx="12"/>
+  
+  <!-- Logo mark (scaled down) -->
+  <g transform="translate(15, 10) scale(0.5)">
+    <!-- Teal daube -->
+    <ellipse cx="65" cy="95" rx="35" ry="28" fill="#0D9488" opacity="0.7"
+      transform="rotate(12 65 95)"/>
+    <!-- Gold daube -->
+    <ellipse cx="140" cy="90" rx="28" ry="22" fill="#F5D563" opacity="0.6"
+      transform="rotate(-8 140 90)"/>
+    <!-- Coral daube -->
+    <ellipse cx="100" cy="100" rx="45" ry="32" fill="#FF7059" opacity="0.9"
+      transform="rotate(3 100 100)"/>
+    <!-- Brackets -->
+    <text x="68" y="115" 
+      font-family="ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace" 
+      font-size="56" font-weight="700" fill="white">{</text>
+    <text x="108" y="115" 
+      font-family="ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace" 
+      font-size="56" font-weight="700" fill="white">}</text>
+  </g>
+  
+  <!-- Wordmark -->
+  <text x="130" y="72" 
+    font-family="'Fraunces', Georgia, serif" 
+    font-size="42" 
+    font-weight="700" 
+    fill="white">ThumbCode</text>
+  
+  <!-- Tagline -->
+  <text x="132" y="95" 
+    font-family="'Cabin', -apple-system, sans-serif" 
+    font-size="14" 
+    fill="#94A3B8">Code with your thumbs</text>
+</svg>

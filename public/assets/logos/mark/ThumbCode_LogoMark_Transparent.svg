@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>ThumbCode Logo Mark - Transparent</title>
+  
+  <!-- Organic paint daubes -->
+  <!-- Teal daube (back left) -->
+  <ellipse cx="65" cy="95" rx="35" ry="28" fill="#0D9488" opacity="0.7"
+    transform="rotate(12 65 95)"/>
+  
+  <!-- Gold daube (back right) -->
+  <ellipse cx="140" cy="90" rx="28" ry="22" fill="#F5D563" opacity="0.6"
+    transform="rotate(-8 140 90)"/>
+  
+  <!-- Coral daube (front center) -->
+  <ellipse cx="100" cy="100" rx="45" ry="32" fill="#FF7059" opacity="0.9"
+    transform="rotate(3 100 100)"/>
+  
+  <!-- Code brackets - white for dark backgrounds -->
+  <text x="68" y="115" 
+    font-family="ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace" 
+    font-size="56" 
+    font-weight="700" 
+    fill="white">{</text>
+  <text x="108" y="115" 
+    font-family="ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace" 
+    font-size="56" 
+    font-weight="700" 
+    fill="white">}</text>
+</svg>

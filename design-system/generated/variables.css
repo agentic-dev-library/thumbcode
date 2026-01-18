@@ -1,0 +1,76 @@
+/**
+ * Design Tokens - CSS Custom Properties
+ * Auto-generated from tokens.json
+ * DO NOT EDIT MANUALLY
+ */
+
+:root {
+  --color-coral-400: #FF8A7A;
+  --color-coral-500: #FF7059;
+  --color-coral-600: #E85A4F;
+  --color-coral-700: #C74840;
+  --color-coral-800: #A33832;
+  --color-teal-400: #2DD4BF;
+  --color-teal-500: #14B8A6;
+  --color-teal-600: #0D9488;
+  --color-teal-700: #0F766E;
+  --color-teal-800: #115E59;
+  --color-gold-300: #FDE68A;
+  --color-gold-400: #F5D563;
+  --color-gold-500: #EAB308;
+  --color-gold-600: #D4A84B;
+  --color-gold-700: #A16207;
+  --color-neutral-50: #F8FAFC;
+  --color-neutral-100: #F1F5F9;
+  --color-neutral-200: #E2E8F0;
+  --color-neutral-300: #CBD5E1;
+  --color-neutral-400: #94A3B8;
+  --color-neutral-500: #64748B;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1E293B;
+  --color-neutral-900: #0F172A;
+
+  /* Spacing */
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-7: 28px;
+  --spacing-8: 32px;
+  --spacing-9: 36px;
+  --spacing-10: 40px;
+  --spacing-11: 44px;
+  --spacing-12: 48px;
+  --spacing-14: 56px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-0.5: 2px;
+  --spacing-1.5: 6px;
+  --spacing-2.5: 10px;
+  --spacing-3.5: 14px;
+
+  /* Typography */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  --font-size-6xl: 3.75rem;
+
+  /* Border Radius */
+  --radius-organic: 50px 45px 50px 48px / 26px 28px 26px 24px;
+  --radius-organic-card: 20px 18px 22px 16px / 16px 20px 18px 22px;
+
+  /* Shadows */
+  --shadow-organic: 0 2px 4px rgba(13, 148, 136, 0.08), 0 8px 24px rgba(21, 24, 32, 0.12), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-organic-coral: 0 4px 12px rgba(255, 112, 89, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
+}
