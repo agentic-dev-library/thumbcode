@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>ThumbCode Logo - On Light</title>
+  
+  <!-- Light background -->
+  <rect width="200" height="200" fill="#F8FAFC" rx="16"/>
+  <rect width="200" height="200" fill="none" stroke="#E2E8F0" stroke-width="1" rx="16"/>
+  
+  <!-- Organic paint daubes (darker variants for light mode) -->
+  <!-- Teal daube (back left) -->
+  <ellipse cx="65" cy="95" rx="35" ry="28" fill="#0F766E" opacity="0.7"
+    transform="rotate(12 65 95)"/>
+  
+  <!-- Gold daube (back right) -->
+  <ellipse cx="140" cy="90" rx="28" ry="22" fill="#D4A84B" opacity="0.6"
+    transform="rotate(-8 140 90)"/>
+  
+  <!-- Coral daube (front center) -->
+  <ellipse cx="100" cy="100" rx="45" ry="32" fill="#E85A4F" opacity="0.9"
+    transform="rotate(3 100 100)"/>
+  
+  <!-- Code brackets -->
+  <text x="68" y="115" 
+    font-family="ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace" 
+    font-size="56" 
+    font-weight="700" 
+    fill="#151820">{</text>
+  <text x="108" y="115" 
+    font-family="ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace" 
+    font-size="56" 
+    font-weight="700" 
+    fill="#151820">}</text>
+</svg>

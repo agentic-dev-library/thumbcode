@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThumbCode - Code with your thumbs</title>
+  <meta name="description" content="A decentralized multi-agent mobile development platform. Full git workflow, AI-powered agents, from your phone.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Cabin:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      /* Primary - Coral */
+      --primary-400: #F28B79;
+      --primary-500: #E66550;
+      --primary-600: #CD4C35;
+      
+      /* Secondary - Teal */
+      --secondary-400: #51AFB9;
+      --secondary-500: #2C96A3;
+      --secondary-600: #1E7885;
+      
+      /* Accent - Gold */
+      --accent-400: #F2CF79;
+      --accent-500: #DEB84D;
+      
+      /* Neutrals */
+      --neutral-50: #FAF9F8;
+      --neutral-100: #F5F3F1;
+      --neutral-200: #EBE7E3;
+      --neutral-600: #69635D;
+      --neutral-800: #322E2B;
+      --neutral-900: #1E1B19;
+      
+      /* Typography */
+      --font-display: 'Fraunces', serif;
+      --font-body: 'Cabin', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font-body);
+      background: var(--neutral-50);
+      color: var(--neutral-900);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    
+    /* Header */
+    header {
+      padding: 24px 0;
+      background: var(--neutral-50);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--neutral-200);
+    }
+    
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-500);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--primary-400);
+      border-radius: 8px 6px 10px 4px;
+    }
+    
+    nav {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    
+    nav a {
+      color: var(--neutral-600);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    nav a:hover {
+      color: var(--secondary-500);
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px 12px 10px 14px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .btn-primary {
+      background: var(--primary-500);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-600);
+      transform: translateY(-1px);
+    }
+    
+    .btn-secondary {
+      background: var(--secondary-500);
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: var(--secondary-600);
+    }
+    
+    .btn-outline {
+      background: transparent;
+      color: var(--neutral-800);
+      border: 2px solid var(--neutral-200);
+    }
+    
+    .btn-outline:hover {
+      border-color: var(--secondary-400);
+      color: var(--secondary-600);
+    }
+    
+    /* Hero */
+    .hero {
+      padding: 80px 0 120px;
+      text-align: center;
+    }
+    
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      color: var(--neutral-900);
+    }
+    
+    .hero h1 span {
+      color: var(--primary-500);
+    }
+    
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--neutral-600);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+    
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    /* Features */
+    .features {
+      padding: 80px 0;
+      background: white;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+    }
+    
+    .feature-card {
+      padding: 32px;
+      background: var(--neutral-50);
+      border-radius: 16px 12px 20px 8px;
+      border: 1px solid var(--neutral-200);
+    }
+    
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--secondary-400);
+      border-radius: 12px 8px 14px 6px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    
+    .feature-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+      color: var(--neutral-900);
+    }
+    
+    .feature-card p {
+      color: var(--neutral-600);
+    }
+    
+    /* Docs Section */
+    .docs-section {
+      padding: 80px 0;
+    }
+    
+    .docs-section h2 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    
+    .docs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+    }
+    
+    .doc-card {
+      padding: 24px;
+      background: white;
+      border: 1px solid var(--neutral-200);
+      border-radius: 12px 8px 14px 10px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s;
+    }
+    
+    .doc-card:hover {
+      border-color: var(--secondary-400);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px -8px rgba(0,0,0,0.1);
+    }
+    
+    .doc-card h4 {
+      font-family: var(--font-display);
+      margin-bottom: 8px;
+      color: var(--secondary-600);
+    }
+    
+    .doc-card p {
+      font-size: 0.9rem;
+      color: var(--neutral-600);
+    }
+    
+    /* Code Block */
+    .code-section {
+      padding: 80px 0;
+      background: var(--neutral-900);
+      color: white;
+    }
+    
+    .code-section h2 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    
+    .code-block {
+      background: #0D0C0B;
+      padding: 32px;
+      border-radius: 16px 12px 20px 8px;
+      overflow-x: auto;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .code-block code {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+    
+    .code-comment { color: #6B7280; }
+    .code-keyword { color: var(--primary-400); }
+    .code-string { color: var(--accent-400); }
+    .code-type { color: var(--secondary-400); }
+    
+    /* Footer */
+    footer {
+      padding: 48px 0;
+      background: var(--neutral-100);
+      text-align: center;
+    }
+    
+    footer p {
+      color: var(--neutral-600);
+      font-size: 0.9rem;
+    }
+    
+    footer a {
+      color: var(--secondary-600);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav {
+        display: none;
+      }
+      
+      .hero {
+        padding: 48px 0 80px;
+      }
+      
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <div class="logo-icon"></div>
+        ThumbCode
+      </a>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#docs">Documentation</a>
+        <a href="https://github.com/agentic-dev-library/thumbcode">GitHub</a>
+        <a href="#" class="btn btn-primary">Get Started</a>
+      </nav>
+    </div>
+  </header>
+  
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>Code with your <span>thumbs</span></h1>
+        <p>A decentralized multi-agent mobile development platform. Full git workflow, AI-powered agents, all from your phone.</p>
+        <div class="hero-buttons">
+          <a href="#docs" class="btn btn-primary">Read the Docs</a>
+          <a href="https://github.com/agentic-dev-library/thumbcode" class="btn btn-outline">View on GitHub →</a>
+        </div>
+      </div>
+    </section>
+    
+    <section class="features" id="features">
+      <div class="container">
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3>Multi-Agent Teams</h3>
+            <p>Architect, Implementer, Reviewer, Tester — AI agents that work in parallel on your codebase, just like a real engineering team.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>Mobile-Native Git</h3>
+            <p>Full git workflow from your phone. Clone, branch, commit, push — no compromises. Powered by isomorphic-git.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Credential Sovereignty</h3>
+            <p>Your API keys never leave your device. GitHub tokens and AI credentials stored in secure hardware enclaves.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💬</div>
+            <h3>Chat-First Interface</h3>
+            <p>Describe what you want to build. Agents propose, implement, and iterate. Code emerges from conversation.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎨</div>
+            <h3>Warm Technical Design</h3>
+            <p>Organic paint-daub aesthetics. Coral, teal, and gold. Because developer tools don't have to be cold.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Expo + React Native</h3>
+            <p>Built on Expo SDK 52+ with New Architecture. NativeWind styling. Production-ready from day one.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="docs-section" id="docs">
+      <div class="container">
+        <h2>Documentation</h2>
+        <div class="docs-grid">
+          <a href="docs/vision/VISION.md" class="doc-card">
+            <h4>📋 Vision</h4>
+            <p>Product vision, target users, and roadmap for ThumbCode.</p>
+          </a>
+          <a href="docs/development/ARCHITECTURE.md" class="doc-card">
+            <h4>🏗️ Architecture</h4>
+            <p>Technical architecture, directory structure, and data flow.</p>
+          </a>
+          <a href="docs/features/ONBOARDING.md" class="doc-card">
+            <h4>🚀 Onboarding</h4>
+            <p>Feature specification for the onboarding flow.</p>
+          </a>
+          <a href="DECISIONS.md" class="doc-card">
+            <h4>📝 Decisions</h4>
+            <p>Technical decision registry with rationale.</p>
+          </a>
+          <a href="AGENTS.md" class="doc-card">
+            <h4>🤖 Agents</h4>
+            <p>Agent coordination protocol and workflow.</p>
+          </a>
+          <a href="src/types/index.ts" class="doc-card">
+            <h4>📐 Types</h4>
+            <p>Core TypeScript interfaces and contracts.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+    
+    <section class="code-section">
+      <div class="container">
+        <h2>Type-Driven Development</h2>
+        <div class="code-block">
+          <code>
+<span class="code-comment">// Agents code against these contracts</span>
+<span class="code-keyword">interface</span> <span class="code-type">Agent</span> {
+  id: <span class="code-type">string</span>;
+  name: <span class="code-type">string</span>;
+  role: <span class="code-string">'architect'</span> | <span class="code-string">'implementer'</span> | <span class="code-string">'reviewer'</span> | <span class="code-string">'tester'</span>;
+  status: <span class="code-type">AgentStatus</span>;
+  capabilities: <span class="code-type">AgentCapability</span>[];
+  currentTask?: <span class="code-type">TaskAssignment</span>;
+}
+
+<span class="code-comment">// Full git operations from your phone</span>
+<span class="code-keyword">interface</span> <span class="code-type">Workspace</span> {
+  projectId: <span class="code-type">string</span>;
+  branch: <span class="code-type">string</span>;
+  files: <span class="code-type">WorkspaceFile</span>[];
+  changes: <span class="code-type">FileChange</span>[];
+}
+          </code>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <footer>
+    <div class="container">
+      <p>ThumbCode is open source. <a href="https://github.com/agentic-dev-library/thumbcode">Contribute on GitHub</a>.</p>
+      <p style="margin-top: 8px;">Built with ❤️ for mobile-first developers.</p>
+    </div>
+  </footer>
+</body>
+</html>
