@@ -31,6 +31,8 @@ export function Input({ label, error, variant = 'default', className = '', ...pr
     <View className="w-full">
       {label && <Text className="mb-2 text-neutral-700 font-medium">{label}</Text>}
       <RNTextInput
+        accessibilityLabel={label}
+        accessibilityHint={error}
         className={`
           ${variantClasses}
           border-2

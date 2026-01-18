@@ -87,9 +87,23 @@ function FileTreeNode({
         ? 'text-coral-400'
         : '';
 
+  const accessibilityLabel = `${node.name}, ${
+    isFolder ? 'folder' : 'file'
+  }, ${
+    node.added ? 'added' : node.modified ? 'modified' : node.deleted ? 'deleted' : ''
+  }`;
+  const accessibilityHint = isFolder
+    ? isExpanded
+      ? 'Collapse folder'
+      : 'Expand folder'
+    : 'Open file';
+
   return (
     <View>
       <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
         onPress={() => {
           if (isFolder && hasChildren) {
             toggleExpanded(node.path);

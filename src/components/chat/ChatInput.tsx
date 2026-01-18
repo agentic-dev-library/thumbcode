@@ -53,6 +53,7 @@ export function ChatInput({
   return (
     <View className="flex-row items-end p-3 border-t border-neutral-700 bg-surface">
       <TextInput
+        accessibilityLabel="Message input"
         className="flex-1 bg-neutral-800 text-white font-body px-4 py-3 mr-2"
         style={{
           borderRadius: '12px 16px 12px 14px',
@@ -74,6 +75,9 @@ export function ChatInput({
         disabled={!canSend}
         className={`px-4 py-3 ${canSend ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}
         style={{ borderRadius: '12px 14px 10px 16px' }}
+        accessibilityRole="button"
+        accessibilityLabel="Send"
+        accessibilityHint="Send the message"
       >
         <Text className={`font-body font-semibold ${canSend ? 'text-white' : 'text-neutral-500'}`}>
           {isSending ? '...' : 'Send'}

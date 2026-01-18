@@ -57,11 +57,17 @@ function getParticipantBadge(participant: ChatThread['participants'][number]) {
 
 function ThreadItem({ thread, onPress }: ThreadItemProps) {
   const hasUnread = thread.unreadCount > 0;
+  const accessibilityLabel = `${thread.title}, ${
+    hasUnread ? `${thread.unreadCount} unread` : ''
+  }`;
 
   return (
     <Pressable
       onPress={onPress}
       className="bg-surface-elevated p-4 mb-2 active:bg-neutral-700"
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint="Open this thread"
       style={{
         borderRadius: '14px 12px 16px 10px',
         transform: [{ rotate: '-0.2deg' }],
@@ -142,6 +148,9 @@ export function ThreadList({ onSelectThread, onCreateThread }: ThreadListProps) 
             onPress={onCreateThread}
             className="bg-coral-500 px-6 py-3 active:bg-coral-600"
             style={{ borderRadius: '12px 14px 10px 16px' }}
+            accessibilityRole="button"
+            accessibilityLabel="New Thread"
+            accessibilityHint="Create a new chat thread"
           >
             <Text className="font-body text-white font-semibold">New Thread</Text>
           </Pressable>
@@ -160,6 +169,9 @@ export function ThreadList({ onSelectThread, onCreateThread }: ThreadListProps) 
             onPress={onCreateThread}
             className="bg-teal-600 px-3 py-1.5 active:bg-teal-700"
             style={{ borderRadius: '8px 10px 6px 12px' }}
+            accessibilityRole="button"
+            accessibilityLabel="New Thread"
+            accessibilityHint="Create a new chat thread"
           >
             <Text className="font-body text-sm text-white font-semibold">+ New</Text>
           </Pressable>

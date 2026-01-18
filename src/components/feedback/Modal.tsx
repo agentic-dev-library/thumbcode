@@ -56,6 +56,8 @@ export function Modal({
       <Pressable
         className="flex-1 justify-center items-center bg-black/60"
         onPress={() => closeOnBackdrop && onClose()}
+        accessibilityLabel="Close"
+        accessibilityHint="Close the modal"
         style={{
           paddingTop: isFull ? insets.top : 24,
           paddingBottom: isFull ? insets.bottom : 24,
@@ -75,8 +77,19 @@ export function Modal({
           {/* Header */}
           {title && (
             <View className="flex-row items-center justify-between px-5 py-4 border-b border-neutral-700">
-              <Text className="font-display text-lg text-white flex-1">{title}</Text>
-              <Pressable onPress={onClose} className="w-8 h-8 items-center justify-center -mr-2">
+              <Text
+                className="font-display text-lg text-white flex-1"
+                accessibilityRole="header"
+              >
+                {title}
+              </Text>
+              <Pressable
+                onPress={onClose}
+                className="w-8 h-8 items-center justify-center -mr-2"
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+                accessibilityHint="Close the modal"
+              >
                 <Text className="text-neutral-400 text-xl">×</Text>
               </Pressable>
             </View>
@@ -147,6 +160,9 @@ export function ConfirmDialog({
               borderBottomRightRadius: 8,
               borderBottomLeftRadius: 12,
             }}
+            accessibilityRole="button"
+            accessibilityLabel={cancelText}
+            accessibilityHint="Cancel and close the dialog"
           >
             <Text className="font-body text-white">{cancelText}</Text>
           </Pressable>
@@ -162,6 +178,9 @@ export function ConfirmDialog({
               borderBottomRightRadius: 8,
               borderBottomLeftRadius: 12,
             }}
+            accessibilityRole="button"
+            accessibilityLabel={confirmText}
+            accessibilityHint="Confirm the action"
           >
             <Text className="font-body text-white font-semibold">{confirmText}</Text>
           </Pressable>

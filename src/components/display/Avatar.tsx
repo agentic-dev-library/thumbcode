@@ -61,8 +61,15 @@ export function Avatar({
   const { dimension, fontSize, statusSize } = avatarSizes[size];
   const initials = getInitials(name);
 
+  const accessibilityLabel = `${name}, ${status || 'no status'}`;
+
   return (
-    <View className="relative" style={{ width: dimension, height: dimension }}>
+    <View
+      className="relative"
+      style={{ width: dimension, height: dimension }}
+      accessibilityRole="image"
+      accessibilityLabel={accessibilityLabel}
+    >
       <View
         className={`items-center justify-center overflow-hidden ${bgColor} ${
           borderColor ? `border-2 ${borderColor}` : ''
@@ -78,6 +85,7 @@ export function Avatar({
             source={{ uri: src }}
             style={{ width: dimension, height: dimension }}
             className="rounded-full"
+            accessibilityIgnoresInvertColors
           />
         ) : (
           <Text className="font-body text-white font-semibold" style={{ fontSize }}>
@@ -102,7 +110,7 @@ export function Avatar({
 
 interface AvatarGroupProps {
   /** List of avatars */
-  avatars: Array<{ src?: string; name?: string }>;
+  avatars: { src?: string; name?: string }[];
   /** Maximum avatars to show before +N */
   max?: number;
   /** Size of avatars */

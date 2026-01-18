@@ -195,6 +195,9 @@ importers:
       eslint-plugin-react-hooks:
         specifier: ^5.0.0
         version: 5.2.0(eslint@9.39.2(jiti@1.21.7))
+      eslint-plugin-react-native-a11y:
+        specifier: ^3.5.1
+        version: 3.5.1(eslint@9.39.2(jiti@1.21.7))
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@25.0.9)
@@ -300,6 +303,9 @@ importers:
         specifier: ~0.34.0
         version: 0.34.5
     devDependencies:
+      '@mdhnpm/color-contrast-ratio-calculator':
+        specifier: ^1.0.4
+        version: 1.0.4
       tsx:
         specifier: ^4.19.2
         version: 4.21.0
@@ -2010,6 +2016,12 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
+  '@mdhnpm/color-contrast-ratio-calculator@1.0.4':
+    resolution: {integrity: sha512-Bo10feMsg0aVd4Hm1lwOogQZI9Sng5BIHms7Y0FVjosmGU8IirsmUOtC+zHMFMjEXnivGT8Qzhc+ZwCS+V6VGA==}
+
+  '@mdhnpm/rgb-hex-converter@1.2.0':
+    resolution: {integrity: sha512-/tSC3owWlZSuZMDnR797DoJ2ZVH59+dUKv5rHJ0tO18MOebc+oZ2FtyMOrN5QqC5yG/sgXYfPLmMPf5EGiibzw==}
+
   '@napi-rs/wasm-runtime@0.2.12':
     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
 
@@ -3011,6 +3023,9 @@ packages:
   assert@2.1.0:
     resolution: {integrity: sha512-eLHpSK/Y4nhMJ07gDaAzoX/XAKS8PSaojml3M0DM4JpV1LAi5JOJ/p6H/XWrl8L+DzVEvVCW1z3vWAaB9oTsQw==}
 
+  ast-types-flow@0.0.7:
+    resolution: {integrity: sha512-eBvWn1lvIApYMhzQMsu9ciLfkBY499mFZlNqG+/9WR7PVlroQw0vG30cOQQbaKz3sCEc44TAOu2ykzqXSNnwag==}
+
   ast-types@0.15.2:
     resolution: {integrity: sha512-c27loCv9QkZinsa5ProX751khO9DJl/AcB5c2KNtA6NRvHKS0PgLfcftz72KVq504vB0Gku5s2kUZzDBvQWvHg==}
     engines: {node: '>=4'}
@@ -3934,6 +3949,12 @@ packages:
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
+
+  eslint-plugin-react-native-a11y@3.5.1:
+    resolution: {integrity: sha512-vqnXZpAiov0lxYNfEYgwABpkiBYRrt0dbtOafPkw6QaFeA0uZ+s3w9opeEMoFmV36WFxLiCxHb9fvOJ+EUc2xQ==}
+    engines: {node: '>=12.0'}
+    peerDependencies:
+      eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
 
   eslint-plugin-react@7.37.5:
     resolution: {integrity: sha512-Qteup0SqU15kdocexFNAJMvCJEfa2xUKNV4CC1xsVMrIIqEy3SQ/rqyxCWNzfrd3/ldy6HMlD2e0JDVpDg2qIA==}
@@ -9380,6 +9401,12 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
+  '@mdhnpm/color-contrast-ratio-calculator@1.0.4':
+    dependencies:
+      '@mdhnpm/rgb-hex-converter': 1.2.0
+
+  '@mdhnpm/rgb-hex-converter@1.2.0': {}
+
   '@napi-rs/wasm-runtime@0.2.12':
     dependencies:
       '@emnapi/core': 1.8.1
@@ -10650,6 +10677,8 @@ snapshots:
       object.assign: 4.1.7
       util: 0.12.5
 
+  ast-types-flow@0.0.7: {}
+
   ast-types@0.15.2:
     dependencies:
       tslib: 2.8.1
@@ -11747,6 +11776,13 @@ snapshots:
   eslint-plugin-react-hooks@5.2.0(eslint@9.39.2(jiti@1.21.7)):
     dependencies:
       eslint: 9.39.2(jiti@1.21.7)
+
+  eslint-plugin-react-native-a11y@3.5.1(eslint@9.39.2(jiti@1.21.7)):
+    dependencies:
+      '@babel/runtime': 7.28.6
+      ast-types-flow: 0.0.7
+      eslint: 9.39.2(jiti@1.21.7)
+      jsx-ast-utils: 3.3.5
 
   eslint-plugin-react@7.37.5(eslint@9.39.2(jiti@1.21.7)):
     dependencies:
