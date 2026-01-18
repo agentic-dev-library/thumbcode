@@ -53,7 +53,10 @@ export function Checkbox({
         style={{
           width: styles.box,
           height: styles.box,
-          borderRadius: '4px 6px 4px 6px',
+          borderTopLeftRadius: 4,
+          borderTopRightRadius: 6,
+          borderBottomRightRadius: 4,
+          borderBottomLeftRadius: 6,
         }}
       >
         {checked && (
