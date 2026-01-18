@@ -1,6 +1,5 @@
-import React from 'react';
-import { TextInput } from 'react-native';
 import { styled } from 'nativewind';
+import { TextInput } from 'react-native';
 
 const StyledTextInput = styled(TextInput);
 
