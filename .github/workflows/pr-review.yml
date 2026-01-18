@@ -9,7 +9,9 @@ permissions:
   pull-requests: write
   issues: write
   id-token: write
-  workflows: write
+  issues: write
+  id-token: write
+  checks: write
   checks: write
 
 jobs:
