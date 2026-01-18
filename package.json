@@ -29,12 +29,14 @@
     "docs:preview": "vitepress preview docs",
     "generate:tokens": "pnpm --filter @thumbcode/dev-tools run generate:tokens",
     "generate:icons": "pnpm --filter @thumbcode/dev-tools run generate:icons",
-    "generate:all": "pnpm --filter @thumbcode/dev-tools run generate:all"
+    "generate:all": "pnpm --filter @thumbcode/dev-tools run generate:all",
+    "audit:prod": "pnpm audit --prod --audit-level=moderate"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
     "@react-native-async-storage/async-storage": "^2.0.0",
     "@react-native-community/netinfo": "^11.4.1",
+    "react-native-ssl-public-key-pinning": "^1.2.6",
     "@react-navigation/native": "^7.0.0",
     "@thumbcode/config": "workspace:*",
     "@thumbcode/core": "workspace:*",
@@ -101,6 +103,11 @@
     "react-test-renderer": "18.3.1",
     "typescript": "~5.6.0",
     "vitepress": "^1.5.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "tar": ">=7.5.3"
+    }
   },
   "private": true
 }

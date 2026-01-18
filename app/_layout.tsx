@@ -5,6 +5,8 @@
  * and global context for ThumbCode.
  */
 
+import { certificatePinningService } from '@thumbcode/core/src/security/CertificatePinningService';
+import { runtimeSecurityService } from '@thumbcode/core/src/security/RuntimeSecurityService';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -84,6 +86,11 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
+  useEffect(() => {
+    certificatePinningService.initialize();
+    runtimeSecurityService.checkAndHandleRootedStatus();
+  }, []);
+
   return (
     <OnboardingProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>

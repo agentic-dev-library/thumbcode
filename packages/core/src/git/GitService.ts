@@ -21,10 +21,10 @@
  * ```
  */
 
-import * as FileSystem from 'expo-file-system';
 import * as Diff from 'diff';
+import * as FileSystem from 'expo-file-system';
 import git from 'isomorphic-git';
-import http from 'isomorphic-git/http/web';
+import { gitHttpClient } from './GitHttpClient';
 
 import type {
   BranchInfo,
@@ -219,7 +219,7 @@ class GitServiceClass {
 
       await git.clone({
         fs,
-        http,
+        http: gitHttpClient,
         dir,
         url,
         singleBranch: singleBranch ?? true,
@@ -263,7 +263,7 @@ class GitServiceClass {
 
       await git.fetch({
         fs,
-        http,
+        http: gitHttpClient,
         dir,
         remote,
         ref,
@@ -305,7 +305,7 @@ class GitServiceClass {
 
       await git.pull({
         fs,
-        http,
+        http: gitHttpClient,
         dir,
         remote,
         ref,
@@ -353,7 +353,7 @@ class GitServiceClass {
 
       await git.push({
         fs,
-        http,
+        http: gitHttpClient,
         dir,
         remote,
         ref,

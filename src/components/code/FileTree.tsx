@@ -94,6 +94,55 @@ function getAccessibilityHint(
   return isExpanded ? 'Collapse folder' : 'Expand folder';
 }
 
+function FileTreeNodeRow({
+  node,
+  depth,
+  isSelected,
+  isExpanded,
+  isFolder,
+  hasChildren,
+  statusColor,
+  onPress,
+  accessibilityLabel,
+  accessibilityHint,
+}: {
+  node: FileNode;
+  depth: number;
+  isSelected: boolean;
+  isExpanded: boolean;
+  isFolder: boolean;
+  hasChildren: boolean;
+  statusColor: string;
+  onPress: () => void;
+  accessibilityLabel: string;
+  accessibilityHint: string;
+}) {
+  const icon = isFolder ? (isExpanded ? '📂' : '📁') : getFileIcon(node.name);
+  const rowClass = isSelected ? 'bg-teal-600/20' : 'active:bg-neutral-700';
+  const textClass = isSelected ? 'text-teal-300' : 'text-neutral-200';
+
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+      className={`flex-row items-center py-1.5 px-2 ${rowClass}`}
+      style={{ paddingLeft: 8 + depth * 16 }}
+    >
+      {isFolder && hasChildren ? (
+        <Text className="text-xs text-neutral-500 w-4 mr-1">{isExpanded ? '▼' : '▶'}</Text>
+      ) : (
+        <View className="w-4 mr-1" />
+      )}
+      <Text className="mr-2">{icon}</Text>
+      <Text className={`font-mono text-sm flex-1 ${textClass} ${statusColor}`} numberOfLines={1}>
+        {node.name}
+      </Text>
+    </Pressable>
+  );
+}
+
 function FileTreeNode({
   node,
   depth,
@@ -108,11 +157,6 @@ function FileTreeNode({
   const isFolder = node.type === 'folder';
   const hasChildren = Boolean(node.children?.length);
   const statusColor = getStatusColor(node);
-  const icon = isFolder ? (isExpanded ? '📂' : '📁') : getFileIcon(node.name);
-
-  const accessibilityLabel = [node.name, isFolder ? 'folder' : 'file', getStatusText(node)]
-    .filter(Boolean)
-    .join(', ');
 
   const handlePress = () => {
     if (isFolder && hasChildren) {
@@ -122,37 +166,34 @@ function FileTreeNode({
     }
   };
 
-  const hasStatus = Boolean(node.added || node.modified || node.deleted);
+  const shouldShowStatus = showStatus && Boolean(node.added || node.modified || node.deleted);
+
+  // Accessibility labels for screen readers
+  const accessibilityLabel = [node.name, isFolder ? 'folder' : 'file', getStatusText(node)]
+    .filter(Boolean)
+    .join(', ');
 
   return (
     <View>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={accessibilityLabel}
-        accessibilityHint={getAccessibilityHint(isFolder, hasChildren, isExpanded)}
-        onPress={handlePress}
-        className={`flex-row items-center py-1.5 px-2 ${isSelected ? 'bg-teal-600/20' : 'active:bg-neutral-700'}`}
-        style={{ paddingLeft: 8 + depth * 16 }}
-      >
-        {isFolder && hasChildren ? (
-          <Text className="text-xs text-neutral-500 w-4 mr-1">{isExpanded ? '▼' : '▶'}</Text>
-        ) : (
-          <View className="w-4 mr-1" />
+      <View className="flex-row items-center">
+        <View className="flex-1">
+          <FileTreeNodeRow
+            node={node}
+            depth={depth}
+            isSelected={isSelected}
+            isExpanded={isExpanded}
+            isFolder={isFolder}
+            hasChildren={hasChildren}
+            statusColor={statusColor}
+            onPress={handlePress}
+            accessibilityLabel={accessibilityLabel}
+            accessibilityHint={getAccessibilityHint(isFolder, hasChildren, isExpanded)}
+          />
+        </View>
+        {shouldShowStatus && (
+          <Text className={`text-xs ${statusColor} mr-2`}>{getStatusLabel(node)}</Text>
         )}
-
-        <Text className="mr-2">{icon}</Text>
-
-        <Text
-          className={`font-mono text-sm flex-1 ${isSelected ? 'text-teal-300' : 'text-neutral-200'} ${statusColor}`}
-          numberOfLines={1}
-        >
-          {node.name}
-        </Text>
-
-        {showStatus && hasStatus && (
-          <Text className={`text-xs ${statusColor} ml-2`}>{getStatusLabel(node)}</Text>
-        )}
-      </Pressable>
+      </View>
 
       {isFolder && isExpanded && hasChildren && (
         <View>
@@ -215,6 +256,8 @@ export function FileTree({
 
   return (
     <View
+      accessibilityRole="list"
+      accessibilityLabel="File tree"
       className="bg-surface overflow-hidden"
       style={{
         borderTopLeftRadius: 12,

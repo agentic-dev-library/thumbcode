@@ -1,10 +1,23 @@
-const GITHUB_TOKEN_REGEX = /^ghp_[a-zA-Z0-9]{36}$/;
-const ANTHROPIC_KEY_REGEX = /^sk-ant-api03-[a-zA-Z0-9_-]{95}$/;
+/**
+ * Credential Validation
+ *
+ * Provides Zod schemas for validating credential formats.
+ */
+import { z } from 'zod';
 
-export const validateGitHubToken = (token: string): boolean => {
-  return GITHUB_TOKEN_REGEX.test(token);
-};
+const AnthropicKeySchema = z.string().startsWith('sk-ant-');
+const OpenAIKeySchema = z.string().startsWith('sk-');
+const GitHubTokenSchema = z.string().regex(/^ghp_[a-zA-Z0-9]{36}$/);
 
-export const validateAnthropicKey = (key: string): boolean => {
-  return ANTHROPIC_KEY_REGEX.test(key);
-};
+export function validate(type: string, value: string): boolean {
+  switch (type) {
+    case 'anthropic':
+      return AnthropicKeySchema.safeParse(value).success;
+    case 'openai':
+      return OpenAIKeySchema.safeParse(value).success;
+    case 'github':
+      return GitHubTokenSchema.safeParse(value).success;
+    default:
+      return true; // No validation for other types
+  }
+}
