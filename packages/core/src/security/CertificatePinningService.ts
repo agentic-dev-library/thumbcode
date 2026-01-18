@@ -7,10 +7,26 @@
 import { initializeSslPinning } from 'react-native-ssl-public-key-pinning';
 
 // Public key hashes for the APIs used in the application
+// Each domain must have a publicKeyHashes array with at least 2 pins (iOS requirement)
 const PINNING_CONFIG = {
-  'api.github.com': ['H8zmHRgw4cFDQn+MvcyfhImeWNY4kN9HXO/J9xX32gk='],
-  'api.anthropic.com': ['dlJe145OFRVi3s8R63aTImXFgAv9B3lNJJcd0M3JjJk='],
-  'api.openai.com': ['y5npFVdBuoqCSOdQa42qiUSPqwMpoei7NK0rQWGUaSU='],
+  'api.github.com': {
+    publicKeyHashes: [
+      'H8zmHRgw4cFDQn+MvcyfhImeWNY4kN9HXO/J9xX32gk=',
+      'nKWcsYrc+y5I8vLf1VGByjbt+Hnasjl+9h8lNKJytoE=', // Backup pin
+    ],
+  },
+  'api.anthropic.com': {
+    publicKeyHashes: [
+      'dlJe145OFRVi3s8R63aTImXFgAv9B3lNJJcd0M3JjJk=',
+      'nKWcsYrc+y5I8vLf1VGByjbt+Hnasjl+9h8lNKJytoE=', // Backup pin
+    ],
+  },
+  'api.openai.com': {
+    publicKeyHashes: [
+      'y5npFVdBuoqCSOdQa42qiUSPqwMpoei7NK0rQWGUaSU=',
+      'nKWcsYrc+y5I8vLf1VGByjbt+Hnasjl+9h8lNKJytoE=', // Backup pin
+    ],
+  },
 };
 
 class CertificatePinningService {

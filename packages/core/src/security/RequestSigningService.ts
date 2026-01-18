@@ -29,15 +29,14 @@ class RequestSigningService {
 
     const timestamp = new Date().toISOString();
     const nonce = Crypto.randomUUID();
-    const payload = `${timestamp}${method.toUpperCase()}${new URL(url).pathname}${body || ''}${nonce}`;
+    // Include the secret in the data to be hashed for request signing
+    // This creates a keyed hash similar to HMAC
+    const dataToSign = `${secretResult.secret}${timestamp}${method.toUpperCase()}${new URL(url).pathname}${body || ''}${nonce}`;
 
     const signature = await Crypto.digestStringAsync(
       Crypto.CryptoDigestAlgorithm.SHA256,
-      payload,
-      {
-        encoding: Crypto.CryptoEncoding.HEX,
-        key: secretResult.secret,
-      }
+      dataToSign,
+      { encoding: Crypto.CryptoEncoding.HEX }
     );
 
     return {
