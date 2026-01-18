@@ -1,16 +1,97 @@
-import { Stack } from 'expo-router';
-
 /**
- * App root layout that provides the navigation stack.
+ * Root Layout
  *
- * Renders a Stack with a single Screen named "index" and sets its title to "ThumbCode".
- *
- * @returns The root JSX element containing the navigation Stack.
+ * Main app layout that provides navigation stack, theme providers,
+ * and global context for ThumbCode.
  */
+
+import { Stack, useRouter, useSegments } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import { ActivityIndicator, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { OnboardingProvider, useOnboarding } from '@/contexts/onboarding';
+import '../global.css';
+
+function RootLayoutNav() {
+  const { isLoading, hasCompletedOnboarding } = useOnboarding();
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    const inOnboarding = segments[0] === '(onboarding)';
+
+    if (!hasCompletedOnboarding && !inOnboarding) {
+      // Redirect to onboarding
+      router.replace('/(onboarding)/welcome');
+    } else if (hasCompletedOnboarding && inOnboarding) {
+      // Redirect to main app
+      router.replace('/(tabs)');
+    }
+  }, [isLoading, hasCompletedOnboarding, segments, router]);
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 bg-charcoal items-center justify-center">
+        <ActivityIndicator size="large" color="#FF7059" />
+      </View>
+    );
+  }
+
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: '#151820' },
+        animation: 'slide_from_right',
+      }}
+    >
+      <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="project/[id]"
+        options={{
+          headerShown: true,
+          headerTitle: 'Project',
+          headerStyle: { backgroundColor: '#151820' },
+          headerTintColor: '#fff',
+        }}
+      />
+      <Stack.Screen
+        name="agent/[id]"
+        options={{
+          headerShown: true,
+          headerTitle: 'Agent',
+          headerStyle: { backgroundColor: '#151820' },
+          headerTintColor: '#fff',
+        }}
+      />
+      <Stack.Screen
+        name="settings"
+        options={{
+          headerShown: true,
+          headerTitle: 'Settings',
+          headerStyle: { backgroundColor: '#151820' },
+          headerTintColor: '#fff',
+          presentation: 'modal',
+        }}
+      />
+    </Stack>
+  );
+}
+
 export default function RootLayout() {
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ title: 'ThumbCode' }} />
-    </Stack>
+    <OnboardingProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <StatusBar style="light" />
+          <RootLayoutNav />
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </OnboardingProvider>
   );
 }
