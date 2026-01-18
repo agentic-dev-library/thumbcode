@@ -1,405 +1,286 @@
-# DECISIONS.md — Key Decisions Registry
+# ThumbCode Technical Decisions Registry
 
-> Every significant decision in ThumbCode is recorded here with rationale. Before proposing changes, check if it was already decided.
-
----
-
-## Decision Format
-
-```
-## D-XXX: [Title]
-
-**Date**: YYYY-MM-DD
-**Status**: ACCEPTED | SUPERSEDED | DEPRECATED
-**Supersedes**: D-XXX (if applicable)
-
-### Context
-What prompted this decision?
-
-### Options Considered
-1. Option A — pros/cons
-2. Option B — pros/cons
-
-### Decision
-What we chose and why.
-
-### Consequences
-What this means going forward.
-```
+This document records significant technical decisions and their rationale. Agents MUST consult this before proposing changes to established patterns.
 
 ---
 
-## Foundational Decisions
+## DEC-001: Expo SDK 52+ with New Architecture
 
-### D-001: Mobile Framework Selection
+**Status:** Accepted  
+**Date:** January 2026  
+**Context:** Choosing the foundation for cross-platform mobile development.
 
-**Date**: 2026-01-17
-**Status**: ACCEPTED
+**Decision:** Use Expo SDK 52+ with the New Architecture (Fabric renderer, TurboModules) enabled.
 
-#### Context
-ThumbCode is built entirely by AI agents. The framework must optimize for agent code generation quality, not human DX.
+**Rationale:**
+- Expo provides the fastest path to iOS and Android deployment
+- SDK 52+ includes stable New Architecture support for better performance
+- expo-router provides file-based routing familiar to web developers
+- EAS Build/Submit handles the entire deployment pipeline
+- Managed workflow avoids native code complexity for v1
 
-#### Options Considered
+**Consequences:**
+- Some native modules may not yet support New Architecture
+- Must use Expo-compatible libraries or write custom modules
+- Performance benefits from synchronous native calls
 
-1. **React Native + Expo**
-   - ✅ TypeScript has largest LLM training corpus
-   - ✅ Expo patterns highly predictable
-   - ✅ 40K+ GitHub stars = extensive examples
-   - ✅ Official Expo MCP Server exists
-   - ❌ React Native specific quirks
-
-2. **Flutter**
-   - ✅ Excellent headless testing
-   - ✅ Good Dart code generation
-   - ❌ Smaller training corpus (Dart)
-   - ❌ Verbose widget trees
-
-3. **Capacitor/Ionic**
-   - ✅ Web skills transfer
-   - ❌ Performance issues for animations
-   - ❌ Hybrid limitations
-
-4. **Tauri Mobile**
-   - ❌ Multi-language (Rust + Swift + Kotlin)
-   - ❌ Limited training data for mobile
-   - ❌ Too new
-
-#### Decision
-**React Native + Expo SDK 52+** with expo-router for navigation.
-
-#### Consequences
-- All code in TypeScript
-- Use NativeWind for styling (Tailwind)
-- Agent code generation reliability maximized
-- Can leverage extensive React training data
+**Alternatives Considered:**
+- React Native CLI: More control but significantly more setup/maintenance
+- Flutter: Different language (Dart), smaller ecosystem for our needs
+- Native development: Would require two codebases
 
 ---
 
-### D-002: Product Name
+## DEC-002: NativeWind 4.x for Styling
 
-**Date**: 2026-01-17
-**Status**: ACCEPTED
+**Status:** Accepted  
+**Date:** January 2026  
+**Context:** Choosing a styling approach for React Native components.
 
-#### Context
-Need a memorable, defensible name with available domains and no trademark conflicts.
+**Decision:** Use NativeWind 4.x to bring Tailwind CSS to React Native.
 
-#### Options Considered
+**Rationale:**
+- Consistent with web Tailwind patterns (team familiarity)
+- Design tokens can be shared between web docs and mobile app
+- v4 has native CSS support, better performance than v2/v3
+- Utility-first approach works well with AI code generation
+- Easy to express our organic border-radius patterns
 
-| Name | Domains | Trademark | Verdict |
-|------|---------|-----------|---------|
-| VibeCode | ❌ Taken | — | Rejected |
-| CodePocket | ❌ Taken | — | Rejected |
-| Codelet | ❌ Taken | — | Rejected |
-| Conductor | ❌ Mixed | ⚠️ Conflicts | Rejected |
-| ThumbCode | ✅ All available | ✅ Clear | **Selected** |
+**Consequences:**
+- Some Tailwind utilities don't translate to React Native
+- Must understand RN layout model (flexbox-only)
+- Custom utilities needed for organic patterns
 
-#### Decision
-**ThumbCode** — "Code with your thumbs"
-
-#### Consequences
-- Domains to acquire: thumbcode.app, thumbcode.dev, thumbcode.ai
-- Social handles to claim: @thumbcode
-- Tagline locked: "Code with your thumbs"
-- Mobile-first positioning reinforced
+**Alternatives Considered:**
+- StyleSheet.create: Verbose, no design system integration
+- styled-components: Runtime overhead, different mental model
+- Tamagui: Promising but less mature ecosystem
 
 ---
 
-### D-003: Color Palette Selection
+## DEC-003: Zustand for State Management
 
-**Date**: 2026-01-17
-**Status**: ACCEPTED
+**Status:** Accepted  
+**Date:** January 2026  
+**Context:** Choosing global state management approach.
 
-#### Context
-65% of dev tools use blue tones. Need differentiation while maintaining technical credibility.
+**Decision:** Use Zustand 5.x for global state management.
 
-#### Options Considered
+**Rationale:**
+- Minimal boilerplate compared to Redux
+- No providers needed (works outside React tree)
+- Built-in devtools support
+- Easy to test (just functions)
+- Supports middleware for persistence, logging
+- TypeScript-first design
 
-1. **P1 — Refined Evolution**: Warm Violet + Ocean Teal + Signal Coral
-   - Risk: Still in violet territory (Cursor-adjacent)
+**Consequences:**
+- Less opinionated than Redux (need our own patterns)
+- Smaller community than Redux (but growing fast)
+- Must define our own slice patterns
 
-2. **P2 — Bold Disruptor**: Electric Lime + Deep Violet
-   - Risk: Too aggressive, accessibility concerns
-
-3. **P3 — Warm Technical**: Coral + Deep Teal + Soft Gold
-   - ✅ Unique in space
-   - ✅ Warm but professional
-   - ✅ Excellent accessibility scores
-
-4. **P4 — Fresh Disruption**: Electric Mint + Hot Magenta + Soft Lavender
-   - Risk: Too playful, signals "toy"
-
-#### Decision
-**P3 "Warm Technical"**
-
-| Role | Name | Hex |
-|------|------|-----|
-| Primary | Thumb Coral | #FF7059 |
-| Secondary | Digital Teal | #0D9488 |
-| Accent | Soft Gold | #F5D563 |
-| Base | Charcoal Navy | #151820 |
-
-#### Consequences
-- All UI must use these colors exclusively
-- Mode variants defined for light/dark/high-contrast
-- Differentiates from blue-heavy competitor space
+**Alternatives Considered:**
+- Redux Toolkit: More boilerplate, heavier
+- Jotai: Good for derived state, less obvious for our needs
+- React Context: Not scalable for complex state
+- MobX: Magic proxies can confuse agents
 
 ---
 
-### D-004: Visual Style — Daubes Over Gradients
+## DEC-004: isomorphic-git for Git Operations
 
-**Date**: 2026-01-17
-**Status**: ACCEPTED
+**Status:** Accepted  
+**Date:** January 2026  
+**Context:** Implementing git operations in JavaScript environment.
 
-#### Context
-Gradients are ubiquitous in tech. Need distinctive visual language that connects to "thumb" concept.
+**Decision:** Use isomorphic-git for all git operations.
 
-#### Options Considered
+**Rationale:**
+- Pure JavaScript, no native dependencies
+- Works with expo-file-system for storage
+- Full git protocol support (clone, fetch, push, etc.)
+- HTTP transport for GitHub API compatibility
+- Can run entirely on device (credential sovereignty)
 
-1. **Standard gradients**
-   - ❌ Generic, looks like every other app
+**Consequences:**
+- Performance may be slower than native git
+- Large repos may hit memory constraints
+- Must implement custom progress reporting
+- Need to handle authentication carefully
 
-2. **Flat solid colors**
-   - ❌ Boring, lacks personality
-
-3. **Organic paint daubes**
-   - ✅ Unique, memorable
-   - ✅ Connects to thumbprint/finger painting
-   - ✅ 2025 trend toward imperfection
-   - ✅ Counter-positions against AI-generated perfection
-
-#### Decision
-**Organic paint daubes** — NO gradients anywhere in the brand.
-
-Implementation:
-- SVG `feTurbulence` + `feDisplacementMap` filters
-- Asymmetric border-radius: `50px 45px 50px 48px / 26px 28px 26px 24px`
-- Subtle rotation transforms: `rotate(-0.3deg)`
-- Multi-layered shadows with brand color tints
-
-#### Consequences
-- NEVER use linear/radial gradients
-- All buttons, cards, containers use organic shapes
-- SVG filters required for paint texture effects
-- CSS3 organic system for NativeWind compatibility
+**Alternatives Considered:**
+- libgit2 (native): Would require ejecting from Expo
+- Simple GitHub API: Not real git, limited offline support
+- Degit: Clone-only, not full git client
 
 ---
 
-### D-005: Typography System
+## DEC-005: expo-secure-store for Credentials
 
-**Date**: 2026-01-17
-**Status**: ACCEPTED
-**Supersedes**: Initial system using Space Grotesk/Inter
+**Status:** Accepted  
+**Date:** January 2026  
+**Context:** Securely storing API keys and tokens.
 
-#### Context
-Initial typography (Space Grotesk, Inter) was too cold and generic. Needed fonts that feel warm and humanist to match daube aesthetic.
+**Decision:** Use expo-secure-store for all sensitive credential storage.
 
-#### Options Considered
+**Rationale:**
+- Uses iOS Keychain and Android Keystore
+- Hardware-backed encryption where available
+- Biometric unlock support
+- No credentials ever leave the device
+- Simple key-value API
 
-1. **Keep Space Grotesk / Inter**
-   - ❌ Cold, geometric
-   - ❌ Conflicts with organic visual style
+**Consequences:**
+- 2KB limit per item (sufficient for API keys)
+- Must handle migration if storage format changes
+- Need fallback for devices without secure storage
 
-2. **Fraunces + Cabin + JetBrains Mono**
-   - ✅ Fraunces: Soft-serif with "wonk" axis
-   - ✅ Cabin: Humanist sans with handcrafted feel
-   - ✅ JetBrains Mono: Best code font (retained)
-   - ✅ All on Google Fonts
-   - ✅ Research shows humanist fonts better for mobile
-
-#### Decision
-**Fraunces (display) + Cabin (body) + JetBrains Mono (code)**
-
-#### Consequences
-- Update all font references
-- Google Fonts import string locked
-- Headlines have organic character
-- Body text is warm and readable
+**Alternatives Considered:**
+- AsyncStorage: Not encrypted, visible to other apps
+- Custom encryption: Reinventing the wheel, likely less secure
+- Cloud credential storage: Violates sovereignty principle
 
 ---
 
-### D-006: Authentication Architecture
+## DEC-006: GitHub Device Flow for Authentication
 
-**Date**: 2026-01-17
-**Status**: ACCEPTED
+**Status:** Accepted  
+**Date:** January 2026  
+**Context:** Authenticating with GitHub from mobile without web views.
 
-#### Context
-Zero per-user server cost required. Users must bring own API keys.
+**Decision:** Use GitHub's Device Flow (OAuth 2.0 Device Authorization Grant).
 
-#### Options Considered
+**Rationale:**
+- No embedded web view required
+- User authenticates in their own browser
+- Better security (no credential interception)
+- Works even on devices without browser integration
+- User can use existing GitHub session
 
-1. **Traditional OAuth with backend**
-   - ❌ Requires server
-   - ❌ Per-user cost
+**Consequences:**
+- Requires user to switch to browser and back
+- Polling mechanism during verification
+- Must handle timeout and retry scenarios
 
-2. **BYOK with Device Flow**
-   - ✅ No backend needed
-   - ✅ GitHub Device Flow works client-side
-   - ✅ Anthropic supports PKCE
-   - ✅ Keys stored securely on device
-
-#### Decision
-**BYOK (Bring Your Own Keys)** with:
-- GitHub Device Flow for repo access
-- Anthropic PKCE for Claude API
-- `expo-secure-store` for credential storage
-
-#### Consequences
-- No server infrastructure
-- Users responsible for their own API costs
-- Must clearly document key setup in onboarding
-- Cannot offer "free trial" of AI features
+**Alternatives Considered:**
+- OAuth web flow: Requires embedded browser, security concerns
+- Personal access tokens: Bad UX, user must manage manually
+- GitHub App authentication: More complex, overkill for personal use
 
 ---
 
-### D-007: Multi-Agent Coordination Model
+## DEC-007: Anthropic as Primary AI Provider
 
-**Date**: 2026-01-17
-**Status**: ACCEPTED
+**Status:** Accepted  
+**Date:** January 2026  
+**Context:** Choosing the primary AI provider for agent capabilities.
 
-#### Context
-Multiple AI agents must work on same codebase without conflicts.
+**Decision:** Use Anthropic's Claude as the primary AI provider.
 
-#### Options Considered
+**Rationale:**
+- Superior code understanding and generation
+- Long context window (200K tokens)
+- Better instruction following
+- MCP (Model Context Protocol) support
+- Strong safety and alignment properties
 
-1. **CRDTs (Yjs)**
-   - ✅ Real-time collaboration
-   - ❌ Context fragmentation for agents
-   - ❌ Merge complexity
+**Consequences:**
+- API costs may be higher than alternatives
+- Must support fallback for users without Anthropic keys
+- OpenAI support as secondary option
 
-2. **Git worktrees**
-   - ✅ Full isolation
-   - ✅ Standard git workflow
-   - ✅ Agents work with complete snapshots
-   - ❌ Requires branch management
-
-3. **File locking**
-   - ✅ Simple
-   - ❌ Blocks parallelism
-
-#### Decision
-**Git worktrees** — each agent operates in isolated directory sharing same .git database.
-
-#### Consequences
-- Branch strategy required (main/develop/feature/*)
-- Merge protocol documented in AGENTS.md
-- PR workflow for integration
-- Human or reviewer agent resolves conflicts
+**Alternatives Considered:**
+- OpenAI GPT-4: Good but shorter context, no MCP
+- Open source models: Not yet competitive for code tasks
+- Multiple providers equally: Adds complexity without clear benefit
 
 ---
 
-### D-008: Agent Role Specialization
+## DEC-008: Organic Visual Language
 
-**Date**: 2026-01-18
-**Status**: ACCEPTED
+**Status:** Accepted  
+**Date:** January 2026  
+**Context:** Establishing visual identity for ThumbCode brand.
 
-#### Context
-Generic agents produce inconsistent results. Specialized roles with constrained permissions improve quality.
+**Decision:** Use "paint daub" aesthetic with asymmetric border radii and warm colors.
 
-#### Decision
-Four specialized roles:
+**Rationale:**
+- Differentiates from cold, technical developer tools
+- Conveys approachability for mobile-first users
+- Memorable and distinctive brand identity
+- Works well at mobile screen sizes
+- Humanizes AI interaction
 
-| Role | Purpose | Key Permission |
-|------|---------|----------------|
-| **Architect** | Plans, designs APIs | Write types/docs only |
-| **Implementer** | Writes feature code | Write src/, commit |
-| **Reviewer** | Evaluates quality | Comment only |
-| **Tester** | Writes/runs tests | Write tests only |
+**Consequences:**
+- More complex CSS/styling implementation
+- Must be consistent across all components
+- May not appeal to users expecting traditional IDE aesthetic
 
-#### Consequences
-- Clear task handoff protocol
-- Reduced scope per agent = better output
-- Quality gates at each transition
-- Documented in AGENTS.md
-
----
-
-### D-009: Design Tokens Format
-
-**Date**: 2026-01-18
-**Status**: ACCEPTED
-
-#### Context
-Agents need machine-readable tokens with semantic context about usage.
-
-#### Decision
-Multi-format token system:
-- `tokens.json` — Machine-readable with descriptions
-- `tokens.ts` — TypeScript constants with types
-- `tailwind.config.ts` — NativeWind integration
-- `css-variables.css` — Web fallback
-
-Each token includes:
-- Value
-- Description of WHY it exists
-- Context for WHEN to use it
-
-#### Consequences
-- Agents can query token intent
-- No hardcoded values in components
-- Single source of truth for brand
+**Alternatives Considered:**
+- Material Design: Generic, doesn't differentiate
+- iOS native: Platform-specific, inconsistent cross-platform
+- Brutalist: Too stark for our "warm" positioning
 
 ---
 
-### D-010: Deployment Platform
+## DEC-009: File-Based Routing with expo-router
 
-**Date**: 2026-01-18
-**Status**: ACCEPTED
+**Status:** Accepted  
+**Date:** January 2026  
+**Context:** Organizing navigation structure.
 
-#### Context
-Need hosting for landing page and reference documentation that agents can access.
+**Decision:** Use expo-router's file-based routing system.
 
-#### Options Considered
+**Rationale:**
+- Familiar pattern from Next.js
+- URL-based routing works for web and deep links
+- Automatic TypeScript route typing
+- Route groups for logical organization
+- Layouts for shared UI
 
-1. **Vercel**
-   - ✅ Great Next.js support
-   - ❌ Separate account
+**Consequences:**
+- File structure IS the route structure
+- Must understand expo-router conventions
+- Some patterns (complex modals) need workarounds
 
-2. **Netlify**
-   - ✅ Claude connector available
-   - ✅ Direct deployment from conversation
-   - ✅ Free tier sufficient
-
-3. **GitHub Pages**
-   - ✅ Free
-   - ❌ Static only
-
-#### Decision
-**Netlify** via Claude connector for initial deployment.
-
-Team: `jbdevprimary`
-Site: `thumbcode-foundation`
-
-#### Consequences
-- Can deploy directly from this conversation
-- CI/CD via Netlify
-- Custom domain support when ready
+**Alternatives Considered:**
+- React Navigation directly: More flexible but more boilerplate
+- Custom routing: Reinventing solved problems
 
 ---
 
-## Pending Decisions
+## DEC-010: Multi-Agent Architecture
 
-### D-011: Pricing Tiers
+**Status:** Accepted  
+**Date:** January 2026  
+**Context:** Defining how AI agents collaborate.
 
-**Status**: DRAFT
+**Decision:** Implement specialized agent roles (Architect, Implementer, Reviewer, Tester) that can work in parallel.
 
-Proposed structure:
-- **Free**: BYOK only, 1 project, 2 agents max
-- **Pro** ($19/mo): Unlimited projects, 10 agents
-- **Team** ($49/mo): Shared workspaces, team management
+**Rationale:**
+- Mirrors real engineering team structure
+- Enables separation of concerns
+- Allows parallel execution of independent tasks
+- Creates natural review/approval checkpoints
+- Better utilization of AI context windows
 
-Needs: Market validation, feature scoping
+**Consequences:**
+- More complex orchestration logic
+- Must define agent communication protocols
+- Need clear task assignment and handoff rules
+- More API calls than single-agent approach
 
-### D-012: MCP Server Strategy
-
-**Status**: DRAFT
-
-Proposed:
-- Context7 hardcoded (always available)
-- GitHub, Figma, Sentry as "quick add" options
-- Custom server URL support
-
-Needs: Security review, UX testing
+**Alternatives Considered:**
+- Single general-purpose agent: Simpler but less capable
+- User assigns roles manually: Poor UX, defeats purpose
+- No roles (all agents equal): Harder to coordinate
 
 ---
 
-**Add new decisions using the format above. Never delete — mark as SUPERSEDED or DEPRECATED.**
+## How to Add New Decisions
+
+1. Create new entry with next number (DEC-XXX)
+2. Fill in all fields (Status, Date, Context, Decision, Rationale, Consequences, Alternatives)
+3. Get Architect approval before implementing
+4. Update this document via PR
+5. Reference decision number in related code comments

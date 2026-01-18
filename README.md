@@ -1,126 +1,130 @@
-# ThumbCode Foundation
+# ThumbCode
 
-> **"Code with your thumbs"** — A decentralized multi-agent mobile development platform
+> **Code with your thumbs.** A decentralized multi-agent mobile development platform.
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/placeholder/deploy-status)](https://app.netlify.com/sites/thumbcode-foundation/deploys)
-
----
+[![Netlify Status](https://api.netlify.com/api/v1/badges/your-badge/deploy-status)](https://thumbcode-foundation.netlify.app)
 
 ## What is ThumbCode?
 
-ThumbCode enables anyone to ship mobile apps by directing AI agents from their phone. No laptop required.
+ThumbCode is a React Native/Expo application that enables professional software development from your mobile device. Instead of typing every character, you orchestrate AI agents that understand your intent and execute with precision.
 
-**Key features:**
-- 🤖 **Multi-agent development** — Architect, Implementer, Reviewer, Tester agents work in parallel
-- 🔑 **BYOK** — Bring Your Own Keys (Anthropic, OpenAI, GitHub) — we never touch your credentials
-- 📱 **Mobile-first** — Built for thumb-based interaction
-- 💰 **Zero server cost** — Everything runs client-side
+### Key Features
 
----
+- 🤖 **Multi-Agent Teams** — Architect, Implementer, Reviewer, Tester agents working in parallel
+- 📱 **Mobile-Native Git** — Full git workflow (clone, commit, push) powered by isomorphic-git
+- 🔒 **Credential Sovereignty** — Your API keys never leave your device
+- 💬 **Chat-First Interface** — Describe what you want, agents build it
+- 🎨 **Warm Technical Design** — Organic paint-daub aesthetics, not cold developer tools
 
-## Repository Structure
+## Documentation
 
-```
-thumbcode-foundation/
-├── CLAUDE.md              # Agent playbook (READ THIS FIRST)
-├── AGENTS.md              # Multi-agent coordination protocol
-├── README.md              # You are here
-├── memory-bank/           # Institutional memory
-│   ├── DEVELOPMENT-LOG.md # Project history
-│   ├── DECISIONS.md       # Key decisions registry
-│   └── ...
-├── design-tokens/         # Brand system
-│   ├── tokens.json        # Machine-readable
-│   ├── tokens.ts          # TypeScript
-│   └── tailwind.config.ts # NativeWind config
-├── src/                   # Source code
-│   ├── components/        # UI components
-│   ├── styles/            # CSS/styling
-│   └── pages/             # Page components
-└── public/                # Static assets
-    └── logos/             # SVG brand assets
-```
+| Document | Description |
+|----------|-------------|
+| [Vision](docs/vision/VISION.md) | Product vision, target users, roadmap |
+| [Architecture](docs/development/ARCHITECTURE.md) | Technical architecture, data flow |
+| [Onboarding](docs/features/ONBOARDING.md) | Feature specification for setup flow |
+| [Decisions](DECISIONS.md) | Technical decision registry |
+| [Agents](AGENTS.md) | Agent coordination protocol |
+| [Brand](docs/brand/BRAND-GUIDELINES.md) | Visual identity guidelines |
+| [Types](src/types/index.ts) | Core TypeScript interfaces |
 
----
+## Tech Stack
 
-## For AI Agents
-
-**READ `CLAUDE.md` BEFORE WRITING ANY CODE.**
-
-It contains:
-- Brand colors and typography (P3 "Warm Technical")
-- Component patterns and anti-patterns
-- File structure conventions
-- Quality checklist
-
-**READ `AGENTS.md` FOR COORDINATION RULES.**
-
----
-
-## Brand Quick Reference
-
-### Colors
-| Role | Name | Hex |
-|------|------|-----|
-| Primary | Thumb Coral | `#FF7059` |
-| Secondary | Digital Teal | `#0D9488` |
-| Accent | Soft Gold | `#F5D563` |
-| Base | Charcoal Navy | `#151820` |
-
-### Typography
-- **Display**: Fraunces (headlines)
-- **Body**: Cabin (UI text)
-- **Code**: JetBrains Mono
-
-### Visual Style
-- ✅ Organic paint daubes
-- ✅ Asymmetric border-radius
-- ❌ NO gradients
-- ❌ NO perfectly rounded corners
-
----
+| Layer | Technology |
+|-------|------------|
+| Framework | Expo SDK 52+ |
+| UI | React Native 0.76+ |
+| Navigation | expo-router 4.x |
+| Styling | NativeWind 4.x |
+| State | Zustand 5.x |
+| Git | isomorphic-git |
+| AI | Anthropic Claude |
+| Security | expo-secure-store |
 
 ## Getting Started
 
-### For Developers
+### Prerequisites
+
+- Node.js 20+
+- Expo CLI (`npm install -g expo-cli`)
+- iOS Simulator or Android Emulator (or physical device)
+
+### Installation
 
 ```bash
-# Clone
-git clone https://github.com/thumbcode/thumbcode-foundation.git
-cd thumbcode-foundation
+# Clone the repository
+git clone https://github.com/agentic-dev-library/thumbcode.git
+cd thumbcode
 
 # Install dependencies
 npm install
 
-# Run development server
-npm run dev
+# Start development server
+npm start
 ```
 
-### For AI Agents
+### Development
 
-1. Read `CLAUDE.md` completely
-2. Read `AGENTS.md` for coordination rules
-3. Check `memory-bank/DECISIONS.md` before proposing changes
-4. Follow the component checklist in CLAUDE.md
+```bash
+# Run on iOS
+npm run ios
 
----
+# Run on Android
+npm run android
 
-## Deployment
+# Run on Web
+npm run web
+```
 
-This repository deploys to Netlify automatically.
+## Project Structure
 
-**Production URL**: https://thumbcode-foundation.netlify.app
+```
+thumbcode/
+├── app/                    # Expo Router file-based routes
+│   ├── (onboarding)/       # Setup flow
+│   ├── (tabs)/             # Main navigation
+│   └── ...
+├── src/
+│   ├── components/         # React components
+│   ├── hooks/              # Custom hooks
+│   ├── stores/             # Zustand stores
+│   ├── services/           # External integrations
+│   ├── types/              # TypeScript definitions
+│   └── utils/              # Utilities
+├── design-system/          # Design tokens
+├── docs/                   # Documentation
+└── __tests__/              # Test suites
+```
 
----
+## For AI Agents
 
-## Contact
+This repository is designed for agentic development. Key files for agents:
 
-- **Project Lead**: Jon Bogaty
-- **Canva Brand Kit**: `kAG-uqPJ8gk`
-- **Netlify Team**: `jbdevprimary`
+1. **[AGENTS.md](AGENTS.md)** — Coordination protocol, roles, workflow
+2. **[src/types/index.ts](src/types/index.ts)** — Type contracts to code against
+3. **[DECISIONS.md](DECISIONS.md)** — Technical decisions with rationale
+4. **[docs/development/ARCHITECTURE.md](docs/development/ARCHITECTURE.md)** — System architecture
 
----
+### Agent Roles
+
+| Role | Responsibility | Key Files |
+|------|----------------|-----------|
+| Architect | System design, types | `src/types/`, `DECISIONS.md` |
+| Implementer | Write code | `src/components/`, `src/services/` |
+| Reviewer | Code quality | PR comments |
+| Tester | Test coverage | `__tests__/` |
+
+## Contributing
+
+1. Read [AGENTS.md](AGENTS.md) for workflow
+2. Check [DECISIONS.md](DECISIONS.md) before proposing changes
+3. Follow types in [src/types/](src/types/)
+4. Use conventional commits
 
 ## License
 
-[TBD]
+MIT © ThumbCode Contributors
+
+---
+
+*Built with ❤️ for mobile-first developers.*
