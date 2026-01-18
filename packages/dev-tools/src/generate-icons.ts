@@ -135,28 +135,12 @@ async function generateAll(): Promise<void> {
   console.log('   "web": { "favicon": "./assets/favicon.png" }\n');
 }
 
-// Run if called directly
-try {
-  if (
-    typeof process !== 'undefined' &&
-    Array.isArray(process.argv) &&
-    typeof process.argv[1] === 'string' &&
-    process.argv[1] === __filename
-  ) {
-    generateAll().catch((error) => {
-      console.error('\n❌ Icon generation failed:', error);
-      process.exit(1);
-    });
-  }
-} catch (error) {
-  // Log a debug message instead of silently suppressing errors,
-  // while still tolerating non-Node environments.
-  if (typeof console !== 'undefined' && typeof console.debug === 'function') {
-    console.debug(
-      'Skipping direct execution of generate-icons script due to environment error:',
-      error
-    );
-  }
+// Run if called directly (Node ESM)
+if (import.meta.url === `file://${process.argv[1]}`) {
+  generateAll().catch((error) => {
+    console.error('\n❌ Icon generation failed:', error);
+    process.exit(1);
+  });
 }
 
 export { generateAll, generateIcon, ICON_SPECS };
