@@ -55,6 +55,19 @@ jobs:
 
             core.setOutput('pr_number', prNumber);
 
+            // Security: Verify not from fork before proceeding
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
+            const isSameRepo = pr.data.head.repo.full_name === `${context.repo.owner}/${context.repo.repo}`;
+            if (!isSameRepo || pr.data.head.repo.fork) {
+              core.setFailed('Refusing to run @review on forked PR code for security reasons.');
+              return;
+            }
+
             // Add reaction to indicate processing
             if (context.payload.comment?.id) {
               await github.rest.reactions.createForIssueComment({
