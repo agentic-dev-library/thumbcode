@@ -81,7 +81,7 @@ importers:
         specifier: ^1.27.0
         version: 1.36.1
       lodash-es:
-        specifier: ^4.17.0
+        specifier: ^4.17.22
         version: 4.17.22
       nativewind:
         specifier: ^4.1.0
@@ -193,7 +193,7 @@ importers:
   packages/dev-tools:
     dependencies:
       sharp:
-        specifier: ^0.34.0
+        specifier: ~0.34.0
         version: 0.34.5
     devDependencies:
       tsx:
