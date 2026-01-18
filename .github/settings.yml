@@ -94,9 +94,8 @@ branches:
         teams: []
         apps: []
 
-      # CRITICAL: Allow bots to push without PR
-      required_pull_request_reviews: null
-      restrictions: null
+      # If bots must bypass PR reviews, prefer a supported bypass list
+      # or use a dedicated bot-only branch pattern.
 
   # Claude auto-fix branches - minimal protection
   - name: "claude/auto-fix-ci-*"
