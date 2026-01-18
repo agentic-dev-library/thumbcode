@@ -37,10 +37,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       if (typeof colorData === 'string') {
         colors[colorName] = colorData;
       } else if ('values' in colorData) {
-        colors[colorName] = {};
+        const colorShades: ColorValue = {};
         Object.entries(colorData.values).forEach(([shade, value]) => {
-          colors[colorName][shade] = value.hex;
+          colorShades[shade] = value.hex;
         });
+        colors[colorName] = colorShades;
       }
     });
 

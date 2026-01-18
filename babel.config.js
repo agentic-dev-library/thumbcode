@@ -8,8 +8,10 @@ module.exports = (api) => {
   return {
     presets: [['babel-preset-expo', isTest ? {} : { jsxImportSource: 'nativewind' }]],
     plugins: [
-      // Skip NativeWind and Reanimated plugins during tests
-      ...(!isTest ? ['nativewind/babel'] : []),
+      // Skip NativeWind/CSS Interop and Reanimated plugins during tests
+      // Use react-native-css-interop/dist/babel-plugin directly instead of
+      // nativewind/babel which returns an invalid plugin wrapper
+      ...(!isTest ? ['react-native-css-interop/dist/babel-plugin'] : []),
       ...(!isTest ? ['react-native-reanimated/plugin'] : []),
     ],
   };

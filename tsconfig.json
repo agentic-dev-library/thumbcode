@@ -13,8 +13,8 @@
       "@/utils/*": ["src/utils/*"],
       "@/design-system/*": ["design-system/*"]
     },
-    "types": ["nativewind/types"]
+    "types": ["nativewind/types", "jest"]
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "nativewind-env.d.ts"],
-  "exclude": ["node_modules", "docs"]
+  "exclude": ["node_modules", "docs", "packages/dev-tools"]
 }

@@ -29,8 +29,11 @@ export function getColor(color: ColorKey, shade: ColorShade = '500'): string {
     return colorFamily.hex;
   }
 
-  if ('values' in colorFamily && colorFamily.values[shade]) {
-    return colorFamily.values[shade].hex;
+  if ('values' in colorFamily) {
+    const values = colorFamily.values as Record<string, { hex: string }>;
+    if (values[shade]) {
+      return values[shade].hex;
+    }
   }
 
   throw new Error(`Color ${String(color)}-${shade} not found`);
@@ -178,10 +181,11 @@ export function getTailwindColors() {
       // Handle hex-only color objects (e.g., charcoal)
       colors[colorName] = colorData.hex;
     } else if ('values' in colorData) {
-      colors[colorName] = {};
+      const shadeMap: Record<string, string> = {};
       Object.entries(colorData.values).forEach(([shade, value]) => {
-        colors[colorName][shade] = value.hex;
+        shadeMap[shade] = value.hex;
       });
+      colors[colorName] = shadeMap;
     }
   });
 
@@ -199,7 +203,8 @@ export function getColorUsage(color: ColorKey, shade: ColorShade = '500'): strin
   const colorFamily = tokens.colors[color];
 
   if (typeof colorFamily === 'object' && 'values' in colorFamily) {
-    return colorFamily.values[shade]?.usage || '';
+    const values = colorFamily.values as Record<string, { usage?: string }>;
+    return values[shade]?.usage || '';
   }
 
   return '';
