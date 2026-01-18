@@ -1,6 +1,11 @@
 // Note: @testing-library/jest-native is deprecated.
 // React Native Testing Library v12.4+ auto-extends Jest matchers.
 
+// Mock AsyncStorage for Zustand persistence
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
+);
+
 // Mock expo-secure-store
 jest.mock('expo-secure-store', () => ({
   getItemAsync: jest.fn(),
