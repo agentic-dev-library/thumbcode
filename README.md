@@ -17,7 +17,7 @@
 **Code with your thumbs.**
 Professional software development, reimagined for mobile.
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/your-badge/deploy-status)](https://thumbcode-foundation.netlify.app)
+[![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Deployed-0D9488?style=for-the-badge&logo=github&logoColor=white)](https://agentic-dev-library.github.io/thumbcode)
 
 <!-- Brand Colors -->
 <p>
@@ -557,7 +557,7 @@ That said, understanding basic programming concepts (variables, functions, state
 - **GitHub Discussions** — [Questions, ideas, feature requests](https://github.com/agentic-dev-library/thumbcode/discussions)
 - **GitHub Issues** — [Bug reports and technical issues](https://github.com/agentic-dev-library/thumbcode/issues)
 - **Documentation** — Comprehensive guides in [`/docs`](docs/)
-- **Web Preview** — [thumbcode-foundation.netlify.app](https://thumbcode-foundation.netlify.app)
+- **Web Preview** — [agentic-dev-library.github.io/thumbcode](https://agentic-dev-library.github.io/thumbcode)
 
 ---
 

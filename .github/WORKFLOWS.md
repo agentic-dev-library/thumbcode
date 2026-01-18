@@ -258,8 +258,6 @@ Add these to your GitHub repository secrets:
 |--------|-------------|--------------|
 | `ANTHROPIC_API_KEY` | Claude API key | PR review, CI auto-fix, issue triage, multi-agent workflow |
 | `GOOGLE_JULES_API_KEY` | Jules API key from jules.google.com | Multi-agent workflow |
-| `NETLIFY_AUTH_TOKEN` | Netlify personal access token | Deploy, PR previews |
-| `NETLIFY_SITE_ID` | Netlify site ID | Deploy, PR previews |
 | `CODECOV_TOKEN` | Codecov upload token | CI (optional) |
 | `GITHUB_TOKEN` | Auto-provided by GitHub Actions | All workflows (automatic) |
 
@@ -283,21 +281,7 @@ Add these to your GitHub repository secrets:
    - Name: `GOOGLE_JULES_API_KEY`
    - Value: Your Jules API key
 
-### 3. Netlify Tokens
-
-1. Log in to Netlify
-2. Go to User Settings → Applications → Personal Access Tokens
-3. Create new access token
-4. Add to GitHub: Settings → Secrets → Actions → New secret
-   - Name: `NETLIFY_AUTH_TOKEN`
-   - Value: Your Netlify token
-
-5. Get Site ID from Site Settings → General → Site details → Site ID
-6. Add to GitHub: Settings → Secrets → Actions → New secret
-   - Name: `NETLIFY_SITE_ID`
-   - Value: Your site ID
-
-### 4. Codecov (Optional)
+### 3. Codecov (Optional)
 
 1. Sign up at [codecov.io](https://codecov.io)
 2. Add your repository
@@ -397,14 +381,17 @@ Add these to your GitHub repository secrets:
 
 **Prevention:** Auto-fix only runs on original PR branches, not on fix branches (branches starting with `claude-auto-fix-ci-`).
 
-### Netlify deploy fails
+### GitHub Pages deploy fails
 
 **Causes:**
-- Invalid secrets
-- Site ID mismatch
-- Build error
+- Pages not enabled in repository settings
+- Build error in POC site
+- Permissions issue
 
-**Solution:** Check deployment logs in workflow run.
+**Solution:**
+1. Enable GitHub Pages in Settings → Pages
+2. Check deployment logs in workflow run
+3. Verify Pages permissions are granted
 
 ---
 
