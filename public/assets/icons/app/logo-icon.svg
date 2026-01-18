@@ -1,0 +1,7 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- ThumbCode Icon - Simplified for small sizes -->
+  <rect x="0" y="0" width="32" height="32" rx="8" ry="6" fill="#F28B79"/>
+  <!-- Simplified thumbprint pattern -->
+  <path d="M8 16 Q16 13, 24 16" stroke="#E66550" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <path d="M8 20 Q16 17, 24 20" stroke="#CD4C35" stroke-width="2" stroke-linecap="round" fill="none"/>
+</svg>
