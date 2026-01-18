@@ -6,13 +6,43 @@
 
 ## Recent Updates (January 18, 2026)
 
-✅ **Major organization and cleanup completed:**
-- Comprehensive README rewrite explaining vibe coding vs. agentic development
-- GitHub Actions CI/CD workflows (CI, Deploy Web, PR Checks)
-- Project structure cleanup (removed duplicates, archived old files)
-- Proper directory structure with all missing subdirectories created
-- Netlify deployment configuration updated for React Native Web
-- Commitlint setup for enforcing conventional commits
+✅ **Major organization, workspace restructuring, and commercial positioning completed:**
+
+**pnpm Workspace Migration:**
+- Restructured project as pnpm monorepo workspace
+- Created `packages/dev-tools/` for build-time tooling
+- Moved procedural generation (tokens, icons) to isolated package
+- Converted `generate-tokens.js` to TypeScript
+- Fixed icon generator paths for workspace root output
+- Updated all dependencies and scripts for workspace architecture
+
+**Icon Generation Pipeline:**
+- Created TypeScript icon generator using Sharp library
+- Converts SVGs to PNGs with transparent backgrounds
+- Generates exact Expo sizes: icon.png (1024), splash.png (2048), adaptive-icon.png (1024), favicon.png (48)
+- Fully automated via postinstall hooks
+
+**Multi-Agent GitHub Actions:**
+- Added comprehensive Claude Code Actions for PR review, CI auto-fix, issue triage
+- Implemented sophisticated multi-agent workflow: Claude (analysis) → Jules (implementation)
+- Automated issue batching and PR creation
+- All actions pinned to exact commit SHAs for security
+- Created detailed WORKFLOWS.md documentation
+
+**README & Licensing:**
+- **Complete README rewrite** with professional marketing copy
+- Positioned as **commercial mobile app with subscription model** (NOT open source)
+- Removed all "free and open source" references
+- Enhanced "vibe coding vs. agentic development" explanations
+- Added mobile-first value proposition and competitive differentiation
+- **Replaced MIT license** with commercial license including protective covenants
+- Defined clear transition to commercial license upon public release
+
+**Documentation Improvements:**
+- Comprehensive README explaining project value proposition
+- Commercial positioning and collaborative development phase clearly defined
+- FAQ addressing pricing, availability, and business model
+- Contribution guidelines for collaborative development phase
 
 ## Overview
 
@@ -75,16 +105,26 @@ ThumbCode is now a complete, organized, and production-ready shell with comprehe
 - **.commitlintrc.json** - Conventional commit rules
 - **.gitignore** - Comprehensive ignore rules
 
-### ✅ CI/CD Pipelines
+### ✅ CI/CD Pipelines & Multi-Agent Workflows
 - **GitHub Actions workflows:**
-  - `ci.yml` - Lint, typecheck, test, build validation
+  - `ci.yml` - Lint, typecheck, test, build validation (all actions pinned to exact SHAs)
   - `deploy-web.yml` - Deploy React Native Web to Netlify
   - `pr-checks.yml` - PR validation, preview deployments, breaking change detection
+  - `pr-review.yml` - Claude comprehensive code review with progress tracking
+  - `ci-failure-fix.yml` - Claude auto-fixes CI failures
+  - `issue-triage.yml` - Claude automated issue categorization
+  - `multi-agent-triage.yml` - **Sophisticated Claude → Jules workflow for automated PRs**
+- **Multi-agent coordination:** Claude assesses issues → batches them → Jules creates PRs in parallel
 - **Netlify deployment** - Auto-deploy from main branch
 - **Code quality gates** - Enforced on all PRs
+- **Comprehensive WORKFLOWS.md** - Full documentation of all automation
 
-### ✅ Development Tools
-- **scripts/generate-tokens.js** - Auto-generate from tokens.json
+### ✅ Development Tools (pnpm Workspace)
+- **packages/dev-tools/** - Isolated build-time tooling package
+  - `generate-tokens.ts` - TypeScript token generator (auto-generates CSS/Tailwind)
+  - `generate-icons.ts` - SVG → PNG conversion with transparent backgrounds
+  - Independent package.json with own dependencies (sharp, tsx)
+- **pnpm-workspace.yaml** - Monorepo configuration
 - Type-safe design token utilities
 - Theme provider with React hooks
 - Programmatic color/spacing/typography access
@@ -172,8 +212,13 @@ thumbcode/
 │       ├── deploy-web.yml       # Deploy to Netlify
 │       └── pr-checks.yml        # PR validation
 │
-├── scripts/
-│   └── generate-tokens.js       # ✅ Working token generator
+├── packages/
+│   └── dev-tools/               # ✅ Build-time tooling package
+│       ├── package.json
+│       ├── README.md
+│       └── src/
+│           ├── generate-tokens.ts
+│           └── generate-icons.ts
 │
 ├── archive/                     # ✅ Old zip files archived
 │   ├── thumbcode-deploy.zip
@@ -253,8 +298,12 @@ Complete TypeScript definitions for:
 1. ✅ ~~Organize project structure and cleanup duplicates~~
 2. ✅ ~~Write comprehensive README explaining vibe coding vs. agency~~
 3. ✅ ~~Set up CI/CD workflows~~
-4. **Install dependencies and verify build** - Run `pnpm install` and test
-5. **Generate proper app icons** - Convert SVGs to PNGs for Expo
+4. ✅ ~~Restructure as pnpm workspace with dev-tools package~~
+5. ✅ ~~Create icon generator with Sharp for Expo PNGs~~
+6. ✅ ~~Rewrite README with commercial positioning~~
+7. ✅ ~~Replace MIT license with commercial license + protective covenants~~
+8. **Test icon generation** - Run `pnpm run generate:icons` and verify output
+9. **Verify multi-agent workflows** - Test GitHub Actions automation
 
 ### Short-term (Next 2 Weeks)
 1. **Onboarding Flow** - Implement setup screens
