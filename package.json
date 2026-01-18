@@ -27,8 +27,7 @@
     "docs:preview": "vitepress preview docs",
     "generate:tokens": "pnpm --filter @thumbcode/dev-tools run generate:tokens",
     "generate:icons": "pnpm --filter @thumbcode/dev-tools run generate:icons",
-    "generate:all": "pnpm --filter @thumbcode/dev-tools run generate:all",
-    "postinstall": "pnpm run generate:all"
+    "generate:all": "pnpm --filter @thumbcode/dev-tools run generate:all"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
