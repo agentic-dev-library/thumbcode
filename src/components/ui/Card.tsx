@@ -1,4 +1,4 @@
-import { View, ViewProps } from 'react-native';
+import { View, type ViewProps } from 'react-native';
 
 interface CardProps extends ViewProps {
   variant?: 'default' | 'elevated';
@@ -11,19 +11,14 @@ interface CardProps extends ViewProps {
  * @param className - Additional Tailwind-style class names to append to the card's classes.
  * @returns A React Native `View` element styled as a card containing the provided children.
  */
-export function Card({ 
-  variant = 'default',
-  className = '',
-  children,
-  ...props 
-}: CardProps) {
+export function Card({ variant = 'default', className = '', children, ...props }: CardProps) {
   const variantClasses = {
     default: 'bg-white',
     elevated: 'bg-neutral-50 shadow-lg',
   }[variant];
-  
+
   return (
-    <View 
+    <View
       className={`
         ${variantClasses}
         p-4

@@ -1,4 +1,4 @@
-import { Pressable, PressableProps, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Pressable, type PressableProps } from 'react-native';
 import { Text } from './Text';
 
 interface ButtonProps extends PressableProps {
@@ -22,29 +22,29 @@ interface ButtonProps extends PressableProps {
  * @param children - Button label or content rendered when not loading
  * @returns A Pressable element that shows an ActivityIndicator when loading or the provided children as the label otherwise
  */
-export function Button({ 
+export function Button({
   variant = 'primary',
   size = 'md',
   loading = false,
   disabled,
   className = '',
   children,
-  ...props 
+  ...props
 }: ButtonProps) {
   const variantClasses = {
     primary: 'bg-coral-500 active:bg-coral-700',
     secondary: 'bg-teal-600 active:bg-teal-800',
     outline: 'bg-transparent border-2 border-neutral-200 active:border-teal-400',
   }[variant];
-  
+
   const sizeClasses = {
     sm: 'px-3 py-2',
     md: 'px-4 py-3',
     lg: 'px-6 py-4',
   }[size];
-  
+
   const textColorClass = variant === 'outline' ? 'text-neutral-800' : 'text-white';
-  
+
   return (
     <Pressable
       disabled={disabled || loading}
@@ -61,9 +61,7 @@ export function Button({
       {loading ? (
         <ActivityIndicator color={variant === 'outline' ? '#1E293B' : '#FFFFFF'} />
       ) : (
-        <Text className={`${textColorClass} text-center font-semibold`}>
-          {children}
-        </Text>
+        <Text className={`${textColorClass} text-center font-semibold`}>{children}</Text>
       )}
     </Pressable>
   );
