@@ -6,6 +6,17 @@ interface InputProps extends RNTextInputProps {
   error?: string;
 }
 
+/**
+ * Renders a text input with an optional label and error message.
+ *
+ * Displays `label` above the input when provided, shows `error` below the input when provided
+ * (and visually highlights the input border), and forwards remaining props to the underlying TextInput.
+ *
+ * @param label - Optional label text displayed above the input
+ * @param error - Optional error message displayed below the input; also changes the input's border styling
+ * @param className - Additional class names applied to the input element
+ * @returns A React element containing the labeled input and optional error message
+ */
 export function Input({ 
   label,
   error,
