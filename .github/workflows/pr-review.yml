@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: PR Review with Progress Tracking
         uses: anthropics/claude-code-action@a017b830c03e23789b11fb69ed571ea61c12e45c # v1.0.30
