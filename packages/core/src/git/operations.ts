@@ -61,10 +61,14 @@ export const diff = async (repoName: string, filepath: string) => {
     );
     return { oldContent, newContent };
   } catch (e) {
-    // If the file is new, readBlob will fail. In that case, the old content is empty.
-    const newContent = await FileSystem.readAsStringAsync(
-      `${repoDir}/${filepath}`
-    );
-    return { oldContent: '', newContent };
+    // Only handle the case where file is not in HEAD commit
+    if (e instanceof Error && (e.name === 'TreeOrBlobNotFoundError' || /TreeOrBlobNotFoundError/.test(e.message))) {
+      const newContent = await FileSystem.readAsStringAsync(
+        `${repoDir}/${filepath}`
+      );
+      return { oldContent: '', newContent };
+    }
+    throw e;
+  }
   }
 };
