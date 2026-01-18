@@ -29,26 +29,26 @@ Before making changes:
 
 1. Fork the repository
 2. Clone your fork
-3. Install dependencies: `npm install`
+3. Install dependencies: `pnpm install`
 4. Create a branch: `git checkout -b feature/your-feature-name`
 
 ### Development Workflow
 
 ```bash
 # Start development server
-npm start
+pnpm start
 
 # Run tests
-npm test
+pnpm test
 
 # Type check
-npm run typecheck
+pnpm run typecheck
 
 # Lint
-npm run lint:fix
+pnpm run lint:fix
 
 # Generate design tokens (after editing tokens.json)
-npm run generate:tokens
+pnpm run generate:tokens
 ```
 
 ### Code Style
@@ -96,16 +96,16 @@ test(git): add isomorphic-git integration tests
 
 ```bash
 # Unit tests
-npm test
+pnpm test
 
 # Watch mode
-npm run test:watch
+pnpm run test:watch
 
 # Coverage (aim for 80%)
-npm run test:coverage
+pnpm run test:coverage
 
 # E2E tests
-npm run e2e:test
+pnpm run e2e:test
 ```
 
 ### Documentation

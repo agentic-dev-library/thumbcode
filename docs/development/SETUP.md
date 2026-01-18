@@ -5,53 +5,53 @@
 ### Prerequisites
 
 - Node.js 20+
-- Expo CLI: `npm install -g expo-cli`
+- Expo CLI: `pnpm add -g expo-cli`
 - iOS Simulator (Mac) or Android Emulator
 
 ### Installation
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Generate design tokens
-npm run generate:tokens
+pnpm run generate:tokens
 
 # Start development server
-npm start
+pnpm start
 ```
 
 ### Development Commands
 
 ```bash
 # Start Expo dev server
-npm start
+pnpm start
 
 # Run on iOS
-npm run ios
+pnpm run ios
 
-# Run on Android  
-npm run android
+# Run on Android
+pnpm run android
 
 # Run on Web
-npm run web
+pnpm run web
 
 # Type checking
-npm run typecheck
+pnpm run typecheck
 
 # Linting
-npm run lint
-npm run lint:fix
+pnpm run lint
+pnpm run lint:fix
 
 # Testing
-npm run test
-npm run test:watch
-npm run test:coverage
+pnpm run test
+pnpm run test:watch
+pnpm run test:coverage
 
 # Build
-npm run build:dev
-npm run build:preview
-npm run build:production
+pnpm run build:dev
+pnpm run build:preview
+pnpm run build:production
 ```
 
 ## Project Structure
@@ -204,13 +204,13 @@ router.back();
 
 ```bash
 # Run tests
-npm test
+pnpm test
 
 # Watch mode
-npm run test:watch
+pnpm run test:watch
 
 # Coverage
-npm run test:coverage
+pnpm run test:coverage
 ```
 
 ## Key Files for AI Agents

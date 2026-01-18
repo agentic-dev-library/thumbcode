@@ -19,15 +19,20 @@ export type ColorShade = '300' | '400' | '500' | '600' | '700' | '800';
  */
 export function getColor(color: ColorKey, shade: ColorShade = '500'): string {
   const colorFamily = tokens.colors[color];
-  
+
   if (typeof colorFamily === 'string') {
     return colorFamily;
   }
-  
+
+  // Handle hex-only color objects (e.g., charcoal)
+  if ('hex' in colorFamily && typeof colorFamily.hex === 'string') {
+    return colorFamily.hex;
+  }
+
   if ('values' in colorFamily && colorFamily.values[shade]) {
     return colorFamily.values[shade].hex;
   }
-  
+
   throw new Error(`Color ${String(color)}-${shade} not found`);
 }
 
@@ -135,6 +140,9 @@ export function getCSSCustomProperties(): Record<string, string> {
   Object.entries(tokens.colors).forEach(([colorName, colorData]) => {
     if (typeof colorData === 'string') {
       cssVars[`--color-${colorName}`] = colorData;
+    } else if ('hex' in colorData && typeof colorData.hex === 'string') {
+      // Handle hex-only color objects (e.g., charcoal)
+      cssVars[`--color-${colorName}`] = colorData.hex;
     } else if ('values' in colorData) {
       Object.entries(colorData.values).forEach(([shade, value]) => {
         cssVars[`--color-${colorName}-${shade}`] = value.hex;
@@ -166,6 +174,9 @@ export function getTailwindColors() {
   Object.entries(tokens.colors).forEach(([colorName, colorData]) => {
     if (typeof colorData === 'string') {
       colors[colorName] = colorData;
+    } else if ('hex' in colorData && typeof colorData.hex === 'string') {
+      // Handle hex-only color objects (e.g., charcoal)
+      colors[colorName] = colorData.hex;
     } else if ('values' in colorData) {
       colors[colorName] = {};
       Object.entries(colorData.values).forEach(([shade, value]) => {
@@ -173,7 +184,7 @@ export function getTailwindColors() {
       });
     }
   });
-  
+
   return colors;
 }
 

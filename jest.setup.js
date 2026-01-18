@@ -1,4 +1,5 @@
-import '@testing-library/jest-native/extend-expect';
+// Note: @testing-library/jest-native is deprecated.
+// React Native Testing Library v12.4+ auto-extends Jest matchers.
 
 // Mock expo-secure-store
 jest.mock('expo-secure-store', () => ({

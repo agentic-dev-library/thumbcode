@@ -58,9 +58,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "your-project-id"
+        "projectId": "${EXPO_PROJECT_ID:-your-project-id}"
       }
     },
-    "owner": "thumbcode"
+    "owner": "${EXPO_OWNER:-thumbcode}"
   }
 }

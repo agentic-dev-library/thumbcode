@@ -30,7 +30,17 @@ export function Text({
     mono: 'font-mono',
   }[variant];
   
-  const sizeClass = `text-${size}`;
+  const sizeClass = {
+    xs: 'text-xs',
+    sm: 'text-sm',
+    base: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl',
+    '2xl': 'text-2xl',
+    '3xl': 'text-3xl',
+    '4xl': 'text-4xl',
+    '5xl': 'text-5xl',
+  }[size];
   
   const weightClass = {
     normal: 'font-normal',

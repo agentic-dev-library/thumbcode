@@ -29,6 +29,7 @@ interface ColorValue {
 
 interface ColorData {
   description?: string;
+  hex?: string;
   values?: Record<string, ColorValue>;
 }
 
@@ -61,6 +62,9 @@ function generateCSSVariables(tokens: Tokens): void {
   for (const [colorName, colorData] of Object.entries(tokens.colors)) {
     if (typeof colorData === 'string') {
       css += `  --color-${colorName}: ${colorData};\n`;
+    } else if (colorData.hex) {
+      // Handle hex-only color objects (e.g., charcoal)
+      css += `  --color-${colorName}: ${colorData.hex};\n`;
     } else if (colorData.values) {
       for (const [shade, value] of Object.entries(colorData.values)) {
         css += `  --color-${colorName}-${shade}: ${value.hex};\n`;
@@ -101,6 +105,9 @@ function generateTailwindColors(tokens: Tokens): void {
   for (const [colorName, colorData] of Object.entries(tokens.colors)) {
     if (typeof colorData === 'string') {
       colors[colorName] = colorData;
+    } else if (colorData.hex) {
+      // Handle hex-only color objects (e.g., charcoal)
+      colors[colorName] = colorData.hex;
     } else if (colorData.values) {
       colors[colorName] = {};
       for (const [shade, value] of Object.entries(colorData.values)) {

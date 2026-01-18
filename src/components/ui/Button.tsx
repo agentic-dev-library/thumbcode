@@ -53,7 +53,7 @@ export function Button({
         ${sizeClasses}
         rounded-[0.5rem_0.75rem_0.625rem_0.875rem]
         shadow-md
-        opacity-${disabled ? '50' : '100'}
+        ${disabled || loading ? 'opacity-50' : 'opacity-100'}
         ${className}
       `}
       {...props}

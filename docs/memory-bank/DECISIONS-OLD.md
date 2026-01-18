@@ -6,7 +6,7 @@
 
 ## Decision Format
 
-```
+```markdown
 ## D-XXX: [Title]
 
 **Date**: YYYY-MM-DD

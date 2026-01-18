@@ -112,7 +112,7 @@ ThumbCode uses **organic, imperfect shapes** — NOT gradients. This is critical
 
 ### File Structure Convention
 
-```
+```text
 src/
 ├── app/                    # expo-router pages
 │   ├── (tabs)/            # Tab navigation group
@@ -192,7 +192,7 @@ export function AgentCard({ agent, onSelect }) {
 ### Commit Messages
 
 Follow Conventional Commits:
-```
+```text
 feat(agents): add multi-agent workspace view
 fix(auth): resolve GitHub PKCE token refresh
 docs(readme): update installation instructions
