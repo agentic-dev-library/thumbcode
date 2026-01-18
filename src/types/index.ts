@@ -1,6 +1,6 @@
 /**
  * ThumbCode Core Type Definitions
- * 
+ *
  * These types define the contracts for all ThumbCode features.
  * Agents MUST code against these interfaces - no deviations without Architect approval.
  */
@@ -11,7 +11,7 @@
 
 export type AgentRole = 'architect' | 'implementer' | 'reviewer' | 'tester';
 
-export type AgentStatus = 
+export type AgentStatus =
   | 'idle'
   | 'thinking'
   | 'coding'
@@ -64,7 +64,7 @@ export interface TaskAssignment {
   completedAt?: Date;
 }
 
-export type TaskStatus = 
+export type TaskStatus =
   | 'pending'
   | 'in_progress'
   | 'blocked'
@@ -126,12 +126,7 @@ export interface Workspace {
   updatedAt: Date;
 }
 
-export type WorkspaceStatus = 
-  | 'initializing'
-  | 'ready'
-  | 'syncing'
-  | 'conflict'
-  | 'error';
+export type WorkspaceStatus = 'initializing' | 'ready' | 'syncing' | 'conflict' | 'error';
 
 export interface WorkspaceFile {
   path: string;
@@ -161,7 +156,7 @@ export interface DiffHunk {
 // CREDENTIAL SYSTEM
 // =============================================================================
 
-export type CredentialType = 
+export type CredentialType =
   | 'github'
   | 'gitlab'
   | 'bitbucket'
@@ -229,11 +224,7 @@ export interface ChatMessage {
   createdAt: Date;
 }
 
-export type MessageContent = 
-  | TextContent
-  | CodeContent
-  | FileContent
-  | ActionContent;
+export type MessageContent = TextContent | CodeContent | FileContent | ActionContent;
 
 export interface TextContent {
   type: 'text';
@@ -322,23 +313,23 @@ export type RootStackParamList = {
   'project/[id]': { id: string };
   'agent/[id]': { id: string };
   'workspace/[id]': { id: string };
-  'settings': undefined;
+  settings: undefined;
 };
 
 export type OnboardingStackParamList = {
-  'welcome': undefined;
+  welcome: undefined;
   'github-auth': undefined;
   'api-keys': undefined;
   'create-project': undefined;
-  'complete': undefined;
+  complete: undefined;
 };
 
 export type TabParamList = {
-  'index': undefined;
-  'projects': undefined;
-  'agents': undefined;
-  'chat': undefined;
-  'settings': undefined;
+  index: undefined;
+  projects: undefined;
+  agents: undefined;
+  chat: undefined;
+  settings: undefined;
 };
 
 // =============================================================================
@@ -374,11 +365,7 @@ export interface RateLimitInfo {
 // EVENTS
 // =============================================================================
 
-export type AppEvent = 
-  | AgentEvent
-  | ProjectEvent
-  | WorkspaceEvent
-  | ChatEvent;
+export type AppEvent = AgentEvent | ProjectEvent | WorkspaceEvent | ChatEvent;
 
 export interface AgentEvent {
   type: 'agent';

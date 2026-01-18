@@ -1,4 +1,4 @@
-import { Text as RNText, TextProps as RNTextProps } from 'react-native';
+import { Text as RNText, type TextProps as RNTextProps } from 'react-native';
 
 interface TextProps extends RNTextProps {
   variant?: 'display' | 'body' | 'mono';
@@ -16,20 +16,20 @@ interface TextProps extends RNTextProps {
  * @param className - Additional class names to append to the computed classes.
  * @returns A React Native `Text` element with class names composed from `variant`, `size`, `weight`, and `className`.
  */
-export function Text({ 
-  variant = 'body', 
+export function Text({
+  variant = 'body',
   size = 'base',
   weight = 'normal',
   className = '',
   children,
-  ...props 
+  ...props
 }: TextProps) {
   const variantClass = {
     display: 'font-display',
     body: 'font-body',
     mono: 'font-mono',
   }[variant];
-  
+
   const sizeClass = {
     xs: 'text-xs',
     sm: 'text-sm',
@@ -41,19 +41,16 @@ export function Text({
     '4xl': 'text-4xl',
     '5xl': 'text-5xl',
   }[size];
-  
+
   const weightClass = {
     normal: 'font-normal',
     medium: 'font-medium',
     semibold: 'font-semibold',
     bold: 'font-bold',
   }[weight];
-  
+
   return (
-    <RNText 
-      className={`${variantClass} ${sizeClass} ${weightClass} ${className}`}
-      {...props}
-    >
+    <RNText className={`${variantClass} ${sizeClass} ${weightClass} ${className}`} {...props}>
       {children}
     </RNText>
   );

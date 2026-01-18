@@ -1,6 +1,6 @@
 /**
  * Design Token Utilities
- * 
+ *
  * Programmatically access and use design tokens from JSON
  */
 
@@ -90,7 +90,7 @@ export function getFontFamily(type: 'display' | 'body' | 'mono'): string {
  */
 export function getGoogleFontsUrl(): string {
   const fonts = Object.values(tokens.typography.fontFamilies)
-    .map(f => f.googleFonts)
+    .map((f) => f.googleFonts)
     .join('&family=');
   return `https://fonts.googleapis.com/css2?family=${fonts}&display=swap`;
 }
@@ -135,7 +135,7 @@ export function getOrganicShadow(type: 'organic' | 'organicCoral'): string {
  */
 export function getCSSCustomProperties(): Record<string, string> {
   const cssVars: Record<string, string> = {};
-  
+
   // Add color values
   Object.entries(tokens.colors).forEach(([colorName, colorData]) => {
     if (typeof colorData === 'string') {
@@ -149,17 +149,17 @@ export function getCSSCustomProperties(): Record<string, string> {
       });
     }
   });
-  
+
   // Add spacing
   Object.entries(tokens.spacing.values).forEach(([key, value]) => {
     cssVars[`--spacing-${key}`] = value;
   });
-  
+
   // Add font sizes
   Object.entries(tokens.typography.fontSizes).forEach(([key, value]) => {
     cssVars[`--font-size-${key}`] = value.value;
   });
-  
+
   return cssVars;
 }
 
@@ -170,7 +170,7 @@ export function getCSSCustomProperties(): Record<string, string> {
  */
 export function getTailwindColors() {
   const colors: Record<string, any> = {};
-  
+
   Object.entries(tokens.colors).forEach(([colorName, colorData]) => {
     if (typeof colorData === 'string') {
       colors[colorName] = colorData;
@@ -197,11 +197,11 @@ export function getTailwindColors() {
  */
 export function getColorUsage(color: ColorKey, shade: ColorShade = '500'): string {
   const colorFamily = tokens.colors[color];
-  
+
   if (typeof colorFamily === 'object' && 'values' in colorFamily) {
     return colorFamily.values[shade]?.usage || '';
   }
-  
+
   return '';
 }
 
