@@ -87,7 +87,7 @@ jobs:
 
             Please:
             1. Analyze the failure logs to identify root causes
-            2. Analyze the failure logs to identify root causes
+            2. Summarize and prioritize the identified root causes
             3. Fix the issues in the code
             4. Run the failing commands locally to verify fixes
             5. Commit the changes with a descriptive message
