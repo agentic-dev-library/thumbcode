@@ -25,9 +25,9 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "generate:tokens": "node scripts/generate-tokens.js",
-    "generate:icons": "tsx scripts/generate-icons.ts",
-    "generate:all": "pnpm run generate:tokens && pnpm run generate:icons",
+    "generate:tokens": "pnpm --filter @thumbcode/dev-tools run generate:tokens",
+    "generate:icons": "pnpm --filter @thumbcode/dev-tools run generate:icons",
+    "generate:all": "pnpm --filter @thumbcode/dev-tools run generate:all",
     "postinstall": "pnpm run generate:all"
   },
   "dependencies": {
@@ -91,8 +91,6 @@
     "jest": "^29.7.0",
     "jest-expo": "~52.0.0",
     "react-test-renderer": "18.3.1",
-    "sharp": "^0.34.0",
-    "tsx": "^4.19.2",
     "typescript": "~5.6.0",
     "vitepress": "^1.5.0"
   },

@@ -1,0 +1,27 @@
+{
+  "name": "@thumbcode/dev-tools",
+  "version": "0.1.0",
+  "description": "Development tooling for ThumbCode - design token generation and asset processing",
+  "type": "module",
+  "exports": {
+    "./generate-tokens": "./src/generate-tokens.ts",
+    "./generate-icons": "./src/generate-icons.ts"
+  },
+  "bin": {
+    "generate-tokens": "./src/generate-tokens.ts",
+    "generate-icons": "./src/generate-icons.ts"
+  },
+  "scripts": {
+    "generate:tokens": "tsx src/generate-tokens.ts",
+    "generate:icons": "tsx src/generate-icons.ts",
+    "generate:all": "pnpm run generate:tokens && pnpm run generate:icons"
+  },
+  "dependencies": {
+    "sharp": "^0.34.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "~5.6.0"
+  },
+  "private": true
+}

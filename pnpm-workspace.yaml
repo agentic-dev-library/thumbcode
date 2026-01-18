@@ -1,0 +1,8 @@
+# pnpm workspace configuration
+# https://pnpm.io/workspaces
+
+packages:
+  # Main app remains at root
+  - '.'
+  # Development tooling package
+  - 'packages/*'

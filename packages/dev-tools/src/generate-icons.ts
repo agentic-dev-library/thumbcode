@@ -9,8 +9,16 @@
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Workspace root (three levels up from packages/dev-tools/src/)
+const ROOT_DIR = join(__dirname, '../../../');
+const OUTPUT_DIR = join(ROOT_DIR, 'assets');
 
 // Icon specifications for Expo
 const ICON_SPECS = {
@@ -42,9 +50,6 @@ const ICON_SPECS = {
     description: 'Web favicon',
   },
 } as const;
-
-const ROOT_DIR = process.cwd();
-const OUTPUT_DIR = join(ROOT_DIR, 'assets');
 
 async function generateIcon(
   filename: string,
