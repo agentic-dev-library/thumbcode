@@ -1,6 +1,6 @@
 /**
  * Design Token Utilities
- * 
+ *
  * Programmatically access and use design tokens from JSON
  */
 
@@ -29,8 +29,11 @@ export function getColor(color: ColorKey, shade: ColorShade = '500'): string {
     return colorFamily.hex;
   }
 
-  if ('values' in colorFamily && colorFamily.values[shade]) {
-    return colorFamily.values[shade].hex;
+  if ('values' in colorFamily) {
+    const values = colorFamily.values as Record<string, { hex: string }>;
+    if (values[shade]) {
+      return values[shade].hex;
+    }
   }
 
   throw new Error(`Color ${String(color)}-${shade} not found`);
@@ -90,7 +93,7 @@ export function getFontFamily(type: 'display' | 'body' | 'mono'): string {
  */
 export function getGoogleFontsUrl(): string {
   const fonts = Object.values(tokens.typography.fontFamilies)
-    .map(f => f.googleFonts)
+    .map((f) => f.googleFonts)
     .join('&family=');
   return `https://fonts.googleapis.com/css2?family=${fonts}&display=swap`;
 }
@@ -135,7 +138,7 @@ export function getOrganicShadow(type: 'organic' | 'organicCoral'): string {
  */
 export function getCSSCustomProperties(): Record<string, string> {
   const cssVars: Record<string, string> = {};
-  
+
   // Add color values
   Object.entries(tokens.colors).forEach(([colorName, colorData]) => {
     if (typeof colorData === 'string') {
@@ -149,17 +152,17 @@ export function getCSSCustomProperties(): Record<string, string> {
       });
     }
   });
-  
+
   // Add spacing
   Object.entries(tokens.spacing.values).forEach(([key, value]) => {
     cssVars[`--spacing-${key}`] = value;
   });
-  
+
   // Add font sizes
   Object.entries(tokens.typography.fontSizes).forEach(([key, value]) => {
     cssVars[`--font-size-${key}`] = value.value;
   });
-  
+
   return cssVars;
 }
 
@@ -169,8 +172,8 @@ export function getCSSCustomProperties(): Record<string, string> {
  * @returns An object mapping color names to either a hex color string or an object of shade keys to hex strings (e.g., `{ blue: { '500': '#0b5fff', '600': '#084fd6' }, black: '#000' }`)
  */
 export function getTailwindColors() {
-  const colors: Record<string, any> = {};
-  
+  const colors: Record<string, string | Record<string, string>> = {};
+
   Object.entries(tokens.colors).forEach(([colorName, colorData]) => {
     if (typeof colorData === 'string') {
       colors[colorName] = colorData;
@@ -178,10 +181,11 @@ export function getTailwindColors() {
       // Handle hex-only color objects (e.g., charcoal)
       colors[colorName] = colorData.hex;
     } else if ('values' in colorData) {
-      colors[colorName] = {};
+      const shadeMap: Record<string, string> = {};
       Object.entries(colorData.values).forEach(([shade, value]) => {
-        colors[colorName][shade] = value.hex;
+        shadeMap[shade] = value.hex;
       });
+      colors[colorName] = shadeMap;
     }
   });
 
@@ -197,11 +201,12 @@ export function getTailwindColors() {
  */
 export function getColorUsage(color: ColorKey, shade: ColorShade = '500'): string {
   const colorFamily = tokens.colors[color];
-  
+
   if (typeof colorFamily === 'object' && 'values' in colorFamily) {
-    return colorFamily.values[shade]?.usage || '';
+    const values = colorFamily.values as Record<string, { usage?: string }>;
+    return values[shade]?.usage || '';
   }
-  
+
   return '';
 }
 
