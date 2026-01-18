@@ -20,13 +20,17 @@ ThumbCode is a React Native/Expo application that enables professional software 
 
 | Document | Description |
 |----------|-------------|
-| [Vision](docs/vision/VISION.md) | Product vision, target users, roadmap |
-| [Architecture](docs/development/ARCHITECTURE.md) | Technical architecture, data flow |
-| [Onboarding](docs/features/ONBOARDING.md) | Feature specification for setup flow |
-| [Decisions](DECISIONS.md) | Technical decision registry |
-| [Agents](AGENTS.md) | Agent coordination protocol |
-| [Brand](docs/brand/BRAND-GUIDELINES.md) | Visual identity guidelines |
-| [Types](src/types/index.ts) | Core TypeScript interfaces |
+| [Project Status](PROJECT-STATUS.md) | 📊 Current status and what's included |
+| [Setup Guide](docs/development/SETUP.md) | 🚀 Development guide and structure |
+| [Contributing](CONTRIBUTING.md) | 🤝 How to contribute |
+| [Vision](docs/vision/VISION.md) | 🎯 Product vision, target users, roadmap |
+| [Architecture](docs/development/ARCHITECTURE.md) | 🏗️ Technical architecture, data flow |
+| [Onboarding](docs/features/ONBOARDING.md) | 📱 Feature specification for setup flow |
+| [Decisions](DECISIONS.md) | 📝 Technical decision registry |
+| [Agents](AGENTS.md) | 🤖 Agent coordination protocol |
+| [Agent Playbook](docs/agents/CLAUDE.md) | 📚 Complete guide for AI agents |
+| [Brand Guidelines](docs/brand/BRAND-GUIDELINES.md) | 🎨 Visual identity guidelines |
+| [Types](src/types/index.ts) | 📐 Core TypeScript interfaces |
 
 ## Tech Stack
 
@@ -56,7 +60,7 @@ ThumbCode is a React Native/Expo application that enables professional software 
 git clone https://github.com/agentic-dev-library/thumbcode.git
 cd thumbcode
 
-# Install dependencies
+# Install dependencies (auto-generates design tokens)
 npm install
 
 # Start development server
@@ -74,45 +78,103 @@ npm run android
 
 # Run on Web
 npm run web
+
+# Type checking
+npm run typecheck
+
+# Linting
+npm run lint
+
+# Testing
+npm run test
+
+# Generate design tokens (after editing tokens.json)
+npm run generate:tokens
 ```
 
 ## Project Structure
 
 ```
 thumbcode/
-├── app/                    # Expo Router file-based routes
-│   ├── (onboarding)/       # Setup flow
-│   ├── (tabs)/             # Main navigation
-│   └── ...
+├── app/                          # Expo Router file-based routes
+│   ├── (onboarding)/            # Setup flow
+│   ├── (tabs)/                  # Main navigation
+│   ├── _layout.tsx              # Root layout
+│   └── index.tsx                # ✅ Working demo home screen
 ├── src/
-│   ├── components/         # React components
-│   ├── hooks/              # Custom hooks
-│   ├── stores/             # Zustand stores
-│   ├── services/           # External integrations
-│   ├── types/              # TypeScript definitions
-│   └── utils/              # Utilities
-├── design-system/          # Design tokens
-├── docs/                   # Documentation
-└── __tests__/              # Test suites
+│   ├── components/
+│   │   └── ui/                  # ✅ Complete base components
+│   ├── hooks/                   # Custom hooks
+│   ├── stores/                  # Zustand stores
+│   ├── services/                # External integrations
+│   ├── types/                   # ✅ TypeScript definitions
+│   └── utils/                   # ✅ Design token utilities
+├── design-system/
+│   ├── tokens.json              # ✅ Design tokens (source of truth)
+│   └── generated/               # ✅ Auto-generated CSS/JS
+├── docs/                        # ✅ Complete documentation
+├── public/assets/               # ✅ Organized brand assets
+├── scripts/                     # ✅ Build & utility scripts
+└── __tests__/                   # Test suites
+```
+
+**Status:** ✅ Fully functioning shell with working demo app. See [PROJECT-STATUS.md](PROJECT-STATUS.md) for details.
+
+## Design System
+
+ThumbCode uses a programmatic design system powered by `design-system/tokens.json`:
+
+### Automatic Token Generation
+
+All design tokens automatically generate:
+- CSS custom properties
+- Tailwind color configuration
+- TypeScript utilities
+- React Native constants
+
+```bash
+# Edit tokens.json, then run:
+npm run generate:tokens
+```
+
+### Programmatic Access
+
+```typescript
+import { getColor, getSpacing, getFontFamily } from '@/utils/design-tokens';
+
+const primary = getColor('coral', '500');     // #FF7059
+const space = getSpacing('4');                // 16px
+const font = getFontFamily('display');        // Fraunces, Georgia, serif
+```
+
+### Organic Styling
+
+Asymmetric border-radius for "paint daub" aesthetic:
+
+```tsx
+<Button className="rounded-[0.5rem_0.75rem_0.625rem_0.875rem]">
+  Organic Button
+</Button>
 ```
 
 ## For AI Agents
 
-This repository is designed for agentic development. Key files for agents:
+This repository is designed for agentic development. **Read these first:**
 
-1. **[AGENTS.md](AGENTS.md)** — Coordination protocol, roles, workflow
-2. **[src/types/index.ts](src/types/index.ts)** — Type contracts to code against
+1. **[docs/agents/CLAUDE.md](docs/agents/CLAUDE.md)** — Complete agent playbook with brand guidelines
+2. **[AGENTS.md](AGENTS.md)** — Coordination protocol, roles, workflow
 3. **[DECISIONS.md](DECISIONS.md)** — Technical decisions with rationale
-4. **[docs/development/ARCHITECTURE.md](docs/development/ARCHITECTURE.md)** — System architecture
+4. **[src/types/index.ts](src/types/index.ts)** — Type contracts to code against
+5. **[docs/development/ARCHITECTURE.md](docs/development/ARCHITECTURE.md)** — System architecture
 
-### Agent Roles
+### Key Principles
 
-| Role | Responsibility | Key Files |
-|------|----------------|-----------|
-| Architect | System design, types | `src/types/`, `DECISIONS.md` |
-| Implementer | Write code | `src/components/`, `src/services/` |
-| Reviewer | Code quality | PR comments |
-| Tester | Test coverage | `__tests__/` |
+- ✅ Use design tokens programmatically from `tokens.json`
+- ✅ Apply organic asymmetric styling (no perfect circles)
+- ✅ Follow the Warm Technical color palette (Coral/Teal/Gold)
+- ✅ Code against type definitions in `src/types/`
+- ❌ NO gradients for backgrounds or buttons
+- ❌ NO hardcoded colors - always use tokens
 
 ## Contributing
 
