@@ -976,7 +976,6 @@ All workflows now have comprehensive permissions to enable full automation:
 | `contents: write` | Create branches, commit, push code |
 | `pull-requests: write` | Create PRs, comment, add labels |
 | `issues: write` | Label issues, add comments |
-| `workflows: write` | Modify workflow files if needed |
 | `checks: write` | Update check status |
 | `actions: read` | Read workflow runs and logs |
 | `statuses: write` | Update commit statuses |
