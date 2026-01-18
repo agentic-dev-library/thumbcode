@@ -136,7 +136,7 @@ async function generateAll(): Promise<void> {
 }
 
 // Run if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (__filename === process.argv[1]) {
   generateAll().catch((error) => {
     console.error('\n❌ Icon generation failed:', error);
     process.exit(1);
