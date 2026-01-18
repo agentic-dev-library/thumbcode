@@ -7,6 +7,7 @@
 import { requestSigningService } from '../security/RequestSigningService';
 
 const MCP_SERVER_HOST = 'mcp.thumbcode.com'; // Replace with actual host
+const ALLOWED_MCP_HOSTS = [MCP_SERVER_HOST];
 
 export async function secureFetch(
   input: RequestInfo | URL,
@@ -14,7 +15,7 @@ export async function secureFetch(
 ): Promise<Response> {
   const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
 
-  if (new URL(url).hostname.endsWith(MCP_SERVER_HOST)) {
+  if (ALLOWED_MCP_HOSTS.includes(new URL(url).hostname)) {
     const method = init?.method?.toUpperCase() || 'GET';
     const body = init?.body ? (typeof init.body === 'string' ? init.body : JSON.stringify(init.body)) : undefined;
 
