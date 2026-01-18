@@ -12,9 +12,9 @@
  * - Secure deletion with memory clearing
  */
 
+import { useCredentialStore } from '@thumbcode/state';
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
-import { useCredentialStore } from '@/stores';
 import type { Credential, CredentialType } from '@/types';
 
 // SecureStore key prefixes for different credential types

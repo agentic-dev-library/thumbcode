@@ -1,6 +1,6 @@
 import { styled } from 'nativewind';
 import { Text, View } from 'react-native';
-import type { Message } from '../../stores/chatStore';
+import type { Message } from '@thumbcode/state';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);

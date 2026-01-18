@@ -5,9 +5,9 @@
  * since actual hardware-backed storage is not available in Jest.
  */
 
+import { useCredentialStore } from '@thumbcode/state';
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
-import { useCredentialStore } from '@/stores';
 import { CredentialService } from '../CredentialService';
 
 // Mock SecureStore

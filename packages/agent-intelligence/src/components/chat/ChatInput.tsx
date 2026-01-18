@@ -1,7 +1,7 @@
 import { styled } from 'nativewind';
 import { useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useChatStore } from '../../stores/chatStore';
+import { useChatStore } from '@thumbcode/state';
 
 const StyledView = styled(View);
 const StyledTextInput = styled(TextInput);

@@ -213,6 +213,9 @@ importers:
       '@anthropic-ai/sdk':
         specifier: ^0.32.0
         version: 0.32.1
+      '@thumbcode/state':
+        specifier: workspace:*
+        version: link:../state
       '@thumbcode/types':
         specifier: workspace:*
         version: link:../types
