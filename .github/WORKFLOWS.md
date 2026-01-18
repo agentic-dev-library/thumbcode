@@ -318,8 +318,10 @@ Add these to your GitHub repository secrets:
 
 ### 2. Google Jules API Key
 
+> Note: Jules is an experimental Google Labs integration and `https://jules.google.com` may only be available to users with special or internal access. If you cannot access this URL, skip this step or consult your project administrator.
+
 1. Visit [jules.google.com](https://jules.google.com)
-2. Authenticate and generate an API key
+2. Authenticate and generate an API key (if you have access)
 3. Add to GitHub: Settings → Secrets → Actions → New secret
    - Name: `GOOGLE_JULES_API_KEY`
    - Value: Your Jules API key
