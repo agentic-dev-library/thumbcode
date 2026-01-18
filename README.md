@@ -1,374 +1,381 @@
 # ThumbCode
 
-> **Code with your thumbs.** A decentralized multi-agent mobile development platform.
+> **Code with your thumbs.** Professional software development, reimagined for mobile.
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/your-badge/deploy-status)](https://thumbcode-foundation.netlify.app)
 
 ---
 
-## What is ThumbCode?
+## The Future of Development is Mobile-Native
 
-ThumbCode brings professional software development to your mobile device. Instead of typing every line of code, you orchestrate teams of specialized AI agents that understand your intent and execute with precision.
+For decades, software development has been chained to the desktop. Keyboards, multiple monitors, sprawling IDEs—these are the tools that built the internet. But they're also what keeps development locked in an office.
 
-**Ship mobile apps by directing AI agents from your phone. Your keys, your code, zero dependencies.**
+**ThumbCode breaks that paradigm.**
 
----
-
-## Understanding AI Development: From Vibe Coding to Agency
-
-### What is "Vibe Coding"?
-
-You've probably heard of **"vibe coding"** — it's the experience of opening an AI chat, describing what you want, and watching code appear. It's magical for simple, single-session tasks:
-
-```
-You: "Build me a todo app with React"
-AI: *generates complete code*
-```
-
-**Vibe coding works great for:**
-- ✅ One-off scripts and utilities
-- ✅ Quick prototypes and demos
-- ✅ Learning and experimentation
-- ✅ Simple, self-contained features
-
-**But vibe coding has limits:**
-- ❌ No memory between sessions — you start from scratch every time
-- ❌ No long-term planning — can't manage complex, multi-step projects
-- ❌ Single agent — no specialization or parallel work
-- ❌ "YOLO mode" — limited oversight and review
-
-When your session ends, the AI forgets everything. It's like having a brilliant colleague with amnesia.
-
-### What is "Agentic Development"?
-
-**Agentic development** (or "**agency**") is the evolution beyond vibe coding. It's what happens when you give AI:
-
-1. **Memory** — Context persists across sessions
-2. **Specialization** — Different agents for architecture, implementation, review, testing
-3. **Coordination** — Agents work together and review each other
-4. **Tools** — Real git operations, vector search, embeddings, deployment
-5. **Lifecycle** — Sustained development over days, weeks, months
-
-Think of it like this:
-
-| Vibe Coding | Agentic Development (ThumbCode) |
-|-------------|----------------------------------|
-| Single AI session | Team of specialized agents |
-| No memory | Persistent context & history |
-| One task at a time | Parallel workflows |
-| "Build me X" | "Maintain this app, add features, fix bugs" |
-| Disposable output | Production-ready systems |
-
-**Agentic development enables:**
-- 🤖 **Multi-agent teams** — Architect, Implementer, Reviewer, Tester working in parallel
-- 🧠 **Contextual memory** — RAG, embeddings, vector search for making connections
-- 🔄 **Agents reviewing agents** — Quality gates and sustained excellence
-- 📈 **Complex task decomposition** — Break down multi-week projects into manageable steps
-- 🚀 **Full lifecycle support** — From ideation to deployment to maintenance
-
-**This is where ThumbCode lives.** We took vibe coding and gave it agency.
+We're building the first professional development environment designed for your phone, not adapted to it. Where most tools treat mobile as a compromise, we treat it as an opportunity—combining conversational AI with specialized agent teams to deliver a development experience that's more powerful *because* it's mobile.
 
 ---
 
-## Why ThumbCode is Different
+## What Makes ThumbCode Different
 
-### 1. Mobile-First, Laptop-Optional
+### Orchestration, Not Translation
 
-Most developers assume "real work" requires a laptop. ThumbCode challenges that. Our interface is designed for your thumbs, not your keyboard.
+Other AI coding tools give you a chatbot that writes code. ThumbCode gives you a **development team**—Architects who design systems, Implementers who write production code, Reviewers who ensure quality, and Testers who prevent regressions.
 
-- **Chat-first interface** — Describe what you want in natural language
-- **Optimized for mobile** — Every UI element designed for touch
-- **Full git workflow** — Clone, commit, push from your phone
-- **Code review on-the-go** — Approve changes during your commute
+You don't type code. You orchestrate it.
 
-### 2. Credential Sovereignty (BYOK)
+Instead of switching between terminal, editor, browser, and documentation, you have a single conversation with agents who handle the entire lifecycle. They coordinate through git, review each other's work, and maintain context across weeks of development.
 
-**Bring Your Own Keys.** Your Anthropic API key, your OpenAI key, your GitHub token — they never leave your device.
+### Your Credentials, Zero Trust
 
-- 🔒 Keys stored in `expo-secure-store` with hardware-backed encryption
-- 🔒 No ThumbCode servers to trust or compromise
-- 🔒 You own your data, you control your costs
-- 🔒 Works completely offline after initial repo clone
+**Bring Your Own Keys (BYOK)** isn't a feature—it's our architecture.
 
-### 3. Multi-Agent Architecture
+Your Anthropic API key, your OpenAI key, your GitHub token—they live in hardware-backed secure storage on your device. ThumbCode never sees them, never proxies them, never has the ability to access them.
 
-ThumbCode isn't one AI — it's a **team** of specialized agents:
+This isn't just about privacy. It's about sovereignty. You control your costs, you own your data, and you're not dependent on our servers staying online.
 
-| Agent | Role | Specialization |
-|-------|------|----------------|
-| **Architect** | System design | Breaking down features, planning architecture |
-| **Implementer** | Code generation | Writing clean, tested code |
-| **Reviewer** | Quality assurance | Code review, security checks |
-| **Tester** | Testing | Unit tests, integration tests, E2E |
+### Mobile-First by Design
 
-Agents coordinate through git worktrees, allowing parallel work without conflicts.
+ThumbCode isn't a desktop IDE squeezed onto a phone. Every interaction is designed for touch, every workflow optimized for the constraints and superpowers of mobile.
 
-### 4. Warm Technical Design
+- **Chat-first interface** — Natural language is the primary input
+- **Gesture-driven navigation** — Swipe to review diffs, tap to approve changes
+- **Context-aware suggestions** — Agents understand what you can see on a 6-inch screen
+- **Offline-capable** — Full git operations work without connectivity
 
-ThumbCode rejects the cold, sterile aesthetic of most developer tools. We use **organic paint-daub shapes**, warm colors (Coral/Teal/Gold), and humanist typography.
+The small screen isn't a limitation. It's a forcing function that makes AI orchestration essential—and more effective than traditional development.
 
-Software development can feel warm and human, not like a terminal window.
+### Warm Technical Aesthetic
+
+Software development doesn't have to look like a terminal from 1985.
+
+ThumbCode uses **organic shapes, warm colors, and humanist typography** to create an environment that feels like a conversation with a talented team, not operating a machine. Our "paint daub" aesthetic—asymmetric borders, soft curves, Coral and Teal and Gold—differentiates us from the cold blue-on-black world of traditional dev tools.
+
+Development can be warm and human.
+
+---
+
+## How It Works: From Conversation to Code
+
+### 1. Describe What You Want
+
+```
+You: "Add a dark mode toggle to the settings screen,
+     following our existing design system"
+```
+
+### 2. Agents Plan & Execute
+
+**Architect Agent:**
+- Reviews design tokens and existing patterns
+- Defines the state management approach
+- Creates TypeScript interfaces
+
+**Implementer Agent:**
+- Writes the toggle component
+- Updates theme provider
+- Applies organic styling
+
+**Tester Agent:**
+- Creates unit tests for toggle
+- Adds integration tests for theme switching
+- Tests across light/dark modes
+
+### 3. Review & Approve
+
+You see a diff, the test results, and a summary. You can:
+- Approve and merge
+- Request changes
+- Ask agents to explain their approach
+- Iterate with follow-up instructions
+
+### 4. Ship
+
+Changes are committed to your branch, tests pass, and you can deploy—all from your phone.
 
 ---
 
 ## Real-World Use Cases
 
-### For Solo Developers
-*"I have an idea but limited coding time."*
+### The Solo Founder
+*"I have a vision but limited coding bandwidth."*
 
-Direct agents to build your MVP while you focus on design and user feedback. Review and approve changes on your commute.
+ThumbCode becomes your engineering team. You focus on product decisions and user feedback. Agents handle implementation, testing, and code review. Build your MVP during your commute.
 
-### For Teams
-*"We need to iterate faster on mobile features."*
+### The Engineering Manager
+*"I need to unblock my team while I'm away from my laptop."*
 
-Spin up agent teams for each feature branch. Agents handle boilerplate, you handle creative decisions.
+Review PRs, merge hotfixes, and kick off new features from your phone. ThumbCode gives you the full git workflow without SSH or terminal access.
 
-### For Learning
-*"I want to understand how production apps are built."*
+### The Aspiring Developer
+*"I want to build real apps, not just tutorials."*
 
-Watch agents architect, implement, review, and test real features. Learn from the conversations and code.
+Learn by directing agents. See how professionals architect features, handle edge cases, and write tests. ThumbCode is a mentor that never sleeps.
 
-### For Prototyping
-*"I need to validate this idea by end of week."*
+### The Rapid Prototyper
+*"I need to validate this idea by Friday."*
 
-Describe your concept in a chat. Agents generate working prototypes you can deploy and share with users.
+Describe your concept, let agents build it. Deploy a working prototype in hours, not weeks. Iterate based on real user feedback.
 
 ---
 
-## Quick Start
+## Technology: Built for AI-First Development
 
-### Prerequisites
+ThumbCode is built on a foundation optimized for AI code generation and mobile deployment:
 
-- **Node.js 20+**
-- **pnpm 10+** (`npm install -g pnpm`)
-- **Expo CLI** (optional, recommended)
-- **iOS Simulator / Android Emulator** or physical device
+| Layer | Technology | Why It Matters |
+|-------|------------|----------------|
+| **Framework** | React Native + Expo SDK 52 | Largest training corpus for AI models; generates better code |
+| **Styling** | NativeWind (Tailwind) | Declarative patterns AI understands natively |
+| **Navigation** | expo-router | File-based routing that's predictable for agents |
+| **State** | Zustand | Simple patterns that AI can reason about |
+| **Git** | isomorphic-git | Client-side operations; no server required |
+| **Security** | expo-secure-store | Hardware-backed encryption for credentials |
+| **AI** | Anthropic Claude / OpenAI | Long context windows for full-file understanding |
 
-### Installation
+Every technology choice optimizes for **AI agent effectiveness** and **mobile-native experience**.
+
+---
+
+## The Intelligence Layer: Multi-Agent Coordination
+
+ThumbCode's agents aren't just LLMs with prompts. They're specialized roles with distinct capabilities, authorities, and communication protocols.
+
+### Agent Specialization
+
+| Agent | Primary Responsibility | Decision Authority |
+|-------|----------------------|-------------------|
+| **🏗️ Architect** | System design, technical decisions | Type definitions, breaking changes, dependency choices |
+| **🔧 Implementer** | Production code within established contracts | Implementation details, code organization, optimizations |
+| **🔍 Reviewer** | Quality assurance, pattern compliance | Code quality gates, security checks, documentation requirements |
+| **🧪 Tester** | Test coverage, regression prevention | Test requirements, coverage thresholds, E2E scenarios |
+
+### Coordination Through Git
+
+Agents work in isolated **git worktrees**, allowing parallel execution without conflicts. When ready, changes are merged with automated conflict resolution.
+
+This isn't just efficient—it mirrors how real development teams work, creating code that's maintainable by humans and AI alike.
+
+---
+
+## Project Status: Currently in Collaborative Development
+
+ThumbCode is **not yet publicly available** as a mobile app. We're currently in an intensive collaborative development phase, working with early contributors to refine the multi-agent orchestration system and mobile-native workflows.
+
+### What's Working Today
+
+- ✅ Complete design system with organic aesthetics
+- ✅ Programmatic design token generation
+- ✅ Multi-agent coordination protocols
+- ✅ GitHub Actions CI/CD with Claude integration
+- ✅ Automated issue triage and PR creation
+- ✅ React Native Web deployment pipeline
+
+### What We're Building
+
+- 🚧 Complete onboarding flow with GitHub authentication
+- 🚧 Secure credential storage with biometric unlock
+- 🚧 Full git workflow (clone, branch, commit, push, merge)
+- 🚧 Chat interface with streaming agent responses
+- 🚧 Code diff review and approval UI
+
+### The Vision
+
+ThumbCode will launch as a **premium mobile application** with a subscription model, targeting professional developers who want the freedom to code from anywhere without compromise.
+
+This repository is open during development to enable collaboration with AI agents and early contributors. It will transition to a commercial license upon public release.
+
+---
+
+## For Developers: Contributing During Development Phase
+
+While ThumbCode is in collaborative development, we welcome contributions from both humans and AI agents.
+
+### Getting Started
 
 ```bash
 # Clone the repository
 git clone https://github.com/agentic-dev-library/thumbcode.git
 cd thumbcode
 
-# Install dependencies (auto-generates design tokens)
+# Install dependencies (runs design token generation automatically)
 pnpm install
 
 # Start development server
 pnpm start
 ```
 
-### First Run
-
-1. **Connect GitHub** — Use Device Flow to authenticate (no password needed)
-2. **Add API Keys** — Enter your Anthropic (required) and OpenAI (optional) keys
-3. **Clone a Project** — Select a repo to work on
-4. **Start Building** — Chat with agents to add features, fix bugs, refactor
-
----
-
-## Documentation
-
-| Document | Audience | Description |
-|----------|----------|-------------|
-| **[Getting Started →](docs/development/SETUP.md)** | All | Setup guide and dev environment |
-| **[Vision & Roadmap →](docs/vision/VISION.md)** | All | Product vision, target users, future plans |
-| **[Architecture →](docs/development/ARCHITECTURE.md)** | Developers | Technical architecture, data flow |
-| **[Agent Playbook →](docs/agents/CLAUDE.md)** | AI Agents | Complete guide for AI development |
-| **[Brand Guidelines →](docs/brand/BRAND-GUIDELINES.md)** | Designers | Visual identity, color palette, typography |
-| **[Type Reference →](src/types/index.ts)** | Developers | Core TypeScript interfaces |
-| **[Contributing →](CONTRIBUTING.md)** | All | How to contribute to ThumbCode |
-
----
-
-## Tech Stack
-
-| Layer | Technology | Why |
-|-------|------------|-----|
-| **Framework** | Expo SDK 52+ | Best AI code generation quality |
-| **UI** | React Native 0.76+ | Cross-platform mobile |
-| **Navigation** | expo-router 4.x | File-based routing |
-| **Styling** | NativeWind 4.x | Tailwind for React Native |
-| **State** | Zustand 5.x | Lightweight global state |
-| **Git** | isomorphic-git | Client-side git operations |
-| **AI** | Anthropic Claude / OpenAI | Agent intelligence |
-| **Security** | expo-secure-store | Hardware-backed credential storage |
-
----
-
-## Project Structure
+### Project Structure
 
 ```
 thumbcode/
-├── app/                          # Expo Router file-based routes
-│   ├── (onboarding)/            # Setup flow (GitHub auth, API keys)
-│   ├── (tabs)/                  # Main navigation (Dashboard, Projects, Chat)
-│   └── _layout.tsx              # Root layout with navigation guards
+├── app/                          # Expo Router pages
+│   ├── (onboarding)/            # GitHub auth, API key setup
+│   ├── (tabs)/                  # Main navigation
+│   └── _layout.tsx
 ├── src/
-│   ├── components/
-│   │   ├── ui/                  # Base design system components
-│   │   ├── agents/              # Agent-specific components
-│   │   ├── workspace/           # File tree, code viewer, diff
-│   │   ├── chat/                # Chat interface components
-│   │   └── project/             # Project cards, repo info
-│   ├── hooks/                   # Custom React hooks
-│   ├── stores/                  # Zustand state management
+│   ├── components/              # React Native components
+│   │   ├── ui/                  # Design system primitives
+│   │   ├── agents/              # Agent-specific UI
+│   │   ├── workspace/           # File tree, code viewer
+│   │   └── chat/                # Chat interface
 │   ├── services/                # Git, GitHub, AI, credentials
-│   ├── types/                   # TypeScript definitions
-│   └── utils/                   # Design tokens, formatting
+│   ├── stores/                  # Zustand state management
+│   ├── hooks/                   # Custom React hooks
+│   └── types/                   # TypeScript definitions
+├── packages/
+│   └── dev-tools/               # Build-time tools (token/icon generation)
 ├── design-system/
 │   ├── tokens.json              # Design tokens (source of truth)
-│   ├── tokens.ts                # TypeScript exports
-│   └── generated/               # Auto-generated CSS/JS
-├── docs/                        # Comprehensive documentation
-├── public/assets/               # Brand assets (logos, icons)
-└── __tests__/                   # Jest test suites
+│   └── generated/               # Auto-generated CSS/Tailwind
+└── docs/                        # Comprehensive documentation
 ```
+
+### Key Documentation for Contributors
+
+| Document | Audience | Purpose |
+|----------|----------|---------|
+| **[CLAUDE.md](CLAUDE.md)** | AI Agents | Complete agent playbook and coding standards |
+| **[AGENTS.md](AGENTS.md)** | All | Multi-agent coordination protocol |
+| **[ARCHITECTURE.md](ARCHITECTURE.md)** | Developers | System architecture and data flow |
+| **[VISION.md](docs/vision/VISION.md)** | All | Product vision and roadmap |
+| **[DECISIONS.md](DECISIONS.md)** | All | Technical decisions with rationale |
+| **[WORKFLOWS.md](.github/WORKFLOWS.md)** | DevOps | CI/CD workflows and GitHub Actions |
+
+### Contribution Guidelines
+
+1. **Read AGENTS.md** to understand workflow and role assignments
+2. **Follow CLAUDE.md** for code style and brand guidelines
+3. **Use conventional commits**: `feat(agents): add workspace view`
+4. **Test across platforms**: iOS, Android, and Web
+5. **Respect the design system**: Use tokens, organic styling, warm palette
 
 ---
 
-## Design System
+## Design System: Programmatic & Organic
 
-ThumbCode uses a programmatic design system powered by `design-system/tokens.json`. All colors, spacing, typography are defined once and auto-generate:
-
-- CSS custom properties
-- Tailwind configuration
-- TypeScript utilities
-- React Native constants
+ThumbCode's design system is fully programmatic, generated from a single source of truth: `design-system/tokens.json`.
 
 ### Warm Technical Palette
 
-| Role | Color | Hex | Usage |
-|------|-------|-----|-------|
-| **Primary** | Thumb Coral | `#FF7059` | Buttons, links, focus states |
-| **Secondary** | Digital Teal | `#0D9488` | Supporting elements, badges |
-| **Accent** | Soft Gold | `#F5D563` | Highlights, success states |
-| **Background** | Charcoal Navy | `#151820` | Dark mode backgrounds |
+| Role | Name | Hex | Usage |
+|------|------|-----|-------|
+| **Primary** | Thumb Coral | `#FF7059` | Primary buttons, CTAs, active states |
+| **Secondary** | Digital Teal | `#0D9488` | Links, secondary actions, badges |
+| **Accent** | Soft Gold | `#F5D563` | Highlights, success states, achievements |
+| **Dark Base** | Charcoal Navy | `#151820` | Dark mode backgrounds |
+| **Light Base** | Off White | `#F8FAFC` | Light mode backgrounds |
 
-### Organic Styling
+### Organic Styling Principles
 
-Asymmetric border-radius for "paint daub" aesthetic:
+**DO:**
+- Asymmetric border-radius: `50px 45px 50px 48px / 26px 28px 26px 24px`
+- Subtle rotation: `transform: rotate(-0.3deg)`
+- Multi-layered organic shadows with color tints
+- SVG `feTurbulence` filters for texture
 
-```tsx
-// Perfectly rounded (DON'T do this)
-<Button className="rounded-lg" />
-
-// Organic paint daub (DO this)
-<Button className="rounded-[0.5rem_0.75rem_0.625rem_0.875rem]" />
-```
-
----
-
-## For AI Agents
-
-This repository is optimized for agentic development. **Start here:**
-
-1. **[docs/agents/CLAUDE.md](docs/agents/CLAUDE.md)** — Complete agent playbook
-2. **[AGENTS.md](AGENTS.md)** — Coordination protocol
-3. **[DECISIONS.md](DECISIONS.md)** — Technical decisions with rationale
-4. **[src/types/index.ts](src/types/index.ts)** — Type contracts
-5. **[docs/development/ARCHITECTURE.md](docs/development/ARCHITECTURE.md)** — System architecture
-
-### Key Principles
-
-- ✅ Use design tokens programmatically from `tokens.json`
-- ✅ Apply organic asymmetric styling (no perfect circles)
-- ✅ Follow the Warm Technical color palette (Coral/Teal/Gold)
-- ✅ Code against type definitions in `src/types/`
-- ❌ NO gradients for backgrounds or buttons
-- ❌ NO hardcoded colors — always use tokens
-- ❌ NO Inter/Roboto fonts — use Fraunces/Cabin
-
----
-
-## Contributing
-
-We welcome contributions from developers, designers, and AI agents.
-
-1. Read **[AGENTS.md](AGENTS.md)** for workflow and roles
-2. Check **[DECISIONS.md](DECISIONS.md)** before proposing architectural changes
-3. Follow types in **[src/types/](src/types/)**
-4. Use conventional commits: `feat(agents): add workspace view`
-5. Test on iOS, Android, and Web before submitting PR
-
----
-
-## Roadmap
-
-### Phase 1: Foundation (Current)
-- ✅ Design system with organic aesthetics
-- ✅ Onboarding flow (GitHub auth, API keys)
-- ✅ Basic multi-agent coordination
-- 🚧 Full git workflow (clone, commit, push)
-- 🚧 Chat interface with streaming responses
-
-### Phase 2: Intelligence
-- 📋 RAG for project context
-- 📋 Vector search for code patterns
-- 📋 Agent memory across sessions
-- 📋 Specialized agent roles (Architect, Implementer, Reviewer, Tester)
-
-### Phase 3: Collaboration
-- 📋 Multi-user projects
-- 📋 Agent collaboration protocols
-- 📋 Code review workflows
-- 📋 Deployment pipelines
-
-### Phase 4: Ecosystem
-- 📋 Plugin system for custom agents
-- 📋 Community agent marketplace
-- 📋 Template library
-- 📋 Integration with popular frameworks
+**DON'T:**
+- Linear or radial gradients
+- Perfectly rounded corners (`border-radius: 8px`)
+- Cold blue/purple tech aesthetic
+- Generic Material Design patterns
 
 ---
 
 ## FAQ
 
-### Is ThumbCode production-ready?
+### When will ThumbCode be available?
 
-ThumbCode is in **active development**. The design system, onboarding, and basic UI are functional. Multi-agent workflows are being refined. Use for experimentation and learning, not yet for production apps.
+ThumbCode is currently in collaborative development. We're targeting a beta release in Q2 2026, with full public launch later in the year. Early access will be available to contributors and beta testers.
 
-### Do I need to be a developer?
+### How will pricing work?
 
-No. ThumbCode is designed for **anyone with an idea**. You describe what you want, agents build it. That said, understanding basic programming concepts helps you communicate more effectively with agents.
+ThumbCode will use a **subscription model** for the mobile app. You'll bring your own AI API keys (Anthropic, OpenAI), and pay a monthly fee for the ThumbCode app and orchestration platform.
+
+Exact pricing will be announced closer to launch. We're committed to making it accessible to individual developers while sustainable for continued development.
+
+### Is ThumbCode open source?
+
+**No.** This repository is open during the collaborative development phase to enable contributions from AI agents and early developers. Upon public release, ThumbCode will transition to a commercial license.
+
+We believe in transparency during development, but also in building a sustainable business that can support long-term innovation in mobile-native development.
 
 ### What AI models does ThumbCode support?
 
-- **Anthropic Claude** (Sonnet, Opus) — Required
-- **OpenAI** (GPT-4) — Optional
+- **Anthropic Claude** (Sonnet 4+, Opus 4+) — Recommended for long context and tool use
+- **OpenAI** (GPT-4o, GPT-4 Turbo) — Supported for specialized tasks
 
-We recommend Claude for its large context window and tool use capabilities.
+You bring your own API keys. ThumbCode never proxies or has access to your credentials.
 
-### How much does ThumbCode cost?
+### Can ThumbCode build production apps?
 
-ThumbCode is **free and open-source (MIT license)**. You pay only for:
-- Your AI API usage (Anthropic/OpenAI)
-- Optional Expo EAS builds for iOS/Android
+Yes. ThumbCode uses **React Native + Expo**, which compiles to native iOS and Android apps. The apps agents build are the same quality as those written by human developers—they're just written faster and with AI-assisted review.
 
-No ThumbCode subscription, no server fees.
+### How do agents avoid conflicts?
 
-### Can ThumbCode build iOS and Android apps?
+Agents work in isolated **git worktrees**, each with their own branch. Changes are merged with automated conflict resolution. If conflicts can't be resolved automatically, you're prompted to review and decide.
 
-Yes. ThumbCode uses **React Native + Expo**, which compiles to native iOS and Android apps. You can also deploy to web.
+This mirrors how distributed development teams work, ensuring maintainability and traceability.
 
-### How do agents avoid conflicting changes?
+### Do I need to be a developer to use ThumbCode?
 
-ThumbCode uses **git worktrees** to give each agent its own isolated workspace. When agents are ready, changes are merged with automated conflict resolution.
+Not necessarily. ThumbCode is designed for **anyone with an idea and the willingness to learn**. You describe what you want in natural language, and agents build it.
+
+That said, understanding basic programming concepts (variables, functions, state) helps you communicate more effectively with agents and understand their decisions.
+
+---
+
+## Understanding "Vibe Coding" vs. "Agentic Development"
+
+### The Evolution of AI-Assisted Development
+
+**Vibe coding**—the experience of opening a chat, describing what you want, and watching code materialize—has introduced millions of people to AI-assisted development. It's powerful for quick tasks, but fundamentally limited:
+
+| Limitation | Impact |
+|------------|--------|
+| **No memory** | Each session starts from scratch; agents forget context |
+| **No specialization** | One generalist agent handles all tasks |
+| **No review** | Code appears without quality gates or oversight |
+| **No lifecycle** | Works for prototypes, not sustained development |
+
+**Agentic development** is the next evolution. It's what happens when you give AI:
+
+1. **Persistent memory** — Context that survives across sessions, days, weeks
+2. **Specialized roles** — Different agents for architecture, implementation, review, testing
+3. **Coordination protocols** — Agents that communicate, review each other, and work in parallel
+4. **Real tools** — Git operations, vector search, embeddings, deployment pipelines
+5. **Lifecycle support** — From initial design through deployment and maintenance
+
+### Why This Matters for Mobile
+
+On a desktop, you can have 30 browser tabs, a sprawling IDE, terminal windows, and documentation side-by-side. On a phone, you have 6 inches.
+
+**Vibe coding doesn't scale to mobile.** You can't juggle context in your head while switching between apps.
+
+**Agentic development was made for mobile.** Agents maintain context. Agents handle the coordination. You focus on decisions, not details.
+
+ThumbCode isn't just bringing development to mobile. We're showing that development *works better* on mobile when you have the right orchestration layer.
+
+---
+
+## Community & Support
+
+- **GitHub Discussions** — Questions, ideas, feature requests
+- **GitHub Issues** — Bug reports and technical issues
+- **Documentation** — Comprehensive guides in `/docs`
+- **Web Preview** — [thumbcode-foundation.netlify.app](https://thumbcode-foundation.netlify.app)
 
 ---
 
 ## License
 
-MIT © ThumbCode Contributors
+**Commercial Software - Collaborative Development Phase**
+
+This software is currently open for collaborative development. All rights are reserved by the ThumbCode team. See [LICENSE](LICENSE) for full terms.
+
+Contributions during this phase are welcomed under the understanding that the project will transition to a commercial license upon public release.
 
 ---
 
-## Community
-
-- **GitHub Discussions** — Questions, ideas, feedback
-- **GitHub Issues** — Bug reports, feature requests
-- **Netlify Deployment** — [thumbcode-foundation.netlify.app](https://thumbcode-foundation.netlify.app)
-
----
-
-*Built with ❤️ for the future of mobile-first development.*
+*Built for the future of mobile-first development.*
+*Because great code doesn't require a great desk.*

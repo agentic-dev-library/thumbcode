@@ -1,21 +1,125 @@
-MIT License
+# ThumbCode Software License
 
-Copyright (c) 2026 agentic-dev-library
+**Copyright © 2026 agentic-dev-library. All Rights Reserved.**
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+---
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+## License Terms
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+This software and associated documentation files (the "Software") are proprietary and confidential.
+
+### During Collaborative Development Phase
+
+While ThumbCode is in its collaborative development phase, the following terms apply:
+
+#### 1. Limited License Grant
+
+You are granted a **limited, non-exclusive, non-transferable, revocable license** to:
+
+- View, fork, and clone this repository for evaluation and contribution purposes
+- Modify the Software for the purpose of contributing improvements back to the project
+- Run the Software locally for development and testing purposes
+- Submit pull requests containing improvements, bug fixes, or new features
+
+#### 2. Restrictions
+
+You **may not**:
+
+- **Use the Software for commercial purposes** including but not limited to:
+  - Offering the Software or derivatives as a service
+  - Incorporating the Software into commercial products
+  - Using the Software to generate revenue
+
+- **Redistribute or sublicense** the Software or any derivatives, except:
+  - As pull requests to this repository
+  - As forks clearly marked as derivatives for contribution purposes
+
+- **Remove or modify** copyright notices, attributions, or license terms
+
+- **Create competing products** that substantially replicate ThumbCode's multi-agent orchestration platform, mobile-first development workflow, or core feature set
+
+- **Use ThumbCode trademarks, logos, or brand assets** without explicit written permission
+
+#### 3. Contribution License
+
+By submitting a contribution (pull request, issue, or other submission) to this repository, you agree that:
+
+1. **You grant agentic-dev-library a perpetual, worldwide, non-exclusive, royalty-free, irrevocable license** to use, modify, sublicense, and distribute your contribution as part of the Software
+
+2. **You represent** that you have the right to grant this license and that your contribution is your original work or you have permission to submit it
+
+3. **Your contribution becomes part of the Software** and is subject to these license terms
+
+4. **You retain copyright** to your contribution, but grant agentic-dev-library the rights described above
+
+#### 4. Protective Covenants
+
+You acknowledge and agree that:
+
+1. **No Derivative Commercial Products**: You will not create, distribute, or monetize any software product that:
+   - Competes with ThumbCode's mobile-native AI development platform
+   - Uses substantial portions of ThumbCode's architecture, design system, or multi-agent coordination protocols
+   - Markets itself as a mobile-first AI coding environment or multi-agent development orchestration tool
+
+2. **No Service Offerings**: You will not offer hosting, deployment, or SaaS versions of ThumbCode or derivatives without explicit written permission
+
+3. **Attribution Required**: Any public discussion, presentation, or demonstration of the Software must clearly attribute ThumbCode and agentic-dev-library
+
+4. **Confidentiality**: You will treat non-public development plans, roadmaps, and strategic discussions as confidential
+
+#### 5. Ownership and Intellectual Property
+
+- **agentic-dev-library retains all rights, title, and interest** in the Software, including all intellectual property rights
+- The Software's design system, brand identity (including Warm Technical palette, organic styling, typography), multi-agent coordination protocols, and architectural patterns are proprietary
+- No transfer of ownership or intellectual property occurs under this license
+
+#### 6. Transition to Commercial License
+
+Upon public release of ThumbCode:
+
+1. This collaborative development license will **automatically terminate**
+2. The Software will transition to a **commercial license**
+3. Contributors will receive **early access** to the commercial product as recognition of contributions
+4. The public repository may be **archived or made private**
+5. Previously accepted contributions will remain part of the Software under the contribution license granted above
+
+#### 7. Warranty Disclaimer
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+#### 8. Limitation of Liability
+
+IN NO EVENT SHALL AGENTIC-DEV-LIBRARY BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#### 9. Termination
+
+This license may be terminated:
+
+- **Automatically** if you breach any term of this license
+- **By agentic-dev-library** at any time with or without cause
+- **Upon public release** of ThumbCode as described in Section 6
+
+Upon termination:
+- You must cease all use of the Software
+- You must delete all copies of the Software in your possession
+- Sections 3 (Contribution License), 5 (Ownership), 7 (Warranty Disclaimer), and 8 (Limitation of Liability) survive termination
+
+#### 10. Governing Law
+
+This license shall be governed by and construed in accordance with the laws of the jurisdiction where agentic-dev-library is established, without regard to its conflict of law provisions.
+
+---
+
+## Contact
+
+For questions about this license, commercial licensing inquiries, or permission requests:
+
+- **Email**: Contact through GitHub repository
+- **Issues**: [GitHub Issues](https://github.com/agentic-dev-library/thumbcode/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/agentic-dev-library/thumbcode/discussions)
+
+---
+
+**Last Updated**: January 18, 2026
+
+This license is effective immediately and supersedes all prior licenses, including any MIT or open-source licenses that may have been previously associated with this repository.
