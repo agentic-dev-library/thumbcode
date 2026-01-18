@@ -23,7 +23,9 @@
     "e2e:test": "maestro test e2e/",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs",
+    "generate:tokens": "node scripts/generate-tokens.js",
+    "postinstall": "npm run generate:tokens"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
