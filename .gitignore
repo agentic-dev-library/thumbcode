@@ -137,3 +137,6 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Generated assets (auto-generated from SVGs during postinstall)
+/assets/*.png
