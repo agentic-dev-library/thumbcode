@@ -5,9 +5,14 @@ on:
     types: [opened, synchronize, ready_for_review, reopened]
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
+  issues: write
   id-token: write
+  issues: write
+  id-token: write
+  checks: write
+  checks: write
 
 jobs:
   claude-review:
@@ -25,6 +30,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          allow_any_user: true
           # Enable a GitHub check run that is updated as Claude reviews files, so maintainers can see progress
           # without adding extra intermediate PR comments. See docs: https://github.com/anthropics/claude-code-action
           track_progress: true

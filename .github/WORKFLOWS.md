@@ -150,29 +150,44 @@ All actions are pinned to exact commit SHAs for security and reproducibility.
 
 ---
 
-### 5. Auto Fix CI Failures (`ci-failure-fix.yml`)
+### 5. Auto-Heal CI Failures (`ci-failure-fix.yml`) 🔧
 
 **Triggers:** CI workflow completes with failures (for PRs only)
 
 **Jobs:**
-- Analyze failure logs
-- Claude automatically fixes issues
-- Creates fix branch and PR
+- Analyze failure logs automatically
+- **Claude AUTOMATICALLY fixes ALL issues** (no recommendations, only implementations)
+- Commits and pushes fixes to dedicated fix branch
+- Creates PR with fixes back to original branch
 
 **Features:**
+- **AUTOMATIC HEALING MODE** - No manual intervention required
 - Only runs on PR branches (not fix branches)
 - Downloads and analyzes CI logs
-- Creates dedicated fix branch
-- Fixes linting, type errors, test failures, build errors
+- Auto-fixes linting errors via Biome
+- Resolves TypeScript type issues
+- Fixes test failures
+- Resolves build errors
+- Can modify workflow files if needed (workflows: write permission)
+- Verifies all fixes by running commands locally
+- Creates detailed PR with all changes
 
 **Duration:** ~20 minutes
 
 **Secrets Required:**
 - `ANTHROPIC_API_KEY`
 
+**Permissions:**
+- `contents: write` - Commit and push fixes
+- `pull-requests: write` - Create fix PRs
+- `workflows: write` - Modify workflow files if needed
+- `checks: write` - Update check status
+- `issues: write` - Comment on issues
+- `actions: read` - Read CI logs
+
 **Allowed Tools:**
 - `edit_file`, `write_file`, `read_file`, `list_directory`, `search_files`, `bash`
-- Bash allowlist: `git`, `pnpm`, `npm`, `npx`, `gh`
+- Bash allowlist: `git`, `pnpm`, `npm`, `npx`, `gh`, `biome`, `tsc`, `jest`, `expo`
 
 **Pinned Actions:**
 - `actions/checkout@de0fac2` (v6.0.2)
@@ -208,9 +223,79 @@ All actions are pinned to exact commit SHAs for security and reproducibility.
 
 ---
 
-### 7. Multi-Agent Triage & PR Automation (`multi-agent-triage.yml`) 🤖🤖
+### 7. Auto-Triage PR Comments (`pr-comment-auto-triage.yml`) 🤖💬
 
-**This is our most sophisticated workflow - a coordinated multi-agent system!**
+**NEW WORKFLOW - Automatically processes feedback from AI agents!**
+
+**Triggers:**
+- Issue comment created/edited on PRs
+- PR review comment created/edited
+- PR review submitted/edited
+
+**Jobs:**
+
+**Phase 1: Detect AI Agent**
+- Identifies comments from AI agents (Claude, Jules, Copilot, etc.)
+- Filters to only process PR-related comments
+- Extracts comment body and PR context
+
+**Phase 2: Auto-Triage & Implement**
+- Claude analyzes AI agent feedback
+- **AUTOMATICALLY implements ALL actionable suggestions**
+- Categorizes issues: security, code quality, performance, style, tests, docs
+- Fetches full PR context using gh CLI
+- Fixes all issues mentioned in the comment
+- Commits and pushes changes to the PR branch
+- Replies to the comment with summary of changes
+- Labels PR as `auto-healed` and `ai-triage`
+
+**What Gets Auto-Implemented:**
+- **Security vulnerabilities** (XSS, injection, auth issues, secrets)
+- **Code quality issues** (refactoring, DRY violations, TypeScript types)
+- **Performance problems** (optimization, memory leaks, re-renders)
+- **ThumbCode style violations** (design tokens, organic styling, brand palette)
+- **Test gaps** (missing tests, broken tests)
+- **Documentation** (missing comments, outdated docs)
+
+**Duration:** ~30 minutes
+
+**Secrets Required:**
+- `ANTHROPIC_API_KEY`
+
+**Permissions:**
+- `contents: write` - Commit fixes to PR branch
+- `pull-requests: write` - Comment on PRs, add labels
+- `workflows: write` - Modify workflows if needed
+- `checks: write` - Update check status
+- `issues: write` - Comment on issues
+
+**AI Agents Detected:**
+- `claude-bot[bot]`
+- `jules[bot]`
+- `github-actions[bot]`
+- `copilot[bot]`
+- `coderabbit[bot]`
+- `sweep-ai[bot]`
+- `deepsource-autofix[bot]`
+- `renovate[bot]`
+- `dependabot[bot]`
+
+**Allowed Tools:**
+- `edit_file`, `write_file`, `read_file`, `list_directory`, `search_files`, `bash`
+- Bash allowlist: `git`, `pnpm`, `npm`, `npx`, `gh`, `biome`, `tsc`, `jest`, `expo`
+
+**Pinned Actions:**
+- `actions/checkout@de0fac2` (v6.0.2)
+- `anthropics/claude-code-action@a017b83` (v1.0.30)
+- `actions/github-script@f28e40c` (v7.1.0)
+
+---
+
+### 8. Multi-Agent Auto-Implementation (`multi-agent-triage.yml`) 🤖🤖
+
+**UPDATED - Now AUTOMATICALLY implements issues instead of just triaging!**
+
+**This is our most sophisticated workflow - FULLY AUTOMATED issue implementation!**
 
 **Triggers:**
 - PR merged to `main`
@@ -220,74 +305,84 @@ All actions are pinned to exact commit SHAs for security and reproducibility.
 **Architecture:**
 
 ```
-┌──────────────────┐
-│  Claude Analysis │  Phase 1: Assess & Prioritize
-│   (Anthropic)    │
-└────────┬─────────┘
-         │
-         │ Outputs: Batch of issues ready for automation
-         │
-         ▼
-┌──────────────────┐
-│ Jules Implement  │  Phase 2: Create PRs
-│  (Google Labs)   │
-└──────────────────┘
+┌─────────────────────────────────────────┐
+│  Claude Auto-Implementation             │
+│  1. Find ready issues                   │
+│  2. Assess & prioritize                 │
+│  3. IMPLEMENT top 3 issues              │
+│  4. Commit, push, create PRs            │
+│  5. Label issues as auto-implemented    │
+└─────────────────────────────────────────┘
 ```
 
-**Phase 1: Claude Analysis**
+**What Claude Does (AUTOMATICALLY):**
 
-Claude searches for and assesses issues that are:
-- NOT labeled `jules` (haven't been processed)
-- NOT associated with an open PR
-- Labeled `status: ready` or clearly actionable
-- Type: `bug`, `feature`, or `enhancement`
+**1. Find Ready Issues**
+- Uses gh CLI to search all open issues
+- Filters for issues NOT labeled `auto-implemented` or `jules`
+- Looks for `status: ready` or clearly actionable issues
+- Types: `bug`, `feature`, or `enhancement`
 
-**Evaluation Criteria:**
-1. **Clarity** - Enough detail for autonomous implementation?
-2. **Scope** - Small enough for single PR (< 200 lines)?
-3. **Dependencies** - Depends on other open issues?
-4. **Priority** - Based on labels and PROJECT-STATUS.md
-5. **Feasibility** - Can AI agent implement this?
+**2. Assess & Prioritize**
+Evaluates each issue:
+- **Clarity** - Enough detail for autonomous implementation?
+- **Scope** - Small enough for single PR (< 200 lines)?
+- **Dependencies** - Depends on other open issues?
+- **Priority** - Based on labels and PROJECT-STATUS.md roadmap
+- **Feasibility** - Can AI implement this alone?
 
-**Batching Strategy:**
-- Groups 3-5 issues per batch
-- Issues can be worked in parallel (no dependencies)
-- Similar in nature (e.g., all UI bugs)
-- Aligned with current phase from PROJECT-STATUS.md
-
-**Phase 2: Jules Implementation**
-
-Jules receives the batch from Claude and:
-- Implements each issue autonomously
-- Follows CLAUDE.md playbook strictly
+**3. AUTO-IMPLEMENT TOP 3 ISSUES**
+For each of the top 3 highest priority issues:
+- Creates implementation branch (`claude/auto-impl-issue-{NUMBER}`)
+- Reads full context (issue body, CLAUDE.md, relevant files)
+- Implements the complete solution
 - Uses design tokens (no hardcoded colors)
 - Applies organic styling conventions
-- Writes TypeScript with strict types
+- Writes proper TypeScript types
 - Adds tests for new functionality
-- Creates PRs with proper conventional commit messages
+- Updates documentation if needed
 
-**Parallel Execution:**
-- Matrix strategy allows up to 3 issues in parallel
-- Each issue gets its own job run
-- PRs created independently
+**4. Verify & Commit**
+- Runs: `pnpm biome check --write .`
+- Runs: `pnpm tsc --noEmit`
+- Runs: `pnpm test --passWithNoTests`
+- Runs: `pnpm expo export:web`
+- Commits all changes with detailed message
+- Pushes to implementation branch
 
-**Duration:** ~30 minutes per batch
+**5. Create PRs & Label**
+- Creates PR with detailed description
+- Includes checklist of changes
+- Links to original issue (Closes #{NUMBER})
+- Labels issue as `auto-implemented` and `claude`
+- Comments on issue with PR link
+
+**Duration:** ~30 minutes per batch (implements 3 issues in parallel)
 
 **Secrets Required:**
 - `ANTHROPIC_API_KEY`
-- `GOOGLE_JULES_API_KEY`
+
+**Permissions:**
+- `contents: write` - Create branches, commit, push
+- `pull-requests: write` - Create PRs
+- `workflows: write` - Modify workflows if needed
+- `issues: write` - Label and comment on issues
+- `checks: write` - Update check status
+- `actions: read` - Read workflow runs
+- `statuses: write` - Update commit statuses
+
+**Allowed Tools:**
+- `edit_file`, `write_file`, `read_file`, `list_directory`, `search_files`, `bash`
+- Bash allowlist: `git`, `pnpm`, `npm`, `npx`, `gh`, `biome`, `tsc`, `jest`, `expo`
 
 **Pinned Actions:**
 - `actions/checkout@de0fac2` (v6.0.2)
 - `anthropics/claude-code-action@a017b83` (v1.0.30)
-- `google-labs-code/jules-action@v1`
-- `actions/github-script@f28e40c` (v7.1.0)
 
 **Label System:**
-- `jules` - Marked for Jules processing
-- `batch: YYYY-MM-DD` - Batch identifier
-- `jules-processing` - Currently being worked on
-- `jules-complete` - PR created successfully
+- `auto-implemented` - Implemented by Claude
+- `claude` - Processed by Claude
+- `status: ready` - Ready for auto-implementation
 
 ---
 
@@ -507,15 +602,403 @@ uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
 ---
 
+## AI Shortcuts 🚀
+
+**NEW! Trigger powerful AI automation via comment mentions**
+
+ThumbCode now includes AI shortcuts that you can trigger by mentioning them in issue or PR comments. These shortcuts engage Claude AI and CodeRabbit AI for automatic complex tasks.
+
+> **📚 Full documentation:** See [SHORTCUTS.md](./SHORTCUTS.md) for comprehensive guide with examples
+
+### Quick Reference
+
+| Shortcut | Where | What | Duration |
+|----------|-------|------|----------|
+| `@rebase` | PR comments | Auto-rebase with conflict resolution | ~5-15 min |
+| `@triage` | Issue/PR comments | Multi-AI triage and categorization | ~10-20 min |
+| `@review` | PR comments | Collaborative deep code review | ~20-30 min |
+| `@backlog` | Anywhere/Manual | Full backlog analysis and organization | ~20-30 min |
+| `@ready` | Issue/PR comments | Check resolution/comment status | ~10-20 min |
+
+### 9. `@rebase` - Auto-Rebase PR (`shortcut-rebase.yml`) 🔀
+
+**Trigger:** Comment `@rebase` on a pull request
+
+**What It Does:**
+- Fetches latest from base branch
+- Attempts automatic rebase
+- **If conflicts:** Claude resolves them automatically with intelligent merge
+- Verifies all changes (lint, typecheck, test, build)
+- Force-pushes rebased branch
+- Posts summary comment with details
+
+**Use Cases:**
+- PR is behind base branch
+- Need to incorporate latest changes
+- Have merge conflicts to resolve automatically
+
+**Workflow Details:**
+- **Phase 1:** Detect `@rebase` command in comments
+- **Phase 2:** Attempt auto-rebase (no conflicts)
+- **Phase 3:** If conflicts → Claude analyzes both sides, intelligently merges, verifies
+- **Phase 4:** Force-push with `--force-with-lease`
+- **Phase 5:** Comment with resolution summary
+
+**Duration:** ~5-15 minutes (longer with complex conflicts)
+
+**Permissions:**
+- `contents: write` - Push code, force-push
+- `pull-requests: write` - Comment on PR
+
+**Pinned Actions:**
+- `actions/checkout@de0fac2` (v6.0.2)
+- `anthropics/claude-code-action@a017b83` (v1.0.30)
+- `actions/github-script@f28e40c` (v7.1.0)
+
+---
+
+### 10. `@triage` - Multi-AI Triage (`shortcut-triage.yml`) 🔍
+
+**Trigger:** Comment `@triage` on an issue or PR
+
+**What It Does:**
+- Engages **CodeRabbit AI** for technical analysis
+- Engages **Claude** for ThumbCode-specific analysis
+- Both AIs provide complementary, non-duplicate assessments
+- Automatically adds appropriate labels
+- Posts comprehensive triage reports
+
+**On Issues:**
+- **CodeRabbit:** Category, priority, complexity, requirements, implementation approach
+- **Claude:** ThumbCode roadmap alignment (PROJECT-STATUS.md), feasibility, style compliance
+- Auto-labels: type, priority, area, status
+- Duplicate detection across repository
+
+**On PRs:**
+- **CodeRabbit:** Code quality, security, performance, TypeScript, testing
+- **Claude:** CLAUDE.md compliance, design tokens, organic styling, architecture fit
+- Collaborative feedback with specific suggestions
+
+**Duration:** ~10-20 minutes
+
+**Permissions:**
+- `contents: write` - Read codebase and docs
+- `issues: write` - Add labels, comment
+- `pull-requests: write` - Add review comments
+
+**Pinned Actions:**
+- `actions/checkout@de0fac2` (v6.0.2)
+- `anthropics/claude-code-action@a017b83` (v1.0.30)
+- `actions/github-script@f28e40c` (v7.1.0)
+
+---
+
+### 11. `@review` - Collaborative AI Code Review (`shortcut-review.yml`) 🔎
+
+**Trigger:** Comment `@review` on a pull request
+
+**What It Does:**
+- **CodeRabbit** performs comprehensive review:
+  - Code quality (DRY, SOLID, KISS, complexity)
+  - Security (XSS, injection, auth, secrets)
+  - Performance (algorithms, React optimization, memory, bundle size)
+  - TypeScript (type safety, no `any`, proper generics)
+  - Testing (coverage, edge cases, test quality)
+  - Documentation (comments, JSDoc, README)
+  - Line-by-line comments with code examples
+
+- **Claude** performs ThumbCode-specific deep review:
+  - **CLAUDE.md Compliance (CRITICAL):** Design tokens, organic styling, no gradients
+  - **Warm Technical Palette:** Coral (#FF7059), Teal (#0D9488), Gold (#F5D563)
+  - **Typography:** Fraunces (display), Cabin (body), JetBrains Mono (code) - NOT Inter/Roboto
+  - **Architecture Alignment:** Follows ARCHITECTURE.md patterns
+  - **Roadmap Fit:** Aligns with PROJECT-STATUS.md current phase
+  - **Mobile-First:** Touch targets, responsive, performance, accessibility
+  - **React Best Practices:** Hooks, effects, memoization
+
+- Both post detailed reviews with:
+  - 🚨 Critical issues (must fix)
+  - ⚠️ High priority warnings (should fix)
+  - 💡 Suggestions (nice to have)
+  - Code examples for fixes
+
+**Duration:** ~20-30 minutes (comprehensive review)
+
+**Permissions:**
+- `contents: write` - Read all files deeply
+- `pull-requests: write` - Add review comments
+- `checks: write` - Update review status
+
+**When to Use:**
+- PR ready for thorough review before merge
+- Need multiple AI perspectives
+- Want both general + ThumbCode-specific feedback
+- Large/important changes
+
+**Pinned Actions:**
+- `actions/checkout@de0fac2` (v6.0.2)
+- `anthropics/claude-code-action@a017b83` (v1.0.30)
+- `actions/github-script@f28e40c` (v7.1.0)
+
+---
+
+### 12. `@backlog` - Collaborative Backlog Triage (`shortcut-backlog.yml`) 📋
+
+**Trigger:** Comment `@backlog` anywhere OR manual workflow dispatch
+
+**What It Does:**
+- Creates triage coordination issue
+- **CodeRabbit** analyzes entire open backlog:
+  - Priority ranking (impact, urgency, dependencies)
+  - Categorization (type, area, complexity)
+  - Duplicate detection across all issues
+  - Missing information identification
+  - Quick wins (simple, high-value issues)
+  - Technical debt issues
+
+- **Claude** performs strategic planning:
+  - Roadmap alignment with PROJECT-STATUS.md
+  - AI-implementation feasibility assessment (< 200 lines, clear requirements)
+  - Quality impact (code quality, UX, tech debt reduction)
+  - Strategic bucketing
+
+- **Both AIs automatically:**
+  - Apply labels to ALL issues
+  - Assign milestones (v1.0.0, v1.1.0, etc.)
+  - Close duplicates and won't-fix issues
+  - Mark ready issues with `status: ready` for auto-implementation
+
+- Posts comprehensive backlog report with:
+  - 🚀 **High Priority** (X issues) - Do now
+  - ✅ **Ready for AI Auto-Implementation** (X issues) - Queued for auto-impl workflow
+  - 📅 **Backlog - Next Phase** (X issues) - Defer to v1.1.0/v2.0.0
+  - 🔒 **Blocked** (X issues) - Waiting on dependencies
+  - ❌ **Recommended to Close** (X issues) - Duplicates, out of scope
+
+**Duration:** ~20-30 minutes (processes 100+ issues)
+
+**Permissions:**
+- `contents: write` - Read strategic docs
+- `issues: write` - Label, milestone, close, create issues
+
+**When to Use:**
+- Backlog cluttered and needs organization
+- Planning next sprint or phase
+- Want to identify auto-implementable work
+- Monthly backlog cleanup
+
+**Pinned Actions:**
+- `actions/checkout@de0fac2` (v6.0.2)
+- `anthropics/claude-code-action@a017b83` (v1.0.30)
+- `actions/github-script@f28e40c` (v7.1.0)
+
+---
+
+### 13. `@ready` - Readiness Check (`shortcut-ready.yml`) ✅
+
+**Trigger:** Comment `@ready` on an issue or PR
+
+**What It Does:**
+
+**On Issues (Resolution Check):**
+1. Fetches issue details and acceptance criteria
+2. **Comprehensively searches codebase** for implementation:
+   - Keyword search from title/body
+   - Recent commit history (`git log`)
+   - Related file modifications
+   - Implementation patterns
+3. Verifies implementation quality:
+   - Runs: `pnpm biome check .`
+   - Runs: `pnpm tsc --noEmit`
+   - Runs: `pnpm test --passWithNoTests`
+   - Runs: `pnpm expo export:web`
+4. Reports: **RESOLVED** / **PARTIALLY RESOLVED** / **NOT RESOLVED** / **DUPLICATE**
+5. **Auto-closes if fully resolved** with evidence
+
+**On PRs (Comment Resolution Check):**
+1. Fetches all comments, reviews, threads (100+ comments supported)
+2. **Categorizes each comment:**
+   - ✅ **Addressed** - Code changed, question answered, concern resolved
+   - ⚠️ **Acknowledged but Deferred** - Out of scope, tracked in follow-up
+   - ❌ **Unaddressed** - Needs response or implementation
+   - 🤖 **AI Hallucination** - Invalid feedback (incorrect understanding)
+
+3. Verifies code changes against suggestions:
+   - Checks file modifications via `gh pr diff`
+   - Matches changes to comment suggestions
+   - Ensures no test breakage
+
+4. **Auto-resolves AI hallucination threads** (you have permission!)
+   - Uses GitHub GraphQL API to resolve threads
+   - Adds dismissal comment with explanation
+
+5. **Creates follow-up issues** for deferred items:
+   - Tracks good ideas that are out of scope for this PR
+   - Links back to original PR comment
+   - Labels as `enhancement,follow-up`
+
+6. Reports: **READY TO MERGE** / **NEEDS ATTENTION** / **NOT READY**
+
+**Duration:** ~10-20 minutes
+
+**Permissions:**
+- `contents: write` - Read codebase, commit history
+- `issues: write` - Close issues, create follow-ups
+- `pull-requests: write` - **Resolve threads**, comment
+
+**Advanced Capabilities:**
+- Can **resolve review threads** (including invalid AI feedback)
+- Can **auto-close issues** when verified as resolved
+- Can **create follow-up issues** from deferred PR comments
+
+**When to Use Issues:**
+- Old issue might be resolved now
+- Verify implementation completion
+- Backlog cleanup
+
+**When to Use PRs:**
+- Lots of comments, want summary
+- Check if all feedback addressed before merge
+- Need to resolve invalid AI comment threads
+- Want to track deferred items
+
+**Pinned Actions:**
+- `actions/checkout@de0fac2` (v6.0.2)
+- `anthropics/claude-code-action@a017b83` (v1.0.30)
+- `actions/github-script@f28e40c` (v7.1.0)
+
+---
+
+### Shortcut Workflow Combinations
+
+**Complete PR Workflow:**
+```
+1. Create PR
+2. @review          # Get comprehensive review from both AIs
+3. (address feedback)
+4. @ready           # Verify all comments addressed
+5. @rebase          # Update with latest main
+6. Merge!
+```
+
+**Issue Lifecycle:**
+```
+1. Create issue
+2. @triage          # Categorize and prioritize
+3. (Auto-implementation if labeled status: ready)
+4. @ready           # Verify resolution in codebase
+5. (Auto-close if resolved)
+```
+
+**Backlog Management:**
+```
+1. @backlog         # Monthly: analyze all open issues
+2. (Labels applied, ready issues marked)
+3. (Auto-implementation workflow runs for ready issues)
+4. @ready on each   # Verify implementations
+```
+
+**Emergency Merge:**
+```
+1. @review          # Quick comprehensive review
+2. @ready           # Check comments
+3. (Fix any issues)
+4. @rebase          # Ensure up to date
+5. Emergency merge
+```
+
+---
+
+## Repository Configuration
+
+### Settings.yml
+
+**Location:** `.github/settings.yml`
+
+**Purpose:** Automated repository configuration using [Probot Settings](https://github.com/apps/settings)
+
+**What It Configures:**
+
+**1. Bot Permissions**
+Grants write access to all automation bots:
+- `github-actions[bot]`
+- `claude-bot[bot]`
+- `renovate[bot]`
+- `dependabot[bot]`
+
+**2. Branch Protection**
+
+**Main Branch:**
+- Requires passing CI checks (Lint, Test, Build)
+- No required approving reviews (allows bot auto-merges)
+- No restrictions on who can push
+- Prevents force pushes and deletions
+- Allows auto-merge
+
+**Claude Branches** (`claude/**`, `claude/auto-fix-ci-*`, `claude/auto-impl-*`):
+- Minimal protection
+- Allows force pushes
+- Allows deletions
+- No required reviews
+- No required status checks
+- Enables rapid development and iteration
+
+**3. Labels**
+Auto-creates all required labels:
+- Type: `bug`, `feature`, `enhancement`, `documentation`, `question`
+- Priority: `priority: high/medium/low`
+- Area: `area: agents/ui/docs/ci/design/git`
+- Status: `status: needs-triage/ready/blocked/in-progress`
+- AI: `claude`, `jules`, `auto-implemented`, `auto-healed`, `ai-triage`
+
+**4. Repository Settings**
+- Enable auto-merge
+- Delete branches after merge
+- Enable automated security fixes
+- Enable vulnerability alerts
+- Disable wiki (use docs/ folder instead)
+
+**Benefits:**
+- **Eliminates manual configuration** across repository settings
+- **Ensures consistency** between environments
+- **Infrastructure as code** for repository settings
+- **Easy replication** to other repositories
+- **Audit trail** via Git history
+
+---
+
+## Permissions Summary
+
+All workflows now have comprehensive permissions to enable full automation:
+
+| Permission | Purpose |
+|------------|---------|
+| `contents: write` | Create branches, commit, push code |
+| `pull-requests: write` | Create PRs, comment, add labels |
+| `issues: write` | Label issues, add comments |
+| `checks: write` | Update check status |
+| `actions: read` | Read workflow runs and logs |
+| `statuses: write` | Update commit statuses |
+| `id-token: write` | OIDC authentication |
+
+**Bot Access:**
+- All workflows use `allow_any_user: true` to allow bot accounts
+- Bot users have write permissions via settings.yml
+- Bots can push to all `claude/**` branches without restrictions
+- Bots can create PRs and auto-merge when checks pass
+
+---
+
 ## Sources
 
 - [Claude Code Action Docs](https://github.com/anthropics/claude-code-action) - Anthropic's GitHub Action documentation
 - [Jules Action Docs](https://github.com/google-labs-code/jules-action) - Google Labs Jules Action
 - [GitHub Actions Security](https://docs.github.com/en/actions/security-guides) - GitHub's security best practices
+- [Probot Settings](https://github.com/apps/settings) - Automated repository configuration
 - [actions/checkout v6.0.2](https://github.com/actions/checkout/releases/tag/v6.0.2)
 - [actions/setup-node v6.2.0](https://github.com/actions/setup-node/releases/tag/v6.2.0)
 - [pnpm/action-setup v4.2.0](https://github.com/pnpm/action-setup/releases/tag/v4.2.0)
 
 ---
 
-*Built with ❤️ by ThumbCode multi-agent team.*
+*Built with ❤️ by ThumbCode fully-automated multi-agent team.*

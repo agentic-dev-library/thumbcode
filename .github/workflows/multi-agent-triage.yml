@@ -13,6 +13,10 @@ permissions:
   issues: write
   pull-requests: write
   id-token: write
+  workflows: write
+  checks: write
+  actions: read
+  statuses: write
 
 jobs:
   claude-triage:
@@ -28,7 +32,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Claude Analysis
+      - name: Claude Analysis & Auto-Implementation
         id: claude
         uses: anthropics/claude-code-action@a017b830c03e23789b11fb69ed571ea61c12e45c # v1.0.30
         with:
@@ -36,67 +40,152 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           allow_any_user: true
           track_progress: true
+          claude_args: |
+            --allowed-tools=edit_file,write_file,read_file,list_directory,search_files,bash
+            --bash-allowlist=git,pnpm,npm,npx,gh,biome,tsc,jest,expo
           prompt: |
-            ## Multi-Agent Triage Coordination
+            🤖 MULTI-AGENT AUTO-IMPLEMENTATION MODE 🤖
 
-            **Context:** This is phase 1 of a multi-agent workflow. You (Claude) will assess issues, then Jules (Google's AI agent) will implement them.
+            **Context:** This is an AUTOMATED multi-agent workflow. You (Claude) will AUTOMATICALLY find, assess, and IMPLEMENT issues without asking for permission.
 
-            **Your Task:**
+            ## YOUR MISSION - AUTO-IMPLEMENT ISSUES:
 
-            ### 1. Find Issues Ready for Jules
-            Search for all open issues that are:
-            - NOT labeled with `jules` (haven't been processed yet)
+            ### 1. Find Ready Issues
+            Use gh CLI to search for open issues:
+            ```bash
+            gh issue list --state open --json number,title,labels,body --limit 100
+            ```
+
+            Filter for issues that are:
+            - NOT labeled with `auto-implemented` or `jules` (not processed yet)
             - NOT associated with an open PR
-            - Labeled as `status: ready` or have clear, actionable requirements
+            - Labeled `status: ready` OR clearly actionable
             - Type: `bug`, `feature`, or `enhancement`
 
             ### 2. Assess & Prioritize
             For each issue, evaluate:
-            - **Clarity:** Does it have enough detail for autonomous implementation?
-            - **Scope:** Is it small enough for a single PR? (< 200 lines of changes)
-            - **Dependencies:** Does it depend on other open issues?
-            - **Priority:** Based on labels and PROJECT-STATUS.md roadmap
-            - **Feasibility:** Can an AI agent realistically implement this?
+            - **Clarity:** Enough detail for autonomous implementation? ✅/❌
+            - **Scope:** Small enough for single PR (< 200 lines)? ✅/❌
+            - **Dependencies:** Depends on other open issues? ❌/✅
+            - **Priority:** Check labels and PROJECT-STATUS.md roadmap
+            - **Feasibility:** Can you implement this alone? ✅/❌
 
-            ### 3. Create Batches
-            Group issues into batches of 3-5 issues that:
-            - Can be worked on in parallel (no dependencies)
-            - Are similar in nature (e.g., all UI bugs, or all documentation)
-            - Fit the current phase from PROJECT-STATUS.md
+            ### 3. AUTO-IMPLEMENT TOP 3 ISSUES
+            For the TOP 3 highest priority issues:
 
-            ### 4. Label & Document
-            For the NEXT BATCH (highest priority 3-5 issues):
-            - Add label `jules` to mark them for Jules processing
-            - Add label `batch: YYYY-MM-DD` with today's date
-            - Add a comment with:
-              - Summary of what needs to be done
-              - Link to relevant documentation (CLAUDE.md, ARCHITECTURE.md, etc.)
-              - Any specific requirements or constraints
-              - Expected file changes
-
-            ### 5. Output for Jules
-            Create a JSON summary in a comment on THIS workflow run:
-            ```json
-            {
-              "batch_id": "2026-01-18-batch-1",
-              "issues": [
-                {
-                  "number": 123,
-                  "title": "...",
-                  "type": "bug|feature|enhancement",
-                  "files_to_modify": ["path/to/file.ts"],
-                  "requirements": "Brief summary"
-                }
-              ]
-            }
+            **A. Create Implementation Branch:**
+            ```bash
+            git checkout -b claude/auto-impl-issue-{ISSUE_NUMBER}-{SHORT_SLUG}
             ```
 
-            **Important:**
-            - Only select issues you're confident can be automated
-            - Prefer bugs and small enhancements over large features
-            - Check PROJECT-STATUS.md to align with current priorities
-            - Avoid issues that need human decision-making
-            - Maximum 5 issues per batch
+            **B. Read Full Context:**
+            - Read the issue body completely
+            - Check CLAUDE.md for style guidelines
+            - Read relevant files mentioned in the issue
+            - Review related code
+
+            **C. Implement the Solution:**
+            - Fix bugs completely
+            - Implement features following CLAUDE.md
+            - Use design tokens (no hardcoded colors)
+            - Apply organic styling conventions
+            - Write proper TypeScript types
+            - Add tests for new functionality
+            - Update documentation if needed
+
+            **D. Verify Implementation:**
+            ```bash
+            pnpm biome check --write .
+            pnpm tsc --noEmit
+            pnpm test --passWithNoTests
+            pnpm expo export:web
+            ```
+
+            **E. Commit & Push:**
+            ```bash
+            git add .
+            git commit -m "fix/feat: implement issue #{ISSUE_NUMBER}
+
+            {Brief description of what was implemented}
+
+            - Added/Fixed X
+            - Updated Y
+            - Tested Z
+
+            Implements #{ISSUE_NUMBER}
+            Auto-implemented by Claude Multi-Agent workflow"
+
+            git push -u origin claude/auto-impl-issue-{ISSUE_NUMBER}-{SHORT_SLUG}
+            ```
+
+            **F. Create PR:**
+            ```bash
+            gh pr create \
+              --base main \
+              --head claude/auto-impl-issue-{ISSUE_NUMBER}-{SHORT_SLUG} \
+              --title "{fix|feat}({scope}): implement issue #{ISSUE_NUMBER}" \
+              --body "$(cat <<'EOF'
+            ## Implements #{ISSUE_NUMBER}
+
+            {Summary of the issue}
+
+            ## Changes Made
+
+            - [ ] {Specific change 1}
+            - [ ] {Specific change 2}
+            - [ ] {Specific change 3}
+
+            ## Implementation Details
+
+            {Brief explanation of approach}
+
+            ## Testing
+
+            - ✅ All tests passing
+            - ✅ Biome linting passed
+            - ✅ TypeScript type checking passed
+            - ✅ Build successful
+
+            ## Checklist
+
+            - [ ] Follows CLAUDE.md style guidelines
+            - [ ] Uses design tokens (no hardcoded colors)
+            - [ ] Organic styling applied
+            - [ ] TypeScript types added
+            - [ ] Tests added/updated
+            - [ ] Documentation updated
+
+            Closes #{ISSUE_NUMBER}
+
+            🤖 *Auto-implemented by Claude Multi-Agent Triage*
+            EOF
+            )"
+            ```
+
+            **G. Label the Issue:**
+            ```bash
+            gh issue edit {ISSUE_NUMBER} --add-label "auto-implemented,claude"
+            gh issue comment {ISSUE_NUMBER} --body "✅ Auto-implemented in PR #{PR_NUMBER}"
+            ```
+
+            ### 4. Report Summary
+            After implementing all 3 issues, create a summary comment on this workflow run with:
+            - Issues implemented
+            - PRs created
+            - Any issues that couldn't be auto-implemented and why
+
+            ## CRITICAL RULES:
+            - **AUTO-IMPLEMENT** - Don't just assess, actually implement
+            - **TOP 3 ONLY** - Implement the 3 highest priority issues
+            - **NO ASKING** - Just do it automatically
+            - **COMMIT & PUSH** - Always commit and push changes
+            - **CREATE PRS** - Always create PRs for implemented issues
+            - **LABEL ISSUES** - Mark issues as auto-implemented
+            - You have full write permissions (contents, workflows, pull-requests)
+            - You are authorized to create branches, commit, push, and create PRs
+            - Follow CLAUDE.md playbook strictly
+            - Prefer bugs over features
+            - Skip issues that need human decision-making
 
       - name: Parse Claude Output
         id: analyze

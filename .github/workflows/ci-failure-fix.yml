@@ -11,6 +11,7 @@ permissions:
   actions: read
   issues: write
   id-token: write
+  checks: write
 
 jobs:
   auto-fix:
@@ -63,38 +64,113 @@ jobs:
           find /tmp/logs -type f -name "*.txt" -exec cat {} \; > /tmp/combined-logs.txt || echo "No logs found"
           echo "logs_path=/tmp/combined-logs.txt" >> $GITHUB_OUTPUT
 
-      - name: Claude Fix CI
+      - name: Claude Auto-Heal CI Failures
         uses: anthropics/claude-code-action@a017b830c03e23789b11fb69ed571ea61c12e45c # v1.0.30
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          allow_any_user: true
           claude_args: |
             --allowed-tools=edit_file,write_file,read_file,list_directory,search_files,bash
-            --bash-allowlist=git,pnpm,npm,npx,gh
+            --bash-allowlist=git,pnpm,npm,npx,gh,biome,tsc,jest,expo
           prompt: |
-            /fix-ci
+            🚨 AUTOMATIC HEALING MODE - NO RECOMMENDATIONS, ONLY FIXES 🚨
 
-            The CI workflow failed. Please analyze the errors and fix them.
+            The CI workflow failed. You MUST automatically fix ALL errors without asking for permission.
 
             **Run URL:** ${{ steps.logs.outputs.run_url }}
             **Failed Jobs:** ${{ steps.logs.outputs.failed_jobs }}
-            **Branch:** ${{ github.event.workflow_run.head_branch }}
+            **Original Branch:** ${{ github.event.workflow_run.head_branch }}
+            **Fix Branch:** ${{ steps.branch.outputs.branch_name }}
             **Repository:** ${{ github.repository }}
-
             **Error Logs Path:** ${{ steps.logs.outputs.logs_path }}
 
-            Please use the read_file tool to open this file and analyze the error logs.
+            ## CRITICAL INSTRUCTIONS - FOLLOW EXACTLY:
 
-            Please:
-            1. Analyze the failure logs to identify root causes
-            2. Summarize and prioritize the identified root causes
-            3. Fix the issues in the code
-            4. Run the failing commands locally to verify fixes
-            5. Commit the changes with a descriptive message
-            6. Push to the branch: ${{ steps.branch.outputs.branch_name }}
+            1. **READ LOGS**: Use read_file to open ${{ steps.logs.outputs.logs_path }} and analyze ALL errors
 
-            Focus on:
-            - Lint errors (fix with Biome)
-            - Type errors (proper TypeScript types)
-            - Test failures (fix logic or update tests)
-            - Build errors (dependency or configuration issues)
+            2. **IDENTIFY ROOT CAUSES**: Categorize errors:
+               - Lint errors (Biome violations)
+               - Type errors (TypeScript issues)
+               - Test failures (Jest failures)
+               - Build errors (Expo/dependency issues)
+               - Import errors (missing modules)
+
+            3. **AUTO-FIX ALL ISSUES** (DO NOT ASK, JUST FIX):
+               - Lint errors: Run `pnpm biome check --write .` to auto-fix
+               - Type errors: Fix TypeScript types manually
+               - Test failures: Fix logic OR update snapshots/tests
+               - Build errors: Fix imports, add missing dependencies
+               - If workflow files need fixing, fix them too (you have workflows: write permission)
+
+            4. **VERIFY FIXES**: Run the failing commands locally:
+               ```bash
+               pnpm biome check .
+               pnpm tsc --noEmit
+               pnpm test --passWithNoTests
+               pnpm expo export:web
+               ```
+
+            5. **COMMIT EVERYTHING**: Git add ALL changes and commit with:
+               ```bash
+               git add .
+               git commit -m "fix(ci): auto-heal CI failures
+
+               - Fixed lint errors via Biome
+               - Resolved TypeScript type issues
+               - Fixed test failures
+               - Resolved build errors
+
+               Auto-healed by Claude CI Failure Fix workflow
+               Run: ${{ steps.logs.outputs.run_url }}"
+               ```
+
+            6. **PUSH FIXES**: Push to the fix branch:
+               ```bash
+               git push -u origin ${{ steps.branch.outputs.branch_name }}
+               ```
+
+            7. **CREATE PR**: Create a pull request using gh CLI:
+               ```bash
+               gh pr create \
+                 --base "${{ github.event.workflow_run.head_branch }}" \
+                 --head "${{ steps.branch.outputs.branch_name }}" \
+                 --title "fix(ci): Auto-heal CI failures from run #${{ github.event.workflow_run.id }}" \
+                 --body "$(cat <<'EOF'
+               ## Auto-Healed CI Failures
+
+               This PR automatically fixes all CI failures from run #${{ github.event.workflow_run.id }}.
+
+               **Original Branch:** ${{ github.event.workflow_run.head_branch }}
+               **Failed Jobs:** ${{ steps.logs.outputs.failed_jobs }}
+               **Run URL:** ${{ steps.logs.outputs.run_url }}
+
+               ## Changes Made
+
+               - [ ] Fixed lint errors (Biome)
+               - [ ] Resolved TypeScript type issues
+               - [ ] Fixed test failures
+               - [ ] Resolved build errors
+               - [ ] Updated workflows if needed
+
+               ## Verification
+
+               All fixes have been verified by running:
+               - ✅ `pnpm biome check .`
+               - ✅ `pnpm tsc --noEmit`
+               - ✅ `pnpm test`
+               - ✅ `pnpm expo export:web`
+
+               **Auto-generated by Claude CI Auto-Heal workflow**
+               EOF
+               )"
+               ```
+
+            ## REMEMBER:
+            - **NO RECOMMENDATIONS** - Only actual fixes
+            - **COMMIT & PUSH** - Always commit and push your changes
+            - **CREATE PR** - Always create the PR
+            - **AUTO-HEAL** - Fix everything automatically
+            - You have full permissions: contents:write, workflows:write, pull-requests:write
+            - You are authorized to modify ANY file including workflows
+            - Bot users (claude-bot[bot]) are allowed to push
