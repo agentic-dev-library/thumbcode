@@ -2,7 +2,7 @@
  * Performance Hooks Tests
  */
 
-import { act, renderHook, waitFor } from '@testing-library/react-native';
+import { act, renderHook } from '@testing-library/react-native';
 import {
   useDebouncedCallback,
   useDebouncedValue,
@@ -103,10 +103,9 @@ describe('Performance Hooks', () => {
     });
 
     it('should debounce value changes', async () => {
-      const { result, rerender } = renderHook(
-        ({ value }) => useDebouncedValue(value, 500),
-        { initialProps: { value: 'initial' } }
-      );
+      const { result, rerender } = renderHook(({ value }) => useDebouncedValue(value, 500), {
+        initialProps: { value: 'initial' },
+      });
 
       expect(result.current).toBe('initial');
 
@@ -126,10 +125,9 @@ describe('Performance Hooks', () => {
     });
 
     it('should reset timer on rapid changes', () => {
-      const { result, rerender } = renderHook(
-        ({ value }) => useDebouncedValue(value, 500),
-        { initialProps: { value: 'initial' } }
-      );
+      const { result, rerender } = renderHook(({ value }) => useDebouncedValue(value, 500), {
+        initialProps: { value: 'initial' },
+      });
 
       // Multiple rapid changes
       rerender({ value: 'change1' });
@@ -279,10 +277,9 @@ describe('Performance Hooks', () => {
     });
 
     it('should return previous value after update', () => {
-      const { result, rerender } = renderHook(
-        ({ value }) => usePrevious(value),
-        { initialProps: { value: 'initial' } }
-      );
+      const { result, rerender } = renderHook(({ value }) => usePrevious(value), {
+        initialProps: { value: 'initial' },
+      });
 
       expect(result.current).toBeUndefined();
 
@@ -301,10 +298,9 @@ describe('Performance Hooks', () => {
       const callback1 = jest.fn();
       const callback2 = jest.fn();
 
-      const { result, rerender } = renderHook(
-        ({ callback }) => useStableCallback(callback),
-        { initialProps: { callback: callback1 } }
-      );
+      const { result, rerender } = renderHook(({ callback }) => useStableCallback(callback), {
+        initialProps: { callback: callback1 },
+      });
 
       const firstRef = result.current;
 
@@ -343,10 +339,9 @@ describe('Performance Hooks', () => {
 
   describe('useStableArray', () => {
     it('should return same reference if array content is identical', () => {
-      const { result, rerender } = renderHook(
-        ({ array }) => useStableArray(array),
-        { initialProps: { array: [1, 2, 3] } }
-      );
+      const { result, rerender } = renderHook(({ array }) => useStableArray(array), {
+        initialProps: { array: [1, 2, 3] },
+      });
 
       const firstRef = result.current;
 
@@ -357,10 +352,9 @@ describe('Performance Hooks', () => {
     });
 
     it('should return new reference if array content changes', () => {
-      const { result, rerender } = renderHook(
-        ({ array }) => useStableArray(array),
-        { initialProps: { array: [1, 2, 3] } }
-      );
+      const { result, rerender } = renderHook(({ array }) => useStableArray(array), {
+        initialProps: { array: [1, 2, 3] },
+      });
 
       const firstRef = result.current;
 
@@ -371,10 +365,9 @@ describe('Performance Hooks', () => {
     });
 
     it('should detect length changes', () => {
-      const { result, rerender } = renderHook(
-        ({ array }) => useStableArray(array),
-        { initialProps: { array: [1, 2, 3] } }
-      );
+      const { result, rerender } = renderHook(({ array }) => useStableArray(array), {
+        initialProps: { array: [1, 2, 3] },
+      });
 
       const firstRef = result.current;
 
@@ -386,10 +379,9 @@ describe('Performance Hooks', () => {
 
   describe('useStableObject', () => {
     it('should return same reference if object content is identical', () => {
-      const { result, rerender } = renderHook(
-        ({ obj }) => useStableObject(obj),
-        { initialProps: { obj: { a: 1, b: 2 } } }
-      );
+      const { result, rerender } = renderHook(({ obj }) => useStableObject(obj), {
+        initialProps: { obj: { a: 1, b: 2 } },
+      });
 
       const firstRef = result.current;
 
@@ -400,10 +392,9 @@ describe('Performance Hooks', () => {
     });
 
     it('should return new reference if object content changes', () => {
-      const { result, rerender } = renderHook(
-        ({ obj }) => useStableObject(obj),
-        { initialProps: { obj: { a: 1, b: 2 } } }
-      );
+      const { result, rerender } = renderHook(({ obj }) => useStableObject(obj), {
+        initialProps: { obj: { a: 1, b: 2 } },
+      });
 
       const firstRef = result.current;
 
@@ -414,10 +405,9 @@ describe('Performance Hooks', () => {
     });
 
     it('should detect key additions', () => {
-      const { result, rerender } = renderHook(
-        ({ obj }) => useStableObject(obj),
-        { initialProps: { obj: { a: 1 } as Record<string, number> } }
-      );
+      const { result, rerender } = renderHook(({ obj }) => useStableObject(obj), {
+        initialProps: { obj: { a: 1 } as Record<string, number> },
+      });
 
       const firstRef = result.current;
 
@@ -431,8 +421,8 @@ describe('Performance Hooks', () => {
     let addEventListenerSpy: jest.SpyInstance;
     let removeEventListenerSpy: jest.SpyInstance;
     const originalWindow = global.window;
-    const originalInnerWidth = global.window?.innerWidth;
-    const originalInnerHeight = global.window?.innerHeight;
+    const _originalInnerWidth = global.window?.innerWidth;
+    const _originalInnerHeight = global.window?.innerHeight;
 
     beforeEach(() => {
       // Set up window properties and spies
@@ -470,10 +460,7 @@ describe('Performance Hooks', () => {
     it('should add resize event listener', () => {
       renderHook(() => useWindowDimensions());
 
-      expect(addEventListenerSpy).toHaveBeenCalledWith(
-        'resize',
-        expect.any(Function)
-      );
+      expect(addEventListenerSpy).toHaveBeenCalledWith('resize', expect.any(Function));
     });
 
     it('should remove event listener on unmount', () => {
@@ -481,10 +468,7 @@ describe('Performance Hooks', () => {
 
       unmount();
 
-      expect(removeEventListenerSpy).toHaveBeenCalledWith(
-        'resize',
-        expect.any(Function)
-      );
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('resize', expect.any(Function));
     });
   });
 });

@@ -2,13 +2,12 @@
  * OptimizedList Component Tests
  */
 
-import React from 'react';
-import { Text, View } from 'react-native';
 import { render } from '@testing-library/react-native';
+import { Text, View } from 'react-native';
 import {
-  OptimizedList,
   createMemoizedRenderItem,
   defaultListItemPropsAreEqual,
+  OptimizedList,
   withListItemMemo,
 } from '../performance';
 
@@ -48,11 +47,7 @@ describe('OptimizedList', () => {
     );
 
     const { getByTestId } = render(
-      <OptimizedList
-        data={mockData}
-        renderItem={renderItem}
-        itemHeight={50}
-      />
+      <OptimizedList data={mockData} renderItem={renderItem} itemHeight={50} />
     );
 
     expect(getByTestId('item-1')).toBeTruthy();
@@ -90,11 +85,7 @@ describe('OptimizedList', () => {
 
     // This should work without throwing
     const { getByTestId } = render(
-      <OptimizedList
-        data={mockData}
-        renderItem={renderItem}
-        itemHeight={50}
-      />
+      <OptimizedList data={mockData} renderItem={renderItem} itemHeight={50} />
     );
 
     expect(getByTestId('item-1')).toBeTruthy();
@@ -113,21 +104,14 @@ describe('OptimizedList', () => {
     );
 
     const { getByTestId } = render(
-      <OptimizedList
-        data={dataWithKey}
-        renderItem={renderItem}
-        itemHeight={50}
-      />
+      <OptimizedList data={dataWithKey} renderItem={renderItem} itemHeight={50} />
     );
 
     expect(getByTestId('item-key-1')).toBeTruthy();
   });
 
   it('should use index as last resort for key', () => {
-    const dataWithoutIdOrKey = [
-      { name: 'Item 1' },
-      { name: 'Item 2' },
-    ];
+    const dataWithoutIdOrKey = [{ name: 'Item 1' }, { name: 'Item 2' }];
 
     const renderItem = ({ item, index }: { item: { name: string }; index: number }) => (
       <View testID={`item-${index}`}>
@@ -136,11 +120,7 @@ describe('OptimizedList', () => {
     );
 
     const { getByTestId } = render(
-      <OptimizedList
-        data={dataWithoutIdOrKey}
-        renderItem={renderItem}
-        itemHeight={50}
-      />
+      <OptimizedList data={dataWithoutIdOrKey} renderItem={renderItem} itemHeight={50} />
     );
 
     expect(getByTestId('item-0')).toBeTruthy();
@@ -155,12 +135,7 @@ describe('OptimizedList', () => {
 
     // Should not throw with custom windowSize
     render(
-      <OptimizedList
-        data={mockData}
-        renderItem={renderItem}
-        itemHeight={50}
-        windowSize={10}
-      />
+      <OptimizedList data={mockData} renderItem={renderItem} itemHeight={50} windowSize={10} />
     );
   });
 
@@ -189,9 +164,18 @@ describe('createMemoizedRenderItem', () => {
   it('should create a memoized render function', () => {
     const MemoizedRender = createMemoizedRenderItem(TestItemComponent);
 
-    const { getByTestId } = render(
-      <MemoizedRender item={{ id: '1', name: 'Test' }} index={0} />
-    );
+    // Create proper ListRenderItemInfo object
+    const renderInfo = {
+      item: { id: '1', name: 'Test' },
+      index: 0,
+      separators: {
+        highlight: jest.fn(),
+        unhighlight: jest.fn(),
+        updateProps: jest.fn(),
+      },
+    };
+
+    const { getByTestId } = render(MemoizedRender(renderInfo));
 
     expect(getByTestId('item-1')).toBeTruthy();
   });
@@ -242,7 +226,7 @@ describe('defaultListItemPropsAreEqual', () => {
   });
 
   it('should compare by reference when id is undefined', () => {
-    const item = { name: 'Item' };
+    const item = { id: undefined as string | undefined, name: 'Item' };
     const prevProps = { item, index: 0 };
     const nextProps = { item, index: 0 };
 
@@ -250,8 +234,8 @@ describe('defaultListItemPropsAreEqual', () => {
   });
 
   it('should return false for different objects without id', () => {
-    const prevProps = { item: { name: 'Item 1' }, index: 0 };
-    const nextProps = { item: { name: 'Item 1' }, index: 0 };
+    const prevProps = { item: { id: undefined as string | undefined, name: 'Item 1' }, index: 0 };
+    const nextProps = { item: { id: undefined as string | undefined, name: 'Item 1' }, index: 0 };
 
     expect(defaultListItemPropsAreEqual(prevProps, nextProps)).toBe(false);
   });
