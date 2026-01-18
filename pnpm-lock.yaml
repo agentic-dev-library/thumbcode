@@ -190,6 +190,18 @@ importers:
         specifier: ^1.5.0
         version: 1.6.4(@algolia/client-search@5.46.3)(@types/node@25.0.9)(@types/react@18.3.27)(lightningcss@1.27.0)(postcss@8.5.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.17.3)(terser@5.46.0)(typescript@5.6.3)
 
+  packages/agent-intelligence:
+    dependencies:
+      react:
+        specifier: 18.3.1
+        version: 18.3.1
+      react-native:
+        specifier: 0.76.0
+        version: 0.76.0(@babel/core@7.28.6)(@babel/preset-env@7.28.6(@babel/core@7.28.6))(@types/react@18.3.27)(react@18.3.1)
+      zustand:
+        specifier: ^5.0.0
+        version: 5.0.10(@types/react@18.3.27)(react@18.3.1)(use-sync-external-store@1.6.0(react@18.3.1))
+
   packages/dev-tools:
     dependencies:
       sharp:
