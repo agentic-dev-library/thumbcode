@@ -169,7 +169,7 @@ export function getCSSCustomProperties(): Record<string, string> {
  * @returns An object mapping color names to either a hex color string or an object of shade keys to hex strings (e.g., `{ blue: { '500': '#0b5fff', '600': '#084fd6' }, black: '#000' }`)
  */
 export function getTailwindColors() {
-  const colors: Record<string, any> = {};
+  const colors: Record<string, string | Record<string, string>> = {};
 
   Object.entries(tokens.colors).forEach(([colorName, colorData]) => {
     if (typeof colorData === 'string') {
