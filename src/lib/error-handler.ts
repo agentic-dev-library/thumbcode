@@ -15,8 +15,7 @@ interface ErrorUtilsType {
 
 // Access React Native's ErrorUtils
 function getErrorUtils(): ErrorUtilsType | undefined {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (global as any).ErrorUtils as ErrorUtilsType | undefined;
+  return (global as unknown as { ErrorUtils?: ErrorUtilsType }).ErrorUtils;
 }
 
 export type ErrorSeverity = 'low' | 'medium' | 'high' | 'critical';

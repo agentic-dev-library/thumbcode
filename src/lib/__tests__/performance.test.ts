@@ -259,9 +259,7 @@ describe('PerformanceMonitor', () => {
       monitor.trackMount('TestComponent', 50);
 
       const summary = monitor.getSummary();
-      const component = summary.componentStats.find(
-        (c) => c.componentName === 'TestComponent'
-      );
+      const component = summary.componentStats.find((c) => c.componentName === 'TestComponent');
 
       expect(component?.mountTime).toBe(50);
       expect(component?.renderTime).toBe(10);
@@ -279,10 +277,7 @@ describe('PerformanceMonitor', () => {
       monitor.configure({ slowRenderThreshold: 10 });
       monitor.trackMount('SlowComponent', 100); // Way above 3x threshold
 
-      expect(logger.warn).toHaveBeenCalledWith(
-        'Slow mount: SlowComponent',
-        expect.any(Object)
-      );
+      expect(logger.warn).toHaveBeenCalledWith('Slow mount: SlowComponent', expect.any(Object));
     });
   });
 
