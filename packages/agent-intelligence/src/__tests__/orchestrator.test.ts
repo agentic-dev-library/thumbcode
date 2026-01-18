@@ -332,7 +332,6 @@ describe('AgentOrchestrator', () => {
         assigneeRole: 'implementer',
       });
 
-      const state = orchestrator.getState();
       const tasks = orchestrator.getTasks();
 
       // Second task should have dependency
