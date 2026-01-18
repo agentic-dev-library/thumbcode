@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>ThumbCode Logo - Monochrome</title>
+  
+  <!-- White background -->
+  <rect width="200" height="200" fill="#FFFFFF" rx="16"/>
+  <rect width="200" height="200" fill="none" stroke="#CBD5E1" stroke-width="1" rx="16"/>
+  
+  <!-- Organic paint daubes (grayscale) -->
+  <!-- Back left daube -->
+  <ellipse cx="65" cy="95" rx="35" ry="28" fill="#151820" opacity="0.25"
+    transform="rotate(12 65 95)"/>
+  
+  <!-- Back right daube -->
+  <ellipse cx="140" cy="90" rx="28" ry="22" fill="#151820" opacity="0.15"
+    transform="rotate(-8 140 90)"/>
+  
+  <!-- Front center daube -->
+  <ellipse cx="100" cy="100" rx="45" ry="32" fill="#151820" opacity="0.4"
+    transform="rotate(3 100 100)"/>
+  
+  <!-- Code brackets -->
+  <text x="68" y="115" 
+    font-family="ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace" 
+    font-size="56" 
+    font-weight="700" 
+    fill="#151820">{</text>
+  <text x="108" y="115" 
+    font-family="ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace" 
+    font-size="56" 
+    font-weight="700" 
+    fill="#151820">}</text>
+</svg>

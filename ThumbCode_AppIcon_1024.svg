@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>ThumbCode App Icon</title>
+  
+  <!-- Background with subtle rounded corners for iOS -->
+  <rect width="1024" height="1024" fill="#151820" rx="224"/>
+  
+  <!-- Scaled organic paint daubes -->
+  <!-- Teal daube -->
+  <ellipse cx="332" cy="486" rx="179" ry="143" fill="#0D9488" opacity="0.7"
+    transform="rotate(12 332 486)"/>
+  
+  <!-- Gold daube -->
+  <ellipse cx="716" cy="460" rx="143" ry="112" fill="#F5D563" opacity="0.6"
+    transform="rotate(-8 716 460)"/>
+  
+  <!-- Coral daube -->
+  <ellipse cx="512" cy="512" rx="230" ry="164" fill="#FF7059" opacity="0.9"
+    transform="rotate(3 512 512)"/>
+  
+  <!-- Code brackets -->
+  <text x="348" y="588" 
+    font-family="ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, monospace" 
+    font-size="286" 
+    font-weight="700" 
+    fill="white">{</text>
+  <text x="552" y="588" 
+    font-family="ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, monospace" 
+    font-size="286" 
+    font-weight="700" 
+    fill="white">}</text>
+</svg>
