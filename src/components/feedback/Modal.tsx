@@ -68,7 +68,7 @@ export function Modal({
           style={{
             maxWidth: isFull ? undefined : maxWidth,
             maxHeight: isFull ? '100%' : '80%',
-            borderRadius: isFull ? 0 : '20px 16px 20px 18px',
+            borderRadius: isFull ? 0 : 18,
             flex: isFull ? 1 : undefined,
           }}
         >
