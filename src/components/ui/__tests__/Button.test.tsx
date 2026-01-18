@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react-native';
+import { ActivityIndicator, Pressable } from 'react-native';
 import { Button } from '../Button';
 
 describe('Button', () => {
@@ -50,7 +51,6 @@ describe('Button', () => {
       // Text should not be visible
       expect(queryByText('Loading')).toBeNull();
       // ActivityIndicator should be present
-      const ActivityIndicator = require('react-native').ActivityIndicator;
       expect(UNSAFE_getByType(ActivityIndicator)).toBeDefined();
     });
 
@@ -59,7 +59,6 @@ describe('Button', () => {
       const { UNSAFE_getByType } = render(
         <Button loading onPress={onPress}>Loading</Button>
       );
-      const Pressable = require('react-native').Pressable;
       const button = UNSAFE_getByType(Pressable);
       expect(button.props.disabled).toBe(true);
     });
@@ -71,7 +70,6 @@ describe('Button', () => {
       const { UNSAFE_getByType } = render(
         <Button disabled onPress={onPress}>Disabled</Button>
       );
-      const Pressable = require('react-native').Pressable;
       const button = UNSAFE_getByType(Pressable);
       expect(button.props.disabled).toBe(true);
     });
