@@ -44,13 +44,16 @@ ThumbCode is a React Native/Expo application that enables professional software 
 | Git | isomorphic-git |
 | AI | Anthropic Claude |
 | Security | expo-secure-store |
+| Package Manager | pnpm 10+ |
+| Linter/Formatter | Biome 2.3+ |
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 20+
-- Expo CLI (`npm install -g expo-cli`)
+- pnpm 10+ (`npm install -g pnpm`)
+- Expo CLI (`pnpm add -g expo-cli`)
 - iOS Simulator or Android Emulator (or physical device)
 
 ### Installation
@@ -60,36 +63,38 @@ ThumbCode is a React Native/Expo application that enables professional software 
 git clone https://github.com/agentic-dev-library/thumbcode.git
 cd thumbcode
 
-# Install dependencies (auto-generates design tokens)
-npm install
+# Install dependencies with pnpm (auto-generates design tokens)
+pnpm install
 
 # Start development server
-npm start
+pnpm start
 ```
 
 ### Development
 
 ```bash
 # Run on iOS
-npm run ios
+pnpm ios
 
 # Run on Android
-npm run android
+pnpm android
 
 # Run on Web
-npm run web
+pnpm web
+
+# Lint & format with Biome (fast!)
+pnpm lint              # Check for issues
+pnpm lint:fix          # Fix issues
+pnpm format            # Format code
 
 # Type checking
-npm run typecheck
-
-# Linting
-npm run lint
+pnpm typecheck
 
 # Testing
-npm run test
+pnpm test
 
 # Generate design tokens (after editing tokens.json)
-npm run generate:tokens
+pnpm generate:tokens
 ```
 
 ## Project Structure
