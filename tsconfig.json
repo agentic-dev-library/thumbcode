@@ -16,5 +16,5 @@
     "types": ["nativewind/types", "jest"]
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "nativewind-env.d.ts"],
-  "exclude": ["node_modules", "docs", "packages/dev-tools", "packages/agent-intelligence"]
+  "exclude": ["node_modules", "docs", "packages/dev-tools", "packages/agent-intelligence", "packages/core"]
 }
