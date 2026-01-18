@@ -98,6 +98,12 @@ jobs:
               pull_number: ${{ needs.detect-ai-agent.outputs.pr_number }}
             });
 
+            const isSameRepo = pr.data.head.repo.full_name === `${context.repo.owner}/${context.repo.repo}`;
+            if (!isSameRepo || pr.data.head.repo.fork) {
+              core.setFailed('Refusing to run auto-triage on forked PR code.');
+              return;
+            }
+
             core.setOutput('branch', pr.data.head.ref);
             core.setOutput('base', pr.data.base.ref);
             core.setOutput('title', pr.data.title);
