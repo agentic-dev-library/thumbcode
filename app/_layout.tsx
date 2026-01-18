@@ -2,7 +2,7 @@
  * Root Layout
  *
  * Main app layout that provides navigation stack, theme providers,
- * global context, and error handling for ThumbCode.
+ * and global context for ThumbCode.
  */
 
 import { certificatePinningService } from '@thumbcode/core/src/security/CertificatePinningService';
@@ -13,14 +13,8 @@ import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ErrorBoundary } from '@/components/error';
 import { OnboardingProvider, useOnboarding } from '@/contexts/onboarding';
-import { logger, setupGlobalErrorHandlers } from '@/lib';
 import '../global.css';
-
-// Initialize global error handlers
-setupGlobalErrorHandlers();
-logger.info('ThumbCode app started');
 
 function RootLayoutNav() {
   const { isLoading, hasCompletedOnboarding } = useOnboarding();
@@ -98,15 +92,13 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ErrorBoundary>
-      <OnboardingProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <SafeAreaProvider>
-            <StatusBar style="light" />
-            <RootLayoutNav />
-          </SafeAreaProvider>
-        </GestureHandlerRootView>
-      </OnboardingProvider>
-    </ErrorBoundary>
+    <OnboardingProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <StatusBar style="light" />
+          <RootLayoutNav />
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </OnboardingProvider>
   );
 }
