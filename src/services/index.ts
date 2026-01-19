@@ -36,6 +36,7 @@ export {
   type PushOptions,
   type RemoteInfo,
   type RetrieveOptions,
+  type RepositoryState,
   type StageOptions,
   type StoreOptions,
   type ValidationResult,
