@@ -2,6 +2,7 @@
  * GitHub Auth Screen
  *
  * Guides user through GitHub Device Flow authentication.
+ * Uses paint daube icons for brand consistency.
  */
 
 import { useRouter } from 'expo-router';
@@ -9,6 +10,7 @@ import { useState } from 'react';
 import { ActivityIndicator, Linking, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StepsProgress } from '@/components/feedback';
+import { LinkIcon, SuccessIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 
@@ -80,7 +82,9 @@ export default function GitHubAuthScreen() {
                 borderBottomLeftRadius: 12,
               }}
             >
-              <Text className="text-3xl text-center mb-4">🔗</Text>
+              <View className="items-center mb-4">
+                <LinkIcon size={40} color="teal" turbulence={0.25} />
+              </View>
               <Text weight="semibold" className="text-white text-center mb-2">
                 Secure Device Flow
               </Text>
@@ -184,7 +188,9 @@ export default function GitHubAuthScreen() {
                 borderBottomLeftRadius: 12,
               }}
             >
-              <Text className="text-4xl text-center mb-4">✓</Text>
+              <View className="items-center mb-4">
+                <SuccessIcon size={48} color="teal" turbulence={0.25} />
+              </View>
               <Text weight="semibold" className="text-teal-400 text-center text-lg">
                 GitHub Connected!
               </Text>

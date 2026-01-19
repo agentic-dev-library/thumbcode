@@ -18,6 +18,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { CloseIcon } from '@/components/icons';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -136,7 +137,7 @@ export function BottomSheet({
                 accessibilityLabel="Close"
                 accessibilityHint="Close the bottom sheet"
               >
-                <Text className="text-neutral-400 text-xl">×</Text>
+                <CloseIcon size={18} color="warmGray" turbulence={0.15} />
               </Pressable>
             </View>
           )}

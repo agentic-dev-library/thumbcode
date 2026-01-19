@@ -9,11 +9,15 @@ import { useState } from 'react';
 import { Alert, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge } from '@/components/display';
+import { type IconColor, LinkIcon, SecurityIcon } from '@/components/icons';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 
+type CredentialIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
+
 interface CredentialItemProps {
-  icon: string;
+  Icon: CredentialIconComponent;
+  iconColor?: IconColor;
   title: string;
   subtitle: string;
   isConnected: boolean;
@@ -23,7 +27,8 @@ interface CredentialItemProps {
 }
 
 function CredentialItem({
-  icon,
+  Icon,
+  iconColor = 'teal',
   title,
   subtitle,
   isConnected,
@@ -43,7 +48,7 @@ function CredentialItem({
             borderBottomLeftRadius: 8,
           }}
         >
-          <Text className="text-xl">{icon}</Text>
+          <Icon size={24} color={iconColor} turbulence={0.2} />
         </View>
 
         <VStack spacing="xs" className="flex-1">
@@ -258,7 +263,8 @@ export default function CredentialsScreen() {
             </View>
             <View className="px-4">
               <CredentialItem
-                icon="🔗"
+                Icon={LinkIcon}
+                iconColor="teal"
                 title="GitHub"
                 subtitle={githubConnected ? 'github.com/user' : 'Connect to access repositories'}
                 isConnected={githubConnected}
@@ -318,7 +324,9 @@ export default function CredentialsScreen() {
             }}
           >
             <HStack spacing="sm" align="start">
-              <Text className="text-teal-500">🔒</Text>
+              <View className="mt-0.5">
+                <SecurityIcon size={18} color="teal" turbulence={0.2} />
+              </View>
               <VStack spacing="xs" className="flex-1">
                 <Text className="text-teal-400 font-semibold">Secure Storage</Text>
                 <Text size="sm" className="text-teal-400/80">

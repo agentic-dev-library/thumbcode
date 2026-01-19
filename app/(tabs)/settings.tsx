@@ -2,17 +2,35 @@
  * Settings Screen
  *
  * App settings, credential management, and preferences.
+ * Uses paint daube icons for brand consistency.
  */
 
 import { useRouter } from 'expo-router';
+import type React from 'react';
 import { Linking, Pressable, ScrollView, Switch, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar, Badge } from '@/components/display';
+import {
+  AgentIcon,
+  BellIcon,
+  BookIcon,
+  BrainIcon,
+  BranchIcon,
+  type IconColor,
+  InfoIcon,
+  KeyboardIcon,
+  LegalIcon,
+  LinkIcon,
+  PaletteIcon,
+  SupportIcon,
+  VibrateIcon,
+} from '@/components/icons';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 
 interface SettingsItemProps {
-  icon: string;
+  Icon: React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
+  iconColor?: IconColor;
   title: string;
   subtitle?: string;
   value?: string;
@@ -26,7 +44,8 @@ interface SettingsItemProps {
 }
 
 function SettingsItem({
-  icon,
+  Icon,
+  iconColor = 'warmGray',
   title,
   subtitle,
   value,
@@ -51,7 +70,7 @@ function SettingsItem({
             borderBottomLeftRadius: 6,
           }}
         >
-          <Text>{icon}</Text>
+          <Icon size={22} color={iconColor} turbulence={0.2} />
         </View>
 
         <VStack spacing="none" className="flex-1">
@@ -145,7 +164,8 @@ export default function SettingsScreen() {
           </View>
           <View className="px-4">
             <SettingsItem
-              icon="🔗"
+              Icon={LinkIcon}
+              iconColor="teal"
               title="GitHub"
               subtitle="github.com/user"
               badge="Connected"
@@ -153,7 +173,8 @@ export default function SettingsScreen() {
             />
             <Divider />
             <SettingsItem
-              icon="🧠"
+              Icon={BrainIcon}
+              iconColor="coral"
               title="Anthropic"
               subtitle="Claude API"
               badge="Active"
@@ -161,7 +182,7 @@ export default function SettingsScreen() {
             />
             <Divider />
             <SettingsItem
-              icon="🤖"
+              Icon={AgentIcon}
               title="OpenAI"
               subtitle="Not connected"
               onPress={() => router.push('/settings/credentials')}
@@ -187,10 +208,16 @@ export default function SettingsScreen() {
             </Text>
           </View>
           <View className="px-4">
-            <SettingsItem icon="🎨" title="Appearance" value="Dark" onPress={() => {}} />
+            <SettingsItem
+              Icon={PaletteIcon}
+              iconColor="gold"
+              title="Appearance"
+              value="Dark"
+              onPress={() => {}}
+            />
             <Divider />
             <SettingsItem
-              icon="📳"
+              Icon={VibrateIcon}
               title="Haptic Feedback"
               showArrow={false}
               toggle={{
@@ -200,7 +227,8 @@ export default function SettingsScreen() {
             />
             <Divider />
             <SettingsItem
-              icon="🔔"
+              Icon={BellIcon}
+              iconColor="coral"
               title="Notifications"
               showArrow={false}
               toggle={{
@@ -210,7 +238,7 @@ export default function SettingsScreen() {
             />
             <Divider />
             <SettingsItem
-              icon="⌨️"
+              Icon={KeyboardIcon}
               title="Editor Settings"
               onPress={() => router.push('/settings/editor')}
             />
@@ -236,14 +264,16 @@ export default function SettingsScreen() {
           </View>
           <View className="px-4">
             <SettingsItem
-              icon="🤖"
+              Icon={AgentIcon}
+              iconColor="teal"
               title="Agent Behavior"
               subtitle="Auto-review, approval settings"
               onPress={() => router.push('/settings/agents')}
             />
             <Divider />
             <SettingsItem
-              icon="🔀"
+              Icon={BranchIcon}
+              iconColor="teal"
               title="Branch Protection"
               subtitle="Protected branches and rules"
               onPress={() => router.push('/settings/agents')}
@@ -270,24 +300,25 @@ export default function SettingsScreen() {
           </View>
           <View className="px-4">
             <SettingsItem
-              icon="📖"
+              Icon={BookIcon}
               title="Documentation"
               onPress={() => Linking.openURL('https://thumbcode.dev/docs')}
             />
             <Divider />
             <SettingsItem
-              icon="💬"
+              Icon={SupportIcon}
+              iconColor="coral"
               title="Support"
               onPress={() => Linking.openURL('https://thumbcode.dev/support')}
             />
             <Divider />
             <SettingsItem
-              icon="⚖️"
+              Icon={LegalIcon}
               title="Terms & Privacy"
               onPress={() => Linking.openURL('https://thumbcode.dev/legal')}
             />
             <Divider />
-            <SettingsItem icon="ℹ️" title="Version" value="1.0.0" showArrow={false} />
+            <SettingsItem Icon={InfoIcon} title="Version" value="1.0.0" showArrow={false} />
           </View>
         </VStack>
 

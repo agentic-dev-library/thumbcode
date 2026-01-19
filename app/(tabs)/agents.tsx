@@ -2,25 +2,49 @@
  * Agents Screen
  *
  * Dashboard showing all AI agents, their status, and metrics.
+ * Uses paint daube icons for brand consistency.
  */
 
 import { useRouter } from 'expo-router';
+import type React from 'react';
 import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBadge } from '@/components/display';
 import { ProgressBar } from '@/components/feedback';
+import {
+  AgentIcon,
+  type IconColor,
+  LightningIcon,
+  ReviewIcon,
+  SearchIcon,
+  StarIcon,
+  SuccessIcon,
+} from '@/components/icons';
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 
+/** Agent avatar icon component */
+type AgentAvatarIcon = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
+
 // Mock data
-const MOCK_AGENTS = [
+const MOCK_AGENTS: Array<{
+  id: string;
+  name: string;
+  role: 'architect' | 'implementer' | 'reviewer' | 'tester';
+  status: 'idle' | 'coding' | 'reviewing' | 'error' | 'waiting_approval';
+  AvatarIcon: AgentAvatarIcon;
+  avatarColor: IconColor;
+  currentTask: { title: string; progress: number } | null;
+  metrics: { tasksCompleted: number; successRate: number; avgTaskTime: number };
+}> = [
   {
     id: '1',
     name: 'Architect',
     role: 'architect' as const,
     status: 'idle' as const,
-    avatar: '🏛️',
+    AvatarIcon: StarIcon,
+    avatarColor: 'gold',
     currentTask: null,
     metrics: {
       tasksCompleted: 47,
@@ -33,7 +57,8 @@ const MOCK_AGENTS = [
     name: 'Implementer',
     role: 'implementer' as const,
     status: 'coding' as const,
-    avatar: '⚡',
+    AvatarIcon: LightningIcon,
+    avatarColor: 'teal',
     currentTask: {
       title: 'Add user authentication',
       progress: 65,
@@ -49,7 +74,8 @@ const MOCK_AGENTS = [
     name: 'Reviewer',
     role: 'reviewer' as const,
     status: 'reviewing' as const,
-    avatar: '🔍',
+    AvatarIcon: ReviewIcon,
+    avatarColor: 'coral',
     currentTask: {
       title: 'Review PR #42',
       progress: 30,
@@ -65,7 +91,8 @@ const MOCK_AGENTS = [
     name: 'Tester',
     role: 'tester' as const,
     status: 'idle' as const,
-    avatar: '🧪',
+    AvatarIcon: SearchIcon,
+    avatarColor: 'teal',
     currentTask: null,
     metrics: {
       tasksCompleted: 72,
@@ -136,7 +163,9 @@ export default function AgentsScreen() {
               borderBottomLeftRadius: 10,
             }}
           >
-            <Text className="text-2xl mb-2">🤖</Text>
+            <View className="mb-2">
+              <AgentIcon size={28} color="coral" turbulence={0.2} />
+            </View>
             <Text size="2xl" weight="bold" className="text-white">
               {activeAgents}/{MOCK_AGENTS.length}
             </Text>
@@ -154,7 +183,9 @@ export default function AgentsScreen() {
               borderBottomLeftRadius: 10,
             }}
           >
-            <Text className="text-2xl mb-2">✓</Text>
+            <View className="mb-2">
+              <SuccessIcon size={28} color="teal" turbulence={0.2} />
+            </View>
             <Text size="2xl" weight="bold" className="text-white">
               {totalTasks}
             </Text>
@@ -230,7 +261,7 @@ export default function AgentsScreen() {
                       borderBottomLeftRadius: 12,
                     }}
                   >
-                    <Text className="text-2xl">{agent.avatar}</Text>
+                    <agent.AvatarIcon size={28} color={agent.avatarColor} turbulence={0.25} />
                   </View>
                   <VStack spacing="xs">
                     <Text weight="semibold" className="text-white text-lg">

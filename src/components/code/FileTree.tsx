@@ -3,10 +3,25 @@
  *
  * Displays a hierarchical file/folder structure.
  * Supports expandable folders and file type icons.
+ * Uses paint daube icons for brand consistency.
  */
 
 import { useMemo, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
+import {
+  FileCodeIcon,
+  FileConfigIcon,
+  FileDataIcon,
+  FileDocIcon,
+  FileIcon,
+  FileMediaIcon,
+  FileStyleIcon,
+  FileWebIcon,
+  FolderIcon,
+  FolderOpenIcon,
+  type IconColor,
+} from '@/components/icons';
+import { Text } from '@/components/ui';
 
 interface FileNode {
   name: string;
@@ -41,26 +56,38 @@ interface FileTreeNodeProps {
   showStatus?: boolean;
 }
 
-function getFileIcon(name: string): string {
+/** File icon component type */
+type FileIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
+
+interface FileIconInfo {
+  Icon: FileIconComponent;
+  color: IconColor;
+}
+
+function getFileIconInfo(name: string): FileIconInfo {
   const ext = name.split('.').pop()?.toLowerCase();
-  const iconMap: Record<string, string> = {
-    ts: '📘',
-    tsx: '⚛️',
-    js: '📙',
-    jsx: '⚛️',
-    json: '📋',
-    md: '📝',
-    css: '🎨',
-    scss: '🎨',
-    html: '🌐',
-    png: '🖼️',
-    jpg: '🖼️',
-    svg: '📐',
-    git: '🔧',
-    env: '⚙️',
-    lock: '🔒',
+  const iconMap: Record<string, FileIconInfo> = {
+    ts: { Icon: FileCodeIcon, color: 'teal' },
+    tsx: { Icon: FileCodeIcon, color: 'teal' },
+    js: { Icon: FileCodeIcon, color: 'gold' },
+    jsx: { Icon: FileCodeIcon, color: 'gold' },
+    json: { Icon: FileDataIcon, color: 'gold' },
+    md: { Icon: FileDocIcon, color: 'warmGray' },
+    css: { Icon: FileStyleIcon, color: 'coral' },
+    scss: { Icon: FileStyleIcon, color: 'coral' },
+    html: { Icon: FileWebIcon, color: 'teal' },
+    png: { Icon: FileMediaIcon, color: 'coral' },
+    jpg: { Icon: FileMediaIcon, color: 'coral' },
+    jpeg: { Icon: FileMediaIcon, color: 'coral' },
+    svg: { Icon: FileMediaIcon, color: 'coral' },
+    gif: { Icon: FileMediaIcon, color: 'coral' },
+    git: { Icon: FileConfigIcon, color: 'warmGray' },
+    env: { Icon: FileConfigIcon, color: 'warmGray' },
+    lock: { Icon: FileConfigIcon, color: 'warmGray' },
+    yaml: { Icon: FileConfigIcon, color: 'warmGray' },
+    yml: { Icon: FileConfigIcon, color: 'warmGray' },
   };
-  return iconMap[ext || ''] || '📄';
+  return iconMap[ext || ''] || { Icon: FileIcon, color: 'warmGray' };
 }
 
 function getStatusColor(node: FileNode): string {
@@ -117,7 +144,11 @@ function FileTreeNodeRow({
   accessibilityLabel: string;
   accessibilityHint: string;
 }) {
-  const icon = isFolder ? (isExpanded ? '📂' : '📁') : getFileIcon(node.name);
+  // Get the appropriate icon based on file type or folder state
+  const iconInfo = isFolder
+    ? { Icon: isExpanded ? FolderOpenIcon : FolderIcon, color: 'gold' as IconColor }
+    : getFileIconInfo(node.name);
+
   const rowClass = isSelected ? 'bg-teal-600/20' : 'active:bg-neutral-700';
   const textClass = isSelected ? 'text-teal-300' : 'text-neutral-200';
 
@@ -135,7 +166,9 @@ function FileTreeNodeRow({
       ) : (
         <View className="w-4 mr-1" />
       )}
-      <Text className="mr-2">{icon}</Text>
+      <View className="mr-2">
+        <iconInfo.Icon size={16} color={iconInfo.color} turbulence={0.15} />
+      </View>
       <Text className={`font-mono text-sm flex-1 ${textClass} ${statusColor}`} numberOfLines={1}>
         {node.name}
       </Text>
