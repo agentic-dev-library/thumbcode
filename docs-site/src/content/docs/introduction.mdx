@@ -1,0 +1,80 @@
+---
+title: Introduction
+description: Code with your thumbs - ThumbCode is a decentralized multi-agent mobile development platform.
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# ThumbCode
+
+**Code with your thumbs.** ThumbCode is a decentralized multi-agent mobile development platform that enables anyone to ship mobile apps by directing AI agents from their phone.
+
+## What is ThumbCode?
+
+ThumbCode puts the power of a development team in your pocket. Instead of writing code line by line, you direct a team of specialized AI agents — Architect, Implementer, Reviewer, and Tester — who work together to build, test, and deploy your apps.
+
+<CardGrid>
+  <Card title="Mobile-First" icon="mobile">
+    Built from the ground up for mobile. Clone repos, commit changes, and push to production — all from your phone.
+  </Card>
+  <Card title="Multi-Agent Teams" icon="rocket">
+    AI agents work in parallel, each with specialized skills. Architect plans, Implementer codes, Reviewer validates, Tester verifies.
+  </Card>
+  <Card title="Bring Your Own Keys" icon="shield">
+    Your API keys stay on your device, stored in secure hardware enclaves. Zero server dependency means you own your credentials.
+  </Card>
+  <Card title="Git Native" icon="git">
+    Full git workflow powered by isomorphic-git. Branch, merge, and resolve conflicts right from your mobile device.
+  </Card>
+</CardGrid>
+
+## Quick Links
+
+<CardGrid>
+  <LinkCard
+    title="Quick Start"
+    description="Get up and running with ThumbCode in minutes"
+    href="/thumbcode/quick-start/"
+  />
+  <LinkCard
+    title="Agent System"
+    description="Learn how the multi-agent architecture works"
+    href="/thumbcode/agents/overview/"
+  />
+  <LinkCard
+    title="API Reference"
+    description="Explore the API documentation"
+    href="/thumbcode/api/"
+  />
+  <LinkCard
+    title="GitHub Repository"
+    description="View the source code and contribute"
+    href="https://github.com/agentic-dev-library/thumbcode"
+  />
+</CardGrid>
+
+## Philosophy
+
+ThumbCode is built on three core principles:
+
+### 1. Mobile-Native, Not Mobile-Adapted
+
+Traditional IDEs were designed for keyboards and large screens. ThumbCode was built from scratch for touch interfaces and mobile constraints. Every interaction is optimized for thumbs.
+
+### 2. Credential Sovereignty
+
+Your API keys never leave your device. We use hardware-backed secure storage (Expo SecureStore) to ensure your credentials are encrypted and protected. There's no server to hack, no database to breach.
+
+### 3. Agent-Driven Development
+
+Instead of writing every line of code yourself, you direct AI agents who collaborate to build your vision. The human-in-the-loop approves key actions while agents handle the implementation details.
+
+## Technology Stack
+
+ThumbCode is built with modern, well-tested technologies:
+
+- **React Native + Expo**: Cross-platform mobile with excellent TypeScript support
+- **NativeWind**: Tailwind CSS for React Native
+- **isomorphic-git**: Client-side Git operations
+- **Zustand**: Lightweight state management
+- **Claude & GPT**: Multi-model AI agent capabilities

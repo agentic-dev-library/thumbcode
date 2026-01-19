@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'docs/**'
+      - 'docs-site/**'
       - 'src/**/*.ts'
       - 'src/**/*.tsx'
       - '.github/workflows/deploy-gh-pages.yml'
@@ -43,87 +44,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate API documentation with TypeDoc
-        run: npx typedoc --out docs-dist/api src/index.ts --plugin typedoc-plugin-markdown
-
-      - name: Build documentation site
+      - name: Build Astro documentation site
         run: |
-          # Create a simple docs site from markdown
-          mkdir -p docs-dist
+          # Install docs-site dependencies (workspace handles this)
+          pnpm --filter @thumbcode/docs install
+          # Build the Astro site
+          pnpm --filter @thumbcode/docs build
+          # Move built files to docs-dist
+          mv docs-site/dist docs-dist
 
-          # Copy documentation files
-          cp -r docs/* docs-dist/ 2>/dev/null || true
-          cp README.md docs-dist/ 2>/dev/null || true
-          cp CLAUDE.md docs-dist/ 2>/dev/null || true
-          cp DECISIONS.md docs-dist/ 2>/dev/null || true
-
-          # Create index.html
-          cat > docs-dist/index.html << 'HTMLEOF'
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>ThumbCode Documentation</title>
-            <style>
-              :root {
-                --coral-500: #FF7059;
-                --teal-600: #0D9488;
-                --charcoal: #151820;
-                --neutral-50: #FAF9F8;
-              }
-              body {
-                font-family: 'Cabin', system-ui, sans-serif;
-                background: var(--neutral-50);
-                color: var(--charcoal);
-                max-width: 800px;
-                margin: 0 auto;
-                padding: 2rem;
-                line-height: 1.6;
-              }
-              h1 { font-family: 'Fraunces', Georgia, serif; color: var(--coral-500); }
-              a { color: var(--teal-600); }
-              .card {
-                background: white;
-                padding: 1.5rem;
-                border-radius: 12px;
-                margin: 1rem 0;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-              }
-            </style>
-            <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=Cabin:wght@400;600&display=swap" rel="stylesheet">
-          </head>
-          <body>
-            <h1>ThumbCode Documentation</h1>
-            <p>Code with your thumbs. A decentralized multi-agent mobile development platform.</p>
-
-            <div class="card">
-              <h2>Quick Links</h2>
-              <ul>
-                <li><a href="https://github.com/agentic-dev-library/thumbcode">GitHub Repository</a></li>
-                <li><a href="https://thumbcode-staging.onrender.com">Staging App (Render)</a></li>
-              </ul>
-            </div>
-
-            <div class="card">
-              <h2>Documentation</h2>
-              <ul>
-                <li><a href="https://github.com/agentic-dev-library/thumbcode/blob/main/README.md">README</a></li>
-                <li><a href="https://github.com/agentic-dev-library/thumbcode/blob/main/CLAUDE.md">Agent Playbook (CLAUDE.md)</a></li>
-                <li><a href="https://github.com/agentic-dev-library/thumbcode/blob/main/DECISIONS.md">Technical Decisions</a></li>
-                <li><a href="./api/">API Reference (TypeDoc)</a></li>
-              </ul>
-            </div>
-
-            <div class="card">
-              <h2>Brand Guidelines</h2>
-              <ul>
-                <li><a href="https://github.com/agentic-dev-library/thumbcode/blob/main/docs/brand/BRAND-GUIDELINES.md">Brand Guidelines</a></li>
-              </ul>
-            </div>
-          </body>
-          </html>
-          HTMLEOF
+      - name: Generate API documentation with TypeDoc
+        run: |
+          npx typedoc --out docs-dist/api src/index.ts --plugin typedoc-plugin-markdown
+          # TypeDoc generates markdown, which Astro can't serve directly
+          # For now, we'll keep it as markdown files accessible via direct links
 
       - name: Inject no-cache headers for staging
         run: |
