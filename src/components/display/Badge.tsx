@@ -92,7 +92,9 @@ export function Badge({
           <Icon size={iconSize} color={iconColor || 'warmGray'} turbulence={0.15} />
         </View>
       )}
-      {textIcon && !Icon && <Text className={`mr-1 ${sizing.text}`}>{textIcon}</Text>}
+      {textIcon && !Icon && (
+        <Text className={`mr-1 ${colors.text} ${sizing.text}`}>{textIcon}</Text>
+      )}
       <Text className={`font-body font-medium ${colors.text} ${sizing.text}`}>{children}</Text>
     </View>
   );
