@@ -12,6 +12,34 @@
  * import { GitService, CredentialService } from '@thumbcode/core';
  */
 
+// Re-export core services for backwards compatibility
+// NOTE: Prefer importing directly from @thumbcode/core
+export {
+  type BiometricResult,
+  type BranchInfo,
+  type BranchOptions,
+  type CheckoutOptions,
+  type CloneOptions,
+  type CommitInfo,
+  type CommitOptions,
+  CredentialService,
+  type DiffResult,
+  type FetchOptions,
+  type FileStatus,
+  type GitAuthor,
+  type GitCredentials,
+  type GitResult,
+  GitService,
+  type ProgressCallback,
+  type ProgressEvent,
+  type PullOptions,
+  type PushOptions,
+  type RemoteInfo,
+  type RetrieveOptions,
+  type StageOptions,
+  type StoreOptions,
+  type ValidationResult,
+} from '@thumbcode/core';
 // Chat service for human-agent collaboration
 export {
   type ApprovalMessage,
@@ -24,32 +52,3 @@ export {
   type SendMessageOptions,
   type StreamingResponse,
 } from './chat';
-
-// Re-export core services for backwards compatibility
-// NOTE: Prefer importing directly from @thumbcode/core
-export {
-  CredentialService,
-  GitService,
-  type BiometricResult,
-  type BranchInfo,
-  type BranchOptions,
-  type CheckoutOptions,
-  type CloneOptions,
-  type CommitInfo,
-  type CommitOptions,
-  type DiffResult,
-  type FetchOptions,
-  type FileStatus,
-  type GitAuthor,
-  type GitCredentials,
-  type GitResult,
-  type ProgressCallback,
-  type ProgressEvent,
-  type PullOptions,
-  type PushOptions,
-  type RemoteInfo,
-  type RetrieveOptions,
-  type StageOptions,
-  type StoreOptions,
-  type ValidationResult,
-} from '@thumbcode/core';
