@@ -340,8 +340,9 @@ export default function GitHubAuthScreen() {
               </Text>
               {githubUser && (
                 <Text weight="semibold" className="text-white text-center mt-1">
-                  @{githubUser.login}
-                  {githubUser.name && ` (${githubUser.name})`}
+                  {githubUser.name
+                    ? `@${githubUser.login} (${githubUser.name})`
+                    : `@${githubUser.login}`}
                 </Text>
               )}
               <Text size="sm" className="text-neutral-400 text-center mt-2">
