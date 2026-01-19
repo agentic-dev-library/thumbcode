@@ -1,8 +1,13 @@
-name: Deploy to GitHub Pages
+name: Deploy Documentation to GitHub Pages
 
 on:
   push:
     branches: [main]
+    paths:
+      - 'docs/**'
+      - 'src/**/*.ts'
+      - 'src/**/*.tsx'
+      - '.github/workflows/deploy-gh-pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -17,7 +22,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build Staging Web App
+    name: Build Documentation
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -25,35 +30,108 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c # v4
+        # Reads version from packageManager field in package.json
+
+      - name: Use Node.js
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
-          version: 8
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
-      - name: Build web app
-        run: npx expo export --platform web
+      - name: Generate API documentation with TypeDoc
+        run: npx typedoc --out docs-dist/api src/index.ts --plugin typedoc-plugin-markdown
 
-      - name: Inject no-cache headers for staging
+      - name: Build documentation site
         run: |
-          # Add no-cache meta tags to all HTML files for staging environment
-          find dist -name "*.html" -exec sed -i 's/<head>/<head>\n  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">\n  <meta http-equiv="Pragma" content="no-cache">\n  <meta http-equiv="Expires" content="0">/' {} \;
-          echo "Injected no-cache headers into $(find dist -name '*.html' | wc -l) HTML files"
+          # Create a simple docs site from markdown
+          mkdir -p docs-dist
+
+          # Copy documentation files
+          cp -r docs/* docs-dist/ 2>/dev/null || true
+          cp README.md docs-dist/ 2>/dev/null || true
+          cp CLAUDE.md docs-dist/ 2>/dev/null || true
+          cp DECISIONS.md docs-dist/ 2>/dev/null || true
+
+          # Create index.html
+          cat > docs-dist/index.html << 'HTMLEOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>ThumbCode Documentation</title>
+            <style>
+              :root {
+                --coral-500: #FF7059;
+                --teal-600: #0D9488;
+                --charcoal: #151820;
+                --neutral-50: #FAF9F8;
+              }
+              body {
+                font-family: 'Cabin', system-ui, sans-serif;
+                background: var(--neutral-50);
+                color: var(--charcoal);
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 2rem;
+                line-height: 1.6;
+              }
+              h1 { font-family: 'Fraunces', Georgia, serif; color: var(--coral-500); }
+              a { color: var(--teal-600); }
+              .card {
+                background: white;
+                padding: 1.5rem;
+                border-radius: 12px;
+                margin: 1rem 0;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+              }
+            </style>
+            <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=Cabin:wght@400;600&display=swap" rel="stylesheet">
+          </head>
+          <body>
+            <h1>ThumbCode Documentation</h1>
+            <p>Code with your thumbs. A decentralized multi-agent mobile development platform.</p>
+
+            <div class="card">
+              <h2>Quick Links</h2>
+              <ul>
+                <li><a href="https://github.com/agentic-dev-library/thumbcode">GitHub Repository</a></li>
+                <li><a href="https://thumbcode-staging.onrender.com">Staging App (Render)</a></li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h2>Documentation</h2>
+              <ul>
+                <li><a href="https://github.com/agentic-dev-library/thumbcode/blob/main/README.md">README</a></li>
+                <li><a href="https://github.com/agentic-dev-library/thumbcode/blob/main/CLAUDE.md">Agent Playbook (CLAUDE.md)</a></li>
+                <li><a href="https://github.com/agentic-dev-library/thumbcode/blob/main/DECISIONS.md">Technical Decisions</a></li>
+                <li><a href="./api/">API Reference (TypeDoc)</a></li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h2>Brand Guidelines</h2>
+              <ul>
+                <li><a href="https://github.com/agentic-dev-library/thumbcode/blob/main/docs/brand/BRAND-GUIDELINES.md">Brand Guidelines</a></li>
+              </ul>
+            </div>
+          </body>
+          </html>
+          HTMLEOF
 
       - name: Setup Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
-          path: 'dist'
+          path: 'docs-dist'
 
   deploy:
     name: Deploy to GitHub Pages

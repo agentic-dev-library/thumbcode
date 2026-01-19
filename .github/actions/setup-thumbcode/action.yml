@@ -2,14 +2,10 @@ name: 'Setup ThumbCode Environment'
 description: 'Reusable setup action for ThumbCode workflows - installs Node, pnpm, dependencies, and generates tokens'
 
 inputs:
-  node-version:
-    description: 'Node.js version to use'
+  node-version-file:
+    description: 'File containing Node.js version (defaults to .nvmrc)'
     required: false
-    default: '20'
-  pnpm-version:
-    description: 'pnpm version to use'
-    required: false
-    default: '10'
+    default: '.nvmrc'
   generate-tokens:
     description: 'Whether to generate design tokens'
     required: false
@@ -24,13 +20,12 @@ runs:
   steps:
     - name: Install pnpm
       uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c # v4
-      with:
-        version: ${{ inputs.pnpm-version }}
+      # Reads version from packageManager field in package.json
 
     - name: Setup Node.js
-      uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+      uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
       with:
-        node-version: ${{ inputs.node-version }}
+        node-version-file: ${{ inputs.node-version-file }}
         cache: 'pnpm'
 
     - name: Install dependencies

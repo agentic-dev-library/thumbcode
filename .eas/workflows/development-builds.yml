@@ -1,0 +1,22 @@
+name: Create development builds
+
+on:
+  pull_request:
+    branches:
+      - main
+      - release/*
+
+jobs:
+  build_android:
+    name: Build Android (dev)
+    type: build
+    params:
+      platform: android
+      profile: development
+
+  build_ios_simulator:
+    name: Build iOS Simulator (dev)
+    type: build
+    params:
+      platform: ios
+      profile: preview

@@ -1,0 +1,49 @@
+# Render Blueprint for ThumbCode Staging
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: thumbcode-staging
+    runtime: static
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && npx expo export --platform web
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: true
+    headers:
+      # Security headers
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Strict-Transport-Security
+        value: max-age=31536000; includeSubDomains
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=()
+      # Cache static assets aggressively (hashed filenames)
+      # NOTE: Specific paths must come BEFORE /* to avoid nondeterministic matching
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /_expo/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      # Staging: no-cache for HTML to always get fresh builds
+      - path: /*
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
+    routes:
+      # SPA fallback - all routes serve index.html
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: PNPM_VERSION
+        value: 10

@@ -48,17 +48,16 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true,
-      "baseUrl": "/thumbcode"
+      "typedRoutes": true
     },
     "extra": {
       "router": {
         "origin": false
       },
       "eas": {
-        "projectId": "${EXPO_PROJECT_ID:-your-project-id}"
+        "projectId": "36e52acc-b39a-4bfa-a9dc-4a1053e87032"
       }
     },
-    "owner": "${EXPO_OWNER:-thumbcode}"
+    "owner": "jbcom"
   }
 }
