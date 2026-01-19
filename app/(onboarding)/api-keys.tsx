@@ -2,6 +2,7 @@
  * API Keys Screen
  *
  * Collects AI provider API keys (Anthropic/OpenAI).
+ * Uses paint daube icons for brand consistency.
  */
 
 import { CredentialService } from '@thumbcode/core/src/credentials/CredentialService';
@@ -12,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StepsProgress } from '@/components/feedback';
 import { Container, VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
+import { SecurityIcon, SuccessIcon, CloseIcon, LightbulbIcon } from '@/components/icons';
 
 interface APIKeyState {
   key: string;
@@ -129,7 +131,9 @@ export default function ApiKeysScreen() {
             }}
           >
             <View className="flex-row items-center mb-2">
-              <Text className="text-lg mr-2">🔐</Text>
+              <View className="mr-2">
+                <SecurityIcon size={20} color="teal" turbulence={0.2} />
+              </View>
               <Text weight="semibold" className="text-teal-400">
                 Your Keys, Your Device
               </Text>
@@ -147,8 +151,8 @@ export default function ApiKeysScreen() {
                 Anthropic (Claude)
               </Text>
               {anthropicKey.isValidating && <ActivityIndicator size="small" color="#14B8A6" />}
-              {anthropicKey.isValid === true && <Text className="text-teal-400">✓</Text>}
-              {anthropicKey.isValid === false && <Text className="text-coral-400">✕</Text>}
+              {anthropicKey.isValid === true && <SuccessIcon size={18} color="teal" turbulence={0.15} />}
+              {anthropicKey.isValid === false && <CloseIcon size={18} color="coral" turbulence={0.15} />}
             </View>
 
             <Input
@@ -171,8 +175,8 @@ export default function ApiKeysScreen() {
                 OpenAI (GPT-4)
               </Text>
               {openaiKey.isValidating && <ActivityIndicator size="small" color="#14B8A6" />}
-              {openaiKey.isValid === true && <Text className="text-teal-400">✓</Text>}
-              {openaiKey.isValid === false && <Text className="text-coral-400">✕</Text>}
+              {openaiKey.isValid === true && <SuccessIcon size={18} color="teal" turbulence={0.15} />}
+              {openaiKey.isValid === false && <CloseIcon size={18} color="coral" turbulence={0.15} />}
             </View>
 
             <Input
@@ -198,10 +202,15 @@ export default function ApiKeysScreen() {
               borderBottomLeftRadius: 10,
             }}
           >
-            <Text size="sm" className="text-neutral-400">
-              💡 <Text className="text-white">Tip:</Text> You can add more providers later in
-              Settings. At least one key is recommended to enable AI agents.
-            </Text>
+            <View className="flex-row items-start">
+              <View className="mr-2 mt-0.5">
+                <LightbulbIcon size={16} color="gold" turbulence={0.2} />
+              </View>
+              <Text size="sm" className="text-neutral-400 flex-1">
+                <Text className="text-white">Tip:</Text> You can add more providers later in
+                Settings. At least one key is recommended to enable AI agents.
+              </Text>
+            </View>
           </View>
         </Container>
       </ScrollView>

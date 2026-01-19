@@ -1,4 +1,5 @@
 import { ScrollView, View } from 'react-native';
+import { AgentIcon, MobileIcon, SecurityIcon } from '../src/components/icons';
 import { Button, Card, Input, Text } from '../src/components/ui';
 
 /**
@@ -32,27 +33,36 @@ export default function Index() {
           </Text>
 
           <Card className="mb-4">
-            <Text size="lg" weight="semibold" className="mb-2">
-              🤖 Multi-Agent Teams
-            </Text>
+            <View className="flex-row items-center mb-2">
+              <AgentIcon size={20} color="coral" turbulence={0.2} />
+              <Text size="lg" weight="semibold" className="ml-2">
+                Multi-Agent Teams
+              </Text>
+            </View>
             <Text className="text-neutral-600">
               Architect, Implementer, Reviewer, Tester agents working in parallel
             </Text>
           </Card>
 
           <Card className="mb-4">
-            <Text size="lg" weight="semibold" className="mb-2">
-              📱 Mobile-Native Git
-            </Text>
+            <View className="flex-row items-center mb-2">
+              <MobileIcon size={20} color="teal" turbulence={0.2} />
+              <Text size="lg" weight="semibold" className="ml-2">
+                Mobile-Native Git
+              </Text>
+            </View>
             <Text className="text-neutral-600">
               Full git workflow from your phone. Clone, commit, push — powered by isomorphic-git
             </Text>
           </Card>
 
           <Card className="mb-4">
-            <Text size="lg" weight="semibold" className="mb-2">
-              🔒 Credential Sovereignty
-            </Text>
+            <View className="flex-row items-center mb-2">
+              <SecurityIcon size={20} color="gold" turbulence={0.2} />
+              <Text size="lg" weight="semibold" className="ml-2">
+                Credential Sovereignty
+              </Text>
+            </View>
             <Text className="text-neutral-600">
               Your API keys never leave your device. Stored in secure hardware enclaves
             </Text>

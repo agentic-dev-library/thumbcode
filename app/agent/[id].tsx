@@ -2,6 +2,7 @@
  * Agent Detail Screen
  *
  * Shows detailed agent information, metrics, task history, and controls.
+ * Uses paint daube icons for brand consistency.
  */
 
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
@@ -10,8 +11,19 @@ import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge, StatusBadge } from '@/components/display';
 import { ProgressBar } from '@/components/feedback';
+import {
+  StarIcon,
+  LightningIcon,
+  ReviewIcon,
+  TestIcon,
+  SuccessIcon,
+  type IconColor,
+} from '@/components/icons';
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+
+/** Agent avatar icon component type */
+type AgentAvatarIcon = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 
 // Mock data
 const MOCK_AGENTS: Record<
@@ -21,7 +33,8 @@ const MOCK_AGENTS: Record<
     name: string;
     role: string;
     status: 'idle' | 'coding' | 'reviewing' | 'testing' | 'waiting_approval' | 'error';
-    avatar: string;
+    AvatarIcon: AgentAvatarIcon;
+    avatarColor: IconColor;
     description: string;
     currentTask: { id: string; title: string; progress: number } | null;
     metrics: {
@@ -44,7 +57,8 @@ const MOCK_AGENTS: Record<
     name: 'Architect',
     role: 'architect',
     status: 'idle',
-    avatar: '🏛️',
+    AvatarIcon: StarIcon,
+    avatarColor: 'gold',
     description:
       'Designs system architecture, creates task breakdowns, and coordinates agent workflows.',
     currentTask: null,
@@ -83,7 +97,8 @@ const MOCK_AGENTS: Record<
     name: 'Implementer',
     role: 'implementer',
     status: 'coding',
-    avatar: '⚡',
+    AvatarIcon: LightningIcon,
+    avatarColor: 'teal',
     description:
       'Writes code, implements features, and resolves technical issues based on architectural plans.',
     currentTask: {
@@ -133,7 +148,8 @@ const MOCK_AGENTS: Record<
     name: 'Reviewer',
     role: 'reviewer',
     status: 'reviewing',
-    avatar: '🔍',
+    AvatarIcon: ReviewIcon,
+    avatarColor: 'coral',
     description:
       'Reviews code changes, ensures quality standards, and provides feedback to implementers.',
     currentTask: {
@@ -169,7 +185,8 @@ const MOCK_AGENTS: Record<
     name: 'Tester',
     role: 'tester',
     status: 'idle',
-    avatar: '🧪',
+    AvatarIcon: TestIcon,
+    avatarColor: 'teal',
     description: 'Writes and runs tests, validates functionality, and reports bugs to the team.',
     currentTask: null,
     metrics: {
@@ -277,7 +294,7 @@ export default function AgentDetailScreen() {
                 borderBottomLeftRadius: 16,
               }}
             >
-              <Text className="text-4xl">{agent.avatar}</Text>
+              <agent.AvatarIcon size={40} color={agent.avatarColor} turbulence={0.25} />
             </View>
 
             <VStack spacing="xs" className="flex-1">
@@ -451,7 +468,7 @@ export default function AgentDetailScreen() {
                 <VStack spacing="sm">
                   {getCapabilities(agent.role).map((capability) => (
                     <HStack key={capability} spacing="sm" align="center">
-                      <Text className="text-teal-500">✓</Text>
+                      <SuccessIcon size={16} color="teal" turbulence={0.2} />
                       <Text className="text-neutral-300">{capability}</Text>
                     </HStack>
                   ))}

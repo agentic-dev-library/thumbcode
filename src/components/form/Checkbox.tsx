@@ -3,9 +3,12 @@
  *
  * A checkbox input with label support and organic styling.
  * Follows accessibility best practices.
+ * Uses paint daube icons for brand consistency.
  */
 
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
+import { Text } from '@/components/ui';
+import { SuccessIcon } from '@/components/icons';
 
 interface CheckboxProps {
   /** Whether the checkbox is checked */
@@ -60,12 +63,7 @@ export function Checkbox({
         }}
       >
         {checked && (
-          <Text
-            style={{ fontSize: styles.icon, lineHeight: styles.icon + 2 }}
-            className="text-white font-bold"
-          >
-            ✓
-          </Text>
+          <SuccessIcon size={styles.icon} color="warmGray" turbulence={0.15} />
         )}
       </View>
       {(label || description) && (

@@ -3,11 +3,21 @@
  *
  * Temporary notification messages with auto-dismiss.
  * Supports different variants for success, error, warning, and info.
+ * Uses paint daube icons for brand consistency.
  */
 
+import type React from 'react';
 import { useEffect, useRef } from 'react';
-import { Animated, Pressable, Text, View } from 'react-native';
+import { Animated, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Text } from '@/components/ui';
+import {
+  SuccessIcon,
+  CloseIcon,
+  WarningIcon,
+  InfoIcon,
+  type IconColor,
+} from '@/components/icons';
 
 type ToastVariant = 'success' | 'error' | 'warning' | 'info';
 type ToastPosition = 'top' | 'bottom';
@@ -34,33 +44,40 @@ interface ToastProps {
   };
 }
 
-const variantStyles: Record<
-  ToastVariant,
-  { bg: string; border: string; icon: string; iconColor: string }
-> = {
+/** Toast icon component type */
+type ToastIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
+
+interface VariantStyle {
+  bg: string;
+  border: string;
+  Icon: ToastIconComponent;
+  iconColor: IconColor;
+}
+
+const variantStyles: Record<ToastVariant, VariantStyle> = {
   success: {
     bg: 'bg-teal-600/20',
     border: '#14B8A6',
-    icon: '✓',
-    iconColor: 'text-teal-400',
+    Icon: SuccessIcon,
+    iconColor: 'teal',
   },
   error: {
     bg: 'bg-coral-500/20',
     border: '#FF7059',
-    icon: '✕',
-    iconColor: 'text-coral-400',
+    Icon: CloseIcon,
+    iconColor: 'coral',
   },
   warning: {
     bg: 'bg-gold-500/20',
     border: '#F5D563',
-    icon: '⚠',
-    iconColor: 'text-gold-400',
+    Icon: WarningIcon,
+    iconColor: 'gold',
   },
   info: {
     bg: 'bg-neutral-600/20',
     border: '#6B7280',
-    icon: 'ℹ',
-    iconColor: 'text-neutral-400',
+    Icon: InfoIcon,
+    iconColor: 'warmGray',
   },
 };
 
@@ -143,7 +160,9 @@ export function Toast({
           borderLeftColor: styles.border,
         }}
       >
-        <Text className={`text-lg mr-3 ${styles.iconColor}`}>{styles.icon}</Text>
+        <View className="mr-3">
+          <styles.Icon size={20} color={styles.iconColor} turbulence={0.2} />
+        </View>
 
         <View className="flex-1">
           {title && <Text className="font-display text-base text-white mb-1">{title}</Text>}
@@ -157,7 +176,7 @@ export function Toast({
             </Pressable>
           )}
           <Pressable onPress={onDismiss} className="p-1">
-            <Text className="text-neutral-400 text-lg">×</Text>
+            <CloseIcon size={16} color="warmGray" turbulence={0.15} />
           </Pressable>
         </View>
       </View>

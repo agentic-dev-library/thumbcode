@@ -2,21 +2,40 @@
  * Complete Screen
  *
  * Final onboarding screen - celebrates completion and launches main app.
+ * Uses paint daube icons for brand consistency.
  */
 
 import { useRouter } from 'expo-router';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Animated, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  CelebrateIcon,
+  AgentIcon,
+  MobileIcon,
+  ChatIcon,
+  TasksIcon,
+  SuccessIcon,
+  type IconColor,
+} from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { useOnboarding } from '@/contexts/onboarding';
 
-const CAPABILITIES = [
-  { icon: '🤖', title: 'AI Agent Teams', description: 'Multi-agent collaboration ready' },
-  { icon: '📱', title: 'Mobile Git', description: 'Clone, commit, push from your phone' },
-  { icon: '💬', title: 'Real-time Chat', description: 'Direct agent communication' },
-  { icon: '📊', title: 'Progress Tracking', description: 'Monitor tasks and metrics' },
+type CapabilityIcon = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
+
+interface Capability {
+  Icon: CapabilityIcon;
+  iconColor: IconColor;
+  title: string;
+  description: string;
+}
+
+const CAPABILITIES: Capability[] = [
+  { Icon: AgentIcon, iconColor: 'coral', title: 'AI Agent Teams', description: 'Multi-agent collaboration ready' },
+  { Icon: MobileIcon, iconColor: 'teal', title: 'Mobile Git', description: 'Clone, commit, push from your phone' },
+  { Icon: ChatIcon, iconColor: 'gold', title: 'Real-time Chat', description: 'Direct agent communication' },
+  { Icon: TasksIcon, iconColor: 'teal', title: 'Progress Tracking', description: 'Monitor tasks and metrics' },
 ];
 
 export default function CompleteScreen() {
@@ -69,7 +88,7 @@ export default function CompleteScreen() {
                 borderBottomLeftRadius: 32,
               }}
             >
-              <Text className="text-6xl">🎉</Text>
+              <CelebrateIcon size={64} color="gold" turbulence={0.3} />
             </View>
           </Animated.View>
 
@@ -108,7 +127,7 @@ export default function CompleteScreen() {
                     borderBottomLeftRadius: 10,
                   }}
                 >
-                  <Text className="text-2xl">{cap.icon}</Text>
+                  <cap.Icon size={24} color={cap.iconColor} turbulence={0.2} />
                 </View>
                 <View className="flex-1">
                   <Text weight="semibold" className="text-white">
@@ -118,7 +137,7 @@ export default function CompleteScreen() {
                     {cap.description}
                   </Text>
                 </View>
-                <Text className="text-teal-400">✓</Text>
+                <SuccessIcon size={20} color="teal" turbulence={0.2} />
               </View>
             ))}
           </VStack>

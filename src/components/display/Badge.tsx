@@ -2,12 +2,23 @@
  * Badge Component
  *
  * Small status indicators and labels with organic styling.
+ * Uses paint daube icons for brand consistency.
  */
 
-import { Text, View } from 'react-native';
+import type React from 'react';
+import { View } from 'react-native';
+import { Text } from '@/components/ui';
+import {
+  SuccessIcon,
+  CloseIcon,
+  type IconColor,
+} from '@/components/icons';
 
 type BadgeVariant = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error';
 type BadgeSize = 'sm' | 'md' | 'lg';
+
+/** Badge icon component type */
+type BadgeIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 
 interface BadgeProps {
   /** Badge text content */
@@ -16,8 +27,12 @@ interface BadgeProps {
   variant?: BadgeVariant;
   /** Size variant */
   size?: BadgeSize;
-  /** Optional icon (emoji or text) */
-  icon?: string;
+  /** Optional icon component */
+  Icon?: BadgeIconComponent;
+  /** Icon color override */
+  iconColor?: IconColor;
+  /** Optional text icon (for simple indicators like dots) */
+  textIcon?: string;
   /** Whether to show as a dot only (no text) */
   dot?: boolean;
 }
@@ -41,11 +56,17 @@ export function Badge({
   children,
   variant = 'default',
   size = 'md',
-  icon,
+  Icon,
+  iconColor,
+  textIcon,
   dot = false,
 }: BadgeProps) {
   const colors = variantStyles[variant];
   const sizing = sizeStyles[size];
+
+  // Icon sizes based on badge size
+  const iconSizes = { sm: 10, md: 12, lg: 14 };
+  const iconSize = iconSizes[size];
 
   if (dot) {
     return (
@@ -70,7 +91,12 @@ export function Badge({
         borderBottomLeftRadius: 10,
       }}
     >
-      {icon && <Text className={`mr-1 ${sizing.text}`}>{icon}</Text>}
+      {Icon && (
+        <View className="mr-1">
+          <Icon size={iconSize} color={iconColor || 'warmGray'} turbulence={0.15} />
+        </View>
+      )}
+      {textIcon && !Icon && <Text className={`mr-1 ${sizing.text}`}>{textIcon}</Text>}
       <Text className={`font-body font-medium ${colors.text} ${sizing.text}`}>{children}</Text>
     </View>
   );
@@ -87,20 +113,26 @@ interface StatusBadgeProps {
 
 const statusConfig: Record<
   StatusBadgeProps['status'],
-  { variant: BadgeVariant; icon: string; label: string }
+  { variant: BadgeVariant; Icon?: BadgeIconComponent; textIcon?: string; iconColor: IconColor; label: string }
 > = {
-  active: { variant: 'success', icon: '●', label: 'Active' },
-  inactive: { variant: 'default', icon: '○', label: 'Inactive' },
-  pending: { variant: 'warning', icon: '◐', label: 'Pending' },
-  error: { variant: 'error', icon: '✕', label: 'Error' },
-  success: { variant: 'success', icon: '✓', label: 'Success' },
+  active: { variant: 'success', textIcon: '●', iconColor: 'teal', label: 'Active' },
+  inactive: { variant: 'default', textIcon: '○', iconColor: 'warmGray', label: 'Inactive' },
+  pending: { variant: 'warning', textIcon: '◐', iconColor: 'gold', label: 'Pending' },
+  error: { variant: 'error', Icon: CloseIcon, iconColor: 'coral', label: 'Error' },
+  success: { variant: 'success', Icon: SuccessIcon, iconColor: 'teal', label: 'Success' },
 };
 
 export function StatusBadge({ status, label, size = 'md' }: StatusBadgeProps) {
   const config = statusConfig[status];
 
   return (
-    <Badge variant={config.variant} size={size} icon={config.icon}>
+    <Badge
+      variant={config.variant}
+      size={size}
+      Icon={config.Icon}
+      iconColor={config.iconColor}
+      textIcon={config.textIcon}
+    >
       {label || config.label}
     </Badge>
   );

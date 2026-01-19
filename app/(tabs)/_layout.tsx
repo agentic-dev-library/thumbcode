@@ -2,22 +2,34 @@
  * Tab Layout
  *
  * Main tab navigation for the app.
+ * Uses paint daube icons for brand consistency.
  */
 
 import { Tabs } from 'expo-router';
+import React from 'react';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  HomeIcon,
+  FolderIcon,
+  AgentIcon,
+  ChatIcon,
+  SettingsIcon,
+  type IconColor,
+} from '@/components/icons';
 
 interface TabIconProps {
-  icon: string;
+  Icon: React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
   label: string;
   focused: boolean;
 }
 
-function TabIcon({ icon, label, focused }: TabIconProps) {
+function TabIcon({ Icon, label, focused }: TabIconProps) {
   return (
     <View className="items-center justify-center py-2">
-      <Text className={`text-xl mb-1 ${focused ? 'opacity-100' : 'opacity-50'}`}>{icon}</Text>
+      <View className={`mb-1 ${focused ? 'opacity-100' : 'opacity-50'}`}>
+        <Icon size={24} color={focused ? 'coral' : 'warmGray'} turbulence={0.2} />
+      </View>
       <Text
         className={`text-xs font-body ${focused ? 'text-coral-500 font-semibold' : 'text-neutral-400'}`}
       >
@@ -63,35 +75,39 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           headerTitle: 'ThumbCode',
-          tabBarIcon: ({ focused }) => <TabIcon icon="🏠" label="Home" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon Icon={HomeIcon} label="Home" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="projects"
         options={{
           title: 'Projects',
-          tabBarIcon: ({ focused }) => <TabIcon icon="📁" label="Projects" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon Icon={FolderIcon} label="Projects" focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="agents"
         options={{
           title: 'Agents',
-          tabBarIcon: ({ focused }) => <TabIcon icon="🤖" label="Agents" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon Icon={AgentIcon} label="Agents" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="chat"
         options={{
           title: 'Chat',
-          tabBarIcon: ({ focused }) => <TabIcon icon="💬" label="Chat" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon Icon={ChatIcon} label="Chat" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ focused }) => <TabIcon icon="⚙️" label="Settings" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon Icon={SettingsIcon} label="Settings" focused={focused} />
+          ),
         }}
       />
     </Tabs>

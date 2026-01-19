@@ -2,10 +2,13 @@
  * Progress Components
  *
  * Progress bars and indicators for tracking completion status.
+ * Uses paint daube icons for brand consistency.
  */
 
 import { useEffect, useRef } from 'react';
-import { Animated, Text, View } from 'react-native';
+import { Animated, View } from 'react-native';
+import { Text } from '@/components/ui';
+import { SuccessIcon } from '@/components/icons';
 
 interface ProgressBarProps {
   /** Progress value between 0 and 100 */
@@ -212,9 +215,11 @@ export function StepsProgress({ totalSteps, currentStep, labels }: StepsProgress
                   borderBottomLeftRadius: 12,
                 }}
               >
-                <Text className="font-body text-sm text-white font-semibold">
-                  {isCompleted ? '✓' : stepNum}
-                </Text>
+                {isCompleted ? (
+                  <SuccessIcon size={14} color="warmGray" turbulence={0.15} />
+                ) : (
+                  <Text className="font-body text-sm text-white font-semibold">{stepNum}</Text>
+                )}
               </View>
               {stepNum < totalSteps && (
                 <View

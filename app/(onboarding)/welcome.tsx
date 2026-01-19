@@ -2,36 +2,75 @@
  * Welcome Screen
  *
  * First screen of onboarding flow. Introduces ThumbCode and its features.
+ * Uses procedural paint daube icons for brand consistency.
  */
 
 import { useRouter } from 'expo-router';
+import React from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import {
+  AgentIcon,
+  MobileIcon,
+  SecurityIcon,
+  LightningIcon,
+  ThumbIcon,
+  type IconVariant,
+} from '@/components/icons';
 
-const FEATURES = [
+interface Feature {
+  icon: IconVariant;
+  title: string;
+  description: string;
+  color: 'coral' | 'teal' | 'gold';
+}
+
+const FEATURES: Feature[] = [
   {
-    icon: '🤖',
+    icon: 'agent',
     title: 'AI Agent Teams',
     description: 'Architect, Implementer, Reviewer, and Tester agents work in parallel',
+    color: 'coral',
   },
   {
-    icon: '📱',
+    icon: 'mobile',
     title: 'Mobile-First Git',
     description: 'Full git workflow from your phone with isomorphic-git',
+    color: 'teal',
   },
   {
-    icon: '🔐',
+    icon: 'security',
     title: 'Your Keys, Your Control',
     description: 'API keys never leave your device - stored in secure hardware',
+    color: 'gold',
   },
   {
-    icon: '⚡',
+    icon: 'lightning',
     title: 'Zero Server Costs',
     description: 'Bring your own keys - no subscriptions, no vendor lock-in',
+    color: 'coral',
   },
 ];
+
+/** Feature icon component that renders the appropriate paint daube icon */
+function FeatureIcon({ variant, color }: { variant: IconVariant; color: Feature['color'] }) {
+  const iconProps = { size: 28, color, turbulence: 0.25 };
+
+  switch (variant) {
+    case 'agent':
+      return <AgentIcon {...iconProps} />;
+    case 'mobile':
+      return <MobileIcon {...iconProps} />;
+    case 'security':
+      return <SecurityIcon {...iconProps} />;
+    case 'lightning':
+      return <LightningIcon {...iconProps} />;
+    default:
+      return <AgentIcon {...iconProps} />;
+  }
+}
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -55,7 +94,7 @@ export default function WelcomeScreen() {
               borderBottomLeftRadius: 20,
             }}
           >
-            <Text className="text-5xl">👍</Text>
+            <ThumbIcon size={48} color="charcoal" turbulence={0.2} />
           </View>
 
           <Text variant="display" size="4xl" weight="bold" className="text-coral-500 text-center">
@@ -69,7 +108,7 @@ export default function WelcomeScreen() {
 
         {/* Features */}
         <VStack spacing="md" className="mb-8">
-          {FEATURES.map((feature) => (
+          {FEATURES.map((feature, index) => (
             <View
               key={feature.title}
               className="bg-surface p-4 flex-row items-start"
@@ -80,7 +119,9 @@ export default function WelcomeScreen() {
                 borderBottomLeftRadius: 10,
               }}
             >
-              <Text className="text-2xl mr-4">{feature.icon}</Text>
+              <View className="mr-4">
+                <FeatureIcon variant={feature.icon} color={feature.color} />
+              </View>
               <View className="flex-1">
                 <Text weight="semibold" className="text-white mb-1">
                   {feature.title}

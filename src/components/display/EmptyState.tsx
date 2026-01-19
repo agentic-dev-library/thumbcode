@@ -3,14 +3,27 @@
  *
  * Placeholder content for empty lists and screens.
  * Provides visual feedback and optional call-to-action.
+ * Uses paint daube icons for brand consistency.
  */
 
 import type { ReactNode } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
+import { Text } from '@/components/ui';
+import {
+  InboxIcon,
+  ErrorIcon,
+  SearchIcon,
+  type IconColor,
+} from '@/components/icons';
+
+/** Icon component type for EmptyState */
+type EmptyStateIcon = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 
 interface EmptyStateProps {
-  /** Large icon or emoji */
-  icon?: string;
+  /** Paint daube icon component */
+  Icon?: EmptyStateIcon;
+  /** Icon color */
+  iconColor?: IconColor;
   /** Title text */
   title: string;
   /** Description text */
@@ -32,13 +45,14 @@ interface EmptyStateProps {
 }
 
 const sizeStyles = {
-  sm: { icon: 'text-4xl', title: 'text-base', desc: 'text-sm', padding: 'p-4' },
-  md: { icon: 'text-5xl', title: 'text-lg', desc: 'text-sm', padding: 'p-6' },
-  lg: { icon: 'text-6xl', title: 'text-xl', desc: 'text-base', padding: 'p-8' },
+  sm: { iconSize: 40, title: 'text-base', desc: 'text-sm', padding: 'p-4' },
+  md: { iconSize: 56, title: 'text-lg', desc: 'text-sm', padding: 'p-6' },
+  lg: { iconSize: 72, title: 'text-xl', desc: 'text-base', padding: 'p-8' },
 };
 
 export function EmptyState({
-  icon = '📭',
+  Icon = InboxIcon,
+  iconColor = 'warmGray',
   title,
   description,
   action,
@@ -50,9 +64,11 @@ export function EmptyState({
 
   return (
     <View className={`items-center justify-center ${styles.padding}`}>
-      <Text className={`${styles.icon} mb-4`}>{icon}</Text>
+      <View className="mb-4">
+        <Icon size={styles.iconSize} color={iconColor} turbulence={0.25} />
+      </View>
 
-      <Text className={`font-display ${styles.title} text-white text-center mb-2`}>{title}</Text>
+      <Text variant="display" className={`${styles.title} text-white text-center mb-2`}>{title}</Text>
 
       {description && (
         <Text
@@ -122,7 +138,8 @@ export function ErrorState({
 }: ErrorStateProps) {
   return (
     <EmptyState
-      icon="😵"
+      Icon={ErrorIcon}
+      iconColor="coral"
       title={title}
       description={message}
       action={onRetry ? { label: 'Try Again', onPress: onRetry } : undefined}
@@ -144,7 +161,8 @@ export function NoResults({ query, message, onClear }: NoResultsProps) {
 
   return (
     <EmptyState
-      icon="🔍"
+      Icon={SearchIcon}
+      iconColor="warmGray"
       title="No Results"
       description={description}
       action={onClear ? { label: 'Clear Search', onPress: onClear } : undefined}

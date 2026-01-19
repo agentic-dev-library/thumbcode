@@ -3,12 +3,22 @@
  *
  * Main chat interface for human-agent communication.
  * Uses simplified mock components for demonstration.
+ * Uses paint daube icons for brand consistency.
  */
 
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, Pressable, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge } from '@/components/display';
+import {
+  StarIcon,
+  LightningIcon,
+  ReviewIcon,
+  SearchIcon,
+  UserIcon,
+  EditIcon,
+  type IconColor,
+} from '@/components/icons';
 import { HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 
@@ -66,22 +76,25 @@ const MOCK_MESSAGES: MockMessage[] = [
   },
 ];
 
+type AgentAvatarIcon = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
+
 function getAgentInfo(sender: MockMessage['sender']): {
   name: string;
-  avatar: string;
-  color: string;
+  AvatarIcon: AgentAvatarIcon;
+  iconColor: IconColor;
+  textColor: string;
 } {
   switch (sender) {
     case 'architect':
-      return { name: 'Architect', avatar: '🏛️', color: 'text-gold-400' };
+      return { name: 'Architect', AvatarIcon: StarIcon, iconColor: 'gold', textColor: 'text-gold-400' };
     case 'implementer':
-      return { name: 'Implementer', avatar: '⚡', color: 'text-teal-400' };
+      return { name: 'Implementer', AvatarIcon: LightningIcon, iconColor: 'teal', textColor: 'text-teal-400' };
     case 'reviewer':
-      return { name: 'Reviewer', avatar: '🔍', color: 'text-coral-400' };
+      return { name: 'Reviewer', AvatarIcon: ReviewIcon, iconColor: 'coral', textColor: 'text-coral-400' };
     case 'tester':
-      return { name: 'Tester', avatar: '🧪', color: 'text-purple-400' };
+      return { name: 'Tester', AvatarIcon: SearchIcon, iconColor: 'teal', textColor: 'text-purple-400' };
     default:
-      return { name: 'You', avatar: '👤', color: 'text-white' };
+      return { name: 'You', AvatarIcon: UserIcon, iconColor: 'warmGray', textColor: 'text-white' };
   }
 }
 
@@ -102,9 +115,9 @@ function MockMessageBubble({ message }: { message: MockMessage }) {
               borderBottomLeftRadius: 6,
             }}
           >
-            <Text>{agentInfo.avatar}</Text>
+            <agentInfo.AvatarIcon size={18} color={agentInfo.iconColor} turbulence={0.2} />
           </View>
-          <Text size="sm" weight="semibold" className={agentInfo.color}>
+          <Text size="sm" weight="semibold" className={agentInfo.textColor}>
             {agentInfo.name}
           </Text>
         </HStack>
@@ -165,7 +178,7 @@ function MockApprovalCard({
     >
       <HStack justify="between" align="center" className="mb-3">
         <HStack spacing="sm" align="center">
-          <Text className="text-xl">📝</Text>
+          <EditIcon size={22} color="gold" turbulence={0.2} />
           <Text weight="semibold" className="text-white">
             Ready to commit changes?
           </Text>

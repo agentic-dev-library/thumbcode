@@ -2,13 +2,22 @@
  * Projects Screen
  *
  * Lists all projects with quick actions and status.
+ * Uses paint daube icons for brand consistency.
  */
 
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Pressable, ScrollView, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge, EmptyState } from '@/components/display';
+import {
+  SearchIcon,
+  FolderIcon,
+  GitIcon,
+  BranchIcon,
+  TasksIcon,
+  AgentIcon,
+} from '@/components/icons';
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 
@@ -86,7 +95,9 @@ export default function ProjectsScreen() {
             borderBottomLeftRadius: 8,
           }}
         >
-          <Text className="text-neutral-500 mr-3">🔍</Text>
+          <View className="mr-3">
+            <SearchIcon size={20} color="warmGray" turbulence={0.2} />
+          </View>
           <TextInput
             placeholder="Search projects..."
             placeholderTextColor="#6B7280"
@@ -105,7 +116,8 @@ export default function ProjectsScreen() {
         <Container padding="md">
           {filteredProjects.length === 0 ? (
             <EmptyState
-              icon="📁"
+              Icon={FolderIcon}
+              iconColor="warmGray"
               title="No Projects Found"
               description={
                 searchQuery
@@ -145,17 +157,13 @@ export default function ProjectsScreen() {
 
                   <HStack spacing="md" className="mb-3">
                     <HStack spacing="xs" align="center">
-                      <Text size="sm" className="text-neutral-500">
-                        📂
-                      </Text>
+                      <GitIcon size={14} color="warmGray" turbulence={0.2} />
                       <Text size="sm" className="text-neutral-400">
                         {project.repository}
                       </Text>
                     </HStack>
                     <HStack spacing="xs" align="center">
-                      <Text size="sm" className="text-neutral-500">
-                        🔀
-                      </Text>
+                      <BranchIcon size={14} color="warmGray" turbulence={0.2} />
                       <Text size="sm" className="text-neutral-400">
                         {project.branch}
                       </Text>
@@ -165,14 +173,20 @@ export default function ProjectsScreen() {
                   <HStack justify="between" align="center">
                     <HStack spacing="md">
                       {project.pendingTasks > 0 && (
-                        <Text size="sm" className="text-gold-400">
-                          📋 {project.pendingTasks} tasks
-                        </Text>
+                        <HStack spacing="xs" align="center">
+                          <TasksIcon size={14} color="gold" turbulence={0.2} />
+                          <Text size="sm" className="text-gold-400">
+                            {project.pendingTasks} tasks
+                          </Text>
+                        </HStack>
                       )}
                       {project.activeAgents > 0 && (
-                        <Text size="sm" className="text-teal-400">
-                          🤖 {project.activeAgents} agents
-                        </Text>
+                        <HStack spacing="xs" align="center">
+                          <AgentIcon size={14} color="teal" turbulence={0.2} />
+                          <Text size="sm" className="text-teal-400">
+                            {project.activeAgents} agents
+                          </Text>
+                        </HStack>
                       )}
                     </HStack>
                     <Text size="xs" className="text-neutral-500">

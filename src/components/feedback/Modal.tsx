@@ -8,6 +8,7 @@
 import type { ReactNode } from 'react';
 import { Pressable, Modal as RNModal, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { CloseIcon } from '@/components/icons';
 
 interface ModalProps {
   /** Whether the modal is visible */
@@ -87,7 +88,7 @@ export function Modal({
                 accessibilityLabel="Close"
                 accessibilityHint="Close the modal"
               >
-                <Text className="text-neutral-400 text-xl">×</Text>
+                <CloseIcon size={18} color="warmGray" turbulence={0.15} />
               </Pressable>
             </View>
           )}
