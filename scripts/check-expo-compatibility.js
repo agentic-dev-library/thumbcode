@@ -13,8 +13,8 @@
  * Exit code is always 0 (informational) since incompatibility is intentional.
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 // Known Expo Go incompatible dependencies
 const INCOMPATIBLE_DEPENDENCIES = {
@@ -84,8 +84,7 @@ function checkAppConfig(projectRoot) {
     reports.push({
       category: 'Configuration',
       item: 'app.config.ts',
-      reason:
-        'Uses TypeScript config which may contain dynamic native plugins',
+      reason: 'Uses TypeScript config which may contain dynamic native plugins',
     });
   }
 
@@ -98,8 +97,7 @@ function checkAppConfig(projectRoot) {
     reports.push({
       category: 'Configuration',
       item: 'newArchEnabled: true',
-      reason:
-        'React Native New Architecture requires custom builds (not Expo Go)',
+      reason: 'React Native New Architecture requires custom builds (not Expo Go)',
     });
   }
 
@@ -107,10 +105,7 @@ function checkAppConfig(projectRoot) {
   const plugins = appConfig.expo.plugins || [];
   for (const plugin of plugins) {
     const pluginName = Array.isArray(plugin) ? plugin[0] : plugin;
-    if (
-      typeof pluginName === 'string' &&
-      NATIVE_CONFIG_PLUGINS.includes(pluginName)
-    ) {
+    if (typeof pluginName === 'string' && NATIVE_CONFIG_PLUGINS.includes(pluginName)) {
       reports.push({
         category: 'Config Plugin',
         item: pluginName,
@@ -134,8 +129,7 @@ function checkEasJson(projectRoot) {
     reports.push({
       category: 'EAS Configuration',
       item: 'developmentClient: true',
-      reason:
-        'Explicitly configured for development client builds (not Expo Go)',
+      reason: 'Explicitly configured for development client builds (not Expo Go)',
     });
   }
 
@@ -155,9 +149,7 @@ function printReport(reports) {
     return;
   }
 
-  console.log(
-    `⚠️  Found ${reports.length} Expo Go incompatibilities (this is expected):\n`
-  );
+  console.log(`⚠️  Found ${reports.length} Expo Go incompatibilities (this is expected):\n`);
 
   // Group by category
   const grouped = reports.reduce((acc, report) => {
