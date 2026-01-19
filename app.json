@@ -13,7 +13,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#FEF8F0"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.thumbcode.app",
@@ -30,7 +32,10 @@
       },
       "package": "com.thumbcode.app",
       "versionCode": 1,
-      "permissions": ["USE_BIOMETRIC", "USE_FINGERPRINT"]
+      "permissions": [
+        "USE_BIOMETRIC",
+        "USE_FINGERPRINT"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -55,9 +60,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "${EXPO_PROJECT_ID:-your-project-id}"
+        "projectId": "36e52acc-b39a-4bfa-a9dc-4a1053e87032"
       }
     },
-    "owner": "${EXPO_OWNER:-thumbcode}"
+    "owner": "jbcom"
   }
 }
