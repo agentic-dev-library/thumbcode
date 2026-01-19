@@ -26,9 +26,17 @@ import * as FileSystem from 'expo-file-system';
 import git, { type HttpClient } from 'isomorphic-git';
 import { gitHttpClient } from './GitHttpClient';
 
-// Type assertion for our HTTP client - body types differ but are functionally compatible
+// HTTP client adapter - bridges our implementation to isomorphic-git's HttpClient type
 // Our implementation uses AsyncIterableIterator which works with isomorphic-git at runtime
-const http = gitHttpClient as unknown as HttpClient;
+const http: HttpClient = async (url, options) => {
+  // Delegate to the underlying implementation; types differ slightly but are runtime compatible
+  const response = await gitHttpClient(url, options as any);
+  return {
+    ...response,
+    // Localize the type assertion to the known body-type difference
+    body: (response as any).body,
+  };
+};
 
 import type {
   BranchInfo,
