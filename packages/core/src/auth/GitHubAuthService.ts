@@ -260,7 +260,7 @@ class GitHubAuthServiceClass {
       authorized: true,
       shouldContinue: false,
       accessToken: tokenData.access_token,
-      scopes: tokenData.scope.split(',').map((s) => s.trim()),
+      scopes: tokenData.scope.split(' ').map((s) => s.trim()),
     };
   }
 
