@@ -15,13 +15,9 @@ export default defineConfig({
         dark: './src/assets/logo-dark.svg',
         replacesTitle: false,
       },
-      social: [
-        {
-          icon: 'github',
-          label: 'GitHub',
-          href: 'https://github.com/agentic-dev-library/thumbcode',
-        },
-      ],
+      social: {
+        github: 'https://github.com/agentic-dev-library/thumbcode',
+      },
       customCss: ['./src/styles/custom.css'],
       sidebar: [
         {
