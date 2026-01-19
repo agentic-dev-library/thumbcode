@@ -11,6 +11,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CloseIcon, type IconColor, InfoIcon, SuccessIcon, WarningIcon } from '@/components/icons';
+import { organicBorderRadius } from '@/lib/organic-styles';
 import { Text } from '@/components/ui';
 
 type ToastVariant = 'success' | 'error' | 'warning' | 'info';
@@ -145,14 +146,10 @@ export function Toast({
     >
       <View
         className={`flex-row items-start p-4 ${styles.bg}`}
-        style={{
-          borderTopLeftRadius: 14,
-          borderTopRightRadius: 12,
-          borderBottomRightRadius: 16,
-          borderBottomLeftRadius: 10,
-          borderLeftWidth: 4,
-          borderLeftColor: styles.border,
-        }}
+        style={[
+          organicBorderRadius.toast,
+          { borderLeftWidth: 4, borderLeftColor: styles.border },
+        ]}
       >
         <View className="mr-3">
           <styles.Icon size={20} color={styles.iconColor} turbulence={0.2} />

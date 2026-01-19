@@ -8,6 +8,7 @@
 import type React from 'react';
 import { View } from 'react-native';
 import { CloseIcon, type IconColor, SuccessIcon } from '@/components/icons';
+import { organicBorderRadius } from '@/lib/organic-styles';
 import { Text } from '@/components/ui';
 
 type BadgeVariant = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error';
@@ -80,12 +81,7 @@ export function Badge({
   return (
     <View
       className={`flex-row items-center ${colors.bg} ${sizing.px} ${sizing.py}`}
-      style={{
-        borderTopLeftRadius: 6,
-        borderTopRightRadius: 8,
-        borderBottomRightRadius: 6,
-        borderBottomLeftRadius: 10,
-      }}
+      style={organicBorderRadius.badge}
     >
       {Icon && (
         <View className="mr-1">

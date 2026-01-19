@@ -9,6 +9,7 @@ import type { ReactNode } from 'react';
 import { Pressable, Modal as RNModal, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CloseIcon } from '@/components/icons';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface ModalProps {
   /** Whether the modal is visible */
@@ -68,12 +69,14 @@ export function Modal({
         <Pressable
           onPress={(e) => e.stopPropagation()}
           className="bg-surface w-full"
-          style={{
-            maxWidth: isFull ? undefined : maxWidth,
-            maxHeight: isFull ? '100%' : '80%',
-            borderRadius: isFull ? 0 : 18,
-            flex: isFull ? 1 : undefined,
-          }}
+          style={[
+            {
+              maxWidth: isFull ? undefined : maxWidth,
+              maxHeight: isFull ? '100%' : '80%',
+              flex: isFull ? 1 : undefined,
+            },
+            !isFull && organicBorderRadius.modal,
+          ]}
         >
           {/* Header */}
           {title && (
@@ -152,12 +155,7 @@ export function ConfirmDialog({
           <Pressable
             onPress={onClose}
             className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
-            style={{
-              borderTopLeftRadius: 8,
-              borderTopRightRadius: 10,
-              borderBottomRightRadius: 8,
-              borderBottomLeftRadius: 12,
-            }}
+            style={organicBorderRadius.button}
             accessibilityRole="button"
             accessibilityLabel={cancelText}
             accessibilityHint="Cancel and close the dialog"
@@ -170,12 +168,7 @@ export function ConfirmDialog({
               onClose();
             }}
             className={`px-4 py-2 ${confirmColor} active:opacity-80`}
-            style={{
-              borderTopLeftRadius: 8,
-              borderTopRightRadius: 10,
-              borderBottomRightRadius: 8,
-              borderBottomLeftRadius: 12,
-            }}
+            style={organicBorderRadius.button}
             accessibilityRole="button"
             accessibilityLabel={confirmText}
             accessibilityHint="Confirm the action"
