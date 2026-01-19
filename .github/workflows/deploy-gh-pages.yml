@@ -108,17 +108,17 @@ jobs:
             <div class="card">
               <h2>Documentation</h2>
               <ul>
-                <li><a href="./README.md">README</a></li>
-                <li><a href="./CLAUDE.md">Agent Playbook (CLAUDE.md)</a></li>
-                <li><a href="./DECISIONS.md">Technical Decisions</a></li>
-                <li><a href="./api/">API Reference</a></li>
+                <li><a href="https://github.com/agentic-dev-library/thumbcode/blob/main/README.md">README</a></li>
+                <li><a href="https://github.com/agentic-dev-library/thumbcode/blob/main/CLAUDE.md">Agent Playbook (CLAUDE.md)</a></li>
+                <li><a href="https://github.com/agentic-dev-library/thumbcode/blob/main/DECISIONS.md">Technical Decisions</a></li>
+                <li><a href="./api/">API Reference (TypeDoc)</a></li>
               </ul>
             </div>
 
             <div class="card">
               <h2>Brand Guidelines</h2>
               <ul>
-                <li><a href="./brand/BRAND-GUIDELINES.md">Brand Guidelines</a></li>
+                <li><a href="https://github.com/agentic-dev-library/thumbcode/blob/main/docs/brand/BRAND-GUIDELINES.md">Brand Guidelines</a></li>
               </ul>
             </div>
           </body>
