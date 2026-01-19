@@ -1,5 +1,12 @@
 import { ActivityIndicator, Pressable, type PressableProps } from 'react-native';
+import { organicBorderRadius } from '@/lib/organic-styles';
 import { Text } from './Text';
+
+/** Brand colors from design tokens for ActivityIndicator */
+const ACTIVITY_INDICATOR_COLORS = {
+  light: '#1E293B', // neutral-800 for outline variant
+  dark: '#FFFFFF', // white for filled variants
+} as const;
 
 interface ButtonProps extends PressableProps {
   variant?: 'primary' | 'secondary' | 'outline';
@@ -28,6 +35,7 @@ export function Button({
   loading = false,
   disabled,
   className = '',
+  style,
   children,
   ...props
 }: ButtonProps) {
@@ -44,6 +52,8 @@ export function Button({
   }[size];
 
   const textColorClass = variant === 'outline' ? 'text-neutral-800' : 'text-white';
+  const indicatorColor =
+    variant === 'outline' ? ACTIVITY_INDICATOR_COLORS.light : ACTIVITY_INDICATOR_COLORS.dark;
 
   return (
     <Pressable
@@ -51,18 +61,18 @@ export function Button({
       className={`
         ${variantClasses}
         ${sizeClasses}
-        rounded-[0.5rem_0.75rem_0.625rem_0.875rem]
         shadow-md
         ${disabled || loading ? 'opacity-50' : 'opacity-100'}
         ${className}
       `}
+      style={(state) => [
+        organicBorderRadius.button,
+        typeof style === 'function' ? style(state) : style,
+      ]}
       {...props}
     >
       {loading ? (
-        <ActivityIndicator
-          testID="activity-indicator"
-          color={variant === 'outline' ? '#1E293B' : '#FFFFFF'}
-        />
+        <ActivityIndicator testID="activity-indicator" color={indicatorColor} />
       ) : (
         <Text className={`${textColorClass} text-center font-semibold`}>{children}</Text>
       )}

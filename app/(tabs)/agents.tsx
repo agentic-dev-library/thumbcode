@@ -23,6 +23,7 @@ import {
 } from '@/components/icons';
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 /** Agent avatar icon component */
 type AgentAvatarIcon = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
@@ -154,15 +155,7 @@ export default function AgentsScreen() {
       <Container padding="lg">
         {/* Overview */}
         <View className="flex-row gap-3 mb-6">
-          <View
-            className="bg-surface p-4 flex-1"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-            }}
-          >
+          <View className="bg-surface p-4 flex-1" style={organicBorderRadius.card}>
             <View className="mb-2">
               <AgentIcon size={28} color="coral" turbulence={0.2} />
             </View>
@@ -174,15 +167,7 @@ export default function AgentsScreen() {
             </Text>
           </View>
 
-          <View
-            className="bg-surface p-4 flex-1"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-            }}
-          >
+          <View className="bg-surface p-4 flex-1" style={organicBorderRadius.card}>
             <View className="mb-2">
               <SuccessIcon size={28} color="teal" turbulence={0.2} />
             </View>
@@ -205,12 +190,7 @@ export default function AgentsScreen() {
           <Pressable
             onPress={() => setSelectedRole(null)}
             className={`px-4 py-2 ${!selectedRole ? 'bg-coral-500' : 'bg-surface'}`}
-            style={{
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 8,
-              borderBottomRightRadius: 12,
-              borderBottomLeftRadius: 6,
-            }}
+            style={organicBorderRadius.badge}
           >
             <Text className={!selectedRole ? 'text-white' : 'text-neutral-400'}>All</Text>
           </Pressable>
@@ -220,12 +200,7 @@ export default function AgentsScreen() {
               key={role}
               onPress={() => setSelectedRole(role)}
               className={`px-4 py-2 ${selectedRole === role ? 'bg-coral-500' : 'bg-surface'}`}
-              style={{
-                borderTopLeftRadius: 10,
-                borderTopRightRadius: 8,
-                borderBottomRightRadius: 12,
-                borderBottomLeftRadius: 6,
-              }}
+              style={organicBorderRadius.button}
             >
               <Text
                 className={`capitalize ${selectedRole === role ? 'text-white' : 'text-neutral-400'}`}
@@ -243,23 +218,13 @@ export default function AgentsScreen() {
               key={agent.id}
               onPress={() => router.push(`/agent/${agent.id}`)}
               className="bg-surface p-4 active:bg-neutral-700"
-              style={{
-                borderTopLeftRadius: 14,
-                borderTopRightRadius: 12,
-                borderBottomRightRadius: 16,
-                borderBottomLeftRadius: 10,
-              }}
+              style={organicBorderRadius.card}
             >
               <HStack justify="between" align="start" className="mb-4">
                 <HStack spacing="md" align="center">
                   <View
                     className={`w-14 h-14 items-center justify-center ${getRoleColor(agent.role)}`}
-                    style={{
-                      borderTopLeftRadius: 16,
-                      borderTopRightRadius: 14,
-                      borderBottomRightRadius: 18,
-                      borderBottomLeftRadius: 12,
-                    }}
+                    style={organicBorderRadius.card}
                   >
                     <agent.AvatarIcon size={28} color={agent.avatarColor} turbulence={0.25} />
                   </View>

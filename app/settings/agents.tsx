@@ -12,6 +12,7 @@ import { Badge } from '@/components/display';
 import { LightbulbIcon } from '@/components/icons';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface SettingRowProps {
   title: string;
@@ -95,12 +96,7 @@ function ApprovalLevelSelector({
             key={level.id}
             onPress={() => onSelect(level.id)}
             className={`p-4 border ${selected === level.id ? 'border-coral-500 bg-coral-500/10' : 'border-neutral-700 bg-charcoal'}`}
-            style={{
-              borderTopLeftRadius: 12,
-              borderTopRightRadius: 10,
-              borderBottomRightRadius: 14,
-              borderBottomLeftRadius: 8,
-            }}
+            style={organicBorderRadius.button}
           >
             <HStack justify="between" align="center">
               <VStack spacing="xs" className="flex-1">
@@ -169,13 +165,7 @@ export default function AgentSettingsScreen() {
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-              overflow: 'hidden',
-            }}
+            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
           >
             <View className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
@@ -208,13 +198,7 @@ export default function AgentSettingsScreen() {
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-              overflow: 'hidden',
-            }}
+            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
           >
             <View className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
@@ -252,13 +236,7 @@ export default function AgentSettingsScreen() {
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-              overflow: 'hidden',
-            }}
+            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
           >
             <View className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
@@ -275,15 +253,7 @@ export default function AgentSettingsScreen() {
           </VStack>
 
           {/* Info Box */}
-          <View
-            className="bg-gold-500/10 p-4"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-            }}
-          >
+          <View className="bg-gold-500/10 p-4" style={organicBorderRadius.card}>
             <HStack spacing="sm" align="start">
               <View className="mt-0.5">
                 <LightbulbIcon size={18} color="gold" turbulence={0.2} />

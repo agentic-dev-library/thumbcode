@@ -21,6 +21,7 @@ import {
 } from '@/components/icons';
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 // Mock data - in production, would come from stores
 const MOCK_STATS = {
@@ -116,15 +117,7 @@ export default function HomeScreen() {
 
         {/* Quick Stats */}
         <View className="flex-row flex-wrap gap-3 mb-6">
-          <View
-            className="bg-surface p-4 flex-1 min-w-[140px]"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-            }}
-          >
+          <View className="bg-surface p-4 flex-1 min-w-[140px]" style={organicBorderRadius.card}>
             <View className="mb-2">
               <FolderIcon size={32} color="teal" turbulence={0.2} />
             </View>
@@ -136,15 +129,7 @@ export default function HomeScreen() {
             </Text>
           </View>
 
-          <View
-            className="bg-surface p-4 flex-1 min-w-[140px]"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-            }}
-          >
+          <View className="bg-surface p-4 flex-1 min-w-[140px]" style={organicBorderRadius.card}>
             <View className="mb-2">
               <AgentIcon size={32} color="coral" turbulence={0.2} />
             </View>
@@ -156,15 +141,7 @@ export default function HomeScreen() {
             </Text>
           </View>
 
-          <View
-            className="bg-surface p-4 flex-1 min-w-[140px]"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-            }}
-          >
+          <View className="bg-surface p-4 flex-1 min-w-[140px]" style={organicBorderRadius.card}>
             <View className="mb-2">
               <TasksIcon size={32} color="gold" turbulence={0.2} />
             </View>
@@ -196,12 +173,7 @@ export default function HomeScreen() {
                 key={agent.id}
                 onPress={() => router.push(`/agent/${agent.id}`)}
                 className="bg-surface p-3 flex-row items-center"
-                style={{
-                  borderTopLeftRadius: 12,
-                  borderTopRightRadius: 10,
-                  borderBottomRightRadius: 14,
-                  borderBottomLeftRadius: 8,
-                }}
+                style={organicBorderRadius.card}
               >
                 <Avatar name={agent.name} size="sm" />
                 <VStack spacing="none" className="ml-3">
@@ -221,15 +193,7 @@ export default function HomeScreen() {
         </VStack>
 
         {/* Today's Progress */}
-        <View
-          className="bg-surface p-4 mb-6"
-          style={{
-            borderTopLeftRadius: 14,
-            borderTopRightRadius: 12,
-            borderBottomRightRadius: 16,
-            borderBottomLeftRadius: 10,
-          }}
-        >
+        <View className="bg-surface p-4 mb-6" style={organicBorderRadius.card}>
           <HStack justify="between" align="center" className="mb-3">
             <Text weight="semibold" className="text-white">
               Today's Progress
@@ -266,21 +230,11 @@ export default function HomeScreen() {
               <View
                 key={activity.id}
                 className="bg-surface p-4 flex-row"
-                style={{
-                  borderTopLeftRadius: 12,
-                  borderTopRightRadius: 10,
-                  borderBottomRightRadius: 14,
-                  borderBottomLeftRadius: 8,
-                }}
+                style={organicBorderRadius.card}
               >
                 <View
                   className="w-10 h-10 bg-charcoal items-center justify-center mr-3"
-                  style={{
-                    borderTopLeftRadius: 12,
-                    borderTopRightRadius: 10,
-                    borderBottomRightRadius: 14,
-                    borderBottomLeftRadius: 8,
-                  }}
+                  style={organicBorderRadius.button}
                 >
                   <ActivityIcon type={activity.type} />
                 </View>

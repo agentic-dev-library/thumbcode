@@ -10,6 +10,7 @@ import type { ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
 import { ErrorIcon, type IconColor, InboxIcon, SearchIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 /** Icon component type for EmptyState */
 type EmptyStateIcon = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
@@ -83,12 +84,7 @@ export function EmptyState({
             <Pressable
               onPress={secondaryAction.onPress}
               className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
-              style={{
-                borderTopLeftRadius: 8,
-                borderTopRightRadius: 10,
-                borderBottomRightRadius: 8,
-                borderBottomLeftRadius: 12,
-              }}
+              style={organicBorderRadius.button}
               accessibilityRole="button"
               accessibilityLabel={secondaryAction.label}
               accessibilityHint={`Perform the action: ${secondaryAction.label}`}
@@ -100,12 +96,7 @@ export function EmptyState({
             <Pressable
               onPress={action.onPress}
               className="px-4 py-2 bg-coral-500 active:bg-coral-600"
-              style={{
-                borderTopLeftRadius: 8,
-                borderTopRightRadius: 10,
-                borderBottomRightRadius: 8,
-                borderBottomLeftRadius: 12,
-              }}
+              style={organicBorderRadius.button}
               accessibilityRole="button"
               accessibilityLabel={action.label}
               accessibilityHint={`Perform the action: ${action.label}`}

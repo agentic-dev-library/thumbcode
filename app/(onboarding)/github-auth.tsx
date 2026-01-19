@@ -13,6 +13,7 @@ import { StepsProgress } from '@/components/feedback';
 import { LinkIcon, SuccessIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 export default function GitHubAuthScreen() {
   const router = useRouter();
@@ -73,15 +74,7 @@ export default function GitHubAuthScreen() {
         {/* Auth Flow */}
         {!userCode && !isConnected && (
           <VStack spacing="lg">
-            <View
-              className="bg-surface p-6"
-              style={{
-                borderTopLeftRadius: 16,
-                borderTopRightRadius: 14,
-                borderBottomRightRadius: 18,
-                borderBottomLeftRadius: 12,
-              }}
-            >
+            <View className="bg-surface p-6" style={organicBorderRadius.card}>
               <View className="items-center mb-4">
                 <LinkIcon size={40} color="teal" turbulence={0.25} />
               </View>
@@ -98,12 +91,7 @@ export default function GitHubAuthScreen() {
               onPress={startDeviceFlow}
               disabled={isAuthenticating}
               className={`bg-neutral-800 py-4 ${isAuthenticating ? 'opacity-70' : 'active:bg-neutral-700'}`}
-              style={{
-                borderTopLeftRadius: 14,
-                borderTopRightRadius: 16,
-                borderBottomRightRadius: 12,
-                borderBottomLeftRadius: 18,
-              }}
+              style={organicBorderRadius.cta}
             >
               {isAuthenticating ? (
                 <ActivityIndicator color="#fff" />
@@ -118,15 +106,7 @@ export default function GitHubAuthScreen() {
 
         {userCode && !isConnected && (
           <VStack spacing="lg">
-            <View
-              className="bg-surface p-6"
-              style={{
-                borderTopLeftRadius: 16,
-                borderTopRightRadius: 14,
-                borderBottomRightRadius: 18,
-                borderBottomLeftRadius: 12,
-              }}
-            >
+            <View className="bg-surface p-6" style={organicBorderRadius.card}>
               <Text size="sm" className="text-neutral-400 text-center mb-2">
                 Enter this code on GitHub:
               </Text>
@@ -143,12 +123,7 @@ export default function GitHubAuthScreen() {
             <Pressable
               onPress={openGitHub}
               className="bg-neutral-800 py-4 active:bg-neutral-700"
-              style={{
-                borderTopLeftRadius: 14,
-                borderTopRightRadius: 16,
-                borderBottomRightRadius: 12,
-                borderBottomLeftRadius: 18,
-              }}
+              style={organicBorderRadius.cta}
             >
               <Text weight="semibold" className="text-white text-center">
                 Open GitHub →
@@ -159,12 +134,7 @@ export default function GitHubAuthScreen() {
               onPress={checkAuth}
               disabled={isAuthenticating}
               className={`bg-teal-600 py-4 ${isAuthenticating ? 'opacity-70' : 'active:bg-teal-700'}`}
-              style={{
-                borderTopLeftRadius: 14,
-                borderTopRightRadius: 16,
-                borderBottomRightRadius: 12,
-                borderBottomLeftRadius: 18,
-              }}
+              style={organicBorderRadius.cta}
             >
               {isAuthenticating ? (
                 <ActivityIndicator color="#fff" />
@@ -179,15 +149,7 @@ export default function GitHubAuthScreen() {
 
         {isConnected && (
           <VStack spacing="lg">
-            <View
-              className="bg-teal-600/20 p-6"
-              style={{
-                borderTopLeftRadius: 16,
-                borderTopRightRadius: 14,
-                borderBottomRightRadius: 18,
-                borderBottomLeftRadius: 12,
-              }}
-            >
+            <View className="bg-teal-600/20 p-6" style={organicBorderRadius.card}>
               <View className="items-center mb-4">
                 <SuccessIcon size={48} color="teal" turbulence={0.25} />
               </View>
@@ -210,12 +172,7 @@ export default function GitHubAuthScreen() {
         <Pressable
           onPress={handleSkip}
           className="flex-1 bg-neutral-800 py-4 active:bg-neutral-700"
-          style={{
-            borderTopLeftRadius: 14,
-            borderTopRightRadius: 16,
-            borderBottomRightRadius: 12,
-            borderBottomLeftRadius: 18,
-          }}
+          style={organicBorderRadius.cta}
         >
           <Text className="text-neutral-300 text-center">Skip for Now</Text>
         </Pressable>
@@ -224,12 +181,7 @@ export default function GitHubAuthScreen() {
           <Pressable
             onPress={handleContinue}
             className="flex-1 bg-coral-500 py-4 active:bg-coral-600"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 16,
-              borderBottomRightRadius: 12,
-              borderBottomLeftRadius: 18,
-            }}
+            style={organicBorderRadius.cta}
           >
             <Text weight="semibold" className="text-white text-center">
               Continue

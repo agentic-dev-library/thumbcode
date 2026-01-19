@@ -22,6 +22,7 @@ import {
 import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { useOnboarding } from '@/contexts/onboarding';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 type CapabilityIcon = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 
@@ -102,12 +103,7 @@ export default function CompleteScreen() {
           >
             <View
               className="w-32 h-32 bg-teal-600/20 items-center justify-center"
-              style={{
-                borderTopLeftRadius: 40,
-                borderTopRightRadius: 36,
-                borderBottomRightRadius: 44,
-                borderBottomLeftRadius: 32,
-              }}
+              style={organicBorderRadius.hero}
             >
               <CelebrateIcon size={64} color="gold" turbulence={0.3} />
             </View>
@@ -132,21 +128,11 @@ export default function CompleteScreen() {
               <View
                 key={cap.title}
                 className="bg-surface p-4 flex-row items-center"
-                style={{
-                  borderTopLeftRadius: 12,
-                  borderTopRightRadius: 10,
-                  borderBottomRightRadius: 14,
-                  borderBottomLeftRadius: 8,
-                }}
+                style={organicBorderRadius.button}
               >
                 <View
                   className="w-12 h-12 bg-charcoal items-center justify-center mr-4"
-                  style={{
-                    borderTopLeftRadius: 14,
-                    borderTopRightRadius: 12,
-                    borderBottomRightRadius: 16,
-                    borderBottomLeftRadius: 10,
-                  }}
+                  style={organicBorderRadius.card}
                 >
                   <cap.Icon size={24} color={cap.iconColor} turbulence={0.2} />
                 </View>
@@ -173,12 +159,7 @@ export default function CompleteScreen() {
         <Pressable
           onPress={handleGetStarted}
           className="bg-coral-500 py-4 active:bg-coral-600"
-          style={{
-            borderTopLeftRadius: 14,
-            borderTopRightRadius: 16,
-            borderBottomRightRadius: 12,
-            borderBottomLeftRadius: 18,
-          }}
+          style={organicBorderRadius.cta}
         >
           <Text weight="semibold" className="text-white text-center text-lg">
             Start Building →

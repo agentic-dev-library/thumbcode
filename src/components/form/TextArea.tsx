@@ -7,6 +7,7 @@
 
 import { useState } from 'react';
 import { Text, TextInput, type TextInputProps, View } from 'react-native';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface TextAreaProps extends Omit<TextInputProps, 'multiline'> {
   /** Label text above the input */
@@ -71,16 +72,15 @@ export function TextArea({
         }}
         className={`bg-neutral-800 text-white font-body px-4 py-3 border ${borderColor}`}
         placeholderTextColor="#6B7280"
-        style={{
-          borderTopLeftRadius: 12,
-          borderTopRightRadius: 14,
-          borderBottomRightRadius: 12,
-          borderBottomLeftRadius: 16,
-          minHeight,
-          maxHeight,
-          textAlignVertical: 'top',
-          lineHeight,
-        }}
+        style={[
+          organicBorderRadius.textInput,
+          {
+            minHeight,
+            maxHeight,
+            textAlignVertical: 'top',
+            lineHeight,
+          },
+        ]}
       />
       <View className="flex-row justify-between mt-1">
         {(helper || error) && (

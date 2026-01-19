@@ -18,6 +18,7 @@ import {
 } from '@/components/icons';
 import { VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface Feature {
   icon: IconVariant;
@@ -86,12 +87,7 @@ export default function WelcomeScreen() {
         <VStack spacing="md" align="center" className="mt-12 mb-10">
           <View
             className="w-24 h-24 bg-coral-500 items-center justify-center"
-            style={{
-              borderTopLeftRadius: 28,
-              borderTopRightRadius: 24,
-              borderBottomRightRadius: 32,
-              borderBottomLeftRadius: 20,
-            }}
+            style={organicBorderRadius.hero}
           >
             <ThumbIcon size={48} color="charcoal" turbulence={0.2} />
           </View>
@@ -111,12 +107,7 @@ export default function WelcomeScreen() {
             <View
               key={feature.title}
               className="bg-surface p-4 flex-row items-start"
-              style={{
-                borderTopLeftRadius: 14,
-                borderTopRightRadius: 12,
-                borderBottomRightRadius: 16,
-                borderBottomLeftRadius: 10,
-              }}
+              style={organicBorderRadius.card}
             >
               <View className="mr-4">
                 <FeatureIcon variant={feature.icon} color={feature.color} />
@@ -142,12 +133,7 @@ export default function WelcomeScreen() {
         <Pressable
           onPress={() => router.push('/(onboarding)/github-auth')}
           className="bg-coral-500 py-4 active:bg-coral-600"
-          style={{
-            borderTopLeftRadius: 14,
-            borderTopRightRadius: 16,
-            borderBottomRightRadius: 12,
-            borderBottomLeftRadius: 18,
-          }}
+          style={organicBorderRadius.cta}
         >
           <Text weight="semibold" className="text-white text-center text-lg">
             Get Started

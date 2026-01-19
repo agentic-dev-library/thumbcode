@@ -27,6 +27,7 @@ import {
 } from '@/components/icons';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface SettingsItemProps {
   Icon: React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
@@ -63,12 +64,7 @@ function SettingsItem({
       <HStack align="center">
         <View
           className="w-10 h-10 bg-surface-elevated items-center justify-center mr-4"
-          style={{
-            borderTopLeftRadius: 10,
-            borderTopRightRadius: 8,
-            borderBottomRightRadius: 12,
-            borderBottomLeftRadius: 6,
-          }}
+          style={organicBorderRadius.badge}
         >
           <Icon size={22} color={iconColor} turbulence={0.2} />
         </View>
@@ -126,12 +122,7 @@ export default function SettingsScreen() {
         {/* Profile */}
         <Pressable
           className="bg-surface p-4 mb-6 flex-row items-center active:bg-neutral-700"
-          style={{
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 14,
-            borderBottomRightRadius: 18,
-            borderBottomLeftRadius: 12,
-          }}
+          style={organicBorderRadius.card}
         >
           <Avatar name="User" size="lg" />
           <VStack spacing="xs" className="ml-4 flex-1">
@@ -149,13 +140,7 @@ export default function SettingsScreen() {
         <VStack
           spacing="none"
           className="bg-surface mb-6"
-          style={{
-            borderTopLeftRadius: 14,
-            borderTopRightRadius: 12,
-            borderBottomRightRadius: 16,
-            borderBottomLeftRadius: 10,
-            overflow: 'hidden',
-          }}
+          style={[organicBorderRadius.card, { overflow: 'hidden' }]}
         >
           <View className="px-4 py-3 border-b border-neutral-700">
             <Text size="sm" weight="semibold" className="text-neutral-400">
@@ -194,13 +179,7 @@ export default function SettingsScreen() {
         <VStack
           spacing="none"
           className="bg-surface mb-6"
-          style={{
-            borderTopLeftRadius: 14,
-            borderTopRightRadius: 12,
-            borderBottomRightRadius: 16,
-            borderBottomLeftRadius: 10,
-            overflow: 'hidden',
-          }}
+          style={[organicBorderRadius.card, { overflow: 'hidden' }]}
         >
           <View className="px-4 py-3 border-b border-neutral-700">
             <Text size="sm" weight="semibold" className="text-neutral-400">
@@ -249,13 +228,7 @@ export default function SettingsScreen() {
         <VStack
           spacing="none"
           className="bg-surface mb-6"
-          style={{
-            borderTopLeftRadius: 14,
-            borderTopRightRadius: 12,
-            borderBottomRightRadius: 16,
-            borderBottomLeftRadius: 10,
-            overflow: 'hidden',
-          }}
+          style={[organicBorderRadius.card, { overflow: 'hidden' }]}
         >
           <View className="px-4 py-3 border-b border-neutral-700">
             <Text size="sm" weight="semibold" className="text-neutral-400">
@@ -285,13 +258,7 @@ export default function SettingsScreen() {
         <VStack
           spacing="none"
           className="bg-surface mb-6"
-          style={{
-            borderTopLeftRadius: 14,
-            borderTopRightRadius: 12,
-            borderBottomRightRadius: 16,
-            borderBottomLeftRadius: 10,
-            overflow: 'hidden',
-          }}
+          style={[organicBorderRadius.card, { overflow: 'hidden' }]}
         >
           <View className="px-4 py-3 border-b border-neutral-700">
             <Text size="sm" weight="semibold" className="text-neutral-400">
@@ -325,12 +292,7 @@ export default function SettingsScreen() {
         {/* Danger Zone */}
         <Pressable
           className="bg-coral-500/10 p-4 items-center active:bg-coral-500/20"
-          style={{
-            borderTopLeftRadius: 14,
-            borderTopRightRadius: 12,
-            borderBottomRightRadius: 16,
-            borderBottomLeftRadius: 10,
-          }}
+          style={organicBorderRadius.card}
         >
           <Text className="text-coral-500 font-semibold">Sign Out</Text>
         </Pressable>

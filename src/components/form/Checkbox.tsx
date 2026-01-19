@@ -9,6 +9,7 @@
 import { Pressable, View } from 'react-native';
 import { SuccessIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface CheckboxProps {
   /** Whether the checkbox is checked */
@@ -53,14 +54,7 @@ export function Checkbox({
         className={`items-center justify-center border-2 ${
           checked ? 'bg-teal-600 border-teal-600' : 'bg-transparent border-neutral-500'
         }`}
-        style={{
-          width: styles.box,
-          height: styles.box,
-          borderTopLeftRadius: 4,
-          borderTopRightRadius: 6,
-          borderBottomRightRadius: 4,
-          borderBottomLeftRadius: 6,
-        }}
+        style={[organicBorderRadius.badge, { width: styles.box, height: styles.box }]}
       >
         {checked && <SuccessIcon size={styles.icon} color="warmGray" turbulence={0.15} />}
       </View>

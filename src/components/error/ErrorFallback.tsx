@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ErrorIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface ErrorFallbackProps {
   error: Error | null;
@@ -51,12 +52,7 @@ export function ErrorFallback({
           {/* Error Icon */}
           <View
             className="w-20 h-20 bg-coral-500/20 items-center justify-center"
-            style={{
-              borderTopLeftRadius: 40,
-              borderTopRightRadius: 36,
-              borderBottomRightRadius: 42,
-              borderBottomLeftRadius: 38,
-            }}
+            style={organicBorderRadius.hero}
           >
             <ErrorIcon size={40} color="coral" turbulence={0.25} />
           </View>
@@ -71,15 +67,7 @@ export function ErrorFallback({
 
           {/* Dev-only Error Details */}
           {isDev && error && (
-            <View
-              className="bg-surface p-4 w-full max-w-sm"
-              style={{
-                borderTopLeftRadius: 12,
-                borderTopRightRadius: 10,
-                borderBottomRightRadius: 14,
-                borderBottomLeftRadius: 8,
-              }}
-            >
+            <View className="bg-surface p-4 w-full max-w-sm" style={organicBorderRadius.card}>
               <Text size="sm" weight="semibold" className="text-coral-500 mb-2">
                 Debug Info
               </Text>
@@ -99,12 +87,7 @@ export function ErrorFallback({
             <Pressable
               onPress={onRetry}
               className="bg-coral-500 px-8 py-3 active:bg-coral-600"
-              style={{
-                borderTopLeftRadius: 24,
-                borderTopRightRadius: 22,
-                borderBottomRightRadius: 26,
-                borderBottomLeftRadius: 20,
-              }}
+              style={organicBorderRadius.cta}
             >
               <Text weight="semibold" className="text-white">
                 Try Again
@@ -137,15 +120,7 @@ export function CompactErrorFallback({
   onRetry,
 }: CompactErrorFallbackProps) {
   return (
-    <View
-      className="bg-surface/50 p-4"
-      style={{
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 10,
-        borderBottomRightRadius: 14,
-        borderBottomLeftRadius: 8,
-      }}
-    >
+    <View className="bg-surface/50 p-4" style={organicBorderRadius.card}>
       <VStack spacing="sm" align="center">
         <Text size="sm" className="text-neutral-400">
           {message}

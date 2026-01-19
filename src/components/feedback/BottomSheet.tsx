@@ -19,6 +19,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CloseIcon } from '@/components/icons';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -110,14 +111,15 @@ export function BottomSheet({
 
         <Animated.View
           className="bg-surface"
-          style={{
-            transform: [{ translateY }],
-            height: sheetHeight,
-            maxHeight: SCREEN_HEIGHT - insets.top - 40,
-            paddingBottom: insets.bottom,
-            borderTopLeftRadius: 24,
-            borderTopRightRadius: 20,
-          }}
+          style={[
+            {
+              transform: [{ translateY }],
+              height: sheetHeight,
+              maxHeight: SCREEN_HEIGHT - insets.top - 40,
+              paddingBottom: insets.bottom,
+            },
+            organicBorderRadius.modal,
+          ]}
         >
           {/* Drag handle */}
           {showHandle && (
@@ -232,12 +234,7 @@ export function ActionSheet({
           accessibilityRole="button"
           accessibilityLabel={cancelText}
           accessibilityHint="Cancel and close the action sheet"
-          style={{
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 14,
-            borderBottomRightRadius: 12,
-            borderBottomLeftRadius: 16,
-          }}
+          style={organicBorderRadius.button}
         >
           <Text className="font-body text-center text-neutral-300 font-semibold">{cancelText}</Text>
         </Pressable>
