@@ -18,15 +18,15 @@
 import { View } from 'react-native';
 import Svg, { Defs, FeDisplacementMap, FeTurbulence, Filter, G, Path } from 'react-native-svg';
 
-// Brand color hex values (sRGB approximations of P3 palette)
+// Brand color hex values aligned with CLAUDE.md P3 "Warm Technical" palette
 export const BRAND_COLORS = {
-  coral: '#F28B7D',
-  coralDark: '#CD4C3F',
-  teal: '#51AFB9',
-  tealDark: '#2C96A3',
-  gold: '#F2CF79',
-  goldDark: '#DEB44D',
-  charcoal: '#1E1B18',
+  coral: '#FF7059', // Primary - Thumb Coral
+  coralDark: '#E85A4F', // Light mode variant
+  teal: '#0D9488', // Secondary - Digital Teal
+  tealDark: '#0F766E', // Light mode variant
+  gold: '#F5D563', // Accent - Soft Gold
+  goldDark: '#D4A84B', // Light mode variant
+  charcoal: '#151820', // Base Dark - Charcoal Navy
   warmGray: '#696259',
 } as const;
 
