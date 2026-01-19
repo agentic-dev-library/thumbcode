@@ -1,5 +1,5 @@
-import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
@@ -8,7 +8,8 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'ThumbCode',
-      description: 'Code with your thumbs. A decentralized multi-agent mobile development platform.',
+      description:
+        'Code with your thumbs. A decentralized multi-agent mobile development platform.',
       logo: {
         light: './src/assets/logo-light.svg',
         dark: './src/assets/logo-dark.svg',
@@ -49,9 +50,7 @@ export default defineConfig({
         },
         {
           label: 'Brand',
-          items: [
-            { label: 'Brand Guidelines', slug: 'brand/guidelines' },
-          ],
+          items: [{ label: 'Brand Guidelines', slug: 'brand/guidelines' }],
         },
         {
           label: 'About',
