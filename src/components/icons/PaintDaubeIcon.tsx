@@ -17,7 +17,7 @@
 
 import React from 'react';
 import { View } from 'react-native';
-import Svg, { Defs, Filter, FeTurbulence, FeDisplacementMap, Path, G, Circle } from 'react-native-svg';
+import Svg, { Defs, Filter, FeTurbulence, FeDisplacementMap, Path, G } from 'react-native-svg';
 
 // Brand color hex values (sRGB approximations of P3 palette)
 export const BRAND_COLORS = {
