@@ -145,3 +145,6 @@ vite.config.ts.timestamp-*
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+# Astro generated files
+docs-site/.astro/
