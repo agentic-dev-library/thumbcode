@@ -1,7 +1,15 @@
 /**
  * Services Exports
  *
- * All ThumbCode services are exported from here.
+ * Application-specific services. For core services (Git, Credentials, Security),
+ * import directly from @thumbcode/core.
+ *
+ * @example
+ * // Chat service (app-specific)
+ * import { ChatService } from '@/services/chat';
+ *
+ * // Core services (from packages)
+ * import { GitService, CredentialService } from '@thumbcode/core';
  */
 
 // Chat service for human-agent collaboration
@@ -16,17 +24,13 @@ export {
   type SendMessageOptions,
   type StreamingResponse,
 } from './chat';
-// Credential management service
-export {
-  type BiometricResult,
-  CredentialService,
-  type RetrieveOptions,
-  type StoreOptions,
-  type ValidationResult,
-} from './credentials';
 
-// Git operations service
+// Re-export core services for backwards compatibility
+// NOTE: Prefer importing directly from @thumbcode/core
 export {
+  CredentialService,
+  GitService,
+  type BiometricResult,
   type BranchInfo,
   type BranchOptions,
   type CheckoutOptions,
@@ -39,12 +43,13 @@ export {
   type GitAuthor,
   type GitCredentials,
   type GitResult,
-  GitService,
   type ProgressCallback,
   type ProgressEvent,
   type PullOptions,
   type PushOptions,
   type RemoteInfo,
-  type RepositoryState,
+  type RetrieveOptions,
   type StageOptions,
-} from './git';
+  type StoreOptions,
+  type ValidationResult,
+} from '@thumbcode/core';

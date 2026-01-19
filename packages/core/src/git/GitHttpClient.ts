@@ -47,7 +47,7 @@ export const gitHttpClient = {
     });
 
     const responseHeaders: Record<string, string> = {};
-    res.headers.forEach((value, key) => {
+    res.headers.forEach((value: string, key: string) => {
       responseHeaders[key] = value;
     });
 
