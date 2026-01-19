@@ -28,15 +28,8 @@ import { gitHttpClient } from './GitHttpClient';
 
 // HTTP client adapter - bridges our implementation to isomorphic-git's HttpClient type
 // Our implementation uses AsyncIterableIterator which works with isomorphic-git at runtime
-const http: HttpClient = async (url, options) => {
-  // Delegate to the underlying implementation; types differ slightly but are runtime compatible
-  const response = await gitHttpClient(url, options as any);
-  return {
-    ...response,
-    // Localize the type assertion to the known body-type difference
-    body: (response as any).body,
-  };
-};
+// Using type assertion as the body types differ but are compatible at runtime
+const http = gitHttpClient as unknown as HttpClient;
 
 import type {
   BranchInfo,
