@@ -21,12 +21,18 @@ export function Header({ title, onBack, rightElement }: HeaderProps) {
     <View className="flex-row items-center justify-between pb-4">
       <View className="w-10">
         {onBack && (
-          <Pressable onPress={onBack} className="p-2">
+          <Pressable
+            onPress={onBack}
+            className="p-2"
+            accessibilityRole="button"
+            accessibilityLabel="Back"
+            accessibilityHint="Go to previous screen"
+          >
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
         )}
       </View>
-      <Text variant="display" size="2xl" className="text-white">
+      <Text variant="display" size="2xl" className="text-white" accessibilityRole="header">
         {title}
       </Text>
       <View className="w-10">{rightElement}</View>

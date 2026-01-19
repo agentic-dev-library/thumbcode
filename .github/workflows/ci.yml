@@ -36,6 +36,21 @@ jobs:
       - name: TypeScript type check
         run: pnpm run typecheck
 
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup ThumbCode environment
+        uses: ./.github/actions/setup-thumbcode
+
+      - name: Run vulnerability scan
+        run: pnpm run audit:prod
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest

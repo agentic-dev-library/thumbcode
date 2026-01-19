@@ -4,6 +4,8 @@
  * Helps user create their first project by connecting a repository.
  */
 
+import { CredentialService } from '@thumbcode/core/src/credentials/CredentialService';
+import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
@@ -73,10 +75,21 @@ export default function CreateProjectScreen() {
     if (isLoading || !selectedRepo || !projectName) return;
 
     setIsLoading(true);
-    // TODO: Create project via service
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    router.push('/(onboarding)/complete');
+    try {
+      // Generate and store the signing secret
+      const secret = Crypto.getRandomBytes(32);
+      await CredentialService.store('mcp_signing_secret', secret.toString());
+
+      // TODO: Create project via service
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      router.push('/(onboarding)/complete');
+    } catch (error) {
+      console.error('Failed to create project:', error);
+      // Optionally, show an error message to the user
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const canCreate = selectedRepo && projectName.trim().length > 0;

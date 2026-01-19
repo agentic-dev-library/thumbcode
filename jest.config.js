@@ -7,6 +7,7 @@ module.exports = {
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.test.{ts,tsx}',
     '<rootDir>/packages/state/src/__tests__/**/*.test.{ts,tsx}',
+    '<rootDir>/packages/core/src/__tests__/**/*.test.{ts,tsx}',
   ],
   // Exclude packages with their own jest config (e.g., agent-intelligence uses ts-jest)
   testPathIgnorePatterns: ['/node_modules/', '/packages/agent-intelligence/'],
@@ -14,6 +15,7 @@ module.exports = {
     'src/**/*.{ts,tsx}',
     'app/**/*.{ts,tsx}',
     'packages/state/src/**/*.{ts,tsx}',
+    'packages/core/src/**/*.{ts,tsx}',
     '!src/**/*.d.ts',
     '!src/types/**/*',
     '!**/__tests__/**/*',

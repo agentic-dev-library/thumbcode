@@ -17,11 +17,19 @@ interface SpinnerProps {
  * @returns A View element containing an ActivityIndicator and optional label.
  */
 export function Spinner({ size = 'large', color = '#FF7059', label }: SpinnerProps) {
+  const accessibilityLabel = label || 'Loading...';
+
   return (
     <View className="items-center">
-      <ActivityIndicator size={size} color={color} />
+      <ActivityIndicator
+        size={size}
+        color={color}
+        accessibilityRole="progressbar"
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint="Content is loading"
+      />
       {label && (
-        <Text className="mt-2 text-neutral-400" size="sm">
+        <Text className="mt-2 text-neutral-400" size="sm" accessibilityElementsHidden>
           {label}
         </Text>
       )}

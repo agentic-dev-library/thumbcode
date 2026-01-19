@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { disableAnimations } from './utils/visual';
 
 test.describe('User Interactions', () => {

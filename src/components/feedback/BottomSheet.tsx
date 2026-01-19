@@ -105,7 +105,7 @@ export function BottomSheet({
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View className="flex-1 justify-end bg-black/50">
-        <Pressable className="absolute inset-0" onPress={onClose} />
+        <Pressable className="absolute inset-0" onPress={onClose} accessible={false} />
 
         <Animated.View
           className="bg-surface"
@@ -129,7 +129,13 @@ export function BottomSheet({
           {title && (
             <View className="flex-row items-center justify-between px-5 py-3 border-b border-neutral-700">
               <Text className="font-display text-lg text-white">{title}</Text>
-              <Pressable onPress={onClose} className="w-8 h-8 items-center justify-center">
+              <Pressable
+                onPress={onClose}
+                className="w-8 h-8 items-center justify-center"
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+                accessibilityHint="Close the bottom sheet"
+              >
                 <Text className="text-neutral-400 text-xl">×</Text>
               </Pressable>
             </View>
@@ -182,7 +188,11 @@ export function ActionSheet({
     <BottomSheet visible={visible} onClose={onClose} height="auto" showHandle={false}>
       {(title || message) && (
         <View className="items-center mb-4 pb-4 border-b border-neutral-700">
-          {title && <Text className="font-display text-base text-white mb-1">{title}</Text>}
+          {title && (
+            <Text className="font-display text-base text-white mb-1" accessibilityRole="header">
+              {title}
+            </Text>
+          )}
           {message && (
             <Text className="font-body text-sm text-neutral-400 text-center">{message}</Text>
           )}
@@ -200,6 +210,9 @@ export function ActionSheet({
           className={`py-4 ${index > 0 ? 'border-t border-neutral-800' : ''} ${
             option.disabled ? 'opacity-50' : 'active:bg-neutral-800'
           }`}
+          accessibilityRole="button"
+          accessibilityLabel={option.label}
+          accessibilityHint={`Perform the action: ${option.label}`}
         >
           <Text
             className={`font-body text-center ${
@@ -215,6 +228,9 @@ export function ActionSheet({
         <Pressable
           onPress={onClose}
           className="mt-2 py-4 bg-neutral-800 active:bg-neutral-700"
+          accessibilityRole="button"
+          accessibilityLabel={cancelText}
+          accessibilityHint="Cancel and close the action sheet"
           style={{
             borderTopLeftRadius: 12,
             borderTopRightRadius: 14,

@@ -14,6 +14,8 @@
 
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
+import { secureFetch } from '../api/api';
+import { validate } from './validation';
 
 import type {
   BiometricResult,
@@ -33,6 +35,7 @@ const SECURE_STORE_KEYS: Record<CredentialType, string> = {
   mcp_server: 'thumbcode_cred_mcp',
   gitlab: 'thumbcode_cred_gitlab',
   bitbucket: 'thumbcode_cred_bitbucket',
+  mcp_signing_secret: 'thumbcode_cred_mcp_signing_secret',
 };
 
 // Validation API endpoints
@@ -105,6 +108,10 @@ class CredentialServiceClass {
     options: StoreOptions = {}
   ): Promise<ValidationResult> {
     const { requireBiometric = false, skipValidation = false } = options;
+
+    if (!validate(type, secret)) {
+      return { isValid: false, message: 'Invalid credential format' };
+    }
 
     // Biometric check if required
     if (requireBiometric) {
@@ -191,6 +198,10 @@ class CredentialServiceClass {
    * @param secret - The secret to validate
    */
   async validateCredential(type: CredentialType, secret: string): Promise<ValidationResult> {
+    if (!validate(type, secret)) {
+      return { isValid: false, message: 'Invalid credential format' };
+    }
+
     try {
       switch (type) {
         case 'github':
@@ -218,7 +229,7 @@ class CredentialServiceClass {
    */
   private async validateGitHubToken(token: string): Promise<ValidationResult> {
     try {
-      const response = await fetch(VALIDATION_ENDPOINTS.github, {
+      const response = await secureFetch(VALIDATION_ENDPOINTS.github, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/vnd.github.v3+json',
@@ -263,7 +274,7 @@ class CredentialServiceClass {
   private async validateAnthropicKey(apiKey: string): Promise<ValidationResult> {
     try {
       // For Anthropic, we make a minimal request to check the key
-      const response = await fetch(VALIDATION_ENDPOINTS.anthropic, {
+      const response = await secureFetch(VALIDATION_ENDPOINTS.anthropic, {
         method: 'POST',
         headers: {
           'x-api-key': apiKey,
@@ -318,7 +329,7 @@ class CredentialServiceClass {
    */
   private async validateOpenAIKey(apiKey: string): Promise<ValidationResult> {
     try {
-      const response = await fetch(VALIDATION_ENDPOINTS.openai, {
+      const response = await secureFetch(VALIDATION_ENDPOINTS.openai, {
         headers: {
           Authorization: `Bearer ${apiKey}`,
         },

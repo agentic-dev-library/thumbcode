@@ -85,6 +85,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       bundleIdentifier:
         appEnv === 'production' ? 'com.thumbcode.app' : `com.thumbcode.app.${appEnv}`,
       buildNumber: '1',
+      // Permission Review: Biometric permissions are essential for securing user credentials.
       infoPlist: {
         NSFaceIDUsageDescription: 'ThumbCode uses Face ID to secure your API keys and credentials.',
         ITSAppUsesNonExemptEncryption: false,
@@ -98,6 +99,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       },
       package: appEnv === 'production' ? 'com.thumbcode.app' : `com.thumbcode.app.${appEnv}`,
       versionCode: 1,
+      // Permission Review: Biometric permissions are essential for securing user credentials.
       permissions: ['USE_BIOMETRIC', 'USE_FINGERPRINT'],
     },
 
