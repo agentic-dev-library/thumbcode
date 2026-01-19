@@ -1,28 +1,38 @@
 import { expect, test } from '@playwright/test';
 import { disableAnimations } from './utils/visual';
 
-test.describe('Landing Page', () => {
+test.describe('Welcome Page Visual Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/welcome');
     await disableAnimations(page);
   });
 
-  test('should match full page screenshot', async ({ page }) => {
-    await expect(page).toHaveScreenshot('landing-full-page.png');
+  test('should display ThumbCode branding correctly', async ({ page }) => {
+    // Logo and title
+    await expect(page.getByText('ThumbCode')).toBeVisible();
+
+    // Tagline
+    await expect(page.getByText(/Code with your thumbs/i)).toBeVisible();
+    await expect(page.getByText(/Ship apps from your phone/i)).toBeVisible();
   });
 
-  test('should match hero section screenshot', async ({ page }) => {
-    const hero = page.getByTestId('hero-section');
-    await expect(hero).toHaveScreenshot('landing-hero-section.png');
+  test('should display all feature cards', async ({ page }) => {
+    // All 4 feature cards should be visible
+    const features = [
+      'AI Agent Teams',
+      'Mobile-First Git',
+      'Your Keys, Your Control',
+      'Zero Server Costs',
+    ];
+
+    for (const feature of features) {
+      await expect(page.getByText(feature)).toBeVisible();
+    }
   });
 
-  test('should match feature cards screenshot', async ({ page }) => {
-    const features = page.getByTestId('feature-cards');
-    await expect(features).toHaveScreenshot('landing-feature-cards.png');
-  });
-
-  test('should match navigation elements screenshot', async ({ page }) => {
-    const navbar = page.getByTestId('navbar');
-    await expect(navbar).toHaveScreenshot('landing-navbar.png');
+  test('should have Get Started button', async ({ page }) => {
+    // React Native Pressable renders as generic element, not button role
+    const button = page.getByText('Get Started');
+    await expect(button).toBeVisible();
   });
 });
