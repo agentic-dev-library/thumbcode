@@ -186,9 +186,7 @@ describe('withListItemMemo', () => {
     const MemoizedComponent = withListItemMemo(TestItemComponent);
 
     // Verify the memoized component renders without throwing
-    const { root } = render(
-      <MemoizedComponent item={{ id: '1', name: 'Test' }} index={0} />
-    );
+    const { root } = render(<MemoizedComponent item={{ id: '1', name: 'Test' }} index={0} />);
 
     expect(root).toBeTruthy();
   });
