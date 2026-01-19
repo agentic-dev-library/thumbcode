@@ -60,28 +60,35 @@ jobs:
 
     steps:
       - name: Check for EXPO_TOKEN
+        id: check-token
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           if [ -z "$EXPO_TOKEN" ]; then
             echo "::warning::EXPO_TOKEN secret is not configured. Skipping EAS update."
             echo "Learn more: https://docs.expo.dev/eas-update/github-actions"
-            exit 0
+            echo "has_token=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_token=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Checkout code
+        if: steps.check-token.outputs.has_token == 'true'
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup ThumbCode environment
+        if: steps.check-token.outputs.has_token == 'true'
         uses: ./.github/actions/setup-thumbcode
 
       - name: Setup Expo and EAS
+        if: steps.check-token.outputs.has_token == 'true'
         uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Create preview update
+        if: steps.check-token.outputs.has_token == 'true'
         uses: expo/expo-github-action/preview@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
         with:
           command: eas update --auto
