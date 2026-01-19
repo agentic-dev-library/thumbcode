@@ -11,9 +11,9 @@ import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StepsProgress } from '@/components/feedback';
+import { CloseIcon, LightbulbIcon, SecurityIcon, SuccessIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
-import { SecurityIcon, SuccessIcon, CloseIcon, LightbulbIcon } from '@/components/icons';
 
 interface APIKeyState {
   key: string;
@@ -151,8 +151,12 @@ export default function ApiKeysScreen() {
                 Anthropic (Claude)
               </Text>
               {anthropicKey.isValidating && <ActivityIndicator size="small" color="#14B8A6" />}
-              {anthropicKey.isValid === true && <SuccessIcon size={18} color="teal" turbulence={0.15} />}
-              {anthropicKey.isValid === false && <CloseIcon size={18} color="coral" turbulence={0.15} />}
+              {anthropicKey.isValid === true && (
+                <SuccessIcon size={18} color="teal" turbulence={0.15} />
+              )}
+              {anthropicKey.isValid === false && (
+                <CloseIcon size={18} color="coral" turbulence={0.15} />
+              )}
             </View>
 
             <Input
@@ -175,8 +179,12 @@ export default function ApiKeysScreen() {
                 OpenAI (GPT-4)
               </Text>
               {openaiKey.isValidating && <ActivityIndicator size="small" color="#14B8A6" />}
-              {openaiKey.isValid === true && <SuccessIcon size={18} color="teal" turbulence={0.15} />}
-              {openaiKey.isValid === false && <CloseIcon size={18} color="coral" turbulence={0.15} />}
+              {openaiKey.isValid === true && (
+                <SuccessIcon size={18} color="teal" turbulence={0.15} />
+              )}
+              {openaiKey.isValid === false && (
+                <CloseIcon size={18} color="coral" turbulence={0.15} />
+              )}
             </View>
 
             <Input

@@ -6,17 +6,18 @@
  */
 
 import { useRouter } from 'expo-router';
-import React, { useEffect, useRef } from 'react';
+import type React from 'react';
+import { useEffect, useRef } from 'react';
 import { Animated, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
-  CelebrateIcon,
   AgentIcon,
-  MobileIcon,
+  CelebrateIcon,
   ChatIcon,
-  TasksIcon,
-  SuccessIcon,
   type IconColor,
+  MobileIcon,
+  SuccessIcon,
+  TasksIcon,
 } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
@@ -32,10 +33,30 @@ interface Capability {
 }
 
 const CAPABILITIES: Capability[] = [
-  { Icon: AgentIcon, iconColor: 'coral', title: 'AI Agent Teams', description: 'Multi-agent collaboration ready' },
-  { Icon: MobileIcon, iconColor: 'teal', title: 'Mobile Git', description: 'Clone, commit, push from your phone' },
-  { Icon: ChatIcon, iconColor: 'gold', title: 'Real-time Chat', description: 'Direct agent communication' },
-  { Icon: TasksIcon, iconColor: 'teal', title: 'Progress Tracking', description: 'Monitor tasks and metrics' },
+  {
+    Icon: AgentIcon,
+    iconColor: 'coral',
+    title: 'AI Agent Teams',
+    description: 'Multi-agent collaboration ready',
+  },
+  {
+    Icon: MobileIcon,
+    iconColor: 'teal',
+    title: 'Mobile Git',
+    description: 'Clone, commit, push from your phone',
+  },
+  {
+    Icon: ChatIcon,
+    iconColor: 'gold',
+    title: 'Real-time Chat',
+    description: 'Direct agent communication',
+  },
+  {
+    Icon: TasksIcon,
+    iconColor: 'teal',
+    title: 'Progress Tracking',
+    description: 'Monitor tasks and metrics',
+  },
 ];
 
 export default function CompleteScreen() {

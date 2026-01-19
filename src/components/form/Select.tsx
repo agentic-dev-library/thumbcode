@@ -8,8 +8,8 @@
 
 import { useState } from 'react';
 import { FlatList, Modal, Pressable, View } from 'react-native';
-import { Text } from '@/components/ui';
 import { ChevronDownIcon, SuccessIcon } from '@/components/icons';
+import { Text } from '@/components/ui';
 
 interface SelectOption {
   value: string;
@@ -129,7 +129,9 @@ export function Select({
                       >
                         {item.label}
                       </Text>
-                      {item.value === value && <SuccessIcon size={16} color="teal" turbulence={0.15} />}
+                      {item.value === value && (
+                        <SuccessIcon size={16} color="teal" turbulence={0.15} />
+                      )}
                     </View>
                   </Pressable>
                 )}

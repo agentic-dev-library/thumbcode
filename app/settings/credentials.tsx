@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { Alert, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge } from '@/components/display';
-import { LinkIcon, SecurityIcon, type IconColor } from '@/components/icons';
+import { type IconColor, LinkIcon, SecurityIcon } from '@/components/icons';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 

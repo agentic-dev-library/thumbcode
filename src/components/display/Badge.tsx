@@ -7,12 +7,8 @@
 
 import type React from 'react';
 import { View } from 'react-native';
+import { CloseIcon, type IconColor, SuccessIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
-import {
-  SuccessIcon,
-  CloseIcon,
-  type IconColor,
-} from '@/components/icons';
 
 type BadgeVariant = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error';
 type BadgeSize = 'sm' | 'md' | 'lg';
@@ -113,7 +109,13 @@ interface StatusBadgeProps {
 
 const statusConfig: Record<
   StatusBadgeProps['status'],
-  { variant: BadgeVariant; Icon?: BadgeIconComponent; textIcon?: string; iconColor: IconColor; label: string }
+  {
+    variant: BadgeVariant;
+    Icon?: BadgeIconComponent;
+    textIcon?: string;
+    iconColor: IconColor;
+    label: string;
+  }
 > = {
   active: { variant: 'success', textIcon: '●', iconColor: 'teal', label: 'Active' },
   inactive: { variant: 'default', textIcon: '○', iconColor: 'warmGray', label: 'Inactive' },

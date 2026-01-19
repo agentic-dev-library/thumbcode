@@ -12,12 +12,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge, StatusBadge } from '@/components/display';
 import { ProgressBar } from '@/components/feedback';
 import {
-  StarIcon,
+  type IconColor,
   LightningIcon,
   ReviewIcon,
-  TestIcon,
+  StarIcon,
   SuccessIcon,
-  type IconColor,
+  TestIcon,
 } from '@/components/icons';
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';

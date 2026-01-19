@@ -8,13 +8,8 @@
 
 import type { ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
+import { ErrorIcon, type IconColor, InboxIcon, SearchIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
-import {
-  InboxIcon,
-  ErrorIcon,
-  SearchIcon,
-  type IconColor,
-} from '@/components/icons';
 
 /** Icon component type for EmptyState */
 type EmptyStateIcon = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
@@ -68,7 +63,9 @@ export function EmptyState({
         <Icon size={styles.iconSize} color={iconColor} turbulence={0.25} />
       </View>
 
-      <Text variant="display" className={`${styles.title} text-white text-center mb-2`}>{title}</Text>
+      <Text variant="display" className={`${styles.title} text-white text-center mb-2`}>
+        {title}
+      </Text>
 
       {description && (
         <Text

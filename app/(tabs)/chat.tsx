@@ -6,18 +6,19 @@
  * Uses paint daube icons for brand consistency.
  */
 
-import React, { useRef, useState } from 'react';
+import type React from 'react';
+import { useRef, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, Pressable, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge } from '@/components/display';
 import {
-  StarIcon,
+  EditIcon,
+  type IconColor,
   LightningIcon,
   ReviewIcon,
   SearchIcon,
+  StarIcon,
   UserIcon,
-  EditIcon,
-  type IconColor,
 } from '@/components/icons';
 import { HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
@@ -86,13 +87,33 @@ function getAgentInfo(sender: MockMessage['sender']): {
 } {
   switch (sender) {
     case 'architect':
-      return { name: 'Architect', AvatarIcon: StarIcon, iconColor: 'gold', textColor: 'text-gold-400' };
+      return {
+        name: 'Architect',
+        AvatarIcon: StarIcon,
+        iconColor: 'gold',
+        textColor: 'text-gold-400',
+      };
     case 'implementer':
-      return { name: 'Implementer', AvatarIcon: LightningIcon, iconColor: 'teal', textColor: 'text-teal-400' };
+      return {
+        name: 'Implementer',
+        AvatarIcon: LightningIcon,
+        iconColor: 'teal',
+        textColor: 'text-teal-400',
+      };
     case 'reviewer':
-      return { name: 'Reviewer', AvatarIcon: ReviewIcon, iconColor: 'coral', textColor: 'text-coral-400' };
+      return {
+        name: 'Reviewer',
+        AvatarIcon: ReviewIcon,
+        iconColor: 'coral',
+        textColor: 'text-coral-400',
+      };
     case 'tester':
-      return { name: 'Tester', AvatarIcon: SearchIcon, iconColor: 'teal', textColor: 'text-purple-400' };
+      return {
+        name: 'Tester',
+        AvatarIcon: SearchIcon,
+        iconColor: 'teal',
+        textColor: 'text-purple-400',
+      };
     default:
       return { name: 'You', AvatarIcon: UserIcon, iconColor: 'warmGray', textColor: 'text-white' };
   }

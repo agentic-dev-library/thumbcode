@@ -10,14 +10,8 @@ import type React from 'react';
 import { useEffect, useRef } from 'react';
 import { Animated, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { CloseIcon, type IconColor, InfoIcon, SuccessIcon, WarningIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
-import {
-  SuccessIcon,
-  CloseIcon,
-  WarningIcon,
-  InfoIcon,
-  type IconColor,
-} from '@/components/icons';
 
 type ToastVariant = 'success' | 'error' | 'warning' | 'info';
 type ToastPosition = 'top' | 'bottom';

@@ -10,9 +10,9 @@ import { useState } from 'react';
 import { ActivityIndicator, Linking, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StepsProgress } from '@/components/feedback';
+import { LinkIcon, SuccessIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
-import { LinkIcon, SuccessIcon } from '@/components/icons';
 
 export default function GitHubAuthScreen() {
   const router = useRouter();

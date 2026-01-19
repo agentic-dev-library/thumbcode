@@ -6,17 +6,17 @@
  */
 
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Pressable, ScrollView, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge, EmptyState } from '@/components/display';
 import {
-  SearchIcon,
+  AgentIcon,
+  BranchIcon,
   FolderIcon,
   GitIcon,
-  BranchIcon,
+  SearchIcon,
   TasksIcon,
-  AgentIcon,
 } from '@/components/icons';
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';

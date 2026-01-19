@@ -6,24 +6,24 @@
  */
 
 import { useRouter } from 'expo-router';
-import React from 'react';
+import type React from 'react';
 import { Linking, Pressable, ScrollView, Switch, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar, Badge } from '@/components/display';
 import {
-  LinkIcon,
-  BrainIcon,
   AgentIcon,
-  PaletteIcon,
-  VibrateIcon,
   BellIcon,
-  KeyboardIcon,
-  BranchIcon,
   BookIcon,
-  SupportIcon,
-  LegalIcon,
-  InfoIcon,
+  BrainIcon,
+  BranchIcon,
   type IconColor,
+  InfoIcon,
+  KeyboardIcon,
+  LegalIcon,
+  LinkIcon,
+  PaletteIcon,
+  SupportIcon,
+  VibrateIcon,
 } from '@/components/icons';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';

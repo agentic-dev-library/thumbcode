@@ -8,20 +8,20 @@
 
 import { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
-import { Text } from '@/components/ui';
 import {
-  FolderIcon,
-  FolderOpenIcon,
-  FileIcon,
   FileCodeIcon,
+  FileConfigIcon,
   FileDataIcon,
   FileDocIcon,
+  FileIcon,
+  FileMediaIcon,
   FileStyleIcon,
   FileWebIcon,
-  FileMediaIcon,
-  FileConfigIcon,
+  FolderIcon,
+  FolderOpenIcon,
   type IconColor,
 } from '@/components/icons';
+import { Text } from '@/components/ui';
 
 interface FileNode {
   name: string;

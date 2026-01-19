@@ -6,16 +6,16 @@
  */
 
 import { Tabs } from 'expo-router';
-import React from 'react';
+import type React from 'react';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
-  HomeIcon,
-  FolderIcon,
   AgentIcon,
   ChatIcon,
-  SettingsIcon,
+  FolderIcon,
+  HomeIcon,
   type IconColor,
+  SettingsIcon,
 } from '@/components/icons';
 
 interface TabIconProps {
@@ -91,7 +91,9 @@ export default function TabLayout() {
         name="agents"
         options={{
           title: 'Agents',
-          tabBarIcon: ({ focused }) => <TabIcon Icon={AgentIcon} label="Agents" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon Icon={AgentIcon} label="Agents" focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen

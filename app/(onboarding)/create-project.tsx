@@ -12,9 +12,9 @@ import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StepsProgress } from '@/components/feedback';
+import { FolderIcon, SecurityIcon, StarIcon, SuccessIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
-import { SecurityIcon, FolderIcon, SuccessIcon, StarIcon } from '@/components/icons';
 
 interface Repository {
   id: string;
@@ -171,7 +171,9 @@ export default function CreateProjectScreen() {
                   <Text weight="semibold" className="text-white flex-1">
                     {repo.name}
                   </Text>
-                  {selectedRepo?.id === repo.id && <SuccessIcon size={18} color="teal" turbulence={0.15} />}
+                  {selectedRepo?.id === repo.id && (
+                    <SuccessIcon size={18} color="teal" turbulence={0.15} />
+                  )}
                 </View>
                 <Text size="sm" className="text-neutral-400" numberOfLines={1}>
                   {repo.description}
@@ -183,7 +185,9 @@ export default function CreateProjectScreen() {
                   {repo.stars > 0 && (
                     <View className="flex-row items-center ml-2">
                       <StarIcon size={12} color="gold" turbulence={0.15} />
-                      <Text size="xs" className="text-neutral-500 ml-1">{repo.stars}</Text>
+                      <Text size="xs" className="text-neutral-500 ml-1">
+                        {repo.stars}
+                      </Text>
                     </View>
                   )}
                 </View>

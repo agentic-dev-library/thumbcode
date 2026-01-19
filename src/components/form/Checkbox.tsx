@@ -7,8 +7,8 @@
  */
 
 import { Pressable, View } from 'react-native';
-import { Text } from '@/components/ui';
 import { SuccessIcon } from '@/components/icons';
+import { Text } from '@/components/ui';
 
 interface CheckboxProps {
   /** Whether the checkbox is checked */
@@ -62,9 +62,7 @@ export function Checkbox({
           borderBottomLeftRadius: 6,
         }}
       >
-        {checked && (
-          <SuccessIcon size={styles.icon} color="warmGray" turbulence={0.15} />
-        )}
+        {checked && <SuccessIcon size={styles.icon} color="warmGray" turbulence={0.15} />}
       </View>
       {(label || description) && (
         <View className="ml-3 flex-1">

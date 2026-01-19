@@ -6,19 +6,18 @@
  */
 
 import { useRouter } from 'expo-router';
-import React from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { VStack } from '@/components/layout';
-import { Text } from '@/components/ui';
 import {
   AgentIcon,
+  type IconVariant,
+  LightningIcon,
   MobileIcon,
   SecurityIcon,
-  LightningIcon,
   ThumbIcon,
-  type IconVariant,
 } from '@/components/icons';
+import { VStack } from '@/components/layout';
+import { Text } from '@/components/ui';
 
 interface Feature {
   icon: IconVariant;
@@ -108,7 +107,7 @@ export default function WelcomeScreen() {
 
         {/* Features */}
         <VStack spacing="md" className="mb-8">
-          {FEATURES.map((feature, index) => (
+          {FEATURES.map((feature, _index) => (
             <View
               key={feature.title}
               className="bg-surface p-4 flex-row items-start"

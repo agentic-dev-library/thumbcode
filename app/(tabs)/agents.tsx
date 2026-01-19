@@ -6,19 +6,20 @@
  */
 
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBadge } from '@/components/display';
 import { ProgressBar } from '@/components/feedback';
 import {
   AgentIcon,
-  SuccessIcon,
-  StarIcon,
+  type IconColor,
   LightningIcon,
   ReviewIcon,
   SearchIcon,
-  type IconColor,
+  StarIcon,
+  SuccessIcon,
 } from '@/components/icons';
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';

@@ -8,15 +8,15 @@
 
 import type { ApprovalMessage } from '@thumbcode/state';
 import { Pressable, View } from 'react-native';
-import { Text } from '@/components/ui';
 import {
-  EditIcon,
-  GitIcon,
   BranchIcon,
-  LightningIcon,
+  EditIcon,
   FileIcon,
+  GitIcon,
   type IconColor,
+  LightningIcon,
 } from '@/components/icons';
+import { Text } from '@/components/ui';
 
 /** Action icon component type */
 type ActionIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
@@ -43,7 +43,12 @@ function getActionInfo(actionType: ApprovalMessage['metadata']['actionType']): A
     push: { Icon: GitIcon, iconColor: 'coral', label: 'Push to Remote', bgColor: 'bg-coral-500' },
     merge: { Icon: BranchIcon, iconColor: 'gold', label: 'Merge Branch', bgColor: 'bg-gold-500' },
     deploy: { Icon: LightningIcon, iconColor: 'coral', label: 'Deploy', bgColor: 'bg-coral-600' },
-    file_change: { Icon: FileIcon, iconColor: 'teal', label: 'File Changes', bgColor: 'bg-teal-600' },
+    file_change: {
+      Icon: FileIcon,
+      iconColor: 'teal',
+      label: 'File Changes',
+      bgColor: 'bg-teal-600',
+    },
   };
   return actionMap[actionType] || actionMap.commit;
 }
@@ -71,7 +76,9 @@ export function ApprovalCard({ message, onApprove, onReject }: ApprovalCardProps
         <View className="mr-2">
           <actionInfo.Icon size={20} color={actionInfo.iconColor} turbulence={0.2} />
         </View>
-        <Text variant="display" className="text-base text-white flex-1">{actionInfo.label}</Text>
+        <Text variant="display" className="text-base text-white flex-1">
+          {actionInfo.label}
+        </Text>
         {!isPending && (
           <View
             className={`px-2 py-0.5 ${wasApproved ? 'bg-teal-600' : 'bg-coral-500'}`}

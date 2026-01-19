@@ -15,9 +15,8 @@
  * @see docs/brand/BRAND-GUIDELINES.md
  */
 
-import React from 'react';
 import { View } from 'react-native';
-import Svg, { Defs, Filter, FeTurbulence, FeDisplacementMap, Path, G } from 'react-native-svg';
+import Svg, { Defs, FeDisplacementMap, FeTurbulence, Filter, G, Path } from 'react-native-svg';
 
 // Brand color hex values (sRGB approximations of P3 palette)
 export const BRAND_COLORS = {
@@ -100,7 +99,7 @@ interface PaintDaubeIconProps {
 function generateOrganicOffset(seed: number, index: number, maxOffset: number = 1.5): number {
   // Simple seeded pseudo-random
   const x = Math.sin(seed * 9999 + index * 7919) * 10000;
-  return ((x - Math.floor(x)) - 0.5) * maxOffset * 2;
+  return (x - Math.floor(x) - 0.5) * maxOffset * 2;
 }
 
 /**
@@ -1054,12 +1053,7 @@ export function PaintDaubeIcon({
 
   return (
     <View style={{ width: size, height: size }}>
-      <Svg
-        width={size}
-        height={size}
-        viewBox="0 0 24 24"
-        fill="none"
-      >
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
         <PaintDaubeFilter id={filterId} turbulence={turbulence} />
         <G filter={`url(#${filterId})`}>
           <Path

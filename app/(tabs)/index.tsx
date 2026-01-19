@@ -6,19 +6,18 @@
  */
 
 import { useRouter } from 'expo-router';
-import React from 'react';
+import type React from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar, Badge } from '@/components/display';
 import { ProgressBar } from '@/components/feedback';
 import {
-  FolderIcon,
   AgentIcon,
-  TasksIcon,
-  EditIcon,
-  SuccessIcon,
   BellIcon,
-  type IconColor,
+  EditIcon,
+  FolderIcon,
+  SuccessIcon,
+  TasksIcon,
 } from '@/components/icons';
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
@@ -80,13 +79,7 @@ function getStatusColor(status: string): string {
 }
 
 /** Returns the appropriate icon component for activity type */
-function ActivityIcon({
-  type,
-  size = 20,
-}: {
-  type: string;
-  size?: number;
-}): React.ReactElement {
+function ActivityIcon({ type, size = 20 }: { type: string; size?: number }): React.ReactElement {
   const iconProps = { size, turbulence: 0.2 };
   switch (type) {
     case 'commit':

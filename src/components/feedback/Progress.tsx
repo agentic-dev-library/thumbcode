@@ -7,8 +7,8 @@
 
 import { useEffect, useRef } from 'react';
 import { Animated, View } from 'react-native';
-import { Text } from '@/components/ui';
 import { SuccessIcon } from '@/components/icons';
+import { Text } from '@/components/ui';
 
 interface ProgressBarProps {
   /** Progress value between 0 and 100 */
