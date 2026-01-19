@@ -1,0 +1,67 @@
+name: Deploy to production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  fingerprint:
+    name: Fingerprint
+    type: fingerprint
+
+  # NOTE: get-build intentionally uses default behavior (completed builds only).
+  # If a build is in-progress, we skip and let it complete on its own.
+  # This prevents duplicate builds and OTA updates that would race with ongoing builds.
+  # Set wait_for_in_progress: true if you want to wait for in-progress builds instead.
+  get_android_build:
+    name: Check existing Android build
+    needs: [fingerprint]
+    type: get-build
+    params:
+      fingerprint_hash: ${{ needs.fingerprint.outputs.android_fingerprint_hash }}
+      profile: production
+
+  get_ios_build:
+    name: Check existing iOS build
+    needs: [fingerprint]
+    type: get-build
+    params:
+      fingerprint_hash: ${{ needs.fingerprint.outputs.ios_fingerprint_hash }}
+      profile: production
+
+  build_android:
+    name: Build Android
+    needs: [get_android_build]
+    if: ${{ !needs.get_android_build.outputs.build_id }}
+    type: build
+    params:
+      platform: android
+      profile: production
+
+  build_ios:
+    name: Build iOS
+    needs: [get_ios_build]
+    if: ${{ !needs.get_ios_build.outputs.build_id }}
+    type: build
+    params:
+      platform: ios
+      profile: production
+
+  publish_android_update:
+    name: Publish Android OTA update
+    needs: [get_android_build]
+    if: ${{ needs.get_android_build.outputs.build_id }}
+    type: update
+    params:
+      branch: production
+      platform: android
+
+  publish_ios_update:
+    name: Publish iOS OTA update
+    needs: [get_ios_build]
+    if: ${{ needs.get_ios_build.outputs.build_id }}
+    type: update
+    params:
+      branch: production
+      platform: ios

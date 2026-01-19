@@ -136,7 +136,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 
       // EAS configuration
       eas: {
-        projectId: process.env.EXPO_PROJECT_ID || '',
+        projectId: process.env.EXPO_PROJECT_ID || '36e52acc-b39a-4bfa-a9dc-4a1053e87032',
       },
 
       // Public environment variables (accessible at runtime)
@@ -144,6 +144,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       githubClientId: process.env.EXPO_PUBLIC_GITHUB_CLIENT_ID || '',
     },
 
-    owner: process.env.EXPO_OWNER || 'thumbcode',
+    owner: process.env.EXPO_OWNER || 'jbcom',
   };
 };
