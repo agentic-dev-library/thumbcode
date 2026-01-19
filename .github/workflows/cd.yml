@@ -163,62 +163,12 @@ jobs:
           eas build --platform ios --profile $PROFILE --non-interactive --no-wait
 
   # ============================================
-  # Production Deployment (App Store / Play Store)
+  # NOTE: App Store Submissions
   # ============================================
-  submit-android:
-    name: Submit to Play Store
-    if: |
-      github.event_name == 'workflow_dispatch' &&
-      github.event.inputs.profile == 'production' &&
-      (github.event.inputs.platform == 'all' || github.event.inputs.platform == 'android')
-    needs: build-android
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    environment: production
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Setup ThumbCode environment
-        uses: ./.github/actions/setup-thumbcode
-
-      - name: Setup Expo and EAS
-        uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-
-      - name: Submit to Play Store
-        run: eas submit --platform android --latest --non-interactive
-        env:
-          EXPO_ANDROID_SERVICE_ACCOUNT_KEY_PATH: ${{ secrets.EXPO_ANDROID_SERVICE_ACCOUNT_KEY_PATH }}
-
-  submit-ios:
-    name: Submit to App Store
-    if: |
-      github.event_name == 'workflow_dispatch' &&
-      github.event.inputs.profile == 'production' &&
-      (github.event.inputs.platform == 'all' || github.event.inputs.platform == 'ios')
-    needs: build-ios
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    environment: production
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Setup ThumbCode environment
-        uses: ./.github/actions/setup-thumbcode
-
-      - name: Setup Expo and EAS
-        uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-
-      - name: Submit to App Store
-        run: eas submit --platform ios --latest --non-interactive
-        env:
-          EXPO_APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.EXPO_APPLE_APP_SPECIFIC_PASSWORD }}
+  # Production submission jobs are not yet configured.
+  # See issue #66 for required credentials and setup.
+  #
+  # Current release strategy:
+  # - Web staging: Automatic via Render.com (render.yaml)
+  # - Mobile builds: Download from expo.dev after EAS build completes
+  # - Debug APK: Can be downloaded from expo.dev build artifacts
