@@ -1,6 +1,7 @@
 {
   "name": "thumbcode",
   "version": "0.1.0",
+  "packageManager": "pnpm@10.11.0",
   "description": "Code with your thumbs. A decentralized multi-agent mobile development platform.",
   "main": "expo-router/entry",
   "scripts": {
