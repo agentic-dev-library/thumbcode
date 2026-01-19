@@ -3,6 +3,7 @@ import {
   type TextInputProps as RNTextInputProps,
   View,
 } from 'react-native';
+import { organicBorderRadius } from '@/lib/organic-styles';
 import { Text } from './Text';
 
 interface InputProps extends RNTextInputProps {
@@ -21,7 +22,10 @@ interface InputProps extends RNTextInputProps {
  * @param className - Additional class names applied to the input element
  * @returns A React element containing the labeled input and optional error message
  */
-export function Input({ label, error, className = '', ...props }: InputProps) {
+/** Placeholder color from design tokens - neutral-400 */
+const PLACEHOLDER_COLOR = '#94A3B8';
+
+export function Input({ label, error, className = '', style, ...props }: InputProps) {
   return (
     <View className="w-full">
       {label && <Text className="mb-2 text-neutral-700 font-medium">{label}</Text>}
@@ -30,12 +34,12 @@ export function Input({ label, error, className = '', ...props }: InputProps) {
           bg-white
           border-2
           ${error ? 'border-coral-500' : 'border-neutral-200'}
-          rounded-[0.5rem_0.625rem_0.5rem_0.75rem]
           px-4 py-3
           font-body text-base text-neutral-900
           ${className}
         `}
-        placeholderTextColor="#94A3B8"
+        style={[organicBorderRadius.textInput, style]}
+        placeholderTextColor={PLACEHOLDER_COLOR}
         {...props}
       />
       {error && <Text className="mt-1 text-sm text-coral-500">{error}</Text>}

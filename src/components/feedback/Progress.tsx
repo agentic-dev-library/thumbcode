@@ -9,6 +9,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, View } from 'react-native';
 import { SuccessIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface ProgressBarProps {
   /** Progress value between 0 and 100 */
@@ -208,12 +209,7 @@ export function StepsProgress({ totalSteps, currentStep, labels }: StepsProgress
                 className={`w-8 h-8 items-center justify-center ${
                   isCompleted ? 'bg-teal-600' : isCurrent ? 'bg-coral-500' : 'bg-neutral-700'
                 }`}
-                style={{
-                  borderTopLeftRadius: 8,
-                  borderTopRightRadius: 10,
-                  borderBottomRightRadius: 8,
-                  borderBottomLeftRadius: 12,
-                }}
+                style={organicBorderRadius.button}
               >
                 {isCompleted ? (
                   <SuccessIcon size={14} color="warmGray" turbulence={0.15} />

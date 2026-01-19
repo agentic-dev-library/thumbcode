@@ -14,6 +14,7 @@ import { StepsProgress } from '@/components/feedback';
 import { CloseIcon, LightbulbIcon, SecurityIcon, SuccessIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface APIKeyState {
   key: string;
@@ -121,15 +122,7 @@ export default function ApiKeysScreen() {
           </VStack>
 
           {/* Security Notice */}
-          <View
-            className="bg-teal-600/10 p-4 mb-6"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-            }}
-          >
+          <View className="bg-teal-600/10 p-4 mb-6" style={organicBorderRadius.card}>
             <View className="flex-row items-center mb-2">
               <View className="mr-2">
                 <SecurityIcon size={20} color="teal" turbulence={0.2} />
@@ -201,15 +194,7 @@ export default function ApiKeysScreen() {
           </VStack>
 
           {/* Optional Badge */}
-          <View
-            className="bg-surface p-4"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-            }}
-          >
+          <View className="bg-surface p-4" style={organicBorderRadius.card}>
             <View className="flex-row items-start">
               <View className="mr-2 mt-0.5">
                 <LightbulbIcon size={16} color="gold" turbulence={0.2} />
@@ -231,12 +216,7 @@ export default function ApiKeysScreen() {
         <Pressable
           onPress={handleSkip}
           className="flex-1 bg-neutral-800 py-4 active:bg-neutral-700"
-          style={{
-            borderTopLeftRadius: 14,
-            borderTopRightRadius: 16,
-            borderBottomRightRadius: 12,
-            borderBottomLeftRadius: 18,
-          }}
+          style={organicBorderRadius.cta}
         >
           <Text className="text-neutral-300 text-center">Skip for Now</Text>
         </Pressable>
@@ -245,12 +225,7 @@ export default function ApiKeysScreen() {
           onPress={handleContinue}
           disabled={!hasAtLeastOneKey}
           className={`flex-1 py-4 ${hasAtLeastOneKey ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}
-          style={{
-            borderTopLeftRadius: 14,
-            borderTopRightRadius: 16,
-            borderBottomRightRadius: 12,
-            borderBottomLeftRadius: 18,
-          }}
+          style={organicBorderRadius.cta}
         >
           <Text
             weight="semibold"

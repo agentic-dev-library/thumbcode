@@ -15,6 +15,7 @@ import { StepsProgress } from '@/components/feedback';
 import { FolderIcon, SecurityIcon, StarIcon, SuccessIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface Repository {
   id: string;
@@ -153,12 +154,7 @@ export default function CreateProjectScreen() {
                 key={repo.id}
                 onPress={() => setSelectedRepo(repo)}
                 className={`p-4 ${selectedRepo?.id === repo.id ? 'bg-teal-600/20 border-teal-600' : 'bg-surface border-transparent'} border`}
-                style={{
-                  borderTopLeftRadius: 14,
-                  borderTopRightRadius: 12,
-                  borderBottomRightRadius: 16,
-                  borderBottomLeftRadius: 10,
-                }}
+                style={organicBorderRadius.card}
               >
                 <View className="flex-row items-center mb-2">
                   <View className="mr-2">
@@ -198,12 +194,7 @@ export default function CreateProjectScreen() {
           {/* Create New Option (Coming Soon) */}
           <View
             className="mt-4 p-4 border border-dashed border-neutral-700 opacity-50"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-            }}
+            style={organicBorderRadius.card}
           >
             <View className="flex-row items-center justify-center">
               <Text className="text-neutral-500">+ Create new repository (coming soon)</Text>
@@ -220,12 +211,7 @@ export default function CreateProjectScreen() {
         <Pressable
           onPress={handleSkip}
           className="flex-1 bg-neutral-800 py-4 active:bg-neutral-700"
-          style={{
-            borderTopLeftRadius: 14,
-            borderTopRightRadius: 16,
-            borderBottomRightRadius: 12,
-            borderBottomLeftRadius: 18,
-          }}
+          style={organicBorderRadius.cta}
         >
           <Text className="text-neutral-300 text-center">Skip for Now</Text>
         </Pressable>
@@ -234,12 +220,7 @@ export default function CreateProjectScreen() {
           onPress={handleCreate}
           disabled={!canCreate || isLoading}
           className={`flex-1 py-4 ${canCreate && !isLoading ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}
-          style={{
-            borderTopLeftRadius: 14,
-            borderTopRightRadius: 16,
-            borderBottomRightRadius: 12,
-            borderBottomLeftRadius: 18,
-          }}
+          style={organicBorderRadius.cta}
         >
           {isLoading ? (
             <ActivityIndicator color="#fff" />

@@ -22,6 +22,7 @@ import {
 } from '@/components/icons';
 import { HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 // Simple message type for the mock screen
 interface MockMessage {
@@ -129,12 +130,7 @@ function MockMessageBubble({ message }: { message: MockMessage }) {
         <HStack spacing="sm" align="center" className="mb-2">
           <View
             className="w-8 h-8 bg-surface items-center justify-center"
-            style={{
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 8,
-              borderBottomRightRadius: 12,
-              borderBottomLeftRadius: 6,
-            }}
+            style={organicBorderRadius.badge}
           >
             <agentInfo.AvatarIcon size={18} color={agentInfo.iconColor} turbulence={0.2} />
           </View>
@@ -188,15 +184,7 @@ function MockApprovalCard({
   onReject: () => void;
 }) {
   return (
-    <View
-      className="bg-surface p-4"
-      style={{
-        borderTopLeftRadius: 16,
-        borderTopRightRadius: 14,
-        borderBottomRightRadius: 18,
-        borderBottomLeftRadius: 12,
-      }}
-    >
+    <View className="bg-surface p-4" style={organicBorderRadius.card}>
       <HStack justify="between" align="center" className="mb-3">
         <HStack spacing="sm" align="center">
           <EditIcon size={22} color="gold" turbulence={0.2} />
@@ -234,24 +222,14 @@ function MockApprovalCard({
         <Pressable
           onPress={onReject}
           className="flex-1 bg-surface-elevated py-3 active:bg-neutral-700"
-          style={{
-            borderTopLeftRadius: 10,
-            borderTopRightRadius: 8,
-            borderBottomRightRadius: 12,
-            borderBottomLeftRadius: 6,
-          }}
+          style={organicBorderRadius.button}
         >
           <Text className="text-center text-neutral-400">Reject</Text>
         </Pressable>
         <Pressable
           onPress={onApprove}
           className="flex-1 bg-teal-600 py-3 active:bg-teal-700"
-          style={{
-            borderTopLeftRadius: 10,
-            borderTopRightRadius: 8,
-            borderBottomRightRadius: 12,
-            borderBottomLeftRadius: 6,
-          }}
+          style={organicBorderRadius.button}
         >
           <Text className="text-center text-white font-semibold">Approve</Text>
         </Pressable>
@@ -295,12 +273,7 @@ function MockChatInput({ onSend }: { onSend: (text: string) => void }) {
         onPress={handleSend}
         disabled={!text.trim()}
         className={`w-12 h-12 items-center justify-center ${text.trim() ? 'bg-coral-500' : 'bg-surface'}`}
-        style={{
-          borderTopLeftRadius: 14,
-          borderTopRightRadius: 12,
-          borderBottomRightRadius: 16,
-          borderBottomLeftRadius: 10,
-        }}
+        style={organicBorderRadius.card}
       >
         <Text className={text.trim() ? 'text-white' : 'text-neutral-500'}>↑</Text>
       </Pressable>

@@ -8,6 +8,7 @@
 import type { ReactNode } from 'react';
 import { useRef, useState } from 'react';
 import { Animated, type LayoutRectangle, Pressable, Text, View } from 'react-native';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
@@ -98,16 +99,7 @@ export function Tooltip({ content, children, position = 'top', delay = 500 }: To
       {visible && (
         <Animated.View
           className="absolute z-50 bg-neutral-800 px-3 py-2"
-          style={[
-            { opacity },
-            {
-              borderTopLeftRadius: 8,
-              borderTopRightRadius: 10,
-              borderBottomRightRadius: 8,
-              borderBottomLeftRadius: 12,
-            },
-            getTooltipStyle() as object,
-          ]}
+          style={[{ opacity }, organicBorderRadius.badge, getTooltipStyle() as object]}
         >
           <Text className="font-body text-sm text-white whitespace-nowrap">{content}</Text>
         </Animated.View>

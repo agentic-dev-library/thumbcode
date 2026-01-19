@@ -12,6 +12,7 @@ import { Badge } from '@/components/display';
 import { type IconColor, LinkIcon, SecurityIcon } from '@/components/icons';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 type CredentialIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 
@@ -41,12 +42,7 @@ function CredentialItem({
       <HStack align="start">
         <View
           className="w-12 h-12 bg-surface-elevated items-center justify-center mr-4"
-          style={{
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 10,
-            borderBottomRightRadius: 14,
-            borderBottomLeftRadius: 8,
-          }}
+          style={organicBorderRadius.badge}
         >
           <Icon size={24} color={iconColor} turbulence={0.2} />
         </View>
@@ -75,12 +71,7 @@ function CredentialItem({
         <Pressable
           onPress={isConnected ? onDisconnect : onConnect}
           className={`px-4 py-2 ${isConnected ? 'bg-coral-500/20' : 'bg-teal-500/20'}`}
-          style={{
-            borderTopLeftRadius: 10,
-            borderTopRightRadius: 8,
-            borderBottomRightRadius: 12,
-            borderBottomLeftRadius: 6,
-          }}
+          style={organicBorderRadius.button}
         >
           <Text className={isConnected ? 'text-coral-500' : 'text-teal-500'}>
             {isConnected ? 'Remove' : 'Connect'}
@@ -128,12 +119,7 @@ function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: Api
         <VStack spacing="sm">
           <View
             className="bg-charcoal border border-neutral-700 px-4 py-3"
-            style={{
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 8,
-              borderBottomRightRadius: 12,
-              borderBottomLeftRadius: 6,
-            }}
+            style={organicBorderRadius.input}
           >
             <TextInput
               placeholder={placeholder}
@@ -151,12 +137,7 @@ function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: Api
               onPress={handleSave}
               disabled={!canSave}
               className={`flex-1 py-3 ${canSave ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}
-              style={{
-                borderTopLeftRadius: 10,
-                borderTopRightRadius: 8,
-                borderBottomRightRadius: 12,
-                borderBottomLeftRadius: 6,
-              }}
+              style={organicBorderRadius.button}
             >
               <Text
                 className={`text-center font-semibold ${canSave ? 'text-white' : 'text-neutral-500'}`}
@@ -168,12 +149,7 @@ function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: Api
               <Pressable
                 onPress={() => setIsEditing(false)}
                 className="flex-1 bg-surface py-3 active:bg-neutral-700"
-                style={{
-                  borderTopLeftRadius: 10,
-                  borderTopRightRadius: 8,
-                  borderBottomRightRadius: 12,
-                  borderBottomLeftRadius: 6,
-                }}
+                style={organicBorderRadius.button}
               >
                 <Text className="text-center text-white">Cancel</Text>
               </Pressable>
@@ -184,12 +160,7 @@ function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: Api
         <Pressable
           onPress={() => setIsEditing(true)}
           className="bg-charcoal border border-neutral-700 px-4 py-3"
-          style={{
-            borderTopLeftRadius: 10,
-            borderTopRightRadius: 8,
-            borderBottomRightRadius: 12,
-            borderBottomLeftRadius: 6,
-          }}
+          style={organicBorderRadius.input}
         >
           <Text className="text-neutral-500">••••••••••••••••</Text>
         </Pressable>
@@ -248,13 +219,7 @@ export default function CredentialsScreen() {
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-              overflow: 'hidden',
-            }}
+            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
           >
             <View className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
@@ -279,13 +244,7 @@ export default function CredentialsScreen() {
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-              overflow: 'hidden',
-            }}
+            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
           >
             <View className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
@@ -314,15 +273,7 @@ export default function CredentialsScreen() {
           </VStack>
 
           {/* Security Info */}
-          <View
-            className="bg-teal-500/10 p-4"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-            }}
-          >
+          <View className="bg-teal-500/10 p-4" style={organicBorderRadius.card}>
             <HStack spacing="sm" align="start">
               <View className="mt-0.5">
                 <SecurityIcon size={18} color="teal" turbulence={0.2} />
