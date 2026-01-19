@@ -169,7 +169,12 @@ export function Toast({
               <Text className="font-body text-sm text-teal-400 font-semibold">{action.label}</Text>
             </Pressable>
           )}
-          <Pressable onPress={onDismiss} className="p-1">
+          <Pressable
+            onPress={onDismiss}
+            className="p-1"
+            accessibilityRole="button"
+            accessibilityLabel="Dismiss notification"
+          >
             <CloseIcon size={16} color="warmGray" turbulence={0.15} />
           </Pressable>
         </View>
