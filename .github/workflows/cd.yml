@@ -191,6 +191,8 @@ jobs:
 
       - name: Submit to Play Store
         run: eas submit --platform android --latest --non-interactive
+        env:
+          EXPO_ANDROID_SERVICE_ACCOUNT_KEY_PATH: ${{ secrets.EXPO_ANDROID_SERVICE_ACCOUNT_KEY_PATH }}
 
   submit-ios:
     name: Submit to App Store

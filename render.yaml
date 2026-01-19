@@ -25,17 +25,18 @@ services:
       - path: /*
         name: Permissions-Policy
         value: camera=(), microphone=(), geolocation=()
-      # Staging: no-cache for HTML to always get fresh builds
-      - path: /*
-        name: Cache-Control
-        value: no-cache, no-store, must-revalidate
-      # But cache static assets aggressively (they're hashed)
+      # Cache static assets aggressively (hashed filenames)
+      # NOTE: Specific paths must come BEFORE /* to avoid nondeterministic matching
       - path: /assets/*
         name: Cache-Control
         value: public, max-age=31536000, immutable
       - path: /_expo/*
         name: Cache-Control
         value: public, max-age=31536000, immutable
+      # Staging: no-cache for HTML to always get fresh builds
+      - path: /*
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
     routes:
       # SPA fallback - all routes serve index.html
       - type: rewrite
