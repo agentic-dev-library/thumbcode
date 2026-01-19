@@ -65,7 +65,8 @@
       "!**/packages",
       "!index.html",
       "!**/playwright-report",
-      "!**/test-results"
+      "!**/test-results",
+      "!**/.astro"
     ]
   }
 }

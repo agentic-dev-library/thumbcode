@@ -3,10 +3,12 @@
  *
  * User-friendly error display with retry functionality.
  * Follows ThumbCode's organic design language.
+ * Uses paint daube icons for brand consistency.
  */
 
 import { Alert, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ErrorIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 
@@ -56,7 +58,7 @@ export function ErrorFallback({
               borderBottomLeftRadius: 38,
             }}
           >
-            <Text className="text-4xl">⚠️</Text>
+            <ErrorIcon size={40} color="coral" turbulence={0.25} />
           </View>
 
           {/* Error Title */}

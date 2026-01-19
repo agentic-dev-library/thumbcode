@@ -2,13 +2,23 @@
  * Home Screen (Dashboard)
  *
  * Main dashboard showing overview of projects, agents, and recent activity.
+ * Uses paint daube icons for brand consistency.
  */
 
 import { useRouter } from 'expo-router';
+import type React from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar, Badge } from '@/components/display';
 import { ProgressBar } from '@/components/feedback';
+import {
+  AgentIcon,
+  BellIcon,
+  EditIcon,
+  FolderIcon,
+  SuccessIcon,
+  TasksIcon,
+} from '@/components/icons';
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 
@@ -68,16 +78,18 @@ function getStatusColor(status: string): string {
   }
 }
 
-function getActivityIcon(type: string): string {
+/** Returns the appropriate icon component for activity type */
+function ActivityIcon({ type, size = 20 }: { type: string; size?: number }): React.ReactElement {
+  const iconProps = { size, turbulence: 0.2 };
   switch (type) {
     case 'commit':
-      return '📝';
+      return <EditIcon {...iconProps} color="teal" />;
     case 'review':
-      return '✅';
+      return <SuccessIcon {...iconProps} color="teal" />;
     case 'task':
-      return '📋';
+      return <TasksIcon {...iconProps} color="gold" />;
     default:
-      return '🔔';
+      return <BellIcon {...iconProps} color="coral" />;
   }
 }
 
@@ -113,7 +125,9 @@ export default function HomeScreen() {
               borderBottomLeftRadius: 10,
             }}
           >
-            <Text className="text-3xl mb-2">📁</Text>
+            <View className="mb-2">
+              <FolderIcon size={32} color="teal" turbulence={0.2} />
+            </View>
             <Text size="2xl" weight="bold" className="text-white">
               {MOCK_STATS.activeProjects}
             </Text>
@@ -131,7 +145,9 @@ export default function HomeScreen() {
               borderBottomLeftRadius: 10,
             }}
           >
-            <Text className="text-3xl mb-2">🤖</Text>
+            <View className="mb-2">
+              <AgentIcon size={32} color="coral" turbulence={0.2} />
+            </View>
             <Text size="2xl" weight="bold" className="text-white">
               {MOCK_STATS.runningAgents}
             </Text>
@@ -149,7 +165,9 @@ export default function HomeScreen() {
               borderBottomLeftRadius: 10,
             }}
           >
-            <Text className="text-3xl mb-2">📋</Text>
+            <View className="mb-2">
+              <TasksIcon size={32} color="gold" turbulence={0.2} />
+            </View>
             <Text size="2xl" weight="bold" className="text-white">
               {MOCK_STATS.pendingTasks}
             </Text>
@@ -264,7 +282,7 @@ export default function HomeScreen() {
                     borderBottomLeftRadius: 8,
                   }}
                 >
-                  <Text>{getActivityIcon(activity.type)}</Text>
+                  <ActivityIcon type={activity.type} />
                 </View>
                 <VStack spacing="xs" className="flex-1">
                   <Text size="sm" className="text-white">

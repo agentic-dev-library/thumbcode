@@ -1,0 +1,15 @@
+<svg viewBox="0 0 120 30" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="organic-light">
+      <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="3" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+  <g filter="url(#organic-light)">
+    <!-- Thumbprint icon -->
+    <circle cx="15" cy="15" r="12" fill="#FF7059"/>
+    <path d="M10 15 Q12 12 15 15 Q18 18 20 15" stroke="#151820" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M11 12 Q14 10 17 12" stroke="#151820" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <path d="M11 18 Q14 20 17 18" stroke="#151820" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+  </g>
+</svg>

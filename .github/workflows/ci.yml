@@ -18,6 +18,42 @@ permissions:
   statuses: write
 
 jobs:
+  expo-compatibility-report:
+    name: Expo Go Compatibility Report
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup ThumbCode environment
+        uses: ./.github/actions/setup-thumbcode
+
+      - name: Check Expo Go compatibility
+        id: expo-check
+        run: pnpm run check:expo-compatibility
+
+      - name: Add summary
+        run: |
+          echo "## Expo Go Compatibility Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "ThumbCode **intentionally requires a custom development build** and is not compatible with Expo Go." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Why?" >> $GITHUB_STEP_SUMMARY
+          echo "ThumbCode uses native security modules for:" >> $GITHUB_STEP_SUMMARY
+          echo "- **expo-secure-store**: Hardware-backed credential storage" >> $GITHUB_STEP_SUMMARY
+          echo "- **expo-local-authentication**: Biometric unlock" >> $GITHUB_STEP_SUMMARY
+          echo "- **react-native-ssl-public-key-pinning**: Certificate pinning" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Commands" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo 'pnpm run build:dev --platform ios     # iOS' >> $GITHUB_STEP_SUMMARY
+          echo 'pnpm run build:dev --platform android # Android' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "See [docs/development/SETUP.md](../docs/development/SETUP.md) for details." >> $GITHUB_STEP_SUMMARY
+
   lint-and-typecheck:
     name: Lint & Type Check
     runs-on: ubuntu-latest

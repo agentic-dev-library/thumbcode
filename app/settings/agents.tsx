@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, Switch, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge } from '@/components/display';
+import { LightbulbIcon } from '@/components/icons';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 
@@ -284,7 +285,9 @@ export default function AgentSettingsScreen() {
             }}
           >
             <HStack spacing="sm" align="start">
-              <Text className="text-gold-500">💡</Text>
+              <View className="mt-0.5">
+                <LightbulbIcon size={18} color="gold" turbulence={0.2} />
+              </View>
               <VStack spacing="xs" className="flex-1">
                 <Text className="text-gold-400 font-semibold">Tip</Text>
                 <Text size="sm" className="text-gold-400/80">

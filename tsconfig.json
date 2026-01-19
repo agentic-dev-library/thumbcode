@@ -18,6 +18,7 @@
   "exclude": [
     "node_modules",
     "docs",
+    "docs-site",
     "packages/dev-tools",
     "packages/agent-intelligence",
     "packages/core",

@@ -3,10 +3,13 @@
  *
  * A dropdown select input with organic styling.
  * Displays options in a modal on mobile.
+ * Uses paint daube icons for brand consistency.
  */
 
 import { useState } from 'react';
-import { FlatList, Modal, Pressable, Text, View } from 'react-native';
+import { FlatList, Modal, Pressable, View } from 'react-native';
+import { ChevronDownIcon, SuccessIcon } from '@/components/icons';
+import { Text } from '@/components/ui';
 
 interface SelectOption {
   value: string;
@@ -77,7 +80,9 @@ export function Select({
         >
           {selectedOption?.label || placeholder}
         </Text>
-        <Text className="text-neutral-400 ml-2">▼</Text>
+        <View className="ml-2">
+          <ChevronDownIcon size={16} color="warmGray" turbulence={0.15} />
+        </View>
       </Pressable>
 
       {error && <Text className="font-body text-xs text-coral-400 mt-1">{error}</Text>}
@@ -124,7 +129,9 @@ export function Select({
                       >
                         {item.label}
                       </Text>
-                      {item.value === value && <Text className="text-teal-400">✓</Text>}
+                      {item.value === value && (
+                        <SuccessIcon size={16} color="teal" turbulence={0.15} />
+                      )}
                     </View>
                   </Pressable>
                 )}

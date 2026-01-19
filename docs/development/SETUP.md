@@ -21,6 +21,50 @@ See [ENVIRONMENT.md](./ENVIRONMENT.md) for detailed environment configuration.
 - Node.js 18+
 - pnpm (installed automatically by setup script)
 - iOS Simulator (Mac) or Android Emulator
+- **Apple Developer account** (for iOS builds) or **EAS account** (for cloud builds)
+
+### Custom Development Build Required
+
+> **ThumbCode does NOT work with Expo Go.** You must build a custom development client.
+
+ThumbCode uses native modules for essential security features that cannot run in Expo Go's sandboxed environment:
+
+| Dependency | Why It's Required | Expo Go Compatible? |
+|------------|-------------------|---------------------|
+| `expo-secure-store` | Hardware-backed storage for API keys | No |
+| `expo-local-authentication` | Biometric unlock for credentials | No |
+| `react-native-ssl-public-key-pinning` | SSL certificate pinning | No |
+| `newArchEnabled: true` | React Native New Architecture | No |
+
+#### First-Time Build Setup
+
+**Option A: Local Build (iOS Simulator)**
+```bash
+# Requires Xcode installed
+npx expo run:ios
+```
+
+**Option B: EAS Cloud Build (Recommended)**
+```bash
+# Build for iOS device/simulator
+pnpm run build:dev --platform ios
+
+# Build for Android device/emulator
+pnpm run build:dev --platform android
+```
+
+#### When to Rebuild
+
+You need to rebuild your development client when:
+- Adding new native modules (packages with native code)
+- Changing `app.config.ts` plugin configurations
+- Upgrading Expo SDK version
+- Changing `newArchEnabled` setting
+
+**You do NOT need to rebuild for:**
+- JavaScript/TypeScript code changes (hot reload works!)
+- Adding pure JavaScript packages
+- Changing environment variables
 
 ### Installation
 
@@ -249,6 +293,68 @@ If you're an AI agent working on this codebase, read these first:
 4. Use design tokens from [design-system/tokens.json](../design-system/tokens.json)
 5. Write tests for new features
 6. Use conventional commits
+
+## Troubleshooting
+
+### Common Native Module Errors
+
+**"Native module cannot be null" / "SecureStore is not available"**
+
+This error means you're trying to run the app in Expo Go instead of a custom development build.
+
+**Solution:**
+```bash
+# Build a development client first
+pnpm run build:dev --platform ios  # or android
+
+# Then start with the development client
+pnpm dev
+```
+
+**"Invariant Violation: Native module cannot be null"**
+
+Same issue - you need a custom development build. Expo Go cannot load native modules like `expo-secure-store`.
+
+**"Unable to resolve module" for native packages**
+
+After adding a new native package:
+```bash
+# Clear Metro cache
+npx expo start --clear
+
+# If that doesn't work, rebuild your dev client
+pnpm run build:dev --platform ios
+```
+
+**Build fails with "Missing credentials"**
+
+For iOS builds, you need:
+1. An Apple Developer account
+2. EAS configured with your Apple credentials
+
+```bash
+# Configure EAS credentials
+eas credentials
+```
+
+### Development vs Production Builds
+
+| Build Type | Profile | Use Case |
+|------------|---------|----------|
+| Development | `development` | Local development with hot reload |
+| Preview | `preview` | Internal testing, TestFlight |
+| Production | `production` | App Store / Play Store release |
+
+```bash
+# Development (includes dev tools, debugging)
+pnpm run build:dev --platform ios
+
+# Preview (internal testing)
+pnpm run build:preview --platform ios
+
+# Production (app store release)
+pnpm run build:production --platform ios
+```
 
 ## License
 

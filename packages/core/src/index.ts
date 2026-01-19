@@ -1,8 +1,23 @@
 /**
  * @thumbcode/core
  *
- * Core services for ThumbCode including Git operations and credential management.
+ * Core services for ThumbCode including Git operations, credential management,
+ * and authentication flows.
  */
+
+// Auth service
+export { GitHubAuthService } from './auth';
+export type {
+  AccessTokenResponse,
+  DeviceCodeResponse,
+  DeviceFlowError,
+  DeviceFlowOptions,
+  DeviceFlowState,
+  GitHubUser,
+  PollResult,
+  StartFlowResult,
+  TokenErrorResponse,
+} from './auth';
 
 // Git service
 export { GitService } from './git';

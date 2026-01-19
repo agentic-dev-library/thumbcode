@@ -23,8 +23,13 @@
 
 import * as Diff from 'diff';
 import * as FileSystem from 'expo-file-system';
-import git from 'isomorphic-git';
+import git, { type HttpClient } from 'isomorphic-git';
 import { gitHttpClient } from './GitHttpClient';
+
+// HTTP client adapter - bridges our implementation to isomorphic-git's HttpClient type
+// Our implementation uses AsyncIterableIterator which works with isomorphic-git at runtime
+// Using type assertion as the body types differ but are compatible at runtime
+const http = gitHttpClient as unknown as HttpClient;
 
 import type {
   BranchInfo,
@@ -219,7 +224,7 @@ class GitServiceClass {
 
       await git.clone({
         fs,
-        http: gitHttpClient,
+        http,
         dir,
         url,
         singleBranch: singleBranch ?? true,
@@ -263,7 +268,7 @@ class GitServiceClass {
 
       await git.fetch({
         fs,
-        http: gitHttpClient,
+        http,
         dir,
         remote,
         ref,
@@ -305,7 +310,7 @@ class GitServiceClass {
 
       await git.pull({
         fs,
-        http: gitHttpClient,
+        http,
         dir,
         remote,
         ref,
@@ -353,7 +358,7 @@ class GitServiceClass {
 
       await git.push({
         fs,
-        http: gitHttpClient,
+        http,
         dir,
         remote,
         ref,

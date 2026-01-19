@@ -1,0 +1,128 @@
+---
+title: Brand Guidelines
+description: ThumbCode P3 "Warm Technical" brand identity guidelines.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+# Brand Guidelines
+
+ThumbCode uses the P3 **"Warm Technical"** brand identity — technical but approachable, like a trusted tool that's also a friend.
+
+## Color Palette
+
+Our colors differentiate ThumbCode from the cold blue/purple tech aesthetic.
+
+### Primary Colors
+
+<CardGrid>
+  <Card title="Thumb Coral" icon="sun">
+    **#FF7059** — Primary brand color for logos, buttons, and key accents.
+  </Card>
+  <Card title="Digital Teal" icon="laptop">
+    **#0D9488** — Secondary for supporting elements and links.
+  </Card>
+  <Card title="Soft Gold" icon="star">
+    **#F5D563** — Accent for highlights and success states.
+  </Card>
+</CardGrid>
+
+### Base Colors
+
+| Name | Hex | Usage |
+|------|-----|-------|
+| Charcoal Navy | `#151820` | Dark mode backgrounds |
+| Off White | `#F8FAFC` | Light mode backgrounds |
+| Surface | `#1E293B` | Card backgrounds (dark) |
+
+### Mode Variants
+
+**Light Mode:**
+- Coral: `#E85A4F`
+- Teal: `#0F766E`
+- Gold: `#D4A84B`
+
+**High Contrast:**
+- Coral: `#A33832`
+- Teal: `#115E59`
+- Gold: `#A16207`
+
+## Typography
+
+### Font Families
+
+| Role | Font | Fallback |
+|------|------|----------|
+| Display | Fraunces | Georgia, serif |
+| Body | Cabin | system-ui, sans-serif |
+| Code | JetBrains Mono | monospace |
+
+### Usage
+
+- **Fraunces** for headlines, hero text, and the logo wordmark
+- **Cabin** for body text, UI elements, and labels
+- **JetBrains Mono** for code blocks and technical data
+
+### Google Fonts Import
+
+```html
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900&family=Cabin:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+```
+
+## Visual Style: Organic Paint Daubes
+
+ThumbCode uses **organic, imperfect shapes** — NOT gradients. This is critical brand differentiation.
+
+### Do
+
+- Use asymmetric border-radius
+- Add subtle rotation to cards
+- Use multi-layered organic shadows
+- Apply SVG turbulence filters
+
+### Don't
+
+- Use linear or radial gradients
+- Use perfectly rounded corners
+- Use flat, sterile UI patterns
+- Copy Material Design literally
+
+### CSS Patterns
+
+```css
+/* Organic button shape */
+.btn-organic {
+  border-radius: 50px 45px 50px 48px / 26px 28px 26px 24px;
+}
+
+/* Organic card with tilt */
+.card-organic {
+  border-radius: 20px 18px 22px 16px / 16px 20px 18px 22px;
+  transform: rotate(-0.3deg);
+}
+```
+
+## Logo
+
+The ThumbCode logo features a stylized thumbprint in Coral with organic paint texture.
+
+### Usage Rules
+
+- Maintain clear space equal to the logo height
+- Never stretch or distort the logo
+- Use the light version on dark backgrounds
+- Use the dark version on light backgrounds
+
+## Voice & Tone
+
+ThumbCode communication should be:
+
+- **Technical but accessible** — Use clear language, explain jargon
+- **Confident but humble** — We're proud of our work, not arrogant
+- **Helpful but not hand-holding** — Guide users, respect their intelligence
+- **Warm but professional** — Friendly without being casual
+
+## Resources
+
+- [Canva Brand Kit](https://www.canva.com/brand/brand-kit) (ID: `kAG-uqPJ8gk`)
+- [GitHub Repository](https://github.com/agentic-dev-library/thumbcode)

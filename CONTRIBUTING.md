@@ -25,18 +25,37 @@ Before making changes:
 
 ## For Human Contributors
 
+### Prerequisites
+
+> **ThumbCode requires a custom development build.** It does NOT work with Expo Go.
+
+Before contributing, ensure you can build and run ThumbCode:
+
+1. **Build a development client** (required once):
+   ```bash
+   pnpm run build:dev --platform ios   # or android
+   ```
+
+2. **Start development** (daily workflow):
+   ```bash
+   pnpm dev   # launches YOUR dev build, not Expo Go
+   ```
+
+See [docs/development/SETUP.md](docs/development/SETUP.md) for detailed build instructions and troubleshooting common "Native module cannot be null" errors.
+
 ### Getting Started
 
 1. Fork the repository
 2. Clone your fork
 3. Install dependencies: `pnpm install`
-4. Create a branch: `git checkout -b feature/your-feature-name`
+4. **Build development client**: `pnpm run build:dev --platform ios`
+5. Create a branch: `git checkout -b feature/your-feature-name`
 
 ### Development Workflow
 
 ```bash
-# Start development server
-pnpm start
+# Start development server (with custom dev client)
+pnpm dev
 
 # Run tests
 pnpm test
