@@ -11,6 +11,17 @@
 import type { TextStyle, ViewStyle } from 'react-native';
 
 /**
+ * Shared input border radius values
+ * Used by both View containers and TextInput components
+ */
+const inputBorderRadiusValues = {
+  borderTopLeftRadius: 8, // 0.5rem
+  borderTopRightRadius: 10, // 0.625rem
+  borderBottomRightRadius: 8, // 0.5rem
+  borderBottomLeftRadius: 12, // 0.75rem
+};
+
+/**
  * Organic border radius configurations
  * Each corner is slightly different to create the hand-crafted paint daube effect
  */
@@ -40,20 +51,10 @@ export const organicBorderRadius = {
   } as ViewStyle,
 
   /** Text inputs, form fields (for View containers) */
-  input: {
-    borderTopLeftRadius: 8, // 0.5rem
-    borderTopRightRadius: 10, // 0.625rem
-    borderBottomRightRadius: 8, // 0.5rem
-    borderBottomLeftRadius: 12, // 0.75rem
-  } as ViewStyle,
+  input: inputBorderRadiusValues as ViewStyle,
 
-  /** Text inputs (for TextInput components, typed as TextStyle) */
-  textInput: {
-    borderTopLeftRadius: 8, // 0.5rem
-    borderTopRightRadius: 10, // 0.625rem
-    borderBottomRightRadius: 8, // 0.5rem
-    borderBottomLeftRadius: 12, // 0.75rem
-  } as TextStyle,
+  /** Text inputs (for TextInput components - typed as TextStyle for compatibility) */
+  textInput: inputBorderRadiusValues as TextStyle,
 
   /** Hero elements, large icons, feature images */
   hero: {

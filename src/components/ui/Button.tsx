@@ -1,10 +1,4 @@
-import {
-  ActivityIndicator,
-  Pressable,
-  type PressableProps,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
+import { ActivityIndicator, Pressable, type PressableProps } from 'react-native';
 import { organicBorderRadius } from '@/lib/organic-styles';
 import { Text } from './Text';
 
@@ -71,7 +65,10 @@ export function Button({
         ${disabled || loading ? 'opacity-50' : 'opacity-100'}
         ${className}
       `}
-      style={[organicBorderRadius.button, style as StyleProp<ViewStyle>]}
+      style={(state) => [
+        organicBorderRadius.button,
+        typeof style === 'function' ? style(state) : style,
+      ]}
       {...props}
     >
       {loading ? (
