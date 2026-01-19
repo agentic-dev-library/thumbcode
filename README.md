@@ -377,6 +377,39 @@ ThumbCode rejects perfect uniformity in favor of organic, human-feeling design:
 
 While ThumbCode is in collaborative development, we welcome contributions from both humans and AI agents.
 
+### Development Build Required
+
+> **ThumbCode requires a custom development build and cannot run in Expo Go.**
+
+ThumbCode uses native modules for security features that are incompatible with Expo Go:
+
+| Native Module | Purpose | Why It's Required |
+|---------------|---------|-------------------|
+| `expo-secure-store` | Hardware-backed credential storage | BYOK architecture requires secure key storage |
+| `expo-local-authentication` | Biometric unlock | Protects API keys with device-level security |
+| `react-native-ssl-public-key-pinning` | Certificate pinning | Prevents man-in-the-middle attacks |
+
+**First-time setup (build once):**
+
+```bash
+# Build development client for iOS
+pnpm run build:dev --platform ios
+
+# OR build for Android
+pnpm run build:dev --platform android
+```
+
+**Daily development (after building once):**
+
+```bash
+# Start dev server with development client
+pnpm dev
+
+# This launches YOUR custom dev build, not Expo Go
+```
+
+See [docs/development/SETUP.md](docs/development/SETUP.md) for detailed build instructions and troubleshooting.
+
 ### Getting Started
 
 ```bash
@@ -387,8 +420,11 @@ cd thumbcode
 # Install dependencies (runs design token generation automatically)
 pnpm install
 
+# Build development client (required - does NOT work with Expo Go)
+pnpm run build:dev --platform ios   # or android
+
 # Start development server
-pnpm start
+pnpm dev
 ```
 
 ### Project Structure
