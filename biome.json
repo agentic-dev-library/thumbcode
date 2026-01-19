@@ -7,7 +7,8 @@
       "recommended": true,
       "complexity": {
         "noExcessiveCognitiveComplexity": "warn",
-        "noForEach": "off"
+        "noForEach": "off",
+        "noImportantStyles": "off"
       },
       "style": {
         "noNonNullAssertion": "warn",
@@ -62,7 +63,9 @@
       "!**/*.generated.*",
       "!**/design-system/generated",
       "!**/packages",
-      "!index.html"
+      "!index.html",
+      "!**/playwright-report",
+      "!**/test-results"
     ]
   }
 }
