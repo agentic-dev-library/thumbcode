@@ -141,8 +141,6 @@ export default function GitHubAuthScreen() {
     setFlowState('idle');
   }, []);
 
-  const isLoading = flowState === 'requesting_code' || flowState === 'polling';
-
   return (
     <View className="flex-1 bg-charcoal" style={{ paddingTop: insets.top }}>
       <Container padding="lg" className="flex-1">
