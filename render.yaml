@@ -5,7 +5,7 @@ services:
   - type: web
     name: thumbcode-staging
     runtime: static
-    buildCommand: pnpm install --frozen-lockfile && npx expo export --platform web
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && npx expo export --platform web
     staticPublishPath: ./dist
     pullRequestPreviewsEnabled: true
     headers:
@@ -19,6 +19,12 @@ services:
       - path: /*
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
+      - path: /*
+        name: Strict-Transport-Security
+        value: max-age=31536000; includeSubDomains
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=()
       # Staging: no-cache for HTML to always get fresh builds
       - path: /*
         name: Cache-Control

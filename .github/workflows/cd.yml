@@ -3,6 +3,17 @@ name: CD
 on:
   push:
     branches: [main]
+    paths:
+      - 'src/**'
+      - 'app.json'
+      - 'eas.json'
+      - 'package.json'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'app.json'
+      - 'eas.json'
   workflow_dispatch:
     inputs:
       platform:
@@ -49,11 +60,13 @@ jobs:
 
     steps:
       - name: Check for EXPO_TOKEN
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
-            echo "EXPO_TOKEN secret is required for EAS operations"
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::warning::EXPO_TOKEN secret is not configured. Skipping EAS update."
             echo "Learn more: https://docs.expo.dev/eas-update/github-actions"
-            exit 1
+            exit 0
           fi
 
       - name: Checkout code
@@ -79,16 +92,18 @@ jobs:
   build-android:
     name: Build Android
     if: |
-      github.event_name == 'push' ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_dispatch' && (github.event.inputs.platform == 'all' || github.event.inputs.platform == 'android'))
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
     steps:
       - name: Check for EXPO_TOKEN
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
-            echo "EXPO_TOKEN secret is required for EAS builds"
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::error::EXPO_TOKEN secret is required for EAS builds"
             exit 1
           fi
 
@@ -115,16 +130,18 @@ jobs:
   build-ios:
     name: Build iOS
     if: |
-      github.event_name == 'push' ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_dispatch' && (github.event.inputs.platform == 'all' || github.event.inputs.platform == 'ios'))
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
     steps:
       - name: Check for EXPO_TOKEN
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
-            echo "EXPO_TOKEN secret is required for EAS builds"
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::error::EXPO_TOKEN secret is required for EAS builds"
             exit 1
           fi
 
