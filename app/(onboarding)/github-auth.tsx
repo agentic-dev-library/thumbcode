@@ -27,7 +27,6 @@ if (!GITHUB_CLIENT_ID && __DEV__) {
   );
 }
 
-
 export default function GitHubAuthScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();

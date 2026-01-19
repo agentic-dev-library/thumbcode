@@ -38,6 +38,8 @@ class GitHubAuthServiceClass {
   private pollTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private pollAttempt: number = 0;
   private abortController: AbortController | null = null;
+  private pollResolve: ((result: PollResult) => void) | null = null;
+  private isCancelled = false;
 
   /**
    * Get the current state of the Device Flow
@@ -126,9 +128,18 @@ class GitHubAuthServiceClass {
 
     this.setState('polling', onStateChange);
     this.pollAttempt = 0;
+    this.isCancelled = false;
 
     return new Promise((resolve) => {
+      this.pollResolve = resolve;
+
       const poll = async () => {
+        // Check if cancelled before proceeding
+        if (this.isCancelled) {
+          resolve({ authorized: false, shouldContinue: false, error: 'Authorization cancelled.' });
+          return;
+        }
+
         this.pollAttempt++;
         onPollAttempt?.(this.pollAttempt, GITHUB_OAUTH.maxPollAttempts);
 
@@ -148,6 +159,12 @@ class GitHubAuthServiceClass {
 
         try {
           const result = await this.checkForToken(clientId);
+
+          // Check if cancelled after fetch returns to avoid stale results
+          if (this.isCancelled) {
+            resolve({ authorized: false, shouldContinue: false, error: 'Authorization cancelled.' });
+            return;
+          }
 
           if (result.authorized) {
             this.setState('success', onStateChange);
@@ -175,6 +192,13 @@ class GitHubAuthServiceClass {
           // Continue polling after interval
           this.pollTimeoutId = setTimeout(poll, this.pollInterval);
         } catch (error) {
+          // Handle cancellation via AbortError
+          if (error instanceof Error && error.name === 'AbortError') {
+            this.cleanup();
+            resolve({ authorized: false, shouldContinue: false, error: 'Polling cancelled' });
+            return;
+          }
+
           const errorMessage = error instanceof Error ? error.message : 'Poll request failed';
           this.setState('error', onStateChange);
           this.cleanup();
@@ -210,6 +234,7 @@ class GitHubAuthServiceClass {
         device_code: this.deviceCode!,
         grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
       }).toString(),
+      signal: this.abortController?.signal,
     });
 
     const data = await response.json();
@@ -268,7 +293,16 @@ class GitHubAuthServiceClass {
    * Cancel an ongoing Device Flow
    */
   cancel(): void {
+    this.isCancelled = true;
     this.abortController?.abort();
+
+    // Resolve any pending poll promise
+    this.pollResolve?.({
+      authorized: false,
+      shouldContinue: false,
+      error: 'Authorization cancelled.',
+    });
+
     this.cleanup();
     this.state = 'idle';
   }
@@ -283,6 +317,7 @@ class GitHubAuthServiceClass {
     }
     this.deviceCode = null;
     this.pollAttempt = 0;
+    this.pollResolve = null;
   }
 
   /**
