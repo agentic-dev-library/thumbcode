@@ -41,6 +41,12 @@ jobs:
       - name: Build web app
         run: npx expo export --platform web
 
+      - name: Inject no-cache headers for staging
+        run: |
+          # Add no-cache meta tags to all HTML files for staging environment
+          find dist -name "*.html" -exec sed -i 's/<head>/<head>\n  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">\n  <meta http-equiv="Pragma" content="no-cache">\n  <meta http-equiv="Expires" content="0">/' {} \;
+          echo "Injected no-cache headers into $(find dist -name '*.html' | wc -l) HTML files"
+
       - name: Setup Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
 
