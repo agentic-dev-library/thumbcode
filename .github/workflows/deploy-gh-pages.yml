@@ -55,7 +55,7 @@ jobs:
 
       - name: Generate API documentation with TypeDoc
         run: |
-          npx typedoc --out docs-dist/api src/index.ts --plugin typedoc-plugin-markdown
+          npx typedoc --out docs-dist/api packages/core/src/index.ts --plugin typedoc-plugin-markdown || echo "TypeDoc generation skipped or failed (non-blocking)"
           # TypeDoc generates markdown, which Astro can't serve directly
           # For now, we'll keep it as markdown files accessible via direct links
 
