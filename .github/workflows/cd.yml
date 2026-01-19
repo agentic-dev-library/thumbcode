@@ -93,6 +93,9 @@ jobs:
         uses: expo/expo-github-action/preview@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
         with:
           command: eas update --auto
+        env:
+          # Use production slug to match EAS project configuration
+          EXPO_PUBLIC_APP_ENV: production
 
   # ============================================
   # EAS Build - Android
