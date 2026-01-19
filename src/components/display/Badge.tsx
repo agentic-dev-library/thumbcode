@@ -8,8 +8,8 @@
 import type React from 'react';
 import { View } from 'react-native';
 import { CloseIcon, type IconColor, SuccessIcon } from '@/components/icons';
-import { organicBorderRadius } from '@/lib/organic-styles';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 type BadgeVariant = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error';
 type BadgeSize = 'sm' | 'md' | 'lg';

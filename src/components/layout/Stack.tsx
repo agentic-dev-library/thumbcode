@@ -6,7 +6,7 @@
  */
 
 import type { ReactNode } from 'react';
-import { View, type ViewStyle } from 'react-native';
+import { type StyleProp, StyleSheet, View, type ViewStyle } from 'react-native';
 
 type StackDirection = 'row' | 'column';
 type StackAlign = 'start' | 'center' | 'end' | 'stretch' | 'baseline';
@@ -22,7 +22,7 @@ interface StackProps {
   wrap?: boolean;
   flex?: number;
   className?: string;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 const spacingValues: Record<Exclude<StackSpacing, number>, number> = {
@@ -64,15 +64,18 @@ export function Stack({
 }: StackProps) {
   const gap = typeof spacing === 'number' ? spacing : spacingValues[spacing];
 
-  const stackStyle: ViewStyle = {
+  const baseStyle: ViewStyle = {
     flexDirection: direction,
     gap,
     alignItems: alignMap[align],
     justifyContent: justifyMap[justify],
     flexWrap: wrap ? 'wrap' : 'nowrap',
     flex,
-    ...style,
   };
+
+  // Flatten the style prop to merge with base styles
+  const flattenedStyle = style ? StyleSheet.flatten(style) : undefined;
+  const stackStyle: ViewStyle = flattenedStyle ? { ...baseStyle, ...flattenedStyle } : baseStyle;
 
   return (
     <View style={stackStyle} className={className}>

@@ -1,4 +1,10 @@
-import { ActivityIndicator, Pressable, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  type PressableProps,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import { organicBorderRadius } from '@/lib/organic-styles';
 import { Text } from './Text';
 
@@ -52,7 +58,8 @@ export function Button({
   }[size];
 
   const textColorClass = variant === 'outline' ? 'text-neutral-800' : 'text-white';
-  const indicatorColor = variant === 'outline' ? ACTIVITY_INDICATOR_COLORS.light : ACTIVITY_INDICATOR_COLORS.dark;
+  const indicatorColor =
+    variant === 'outline' ? ACTIVITY_INDICATOR_COLORS.light : ACTIVITY_INDICATOR_COLORS.dark;
 
   return (
     <Pressable

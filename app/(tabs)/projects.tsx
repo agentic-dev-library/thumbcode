@@ -20,6 +20,7 @@ import {
 } from '@/components/icons';
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 // Mock data
 const MOCK_PROJECTS = [
@@ -88,12 +89,7 @@ export default function ProjectsScreen() {
         {/* Search */}
         <View
           className="bg-surface flex-row items-center px-4 py-3 mb-4"
-          style={{
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 10,
-            borderBottomRightRadius: 14,
-            borderBottomLeftRadius: 8,
-          }}
+          style={organicBorderRadius.card}
         >
           <View className="mr-3">
             <SearchIcon size={20} color="warmGray" turbulence={0.2} />
@@ -136,12 +132,7 @@ export default function ProjectsScreen() {
                   key={project.id}
                   onPress={() => router.push(`/project/${project.id}`)}
                   className="bg-surface p-4 active:bg-neutral-700"
-                  style={{
-                    borderTopLeftRadius: 14,
-                    borderTopRightRadius: 12,
-                    borderBottomRightRadius: 16,
-                    borderBottomLeftRadius: 10,
-                  }}
+                  style={organicBorderRadius.card}
                 >
                   <HStack justify="between" align="start" className="mb-3">
                     <VStack spacing="xs" className="flex-1">
@@ -204,18 +195,17 @@ export default function ProjectsScreen() {
       <Pressable
         onPress={() => router.push('/(onboarding)/create-project')}
         className="absolute bottom-6 right-6 w-14 h-14 bg-coral-500 items-center justify-center active:bg-coral-600"
-        style={{
-          borderTopLeftRadius: 18,
-          borderTopRightRadius: 16,
-          borderBottomRightRadius: 20,
-          borderBottomLeftRadius: 14,
-          marginBottom: insets.bottom,
-          shadowColor: '#FF7059',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 8,
-          elevation: 8,
-        }}
+        style={[
+          organicBorderRadius.cta,
+          {
+            marginBottom: insets.bottom,
+            shadowColor: '#FF7059',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 8,
+            elevation: 8,
+          },
+        ]}
       >
         <Text className="text-white text-2xl">+</Text>
       </Pressable>

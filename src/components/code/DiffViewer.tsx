@@ -7,6 +7,7 @@
 
 import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface DiffLine {
   type: 'add' | 'remove' | 'context';
@@ -133,15 +134,7 @@ export function DiffViewer({
   };
 
   return (
-    <View
-      className="bg-charcoal overflow-hidden"
-      style={{
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 10,
-        borderBottomRightRadius: 14,
-        borderBottomLeftRadius: 8,
-      }}
-    >
+    <View className="bg-charcoal overflow-hidden" style={organicBorderRadius.card}>
       {/* Header */}
       <Pressable
         onPress={() => setCollapsed(!collapsed)}

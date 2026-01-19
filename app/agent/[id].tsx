@@ -21,6 +21,7 @@ import {
 } from '@/components/icons';
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 /** Agent avatar icon component type */
 type AgentAvatarIcon = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
@@ -287,12 +288,7 @@ export default function AgentDetailScreen() {
           <HStack spacing="lg" align="center">
             <View
               className={`w-20 h-20 items-center justify-center ${getRoleColor(agent.role)}`}
-              style={{
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 18,
-                borderBottomRightRadius: 22,
-                borderBottomLeftRadius: 16,
-              }}
+              style={organicBorderRadius.hero}
             >
               <agent.AvatarIcon size={40} color={agent.avatarColor} turbulence={0.25} />
             </View>
@@ -320,15 +316,7 @@ export default function AgentDetailScreen() {
         {/* Current Task */}
         {agent.currentTask && (
           <Container padding="md" className="border-b border-neutral-800">
-            <View
-              className="bg-surface p-4"
-              style={{
-                borderTopLeftRadius: 14,
-                borderTopRightRadius: 12,
-                borderBottomRightRadius: 16,
-                borderBottomLeftRadius: 10,
-              }}
-            >
+            <View className="bg-surface p-4" style={organicBorderRadius.card}>
               <HStack justify="between" align="center" className="mb-2">
                 <Text size="sm" className="text-neutral-400">
                   Current Task
@@ -381,13 +369,7 @@ export default function AgentDetailScreen() {
               <View className="flex-row flex-wrap gap-3 mb-6">
                 <View
                   className="bg-surface p-4 flex-1"
-                  style={{
-                    minWidth: '45%',
-                    borderTopLeftRadius: 14,
-                    borderTopRightRadius: 12,
-                    borderBottomRightRadius: 16,
-                    borderBottomLeftRadius: 10,
-                  }}
+                  style={[organicBorderRadius.card, { minWidth: '45%' }]}
                 >
                   <Text size="2xl" weight="bold" className="text-white">
                     {agent.metrics.tasksCompleted}
@@ -399,13 +381,7 @@ export default function AgentDetailScreen() {
 
                 <View
                   className="bg-surface p-4 flex-1"
-                  style={{
-                    minWidth: '45%',
-                    borderTopLeftRadius: 14,
-                    borderTopRightRadius: 12,
-                    borderBottomRightRadius: 16,
-                    borderBottomLeftRadius: 10,
-                  }}
+                  style={[organicBorderRadius.card, { minWidth: '45%' }]}
                 >
                   <Text size="2xl" weight="bold" className="text-teal-400">
                     {Math.round(agent.metrics.successRate * 100)}%
@@ -417,13 +393,7 @@ export default function AgentDetailScreen() {
 
                 <View
                   className="bg-surface p-4 flex-1"
-                  style={{
-                    minWidth: '45%',
-                    borderTopLeftRadius: 14,
-                    borderTopRightRadius: 12,
-                    borderBottomRightRadius: 16,
-                    borderBottomLeftRadius: 10,
-                  }}
+                  style={[organicBorderRadius.card, { minWidth: '45%' }]}
                 >
                   <Text size="2xl" weight="bold" className="text-white">
                     {agent.metrics.avgTaskTime}m
@@ -435,13 +405,7 @@ export default function AgentDetailScreen() {
 
                 <View
                   className="bg-surface p-4 flex-1"
-                  style={{
-                    minWidth: '45%',
-                    borderTopLeftRadius: 14,
-                    borderTopRightRadius: 12,
-                    borderBottomRightRadius: 16,
-                    borderBottomLeftRadius: 10,
-                  }}
+                  style={[organicBorderRadius.card, { minWidth: '45%' }]}
                 >
                   <Text size="2xl" weight="bold" className="text-gold-400">
                     {formatMinutes(agent.metrics.totalCodingTime)}
@@ -456,15 +420,7 @@ export default function AgentDetailScreen() {
               <Text size="sm" weight="semibold" className="text-neutral-400 mb-3">
                 CAPABILITIES
               </Text>
-              <View
-                className="bg-surface p-4 mb-6"
-                style={{
-                  borderTopLeftRadius: 14,
-                  borderTopRightRadius: 12,
-                  borderBottomRightRadius: 16,
-                  borderBottomLeftRadius: 10,
-                }}
-              >
+              <View className="bg-surface p-4 mb-6" style={organicBorderRadius.card}>
                 <VStack spacing="sm">
                   {getCapabilities(agent.role).map((capability) => (
                     <HStack key={capability} spacing="sm" align="center">
@@ -486,12 +442,7 @@ export default function AgentDetailScreen() {
                       <View
                         key={task.id}
                         className="bg-surface p-4"
-                        style={{
-                          borderTopLeftRadius: 12,
-                          borderTopRightRadius: 10,
-                          borderBottomRightRadius: 14,
-                          borderBottomLeftRadius: 8,
-                        }}
+                        style={organicBorderRadius.card}
                       >
                         <HStack justify="between" align="start">
                           <VStack spacing="xs" className="flex-1">
@@ -534,16 +485,7 @@ export default function AgentDetailScreen() {
                   </View>
                 ) : (
                   agent.taskHistory.map((task) => (
-                    <View
-                      key={task.id}
-                      className="bg-surface p-4"
-                      style={{
-                        borderTopLeftRadius: 12,
-                        borderTopRightRadius: 10,
-                        borderBottomRightRadius: 14,
-                        borderBottomLeftRadius: 8,
-                      }}
-                    >
+                    <View key={task.id} className="bg-surface p-4" style={organicBorderRadius.card}>
                       <HStack justify="between" align="start">
                         <VStack spacing="xs" className="flex-1">
                           <Text className="text-white">{task.title}</Text>
@@ -584,12 +526,7 @@ export default function AgentDetailScreen() {
           {agent.status === 'idle' ? (
             <Pressable
               className="flex-1 bg-teal-600 py-3 active:bg-teal-700"
-              style={{
-                borderTopLeftRadius: 12,
-                borderTopRightRadius: 10,
-                borderBottomRightRadius: 14,
-                borderBottomLeftRadius: 8,
-              }}
+              style={organicBorderRadius.card}
             >
               <Text className="text-center text-white font-semibold">Assign Task</Text>
             </Pressable>
@@ -597,23 +534,13 @@ export default function AgentDetailScreen() {
             <>
               <Pressable
                 className="flex-1 bg-surface py-3 active:bg-neutral-700"
-                style={{
-                  borderTopLeftRadius: 12,
-                  borderTopRightRadius: 10,
-                  borderBottomRightRadius: 14,
-                  borderBottomLeftRadius: 8,
-                }}
+                style={organicBorderRadius.button}
               >
                 <Text className="text-center text-white">Pause</Text>
               </Pressable>
               <Pressable
                 className="flex-1 bg-coral-500 py-3 active:bg-coral-600"
-                style={{
-                  borderTopLeftRadius: 12,
-                  borderTopRightRadius: 10,
-                  borderBottomRightRadius: 14,
-                  borderBottomLeftRadius: 8,
-                }}
+                style={organicBorderRadius.button}
               >
                 <Text className="text-center text-white font-semibold">View Output</Text>
               </Pressable>

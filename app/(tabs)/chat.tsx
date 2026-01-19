@@ -21,8 +21,8 @@ import {
   UserIcon,
 } from '@/components/icons';
 import { HStack, VStack } from '@/components/layout';
-import { organicBorderRadius } from '@/lib/organic-styles';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 // Simple message type for the mock screen
 interface MockMessage {
@@ -184,15 +184,7 @@ function MockApprovalCard({
   onReject: () => void;
 }) {
   return (
-    <View
-      className="bg-surface p-4"
-      style={{
-        borderTopLeftRadius: 16,
-        borderTopRightRadius: 14,
-        borderBottomRightRadius: 18,
-        borderBottomLeftRadius: 12,
-      }}
-    >
+    <View className="bg-surface p-4" style={organicBorderRadius.card}>
       <HStack justify="between" align="center" className="mb-3">
         <HStack spacing="sm" align="center">
           <EditIcon size={22} color="gold" turbulence={0.2} />
@@ -281,12 +273,7 @@ function MockChatInput({ onSend }: { onSend: (text: string) => void }) {
         onPress={handleSend}
         disabled={!text.trim()}
         className={`w-12 h-12 items-center justify-center ${text.trim() ? 'bg-coral-500' : 'bg-surface'}`}
-        style={{
-          borderTopLeftRadius: 14,
-          borderTopRightRadius: 12,
-          borderBottomRightRadius: 16,
-          borderBottomLeftRadius: 10,
-        }}
+        style={organicBorderRadius.card}
       >
         <Text className={text.trim() ? 'text-white' : 'text-neutral-500'}>↑</Text>
       </Pressable>

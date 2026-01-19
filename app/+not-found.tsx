@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SearchIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 export default function NotFoundScreen() {
   const router = useRouter();
@@ -29,12 +30,7 @@ export default function NotFoundScreen() {
             {/* Icon */}
             <View
               className="w-24 h-24 bg-surface items-center justify-center"
-              style={{
-                borderTopLeftRadius: 30,
-                borderTopRightRadius: 26,
-                borderBottomRightRadius: 32,
-                borderBottomLeftRadius: 24,
-              }}
+              style={organicBorderRadius.hero}
             >
               <SearchIcon size={48} color="warmGray" turbulence={0.25} />
             </View>
@@ -54,12 +50,7 @@ export default function NotFoundScreen() {
               <Pressable
                 onPress={() => router.replace('/(tabs)')}
                 className="bg-coral-500 py-4 px-8 active:bg-coral-600"
-                style={{
-                  borderTopLeftRadius: 14,
-                  borderTopRightRadius: 12,
-                  borderBottomRightRadius: 16,
-                  borderBottomLeftRadius: 10,
-                }}
+                style={organicBorderRadius.cta}
               >
                 <Text className="text-center text-white font-semibold">Go Home</Text>
               </Pressable>
@@ -67,12 +58,7 @@ export default function NotFoundScreen() {
               <Pressable
                 onPress={() => router.back()}
                 className="bg-surface py-4 px-8 active:bg-neutral-700"
-                style={{
-                  borderTopLeftRadius: 14,
-                  borderTopRightRadius: 12,
-                  borderBottomRightRadius: 16,
-                  borderBottomLeftRadius: 10,
-                }}
+                style={organicBorderRadius.cta}
               >
                 <Text className="text-center text-white">Go Back</Text>
               </Pressable>

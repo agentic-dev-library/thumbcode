@@ -10,6 +10,7 @@ import { Pressable, ScrollView, Switch, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface SettingRowProps {
   title: string;
@@ -73,12 +74,7 @@ function OptionSelector({ title, options, selected, onSelect }: OptionSelectorPr
             key={option.value}
             onPress={() => onSelect(option.value)}
             className={`px-4 py-2 ${selected === option.value ? 'bg-coral-500' : 'bg-surface-elevated'}`}
-            style={{
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 8,
-              borderBottomRightRadius: 12,
-              borderBottomLeftRadius: 6,
-            }}
+            style={organicBorderRadius.button}
           >
             <Text className={selected === option.value ? 'text-white' : 'text-neutral-400'}>
               {option.label}
@@ -138,13 +134,7 @@ export default function EditorSettingsScreen() {
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-              overflow: 'hidden',
-            }}
+            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
           >
             <View className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
@@ -193,13 +183,7 @@ export default function EditorSettingsScreen() {
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-              overflow: 'hidden',
-            }}
+            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
           >
             <View className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
@@ -242,13 +226,7 @@ export default function EditorSettingsScreen() {
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-              overflow: 'hidden',
-            }}
+            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
           >
             <View className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
@@ -268,13 +246,7 @@ export default function EditorSettingsScreen() {
           <VStack
             spacing="none"
             className="bg-surface"
-            style={{
-              borderTopLeftRadius: 14,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 16,
-              borderBottomLeftRadius: 10,
-              overflow: 'hidden',
-            }}
+            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
           >
             <View className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">

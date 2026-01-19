@@ -13,6 +13,7 @@ import { Avatar, Badge, StatusBadge } from '@/components/display';
 import { ProgressBar } from '@/components/feedback';
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 // Mock data
 const MOCK_PROJECT = {
@@ -177,12 +178,7 @@ export default function ProjectDetailScreen() {
                   <View
                     key={commit.sha}
                     className="bg-surface p-4"
-                    style={{
-                      borderTopLeftRadius: 12,
-                      borderTopRightRadius: 10,
-                      borderBottomRightRadius: 14,
-                      borderBottomLeftRadius: 8,
-                    }}
+                    style={organicBorderRadius.button}
                   >
                     <Text className="text-white mb-2">{commit.message}</Text>
                     <HStack spacing="md">
@@ -220,16 +216,7 @@ export default function ProjectDetailScreen() {
                   },
                   { id: '3', title: 'Write unit tests', status: 'pending', assignee: 'Tester' },
                 ].map((task) => (
-                  <View
-                    key={task.id}
-                    className="bg-surface p-4"
-                    style={{
-                      borderTopLeftRadius: 12,
-                      borderTopRightRadius: 10,
-                      borderBottomRightRadius: 14,
-                      borderBottomLeftRadius: 8,
-                    }}
-                  >
+                  <View key={task.id} className="bg-surface p-4" style={organicBorderRadius.button}>
                     <HStack justify="between" align="center">
                       <VStack spacing="xs" className="flex-1">
                         <Text className="text-white">{task.title}</Text>
@@ -259,12 +246,7 @@ export default function ProjectDetailScreen() {
                     key={agent.id}
                     onPress={() => router.push(`/agent/${agent.id}`)}
                     className="bg-surface p-4 active:bg-neutral-700"
-                    style={{
-                      borderTopLeftRadius: 12,
-                      borderTopRightRadius: 10,
-                      borderBottomRightRadius: 14,
-                      borderBottomLeftRadius: 8,
-                    }}
+                    style={organicBorderRadius.button}
                   >
                     <HStack justify="between" align="center">
                       <HStack spacing="md" align="center">
@@ -299,34 +281,19 @@ export default function ProjectDetailScreen() {
         >
           <Pressable
             className="flex-1 bg-surface py-3 active:bg-neutral-700"
-            style={{
-              borderTopLeftRadius: 12,
-              borderTopRightRadius: 10,
-              borderBottomRightRadius: 14,
-              borderBottomLeftRadius: 8,
-            }}
+            style={organicBorderRadius.button}
           >
             <Text className="text-center text-white">Pull</Text>
           </Pressable>
           <Pressable
             className="flex-1 bg-teal-600 py-3 active:bg-teal-700"
-            style={{
-              borderTopLeftRadius: 12,
-              borderTopRightRadius: 10,
-              borderBottomRightRadius: 14,
-              borderBottomLeftRadius: 8,
-            }}
+            style={organicBorderRadius.button}
           >
             <Text className="text-center text-white font-semibold">Commit</Text>
           </Pressable>
           <Pressable
             className="flex-1 bg-coral-500 py-3 active:bg-coral-600"
-            style={{
-              borderTopLeftRadius: 12,
-              borderTopRightRadius: 10,
-              borderBottomRightRadius: 14,
-              borderBottomLeftRadius: 8,
-            }}
+            style={organicBorderRadius.button}
           >
             <Text className="text-center text-white font-semibold">Push</Text>
           </Pressable>

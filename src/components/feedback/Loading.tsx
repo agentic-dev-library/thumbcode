@@ -6,6 +6,7 @@
 
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, Text, View } from 'react-native';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface SpinnerProps {
   /** Size of the spinner */
@@ -131,15 +132,7 @@ export function LoadingOverlay({ visible, message }: LoadingOverlayProps) {
 
   return (
     <View className="absolute inset-0 bg-charcoal/80 items-center justify-center z-50">
-      <View
-        className="bg-surface-elevated p-6 items-center"
-        style={{
-          borderTopLeftRadius: 16,
-          borderTopRightRadius: 14,
-          borderBottomRightRadius: 18,
-          borderBottomLeftRadius: 12,
-        }}
-      >
+      <View className="bg-surface-elevated p-6 items-center" style={organicBorderRadius.card}>
         <Spinner size="lg" />
         {message && <Text className="font-body text-white mt-4 text-center">{message}</Text>}
       </View>

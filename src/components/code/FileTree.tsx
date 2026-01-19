@@ -22,6 +22,7 @@ import {
   type IconColor,
 } from '@/components/icons';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface FileNode {
   name: string;
@@ -292,12 +293,7 @@ export function FileTree({
       accessibilityRole="list"
       accessibilityLabel="File tree"
       className="bg-surface overflow-hidden"
-      style={{
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 10,
-        borderBottomRightRadius: 14,
-        borderBottomLeftRadius: 8,
-      }}
+      style={organicBorderRadius.card}
     >
       {sortedData.map((node) => (
         <FileTreeNode
