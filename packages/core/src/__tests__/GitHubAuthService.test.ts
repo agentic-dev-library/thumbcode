@@ -4,6 +4,19 @@
  * Tests for the GitHub Device Flow authentication service.
  */
 
+// Mock expo-constants before any imports
+jest.mock('expo-constants', () => ({
+  __esModule: true,
+  default: {
+    expoConfig: {
+      extra: {
+        eas: { projectId: 'test-project-id' },
+      },
+    },
+    appOwnership: null,
+  },
+}));
+
 import { GitHubAuthService } from '../auth/GitHubAuthService';
 
 // Mock fetch globally
