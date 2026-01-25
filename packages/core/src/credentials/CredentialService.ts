@@ -393,13 +393,9 @@ class CredentialServiceClass {
    * Get all stored credential types
    */
   async getStoredCredentialTypes(): Promise<CredentialType[]> {
-    const stored: CredentialType[] = [];
-    for (const type of Object.keys(SECURE_STORE_KEYS) as CredentialType[]) {
-      if (await this.exists(type)) {
-        stored.push(type);
-      }
-    }
-    return stored;
+    const types = Object.keys(SECURE_STORE_KEYS) as CredentialType[];
+    const results = await Promise.all(types.map((type) => this.exists(type)));
+    return types.filter((_, index) => results[index]);
   }
 
   /**
