@@ -7,6 +7,7 @@
 
 import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ChevronDownIcon } from '@/components/icons';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface DiffLine {
@@ -145,7 +146,9 @@ export function DiffViewer({
         accessibilityState={{ expanded: !collapsed }}
       >
         <View className="flex-row items-center flex-1">
-          <Text className="text-neutral-400 mr-2">{collapsed ? '▶' : '▼'}</Text>
+          <View className="mr-2" style={{ transform: [{ rotate: collapsed ? '-90deg' : '0deg' }] }}>
+            <ChevronDownIcon size={14} color="warmGray" turbulence={0.12} />
+          </View>
           {filename && (
             <Text className="font-mono text-sm text-neutral-200" numberOfLines={1}>
               {filename}

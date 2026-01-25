@@ -23,6 +23,7 @@ import {
 import { HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 
 // Simple message type for the mock screen
 interface MockMessage {
@@ -142,25 +143,12 @@ function MockMessageBubble({ message }: { message: MockMessage }) {
 
       <View
         className={`max-w-[85%] p-3 ${isUser ? 'bg-coral-500' : 'bg-surface'}`}
-        style={{
-          borderTopLeftRadius: isUser ? 16 : 4,
-          borderTopRightRadius: isUser ? 4 : 16,
-          borderBottomRightRadius: 16,
-          borderBottomLeftRadius: 16,
-        }}
+        style={isUser ? organicBorderRadius.chatBubbleUser : organicBorderRadius.chatBubbleAgent}
       >
         <Text className={isUser ? 'text-white' : 'text-neutral-200'}>{message.text}</Text>
 
         {message.code && (
-          <View
-            className="mt-3 bg-charcoal p-3"
-            style={{
-              borderTopLeftRadius: 8,
-              borderTopRightRadius: 8,
-              borderBottomRightRadius: 8,
-              borderBottomLeftRadius: 8,
-            }}
-          >
+          <View className="mt-3 bg-charcoal p-3" style={organicBorderRadius.codeBlock}>
             {message.code.filename && (
               <Text size="xs" className="text-neutral-500 mb-2">
                 {message.code.filename}
@@ -250,20 +238,12 @@ function MockChatInput({ onSend }: { onSend: (text: string) => void }) {
 
   return (
     <HStack spacing="sm" align="center">
-      <View
-        className="flex-1 bg-surface px-4 py-3"
-        style={{
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 18,
-          borderBottomRightRadius: 22,
-          borderBottomLeftRadius: 16,
-        }}
-      >
+      <View className="flex-1 bg-surface px-4 py-3" style={organicBorderRadius.input}>
         <TextInput
           value={text}
           onChangeText={setText}
           placeholder="Message your AI team..."
-          placeholderTextColor="#6B7280"
+          placeholderTextColor={getColor('neutral', '400')}
           className="text-white font-body"
           multiline
           onSubmitEditing={handleSend}

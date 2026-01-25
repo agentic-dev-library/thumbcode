@@ -6,7 +6,9 @@
  */
 
 import type { ApprovalMessage, Message } from '@thumbcode/state';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 import { ApprovalCard } from './ApprovalCard';
 import { CodeBlock } from './CodeBlock';
 
@@ -64,11 +66,10 @@ export function ChatMessage({ message, onApprovalResponse }: ChatMessageProps) {
       <View className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
         <View className="max-w-[90%]">
           <View className="flex-row items-center mb-1">
-            <View
-              className={`px-2 py-0.5 ${senderInfo.bgColor}`}
-              style={{ borderRadius: '8px 10px 8px 12px' }}
-            >
-              <Text className={`text-xs font-body ${senderInfo.textColor}`}>{senderInfo.name}</Text>
+            <View className={`px-2 py-0.5 ${senderInfo.bgColor}`} style={organicBorderRadius.pill}>
+              <Text size="xs" className={senderInfo.textColor}>
+                {senderInfo.name}
+              </Text>
             </View>
           </View>
           <CodeBlock
@@ -88,23 +89,18 @@ export function ChatMessage({ message, onApprovalResponse }: ChatMessageProps) {
       <View className="max-w-[80%]">
         {!isUser && (
           <View className="flex-row items-center mb-1">
-            <View
-              className={`px-2 py-0.5 ${senderInfo.bgColor}`}
-              style={{ borderRadius: '8px 10px 8px 12px' }}
-            >
-              <Text className={`text-xs font-body ${senderInfo.textColor}`}>{senderInfo.name}</Text>
+            <View className={`px-2 py-0.5 ${senderInfo.bgColor}`} style={organicBorderRadius.pill}>
+              <Text size="xs" className={senderInfo.textColor}>
+                {senderInfo.name}
+              </Text>
             </View>
           </View>
         )}
         <View
           className={`p-3 ${isUser ? 'bg-teal-600' : 'bg-surface-elevated'}`}
-          style={{
-            borderRadius: isUser ? '16px 4px 16px 16px' : '4px 16px 16px 16px',
-          }}
+          style={isUser ? organicBorderRadius.chatBubbleUser : organicBorderRadius.chatBubbleAgent}
         >
-          <Text className={`font-body ${isUser ? 'text-white' : 'text-neutral-200'}`}>
-            {message.content}
-          </Text>
+          <Text className={isUser ? 'text-white' : 'text-neutral-200'}>{message.content}</Text>
         </View>
         <View className={`flex-row items-center mt-1 ${isUser ? 'justify-end' : ''}`}>
           <Text className="text-xs text-neutral-500">{formatTime(message.timestamp)}</Text>
