@@ -5,6 +5,7 @@
  * Uses paint daube icons for brand consistency.
  */
 
+import { selectAgents, selectProjects, useAgentStore, useProjectStore } from '@thumbcode/state';
 import { useRouter } from 'expo-router';
 import type React from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
@@ -23,54 +24,13 @@ import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
-// Mock data - in production, would come from stores
-const MOCK_STATS = {
-  activeProjects: 3,
-  runningAgents: 2,
-  pendingTasks: 7,
-  completedToday: 12,
-};
-
-const MOCK_ACTIVITY = [
-  {
-    id: '1',
-    type: 'commit',
-    agent: 'Implementer',
-    message: 'Added user authentication module',
-    project: 'my-awesome-app',
-    time: '5 min ago',
-  },
-  {
-    id: '2',
-    type: 'review',
-    agent: 'Reviewer',
-    message: 'Approved PR #42: API endpoints',
-    project: 'api-service',
-    time: '15 min ago',
-  },
-  {
-    id: '3',
-    type: 'task',
-    agent: 'Architect',
-    message: 'Created task breakdown for feature X',
-    project: 'my-awesome-app',
-    time: '1 hour ago',
-  },
-];
-
-const MOCK_AGENTS = [
-  { id: '1', name: 'Architect', role: 'architect', status: 'idle' as const },
-  { id: '2', name: 'Implementer', role: 'implementer', status: 'coding' as const },
-  { id: '3', name: 'Reviewer', role: 'reviewer', status: 'reviewing' as const },
-  { id: '4', name: 'Tester', role: 'tester', status: 'idle' as const },
-];
-
 function getStatusColor(status: string): string {
   switch (status) {
-    case 'coding':
-    case 'reviewing':
+    case 'working':
+    case 'needs_review':
       return 'bg-teal-500';
     case 'idle':
+    case 'complete':
       return 'bg-neutral-500';
     case 'error':
       return 'bg-coral-500';
@@ -97,6 +57,36 @@ function ActivityIcon({ type, size = 20 }: { type: string; size?: number }): Rea
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const projects = useProjectStore(selectProjects);
+  const agents = useAgentStore(selectAgents);
+  const tasks = useAgentStore((s) => s.tasks);
+
+  const runningAgents = agents.filter((a) => a.status !== 'idle').length;
+  const pendingTasks = tasks.filter(
+    (t) => t.status === 'pending' || t.status === 'in_progress'
+  ).length;
+  const completedToday = tasks.filter((t) => {
+    if (t.status !== 'completed' || !t.completedAt) return false;
+    const d = new Date(t.completedAt);
+    const now = new Date();
+    return d.toDateString() === now.toDateString();
+  }).length;
+
+  const recentActivity = tasks
+    .slice()
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5)
+    .map((t) => {
+      const agent = agents.find((a) => a.id === t.agentId);
+      return {
+        id: t.id,
+        type: t.status === 'completed' ? 'commit' : t.status === 'failed' ? 'review' : 'task',
+        agent: agent?.name || 'Agent',
+        message: t.description,
+        project: 'workspace',
+        time: new Date(t.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+    });
 
   return (
     <ScrollView
@@ -122,10 +112,10 @@ export default function HomeScreen() {
               <FolderIcon size={32} color="teal" turbulence={0.2} />
             </View>
             <Text size="2xl" weight="bold" className="text-white">
-              {MOCK_STATS.activeProjects}
+              {projects.length}
             </Text>
             <Text size="sm" className="text-neutral-400">
-              Active Projects
+              Projects
             </Text>
           </View>
 
@@ -134,7 +124,7 @@ export default function HomeScreen() {
               <AgentIcon size={32} color="coral" turbulence={0.2} />
             </View>
             <Text size="2xl" weight="bold" className="text-white">
-              {MOCK_STATS.runningAgents}
+              {runningAgents}
             </Text>
             <Text size="sm" className="text-neutral-400">
               Running Agents
@@ -146,7 +136,7 @@ export default function HomeScreen() {
               <TasksIcon size={32} color="gold" turbulence={0.2} />
             </View>
             <Text size="2xl" weight="bold" className="text-white">
-              {MOCK_STATS.pendingTasks}
+              {pendingTasks}
             </Text>
             <Text size="sm" className="text-neutral-400">
               Pending Tasks
@@ -168,7 +158,7 @@ export default function HomeScreen() {
           </HStack>
 
           <View className="flex-row flex-wrap gap-3">
-            {MOCK_AGENTS.map((agent) => (
+            {agents.map((agent) => (
               <Pressable
                 key={agent.id}
                 onPress={() => router.push(`/agent/${agent.id}`)}
@@ -198,14 +188,12 @@ export default function HomeScreen() {
             <Text weight="semibold" className="text-white">
               Today's Progress
             </Text>
-            <Badge variant="success">{`${MOCK_STATS.completedToday} done`}</Badge>
+            <Badge variant="success">{`${completedToday} done`}</Badge>
           </HStack>
           <ProgressBar
             value={
-              MOCK_STATS.completedToday + MOCK_STATS.pendingTasks > 0
-                ? (MOCK_STATS.completedToday /
-                    (MOCK_STATS.completedToday + MOCK_STATS.pendingTasks)) *
-                  100
+              completedToday + pendingTasks > 0
+                ? (completedToday / (completedToday + pendingTasks)) * 100
                 : 0
             }
             color="secondary"
@@ -226,7 +214,7 @@ export default function HomeScreen() {
           </HStack>
 
           <VStack spacing="sm">
-            {MOCK_ACTIVITY.map((activity) => (
+            {recentActivity.map((activity) => (
               <View
                 key={activity.id}
                 className="bg-surface p-4 flex-row"
