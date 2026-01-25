@@ -10,6 +10,8 @@
     "./credentials": "./src/credentials/index.ts"
   },
   "dependencies": {
+    "@thumbcode/config": "workspace:*",
+    "@thumbcode/types": "workspace:*",
     "diff": "^8.0.3",
     "expo-file-system": "~18.0.0",
     "expo-local-authentication": "~15.0.0",

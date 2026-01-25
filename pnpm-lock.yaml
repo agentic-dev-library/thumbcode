@@ -295,6 +295,12 @@ importers:
 
   packages/core:
     dependencies:
+      '@thumbcode/config':
+        specifier: workspace:*
+        version: link:../config
+      '@thumbcode/types':
+        specifier: workspace:*
+        version: link:../types
       diff:
         specifier: ^8.0.3
         version: 8.0.3
