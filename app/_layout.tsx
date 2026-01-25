@@ -5,8 +5,7 @@
  * global context, and error handling for ThumbCode.
  */
 
-import { certificatePinningService } from '@thumbcode/core/src/security/CertificatePinningService';
-import { runtimeSecurityService } from '@thumbcode/core/src/security/RuntimeSecurityService';
+import { certificatePinningService, runtimeSecurityService } from '@thumbcode/core';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';

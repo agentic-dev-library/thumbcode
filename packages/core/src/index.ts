@@ -60,3 +60,6 @@ export type {
 
 // GitHub API
 export { GitHubApiService } from './github';
+
+// Security
+export { certificatePinningService, requestSigningService, runtimeSecurityService } from './security';
