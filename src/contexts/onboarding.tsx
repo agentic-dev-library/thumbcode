@@ -5,7 +5,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 const ONBOARDING_COMPLETE_KEY = 'thumbcode_onboarding_complete';
 
@@ -57,9 +57,10 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
     }
   }, []);
 
-  return (
-    <OnboardingContext.Provider value={{ isLoading, hasCompletedOnboarding, completeOnboarding }}>
-      {children}
-    </OnboardingContext.Provider>
+  const value = useMemo(
+    () => ({ isLoading, hasCompletedOnboarding, completeOnboarding }),
+    [isLoading, hasCompletedOnboarding, completeOnboarding]
   );
+
+  return <OnboardingContext.Provider value={value}>{children}</OnboardingContext.Provider>;
 }
