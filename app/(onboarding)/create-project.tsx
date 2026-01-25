@@ -5,10 +5,12 @@
  * Uses paint daube icons for brand consistency.
  */
 
-import { CredentialService } from '@thumbcode/core/src/credentials/CredentialService';
+import { CredentialService, GitHubApiService, GitService } from '@thumbcode/core';
+import { useProjectStore } from '@thumbcode/state';
+import type { Repository } from '@thumbcode/types';
 import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StepsProgress } from '@/components/feedback';
@@ -16,58 +18,110 @@ import { FolderIcon, SecurityIcon, StarIcon, SuccessIcon } from '@/components/ic
 import { Container, VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 
-interface Repository {
-  id: string;
-  name: string;
-  fullName: string;
-  description: string;
-  isPrivate: boolean;
-  stars: number;
+interface RepoListItem extends Repository {
+  /** Stable key for list rendering */
+  key: string;
 }
 
-// Mock repos for demo
-const MOCK_REPOS: Repository[] = [
-  {
-    id: '1',
-    name: 'my-awesome-app',
-    fullName: 'user/my-awesome-app',
-    description: 'A React Native app built with ThumbCode',
-    isPrivate: false,
-    stars: 42,
-  },
-  {
-    id: '2',
-    name: 'api-service',
-    fullName: 'user/api-service',
-    description: 'Backend API service',
-    isPrivate: true,
-    stars: 0,
-  },
-  {
-    id: '3',
-    name: 'portfolio-site',
-    fullName: 'user/portfolio-site',
-    description: 'Personal portfolio website',
-    isPrivate: false,
-    stars: 15,
-  },
-];
+function bytesToHex(bytes: Uint8Array): string {
+  return Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function fetchRepoList(): Promise<RepoListItem[]> {
+  const list = await GitHubApiService.listRepositories();
+  return list.map((r) => ({
+    ...r,
+    key: r.fullName,
+  }));
+}
+
+async function ensureSigningSecret(): Promise<void> {
+  const secretBytes = Crypto.getRandomBytes(32);
+  await CredentialService.store('mcp_signing_secret', bytesToHex(secretBytes));
+}
+
+async function getGitHubToken(): Promise<string | null> {
+  const { secret } = await CredentialService.retrieve('github');
+  return secret;
+}
+
+async function cloneRepository(repo: RepoListItem): Promise<{ dir: string }> {
+  const dir = `${GitService.getRepoBaseDir()}/${repo.fullName.replace('/', '__')}`;
+  const githubToken = await getGitHubToken();
+
+  if (repo.isPrivate && !githubToken) {
+    throw new Error('This repository is private. Please connect GitHub first.');
+  }
+
+  const result = await GitService.clone({
+    url: repo.cloneUrl,
+    dir,
+    branch: repo.defaultBranch,
+    depth: 1,
+    credentials: githubToken
+      ? {
+          username: 'x-access-token',
+          password: githubToken,
+        }
+      : undefined,
+  });
+
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to clone repository');
+  }
+
+  return { dir };
+}
 
 export default function CreateProjectScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const addProject = useProjectStore((s) => s.addProject);
+  const setActiveProject = useProjectStore((s) => s.setActiveProject);
+  const initWorkspace = useProjectStore((s) => s.initWorkspace);
 
   const [projectName, setProjectName] = useState('');
-  const [selectedRepo, setSelectedRepo] = useState<Repository | null>(null);
+  const [selectedRepo, setSelectedRepo] = useState<RepoListItem | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingRepos, setIsLoadingRepos] = useState(true);
+  const [repos, setRepos] = useState<RepoListItem[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const filteredRepos = MOCK_REPOS.filter(
-    (repo) =>
-      repo.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      repo.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    let cancelled = false;
+    setIsLoadingRepos(true);
+    setErrorMessage(null);
+    fetchRepoList()
+      .then((list) => {
+        if (cancelled) return;
+        setRepos(list);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setErrorMessage(error instanceof Error ? error.message : 'Failed to load repositories');
+      })
+      .finally(() => {
+        if (cancelled) return;
+        setIsLoadingRepos(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const filteredRepos = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return repos;
+    return repos.filter((repo) => {
+      const hay = `${repo.name} ${repo.fullName} ${repo.description ?? ''}`.toLowerCase();
+      return hay.includes(q);
+    });
+  }, [repos, searchQuery]);
 
   const handleSkip = () => {
     router.push('/(onboarding)/complete');
@@ -78,18 +132,25 @@ export default function CreateProjectScreen() {
     if (isLoading || !selectedRepo || !projectName) return;
 
     setIsLoading(true);
+    setErrorMessage(null);
     try {
-      // Generate and store the signing secret
-      const secret = Crypto.getRandomBytes(32);
-      await CredentialService.store('mcp_signing_secret', secret.toString());
+      await ensureSigningSecret();
+      const { dir } = await cloneRepository(selectedRepo);
 
-      // TODO: Create project via service
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Create project in shared store
+      const projectId = addProject({
+        name: projectName.trim(),
+        repoUrl: selectedRepo.cloneUrl,
+        localPath: dir,
+        defaultBranch: selectedRepo.defaultBranch,
+      });
+      setActiveProject(projectId);
+      initWorkspace(projectId, selectedRepo.defaultBranch);
 
-      router.push('/(onboarding)/complete');
+      router.replace(`/project/${projectId}`);
     } catch (error) {
       console.error('Failed to create project:', error);
-      // Optionally, show an error message to the user
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to create project');
     } finally {
       setIsLoading(false);
     }
@@ -149,46 +210,64 @@ export default function CreateProjectScreen() {
 
           {/* Repo List */}
           <VStack spacing="sm">
-            {filteredRepos.map((repo) => (
-              <Pressable
-                key={repo.id}
-                onPress={() => setSelectedRepo(repo)}
-                className={`p-4 ${selectedRepo?.id === repo.id ? 'bg-teal-600/20 border-teal-600' : 'bg-surface border-transparent'} border`}
-                style={organicBorderRadius.card}
-              >
-                <View className="flex-row items-center mb-2">
-                  <View className="mr-2">
-                    {repo.isPrivate ? (
-                      <SecurityIcon size={18} color="warmGray" turbulence={0.15} />
-                    ) : (
-                      <FolderIcon size={18} color="gold" turbulence={0.15} />
+            {isLoadingRepos ? (
+              <View className="py-8 items-center justify-center">
+                <ActivityIndicator color={getColor('neutral', '50')} />
+                <Text size="sm" className="text-neutral-500 mt-3 text-center">
+                  Loading repositories…
+                </Text>
+              </View>
+            ) : filteredRepos.length === 0 ? (
+              <View className="py-8 items-center justify-center">
+                <Text className="text-neutral-400 text-center">No repositories found.</Text>
+                {errorMessage && (
+                  <Text size="sm" className="text-coral-400 text-center mt-2">
+                    {errorMessage}
+                  </Text>
+                )}
+              </View>
+            ) : (
+              filteredRepos.map((repo) => (
+                <Pressable
+                  key={repo.key}
+                  onPress={() => setSelectedRepo(repo)}
+                  className={`p-4 ${selectedRepo?.key === repo.key ? 'bg-teal-600/20 border-teal-600' : 'bg-surface border-transparent'} border`}
+                  style={organicBorderRadius.card}
+                >
+                  <View className="flex-row items-center mb-2">
+                    <View className="mr-2">
+                      {repo.isPrivate ? (
+                        <SecurityIcon size={18} color="warmGray" turbulence={0.15} />
+                      ) : (
+                        <FolderIcon size={18} color="gold" turbulence={0.15} />
+                      )}
+                    </View>
+                    <Text weight="semibold" className="text-white flex-1">
+                      {repo.name}
+                    </Text>
+                    {selectedRepo?.key === repo.key && (
+                      <SuccessIcon size={18} color="teal" turbulence={0.15} />
                     )}
                   </View>
-                  <Text weight="semibold" className="text-white flex-1">
-                    {repo.name}
+                  <Text size="sm" className="text-neutral-400" numberOfLines={1}>
+                    {repo.description || 'No description'}
                   </Text>
-                  {selectedRepo?.id === repo.id && (
-                    <SuccessIcon size={18} color="teal" turbulence={0.15} />
-                  )}
-                </View>
-                <Text size="sm" className="text-neutral-400" numberOfLines={1}>
-                  {repo.description}
-                </Text>
-                <View className="flex-row items-center mt-1">
-                  <Text size="xs" className="text-neutral-500">
-                    {repo.fullName}
-                  </Text>
-                  {repo.stars > 0 && (
-                    <View className="flex-row items-center ml-2">
-                      <StarIcon size={12} color="gold" turbulence={0.15} />
-                      <Text size="xs" className="text-neutral-500 ml-1">
-                        {repo.stars}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              </Pressable>
-            ))}
+                  <View className="flex-row items-center mt-1">
+                    <Text size="xs" className="text-neutral-500">
+                      {repo.fullName}
+                    </Text>
+                    {(repo.stars || 0) > 0 && (
+                      <View className="flex-row items-center ml-2">
+                        <StarIcon size={12} color="gold" turbulence={0.15} />
+                        <Text size="xs" className="text-neutral-500 ml-1">
+                          {repo.stars}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                </Pressable>
+              ))
+            )}
           </VStack>
 
           {/* Create New Option (Coming Soon) */}
@@ -223,7 +302,7 @@ export default function CreateProjectScreen() {
           style={organicBorderRadius.cta}
         >
           {isLoading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={getColor('neutral', '50')} />
           ) : (
             <Text
               weight="semibold"

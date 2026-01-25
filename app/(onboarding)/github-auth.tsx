@@ -5,6 +5,9 @@
  * Uses paint daube icons for brand consistency.
  */
 
+import { env } from '@thumbcode/config/env';
+import { CredentialService, GitHubAuthService } from '@thumbcode/core';
+import { useCredentialStore, useUserStore } from '@thumbcode/state';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Linking, Pressable, View } from 'react-native';
@@ -14,31 +17,115 @@ import { LinkIcon, SuccessIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 
 export default function GitHubAuthScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const addCredential = useCredentialStore((s) => s.addCredential);
+  const setValidationResult = useCredentialStore((s) => s.setValidationResult);
+  const setAuthenticated = useUserStore((s) => s.setAuthenticated);
+  const setGitHubProfile = useUserStore((s) => s.setGitHubProfile);
+
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [userCode, setUserCode] = useState<string | null>(null);
+  const [verificationUri, setVerificationUri] = useState<string>('https://github.com/login/device');
   const [isConnected, setIsConnected] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [pollStatus, setPollStatus] = useState<{ attempt: number; max: number } | null>(null);
 
   const startDeviceFlow = async () => {
     setIsAuthenticating(true);
-    // TODO: Implement actual GitHub Device Flow
-    // For now, simulate the flow
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setUserCode('ABCD-1234');
+    setErrorMessage(null);
+    setPollStatus(null);
+
+    const result = await GitHubAuthService.startDeviceFlow({
+      clientId: env.githubClientId,
+      onUserCode: (code, uri) => {
+        setUserCode(code);
+        setVerificationUri(uri);
+      },
+      onError: (msg) => setErrorMessage(msg),
+    });
+
+    if (!result.success) {
+      setIsAuthenticating(false);
+      return;
+    }
+
     setIsAuthenticating(false);
   };
 
   const openGitHub = async () => {
-    await Linking.openURL('https://github.com/login/device');
+    await Linking.openURL(verificationUri);
   };
 
   const checkAuth = async () => {
     setIsAuthenticating(true);
-    // TODO: Poll for authorization completion
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setErrorMessage(null);
+
+    const result = await GitHubAuthService.pollForToken({
+      clientId: env.githubClientId,
+      onPollAttempt: (attempt, max) => setPollStatus({ attempt, max }),
+      onError: (msg) => setErrorMessage(msg),
+    });
+
+    if (!result.authorized) {
+      setIsAuthenticating(false);
+      return;
+    }
+
+    // Update metadata stores after successful auth
+    const { secret } = await CredentialService.retrieve('github');
+    if (secret) {
+      const validation = await CredentialService.validateCredential('github', secret);
+      type GitHubValidationMeta = {
+        username?: string;
+        scopes?: string[];
+        avatarUrl?: string;
+        name?: string;
+        rateLimit?: number;
+        remainingCalls?: number;
+      };
+      const meta = validation.metadata as unknown as GitHubValidationMeta | undefined;
+      const maskedValue = `${secret.slice(0, 4)}…${secret.slice(-4)}`;
+      const credentialId = addCredential({
+        provider: 'github',
+        name: 'GitHub',
+        secureStoreKey: 'thumbcode_cred_github',
+        expiresAt: validation.expiresAt,
+        maskedValue,
+        metadata: meta
+          ? {
+              username: meta.username,
+              scopes: meta.scopes,
+              rateLimit: meta.rateLimit,
+              remainingCalls: meta.remainingCalls,
+            }
+          : undefined,
+      });
+      setValidationResult(credentialId, {
+        isValid: validation.isValid,
+        message: validation.message,
+        expiresAt: validation.expiresAt,
+        metadata: validation.metadata,
+      });
+    }
+
+    const user = await GitHubAuthService.getCurrentUser();
+    if (user) {
+      setGitHubProfile({
+        login: user.login,
+        id: user.id,
+        avatarUrl: user.avatar_url,
+        name: user.name,
+        publicRepos: 0,
+        followers: 0,
+        following: 0,
+      });
+    }
+
+    setAuthenticated(true);
     setIsConnected(true);
     setIsAuthenticating(false);
   };
@@ -94,13 +181,19 @@ export default function GitHubAuthScreen() {
               style={organicBorderRadius.cta}
             >
               {isAuthenticating ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={getColor('neutral', '50')} />
               ) : (
                 <Text weight="semibold" className="text-white text-center">
                   Start GitHub Authentication
                 </Text>
               )}
             </Pressable>
+
+            {errorMessage && (
+              <Text size="sm" className="text-coral-400 text-center">
+                {errorMessage}
+              </Text>
+            )}
           </VStack>
         )}
 
@@ -137,13 +230,24 @@ export default function GitHubAuthScreen() {
               style={organicBorderRadius.cta}
             >
               {isAuthenticating ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={getColor('neutral', '50')} />
               ) : (
                 <Text weight="semibold" className="text-white text-center">
                   I've Entered the Code
                 </Text>
               )}
             </Pressable>
+
+            {pollStatus && (
+              <Text size="sm" className="text-neutral-500 text-center">
+                Checking authorization… {pollStatus.attempt}/{pollStatus.max}
+              </Text>
+            )}
+            {errorMessage && (
+              <Text size="sm" className="text-coral-400 text-center">
+                {errorMessage}
+              </Text>
+            )}
           </VStack>
         )}
 
