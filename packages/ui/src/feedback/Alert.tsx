@@ -1,5 +1,5 @@
-import { Ionicons } from '@expo/vector-icons';
 import { View } from 'react-native';
+import { Icon } from '../icons/Icon';
 import { Text } from '../primitives/Text';
 
 type AlertType = 'success' | 'error' | 'warning' | 'info';
@@ -21,10 +21,10 @@ interface AlertProps {
  */
 export function Alert({ message, type, title }: AlertProps) {
   const config = {
-    success: { bg: 'bg-teal-600', icon: 'checkmark-circle' as const },
-    error: { bg: 'bg-coral-500', icon: 'alert-circle' as const },
-    warning: { bg: 'bg-gold-400', icon: 'warning' as const },
-    info: { bg: 'bg-neutral-600', icon: 'information-circle' as const },
+    success: { bg: 'bg-teal-600', icon: 'alertSuccess' as const },
+    error: { bg: 'bg-coral-500', icon: 'alertError' as const },
+    warning: { bg: 'bg-gold-400', icon: 'alertWarning' as const },
+    info: { bg: 'bg-neutral-600', icon: 'alertInfo' as const },
   }[type];
 
   const accessibilityLabel = title ? `${title}, ${message}` : message;
@@ -35,7 +35,7 @@ export function Alert({ message, type, title }: AlertProps) {
       accessibilityLabel={accessibilityLabel}
       className={`${config.bg} p-4 flex-row items-center rounded-[0.6rem_0.8rem_0.7rem_0.9rem]`}
     >
-      <Ionicons name={config.icon} size={24} color="white" />
+      <Icon name={config.icon} size={24} color="white" />
       <View className="ml-3 flex-1">
         {title && (
           <Text weight="semibold" className="text-white mb-1">

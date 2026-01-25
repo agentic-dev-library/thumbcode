@@ -1,5 +1,5 @@
-import { Ionicons } from '@expo/vector-icons';
 import { Pressable, View } from 'react-native';
+import { Icon } from '../icons/Icon';
 import { Text } from '../primitives/Text';
 
 interface HeaderProps {
@@ -28,7 +28,7 @@ export function Header({ title, onBack, rightElement }: HeaderProps) {
             accessibilityLabel="Back"
             accessibilityHint="Go to previous screen"
           >
-            <Ionicons name="arrow-back" size={24} color="white" />
+            <Icon name="back" size={24} color="white" />
           </Pressable>
         )}
       </View>
