@@ -5,6 +5,7 @@
  * Supports different sizes and status indicators.
  */
 
+import { useMemo } from 'react';
 import { Image, Text, View } from 'react-native';
 
 type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -59,7 +60,7 @@ export function Avatar({
   bgColor = 'bg-neutral-700',
 }: AvatarProps) {
   const { dimension, fontSize, statusSize } = avatarSizes[size];
-  const initials = getInitials(name);
+  const initials = useMemo(() => getInitials(name), [name]);
 
   const accessibilityLabel = [name || 'Unknown', status || 'no status'].filter(Boolean).join(', ');
 
