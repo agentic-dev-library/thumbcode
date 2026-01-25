@@ -15,6 +15,7 @@ import { CloseIcon, LightbulbIcon, SecurityIcon, SuccessIcon } from '@/component
 import { Container, VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 
 interface APIKeyState {
   key: string;
@@ -143,7 +144,9 @@ export default function ApiKeysScreen() {
               <Text weight="semibold" className="text-white flex-1">
                 Anthropic (Claude)
               </Text>
-              {anthropicKey.isValidating && <ActivityIndicator size="small" color="#14B8A6" />}
+              {anthropicKey.isValidating && (
+                <ActivityIndicator size="small" color={getColor('teal', '500')} />
+              )}
               {anthropicKey.isValid === true && (
                 <SuccessIcon size={18} color="teal" turbulence={0.15} />
               )}
@@ -171,7 +174,9 @@ export default function ApiKeysScreen() {
               <Text weight="semibold" className="text-white flex-1">
                 OpenAI (GPT-4)
               </Text>
-              {openaiKey.isValidating && <ActivityIndicator size="small" color="#14B8A6" />}
+              {openaiKey.isValidating && (
+                <ActivityIndicator size="small" color={getColor('teal', '500')} />
+              )}
               {openaiKey.isValid === true && (
                 <SuccessIcon size={18} color="teal" turbulence={0.15} />
               )}

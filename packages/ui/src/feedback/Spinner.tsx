@@ -1,5 +1,6 @@
 import { ActivityIndicator, View } from 'react-native';
 import { Text } from '../primitives/Text';
+import { themeTokens } from '../theme/ThemeProvider';
 
 interface SpinnerProps {
   size?: 'small' | 'large';
@@ -16,7 +17,7 @@ interface SpinnerProps {
  * @param label - Optional label to display below the spinner.
  * @returns A View element containing an ActivityIndicator and optional label.
  */
-export function Spinner({ size = 'large', color = '#FF7059', label }: SpinnerProps) {
+export function Spinner({ size = 'large', color = themeTokens.colors.coral[500], label }: SpinnerProps) {
   const accessibilityLabel = label || 'Loading...';
 
   return (

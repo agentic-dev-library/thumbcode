@@ -4,6 +4,7 @@ import {
   View,
 } from 'react-native';
 import { Text } from '../primitives/Text';
+import { themeTokens } from '../theme/ThemeProvider';
 
 interface InputProps extends RNTextInputProps {
   label?: string;
@@ -42,7 +43,7 @@ export function Input({ label, error, variant = 'default', className = '', ...pr
           font-body text-base
           ${className}
         `}
-        placeholderTextColor="#94A3B8"
+        placeholderTextColor={themeTokens.colors.neutral[400]}
         {...props}
       />
       {error && <Text className="mt-1 text-sm text-coral-500">{error}</Text>}

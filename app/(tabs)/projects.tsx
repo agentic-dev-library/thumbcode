@@ -21,6 +21,7 @@ import {
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 
 // Mock data
 const MOCK_PROJECTS = [
@@ -96,7 +97,7 @@ export default function ProjectsScreen() {
           </View>
           <TextInput
             placeholder="Search projects..."
-            placeholderTextColor="#6B7280"
+            placeholderTextColor={getColor('neutral', '400')}
             value={searchQuery}
             onChangeText={setSearchQuery}
             className="flex-1 text-white font-body"
@@ -199,7 +200,7 @@ export default function ProjectsScreen() {
           organicBorderRadius.cta,
           {
             marginBottom: insets.bottom,
-            shadowColor: '#FF7059',
+            shadowColor: getColor('coral', '500'),
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.3,
             shadowRadius: 8,

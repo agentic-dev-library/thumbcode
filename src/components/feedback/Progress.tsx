@@ -10,6 +10,7 @@ import { Animated, View } from 'react-native';
 import { SuccessIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 
 interface ProgressBarProps {
   /** Progress value between 0 and 100 */
@@ -110,10 +111,10 @@ interface ProgressCircleProps {
 }
 
 const circleColors = {
-  primary: '#FF7059',
-  secondary: '#14B8A6',
-  success: '#0D9488',
-  warning: '#F5D563',
+  primary: getColor('coral', '500'),
+  secondary: getColor('teal', '500'),
+  success: getColor('teal', '600'),
+  warning: getColor('gold', '400'),
 };
 
 export function ProgressCircle({

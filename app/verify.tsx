@@ -1,5 +1,6 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Card, Input, Text } from '@/components/ui';
+import { getColor } from '@/utils/design-tokens';
 
 /**
  * Component verification screen.
@@ -50,7 +51,7 @@ const VerificationScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: getColor('neutral', '50'),
   },
   content: {
     padding: 16,

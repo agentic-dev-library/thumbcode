@@ -16,6 +16,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ErrorBoundary } from '@/components/error';
 import { OnboardingProvider, useOnboarding } from '@/contexts/onboarding';
 import { logger, setupGlobalErrorHandlers } from '@/lib';
+import { getColor } from '@/utils/design-tokens';
 import '../global.css';
 
 // Initialize global error handlers
@@ -44,7 +45,7 @@ function RootLayoutNav() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-charcoal items-center justify-center">
-        <ActivityIndicator size="large" color="#FF7059" />
+        <ActivityIndicator size="large" color={getColor('coral', '500')} />
       </View>
     );
   }
@@ -53,7 +54,7 @@ function RootLayoutNav() {
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: '#151820' },
+        contentStyle: { backgroundColor: getColor('charcoal') },
         animation: 'slide_from_right',
       }}
     >
@@ -64,8 +65,8 @@ function RootLayoutNav() {
         options={{
           headerShown: true,
           headerTitle: 'Project',
-          headerStyle: { backgroundColor: '#151820' },
-          headerTintColor: '#fff',
+          headerStyle: { backgroundColor: getColor('charcoal') },
+          headerTintColor: getColor('neutral', '50'),
         }}
       />
       <Stack.Screen
@@ -73,8 +74,8 @@ function RootLayoutNav() {
         options={{
           headerShown: true,
           headerTitle: 'Agent',
-          headerStyle: { backgroundColor: '#151820' },
-          headerTintColor: '#fff',
+          headerStyle: { backgroundColor: getColor('charcoal') },
+          headerTintColor: getColor('neutral', '50'),
         }}
       />
       <Stack.Screen
@@ -82,8 +83,8 @@ function RootLayoutNav() {
         options={{
           headerShown: true,
           headerTitle: 'Settings',
-          headerStyle: { backgroundColor: '#151820' },
-          headerTintColor: '#fff',
+          headerStyle: { backgroundColor: getColor('charcoal') },
+          headerTintColor: getColor('neutral', '50'),
           presentation: 'modal',
         }}
       />

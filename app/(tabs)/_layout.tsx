@@ -17,6 +17,7 @@ import {
   type IconColor,
   SettingsIcon,
 } from '@/components/icons';
+import { getColor } from '@/utils/design-tokens';
 
 interface TabIconProps {
   Icon: React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
@@ -47,22 +48,22 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: true,
         headerStyle: {
-          backgroundColor: '#151820',
+          backgroundColor: getColor('charcoal'),
         },
         headerTitleStyle: {
           fontFamily: 'Fraunces',
-          color: '#fff',
+          color: getColor('neutral', '50'),
         },
-        headerTintColor: '#fff',
+        headerTintColor: getColor('neutral', '50'),
         tabBarStyle: {
-          backgroundColor: '#1E293B',
-          borderTopColor: '#334155',
+          backgroundColor: getColor('neutral', '800'),
+          borderTopColor: getColor('neutral', '700'),
           borderTopWidth: 1,
           height: 80 + insets.bottom,
           paddingBottom: insets.bottom,
         },
-        tabBarActiveTintColor: '#FF7059',
-        tabBarInactiveTintColor: '#9CA3AF',
+        tabBarActiveTintColor: getColor('coral', '500'),
+        tabBarInactiveTintColor: getColor('neutral', '400'),
         tabBarLabelStyle: {
           fontFamily: 'Cabin',
           fontSize: 11,

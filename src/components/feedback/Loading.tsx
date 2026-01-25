@@ -7,6 +7,12 @@
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, Text, View } from 'react-native';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import {
+  type ColorKey,
+  type ColorShade,
+  getColor,
+  getColorWithOpacity,
+} from '@/utils/design-tokens';
 
 interface SpinnerProps {
   /** Size of the spinner */
@@ -23,10 +29,13 @@ const spinnerSizes = {
   lg: 32,
 };
 
-const spinnerColors = {
-  primary: '#FF7059', // coral
-  secondary: '#14B8A6', // teal
-  white: '#FFFFFF',
+const spinnerColorTokens: Record<
+  NonNullable<SpinnerProps['color']>,
+  { color: ColorKey; shade: ColorShade }
+> = {
+  primary: { color: 'coral', shade: '500' },
+  secondary: { color: 'teal', shade: '500' },
+  white: { color: 'neutral', shade: '50' },
 };
 
 export function Spinner({ size = 'md', color = 'primary', label }: SpinnerProps) {
@@ -50,6 +59,9 @@ export function Spinner({ size = 'md', color = 'primary', label }: SpinnerProps)
 
   const dimension = spinnerSizes[size];
   const borderWidth = dimension / 6;
+  const token = spinnerColorTokens[color];
+  const borderColor = getColorWithOpacity(token.color, token.shade, 0.2);
+  const borderTopColor = getColor(token.color, token.shade);
 
   return (
     <View className="items-center">
@@ -59,8 +71,8 @@ export function Spinner({ size = 'md', color = 'primary', label }: SpinnerProps)
           height: dimension,
           borderRadius: dimension / 2,
           borderWidth,
-          borderColor: `${spinnerColors[color]}30`,
-          borderTopColor: spinnerColors[color],
+          borderColor,
+          borderTopColor,
           transform: [{ rotate: spin }],
         }}
       />

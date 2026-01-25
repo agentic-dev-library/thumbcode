@@ -5,6 +5,7 @@
  */
 
 import { Stack, useRouter } from 'expo-router';
+import type React from 'react';
 import { useState } from 'react';
 import { Alert, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,6 +14,7 @@ import { type IconColor, LinkIcon, SecurityIcon } from '@/components/icons';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 
 type CredentialIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 
@@ -123,7 +125,7 @@ function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: Api
           >
             <TextInput
               placeholder={placeholder}
-              placeholderTextColor="#6B7280"
+              placeholderTextColor={getColor('neutral', '400')}
               value={value}
               onChangeText={onChange}
               secureTextEntry

@@ -7,7 +7,17 @@
 import tokens from '../../design-system/tokens.json';
 
 export type ColorKey = keyof typeof tokens.colors;
-export type ColorShade = '300' | '400' | '500' | '600' | '700' | '800';
+export type ColorShade =
+  | '50'
+  | '100'
+  | '200'
+  | '300'
+  | '400'
+  | '500'
+  | '600'
+  | '700'
+  | '800'
+  | '900';
 
 /**
  * Retrieves the hex color value for a named color and shade.
