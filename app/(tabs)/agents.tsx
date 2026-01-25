@@ -7,7 +7,7 @@
 
 import { useRouter } from 'expo-router';
 import type React from 'react';
-import { useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBadge } from '@/components/display';
@@ -134,10 +134,35 @@ function getRoleColor(role: string): string {
   }
 }
 
+interface RoleFilterButtonProps {
+  role: string;
+  isSelected: boolean;
+  onPress: (role: string) => void;
+}
+
+const RoleFilterButton = memo(({ role, isSelected, onPress }: RoleFilterButtonProps) => (
+  <Pressable
+    testID={`role-filter-${role}`}
+    onPress={() => onPress(role)}
+    className={`px-4 py-2 ${isSelected ? 'bg-coral-500' : 'bg-surface'}`}
+    style={organicBorderRadius.button}
+  >
+    <Text className={`capitalize ${isSelected ? 'text-white' : 'text-neutral-400'}`}>{role}</Text>
+  </Pressable>
+));
+
 export default function AgentsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+
+  const handleRolePress = useCallback((role: string) => {
+    setSelectedRole(role);
+  }, []);
+
+  const handleAllPress = useCallback(() => {
+    setSelectedRole(null);
+  }, []);
 
   const filteredAgents = selectedRole
     ? MOCK_AGENTS.filter((agent) => agent.role === selectedRole)
@@ -188,7 +213,8 @@ export default function AgentsScreen() {
           contentContainerStyle={{ gap: 8 }}
         >
           <Pressable
-            onPress={() => setSelectedRole(null)}
+            testID="role-filter-all"
+            onPress={handleAllPress}
             className={`px-4 py-2 ${!selectedRole ? 'bg-coral-500' : 'bg-surface'}`}
             style={organicBorderRadius.badge}
           >
@@ -196,18 +222,12 @@ export default function AgentsScreen() {
           </Pressable>
 
           {['architect', 'implementer', 'reviewer', 'tester'].map((role) => (
-            <Pressable
+            <RoleFilterButton
               key={role}
-              onPress={() => setSelectedRole(role)}
-              className={`px-4 py-2 ${selectedRole === role ? 'bg-coral-500' : 'bg-surface'}`}
-              style={organicBorderRadius.button}
-            >
-              <Text
-                className={`capitalize ${selectedRole === role ? 'text-white' : 'text-neutral-400'}`}
-              >
-                {role}
-              </Text>
-            </Pressable>
+              role={role}
+              isSelected={selectedRole === role}
+              onPress={handleRolePress}
+            />
           ))}
         </ScrollView>
 
