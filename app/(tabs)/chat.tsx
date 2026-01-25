@@ -2,294 +2,57 @@
  * Chat Screen
  *
  * Main chat interface for human-agent communication.
- * Uses simplified mock components for demonstration.
  * Uses paint daube icons for brand consistency.
  */
 
-import type React from 'react';
-import { useRef, useState } from 'react';
-import { FlatList, KeyboardAvoidingView, Platform, Pressable, TextInput, View } from 'react-native';
+import { type Message, useChatStore } from '@thumbcode/state';
+import { useEffect, useMemo, useRef } from 'react';
+import { FlatList, KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Badge } from '@/components/display';
-import {
-  EditIcon,
-  type IconColor,
-  LightningIcon,
-  ReviewIcon,
-  SearchIcon,
-  StarIcon,
-  UserIcon,
-} from '@/components/icons';
-import { HStack, VStack } from '@/components/layout';
+import { ChatInput, ChatMessage, ThreadList } from '@/components/chat';
+import { ChevronDownIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
-import { getColor } from '@/utils/design-tokens';
-
-// Simple message type for the mock screen
-interface MockMessage {
-  id: string;
-  sender: 'user' | 'architect' | 'implementer' | 'reviewer' | 'tester';
-  text: string;
-  code?: {
-    language: string;
-    content: string;
-    filename?: string;
-  };
-  timestamp: Date;
-}
-
-// Mock data
-const MOCK_MESSAGES: MockMessage[] = [
-  {
-    id: '1',
-    sender: 'architect',
-    text: "I've analyzed the project requirements and created a task breakdown for the authentication module.",
-    timestamp: new Date(Date.now() - 3600000),
-  },
-  {
-    id: '2',
-    sender: 'user',
-    text: "Great! Let's start with the login flow. Can you implement it using OAuth?",
-    timestamp: new Date(Date.now() - 3000000),
-  },
-  {
-    id: '3',
-    sender: 'implementer',
-    text: "I've started implementing the OAuth login flow. Here's the initial implementation:",
-    code: {
-      language: 'typescript',
-      content: `async function handleOAuthLogin(provider: string) {
-  const authUrl = await getAuthorizationUrl(provider);
-  const result = await WebBrowser.openAuthSessionAsync(authUrl);
-
-  if (result.type === 'success') {
-    const tokens = await exchangeCodeForTokens(result.url);
-    await secureStore.setItem('auth_tokens', tokens);
-  }
-}`,
-      filename: 'src/services/auth.ts',
-    },
-    timestamp: new Date(Date.now() - 1800000),
-  },
-  {
-    id: '4',
-    sender: 'reviewer',
-    text: "I've reviewed the implementation. It looks good but needs some error handling. Please add try-catch blocks and handle token expiry.",
-    timestamp: new Date(Date.now() - 900000),
-  },
-];
-
-type AgentAvatarIcon = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
-
-function getAgentInfo(sender: MockMessage['sender']): {
-  name: string;
-  AvatarIcon: AgentAvatarIcon;
-  iconColor: IconColor;
-  textColor: string;
-} {
-  switch (sender) {
-    case 'architect':
-      return {
-        name: 'Architect',
-        AvatarIcon: StarIcon,
-        iconColor: 'gold',
-        textColor: 'text-gold-400',
-      };
-    case 'implementer':
-      return {
-        name: 'Implementer',
-        AvatarIcon: LightningIcon,
-        iconColor: 'teal',
-        textColor: 'text-teal-400',
-      };
-    case 'reviewer':
-      return {
-        name: 'Reviewer',
-        AvatarIcon: ReviewIcon,
-        iconColor: 'coral',
-        textColor: 'text-coral-400',
-      };
-    case 'tester':
-      return {
-        name: 'Tester',
-        AvatarIcon: SearchIcon,
-        iconColor: 'teal',
-        textColor: 'text-purple-400',
-      };
-    default:
-      return { name: 'You', AvatarIcon: UserIcon, iconColor: 'warmGray', textColor: 'text-white' };
-  }
-}
-
-function MockMessageBubble({ message }: { message: MockMessage }) {
-  const isUser = message.sender === 'user';
-  const agentInfo = getAgentInfo(message.sender);
-
-  return (
-    <View className={`px-4 py-2 ${isUser ? 'items-end' : 'items-start'}`}>
-      {!isUser && (
-        <HStack spacing="sm" align="center" className="mb-2">
-          <View
-            className="w-8 h-8 bg-surface items-center justify-center"
-            style={organicBorderRadius.badge}
-          >
-            <agentInfo.AvatarIcon size={18} color={agentInfo.iconColor} turbulence={0.2} />
-          </View>
-          <Text size="sm" weight="semibold" className={agentInfo.textColor}>
-            {agentInfo.name}
-          </Text>
-        </HStack>
-      )}
-
-      <View
-        className={`max-w-[85%] p-3 ${isUser ? 'bg-coral-500' : 'bg-surface'}`}
-        style={isUser ? organicBorderRadius.chatBubbleUser : organicBorderRadius.chatBubbleAgent}
-      >
-        <Text className={isUser ? 'text-white' : 'text-neutral-200'}>{message.text}</Text>
-
-        {message.code && (
-          <View className="mt-3 bg-charcoal p-3" style={organicBorderRadius.codeBlock}>
-            {message.code.filename && (
-              <Text size="xs" className="text-neutral-500 mb-2">
-                {message.code.filename}
-              </Text>
-            )}
-            <Text size="sm" className="text-teal-400 font-mono">
-              {message.code.content}
-            </Text>
-          </View>
-        )}
-      </View>
-    </View>
-  );
-}
-
-function MockApprovalCard({
-  onApprove,
-  onReject,
-}: {
-  onApprove: () => void;
-  onReject: () => void;
-}) {
-  return (
-    <View className="bg-surface p-4" style={organicBorderRadius.card}>
-      <HStack justify="between" align="center" className="mb-3">
-        <HStack spacing="sm" align="center">
-          <EditIcon size={22} color="gold" turbulence={0.2} />
-          <Text weight="semibold" className="text-white">
-            Ready to commit changes?
-          </Text>
-        </HStack>
-        <Badge variant="warning">Pending</Badge>
-      </HStack>
-
-      <Text size="sm" className="text-neutral-400 mb-4">
-        The authentication module implementation is ready for commit.
-      </Text>
-
-      <VStack spacing="xs" className="mb-4">
-        <HStack spacing="sm" align="center">
-          <Text size="sm" className="text-gold-400">
-            M
-          </Text>
-          <Text size="sm" className="text-neutral-300">
-            src/services/auth.ts
-          </Text>
-        </HStack>
-        <HStack spacing="sm" align="center">
-          <Text size="sm" className="text-teal-400">
-            A
-          </Text>
-          <Text size="sm" className="text-neutral-300">
-            src/hooks/useAuth.ts
-          </Text>
-        </HStack>
-      </VStack>
-
-      <HStack spacing="sm">
-        <Pressable
-          onPress={onReject}
-          className="flex-1 bg-surface-elevated py-3 active:bg-neutral-700"
-          style={organicBorderRadius.button}
-        >
-          <Text className="text-center text-neutral-400">Reject</Text>
-        </Pressable>
-        <Pressable
-          onPress={onApprove}
-          className="flex-1 bg-teal-600 py-3 active:bg-teal-700"
-          style={organicBorderRadius.button}
-        >
-          <Text className="text-center text-white font-semibold">Approve</Text>
-        </Pressable>
-      </HStack>
-    </View>
-  );
-}
-
-function MockChatInput({ onSend }: { onSend: (text: string) => void }) {
-  const [text, setText] = useState('');
-
-  const handleSend = () => {
-    if (text.trim()) {
-      onSend(text.trim());
-      setText('');
-    }
-  };
-
-  return (
-    <HStack spacing="sm" align="center">
-      <View className="flex-1 bg-surface px-4 py-3" style={organicBorderRadius.input}>
-        <TextInput
-          value={text}
-          onChangeText={setText}
-          placeholder="Message your AI team..."
-          placeholderTextColor={getColor('neutral', '400')}
-          className="text-white font-body"
-          multiline
-          onSubmitEditing={handleSend}
-        />
-      </View>
-      <Pressable
-        onPress={handleSend}
-        disabled={!text.trim()}
-        className={`w-12 h-12 items-center justify-center ${text.trim() ? 'bg-coral-500' : 'bg-surface'}`}
-        style={organicBorderRadius.card}
-      >
-        <Text className={text.trim() ? 'text-white' : 'text-neutral-500'}>↑</Text>
-      </Pressable>
-    </HStack>
-  );
-}
+import { ChatService } from '@/services/chat';
 
 export default function ChatScreen() {
   const insets = useSafeAreaInsets();
-  const [messages, setMessages] = useState(MOCK_MESSAGES);
-  const [showApproval, setShowApproval] = useState(true);
-  const flatListRef = useRef<FlatList>(null);
+  const listRef = useRef<FlatList<Message>>(null);
 
-  const handleSend = (text: string) => {
-    const newMessage: MockMessage = {
-      id: Date.now().toString(),
-      sender: 'user',
-      text,
-      timestamp: new Date(),
-    };
-    setMessages((prev) => [...prev, newMessage]);
+  const activeThreadId = useChatStore((s) => s.activeThreadId);
+  const setActiveThread = useChatStore((s) => s.setActiveThread);
+  const respondToApproval = useChatStore((s) => s.respondToApproval);
 
-    // Scroll to bottom
-    setTimeout(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }, 100);
-  };
+  const activeThreadTitle = useChatStore((s) =>
+    activeThreadId ? s.threads.find((t) => t.id === activeThreadId)?.title : undefined
+  );
 
-  const handleApprove = () => {
-    setShowApproval(false);
-    // TODO: Trigger commit
-  };
+  const messages = useChatStore((s) => (activeThreadId ? (s.messages[activeThreadId] ?? []) : []));
+  const typingSenders = useChatStore((s) =>
+    activeThreadId ? (s.isTyping[activeThreadId] ?? []) : []
+  );
 
-  const handleReject = () => {
-    setShowApproval(false);
-    // TODO: Request changes
+  const typingLabel = useMemo(() => {
+    const nonUser = typingSenders.filter((s) => s !== 'user');
+    if (nonUser.length === 0) return null;
+    if (nonUser.length === 1) return `${nonUser[0]} is typing…`;
+    return `${nonUser.slice(0, 2).join(', ')} are typing…`;
+  }, [typingSenders]);
+
+  useEffect(() => {
+    if (!activeThreadId) return;
+    // Ensure the effect re-runs when message count changes (for auto-scroll).
+    void messages.length;
+    // Slight delay so FlatList has laid out
+    const timer = setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 50);
+    return () => clearTimeout(timer);
+  }, [activeThreadId, messages.length]);
+
+  const handleCreateThread = () => {
+    const id = ChatService.createThread({
+      title: 'New thread',
+      participants: ['user', 'architect', 'implementer', 'reviewer', 'tester'],
+    });
+    setActiveThread(id);
   };
 
   return (
@@ -298,32 +61,69 @@ export default function ChatScreen() {
       className="flex-1 bg-charcoal"
       keyboardVerticalOffset={90}
     >
-      <FlatList
-        ref={flatListRef}
-        data={messages}
-        renderItem={({ item }) => <MockMessageBubble message={item} />}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{
-          paddingTop: 16,
-          paddingBottom: showApproval ? 200 : 100,
-        }}
-        showsVerticalScrollIndicator={false}
-      />
+      {!activeThreadId ? (
+        <View className="flex-1" style={{ paddingTop: insets.top }}>
+          <ThreadList onSelectThread={setActiveThread} onCreateThread={handleCreateThread} />
+        </View>
+      ) : (
+        <View className="flex-1" style={{ paddingTop: insets.top }}>
+          {/* Thread header */}
+          <View className="flex-row items-center px-4 py-3 border-b border-neutral-800 bg-charcoal">
+            <Pressable
+              onPress={() => setActiveThread(null)}
+              accessibilityRole="button"
+              accessibilityLabel="Back"
+              accessibilityHint="Return to thread list"
+              className="mr-3 p-2 -ml-2"
+            >
+              <View style={{ transform: [{ rotate: '90deg' }] }}>
+                <ChevronDownIcon size={18} color="warmGray" turbulence={0.12} />
+              </View>
+            </Pressable>
+            <Text variant="display" size="lg" className="text-white flex-1" numberOfLines={1}>
+              {activeThreadTitle || 'Chat'}
+            </Text>
+          </View>
 
-      {/* Approval Card */}
-      {showApproval && (
-        <View className="absolute left-4 right-4" style={{ bottom: 100 + insets.bottom }}>
-          <MockApprovalCard onApprove={handleApprove} onReject={handleReject} />
+          {/* Messages */}
+          <FlatList
+            ref={listRef}
+            data={messages}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <ChatMessage
+                message={item}
+                onApprovalResponse={(messageId, approved) => {
+                  if (!activeThreadId) return;
+                  respondToApproval(messageId, activeThreadId, approved);
+                }}
+              />
+            )}
+            contentContainerStyle={{
+              paddingTop: 12,
+              paddingBottom: 12,
+            }}
+            showsVerticalScrollIndicator={false}
+          />
+
+          {/* Typing indicator */}
+          {typingLabel && (
+            <View className="px-4 py-2">
+              <Text size="sm" className="text-neutral-500">
+                {typingLabel}
+              </Text>
+            </View>
+          )}
+
+          {/* Input */}
+          <View
+            className="border-t border-neutral-800 bg-charcoal"
+            style={{ paddingBottom: insets.bottom + 12 }}
+          >
+            <ChatInput threadId={activeThreadId} />
+          </View>
         </View>
       )}
-
-      {/* Input */}
-      <View
-        className="border-t border-neutral-800 px-4 py-3 bg-charcoal"
-        style={{ paddingBottom: insets.bottom + 12 }}
-      >
-        <MockChatInput onSend={handleSend} />
-      </View>
     </KeyboardAvoidingView>
   );
 }
