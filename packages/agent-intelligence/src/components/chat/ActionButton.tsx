@@ -1,5 +1,6 @@
 import { styled } from 'nativewind';
 import { Text, TouchableOpacity } from 'react-native';
+import { organicBorderRadius } from '../../theme/organic-styles';
 
 const StyledTouchableOpacity = styled(TouchableOpacity);
 const StyledText = styled(Text);
@@ -13,9 +14,7 @@ const ActionButton = ({ title, onPress }: ActionButtonProps) => {
   return (
     <StyledTouchableOpacity
       className="bg-gold-400 py-2 px-3 mx-1 active:bg-gold-600"
-      style={{
-        borderRadius: '0.375rem 0.5rem 0.625rem 0.25rem',
-      }}
+      style={organicBorderRadius.badge}
       onPress={onPress}
     >
       <StyledText className="text-charcoal font-body font-bold text-sm">{title}</StyledText>

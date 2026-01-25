@@ -1,5 +1,6 @@
 import { styled } from 'nativewind';
 import { ScrollView, Text, View } from 'react-native';
+import { organicBorderRadius } from '../../theme/organic-styles';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -14,9 +15,7 @@ const CodeBlock = ({ code, language }: CodeBlockProps) => {
   return (
     <StyledView
       className="bg-charcoal my-2 p-3 shadow-organic-card"
-      style={{
-        borderRadius: '0.5rem 0.75rem 0.625rem 0.5rem',
-      }}
+      style={organicBorderRadius.codeBlock}
     >
       {language && (
         <StyledText className="text-neutral-400 font-mono text-xs mb-2">{language}</StyledText>
