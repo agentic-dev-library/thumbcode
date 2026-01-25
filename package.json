@@ -113,7 +113,7 @@
   },
   "pnpm": {
     "overrides": {
-      "tar": ">=7.5.3"
+      "tar": ">=7.5.4"
     }
   },
   "private": true
