@@ -1,4 +1,5 @@
 import { View, type ViewProps } from 'react-native';
+import { organicBorderRadius, organicShadow } from '../theme/organicStyles';
 
 interface CardProps extends ViewProps {
   variant?: 'default' | 'elevated' | 'outlined';
@@ -14,9 +15,9 @@ interface CardProps extends ViewProps {
  */
 export function Card({ variant = 'default', className = '', children, ...props }: CardProps) {
   const variantClasses = {
-    default: 'bg-white',
-    elevated: 'bg-neutral-50 shadow-lg',
-    outlined: 'bg-white border border-neutral-200',
+    default: 'bg-surface',
+    elevated: 'bg-surface-elevated',
+    outlined: 'bg-surface border border-neutral-700',
   }[variant];
 
   return (
@@ -24,12 +25,13 @@ export function Card({ variant = 'default', className = '', children, ...props }
       className={`
         ${variantClasses}
         p-4
-        rounded-[1rem_0.75rem_1.25rem_0.5rem]
         ${className}
       `}
-      style={{
-        transform: [{ rotate: '-0.3deg' }],
-      }}
+      style={[
+        organicBorderRadius.card,
+        variant === 'elevated' ? organicShadow.elevated : organicShadow.card,
+        { transform: [{ rotate: '-0.3deg' }] },
+      ]}
       {...props}
     >
       {children}

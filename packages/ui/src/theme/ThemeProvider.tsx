@@ -9,7 +9,7 @@ import type { ReactNode } from 'react';
 import { createContext, useContext, useMemo } from 'react';
 
 // Design tokens - these match the P3 "Warm Technical" palette
-const tokens = {
+export const themeTokens = {
   colors: {
     coral: {
       500: '#FF7059',
@@ -76,10 +76,10 @@ const tokens = {
 };
 
 interface ThemeContextValue {
-  tokens: typeof tokens;
-  colors: typeof tokens.colors;
-  spacing: typeof tokens.spacing;
-  typography: typeof tokens.typography;
+  tokens: typeof themeTokens;
+  colors: typeof themeTokens.colors;
+  spacing: typeof themeTokens.spacing;
+  typography: typeof themeTokens.typography;
 }
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
@@ -92,10 +92,10 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     () => ({
-      tokens,
-      colors: tokens.colors,
-      spacing: tokens.spacing,
-      typography: tokens.typography,
+      tokens: themeTokens,
+      colors: themeTokens.colors,
+      spacing: themeTokens.spacing,
+      typography: themeTokens.typography,
     }),
     []
   );
@@ -124,7 +124,7 @@ export function useTheme() {
  * @param shade - The shade key within a color group (defaults to `'500'`).
  * @returns The resolved color string (e.g., hex value). Returns `'#000000'` if the color or shade is not found.
  */
-export function useColor(colorName: keyof typeof tokens.colors, shade: string = '500'): string {
+export function useColor(colorName: keyof typeof themeTokens.colors, shade: string = '500'): string {
   const { colors } = useTheme();
   const color = colors[colorName];
 
@@ -141,7 +141,7 @@ export function useColor(colorName: keyof typeof tokens.colors, shade: string = 
  * @param key - The spacing token key (for example, `"sm"`, `"md"`, `"lg"`)
  * @returns The spacing value for the given key, or `'0px'` if the key is not present
  */
-export function useSpacing(key: keyof typeof tokens.spacing): string {
+export function useSpacing(key: keyof typeof themeTokens.spacing): string {
   const { spacing } = useTheme();
   return spacing[key] || '0px';
 }

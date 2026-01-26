@@ -5,6 +5,7 @@
  * Uses paint daube icons for brand consistency.
  */
 
+import { selectProjects, useProjectStore } from '@thumbcode/state';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, TextInput, View } from 'react-native';
@@ -21,43 +22,7 @@ import {
 import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
-
-// Mock data
-const MOCK_PROJECTS = [
-  {
-    id: '1',
-    name: 'My Awesome App',
-    description: 'A React Native app built with ThumbCode',
-    repository: 'user/my-awesome-app',
-    branch: 'main',
-    lastActivity: '5 min ago',
-    pendingTasks: 3,
-    activeAgents: 2,
-    status: 'active' as const,
-  },
-  {
-    id: '2',
-    name: 'API Service',
-    description: 'Backend API service',
-    repository: 'user/api-service',
-    branch: 'develop',
-    lastActivity: '1 hour ago',
-    pendingTasks: 5,
-    activeAgents: 1,
-    status: 'active' as const,
-  },
-  {
-    id: '3',
-    name: 'Portfolio Site',
-    description: 'Personal portfolio website',
-    repository: 'user/portfolio-site',
-    branch: 'main',
-    lastActivity: '2 days ago',
-    pendingTasks: 0,
-    activeAgents: 0,
-    status: 'idle' as const,
-  },
-];
+import { getColor } from '@/utils/design-tokens';
 
 function getStatusBadge(status: 'active' | 'idle' | 'error') {
   switch (status) {
@@ -77,10 +42,12 @@ export default function ProjectsScreen() {
   const insets = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredProjects = MOCK_PROJECTS.filter(
+  const projects = useProjectStore(selectProjects);
+
+  const filteredProjects = projects.filter(
     (project) =>
       project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchQuery.toLowerCase())
+      project.repoUrl.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -96,7 +63,7 @@ export default function ProjectsScreen() {
           </View>
           <TextInput
             placeholder="Search projects..."
-            placeholderTextColor="#6B7280"
+            placeholderTextColor={getColor('neutral', '400')}
             value={searchQuery}
             onChangeText={setSearchQuery}
             className="flex-1 text-white font-body"
@@ -140,48 +107,44 @@ export default function ProjectsScreen() {
                         {project.name}
                       </Text>
                       <Text size="sm" className="text-neutral-400" numberOfLines={1}>
-                        {project.description}
+                        {project.repoUrl}
                       </Text>
                     </VStack>
-                    {getStatusBadge(project.status)}
+                    {getStatusBadge(project.status ?? 'idle')}
                   </HStack>
 
                   <HStack spacing="md" className="mb-3">
                     <HStack spacing="xs" align="center">
                       <GitIcon size={14} color="warmGray" turbulence={0.2} />
                       <Text size="sm" className="text-neutral-400">
-                        {project.repository}
+                        {project.repoUrl.replace(/^https?:\/\//, '')}
                       </Text>
                     </HStack>
                     <HStack spacing="xs" align="center">
                       <BranchIcon size={14} color="warmGray" turbulence={0.2} />
                       <Text size="sm" className="text-neutral-400">
-                        {project.branch}
+                        {project.defaultBranch}
                       </Text>
                     </HStack>
                   </HStack>
 
                   <HStack justify="between" align="center">
                     <HStack spacing="md">
-                      {project.pendingTasks > 0 && (
-                        <HStack spacing="xs" align="center">
-                          <TasksIcon size={14} color="gold" turbulence={0.2} />
-                          <Text size="sm" className="text-gold-400">
-                            {project.pendingTasks} tasks
-                          </Text>
-                        </HStack>
-                      )}
-                      {project.activeAgents > 0 && (
-                        <HStack spacing="xs" align="center">
-                          <AgentIcon size={14} color="teal" turbulence={0.2} />
-                          <Text size="sm" className="text-teal-400">
-                            {project.activeAgents} agents
-                          </Text>
-                        </HStack>
-                      )}
+                      <HStack spacing="xs" align="center">
+                        <TasksIcon size={14} color="gold" turbulence={0.2} />
+                        <Text size="sm" className="text-neutral-400">
+                          Workspace ready
+                        </Text>
+                      </HStack>
+                      <HStack spacing="xs" align="center">
+                        <AgentIcon size={14} color="teal" turbulence={0.2} />
+                        <Text size="sm" className="text-neutral-400">
+                          Agents available
+                        </Text>
+                      </HStack>
                     </HStack>
                     <Text size="xs" className="text-neutral-500">
-                      {project.lastActivity}
+                      Opened {new Date(project.lastOpenedAt).toLocaleDateString()}
                     </Text>
                   </HStack>
                 </Pressable>
@@ -199,7 +162,7 @@ export default function ProjectsScreen() {
           organicBorderRadius.cta,
           {
             marginBottom: insets.bottom,
-            shadowColor: '#FF7059',
+            shadowColor: getColor('coral', '500'),
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.3,
             shadowRadius: 8,

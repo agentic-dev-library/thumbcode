@@ -4,6 +4,7 @@ import {
   View,
 } from 'react-native';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 import { Text } from './Text';
 
 interface InputProps extends RNTextInputProps {
@@ -23,7 +24,7 @@ interface InputProps extends RNTextInputProps {
  * @returns A React element containing the labeled input and optional error message
  */
 /** Placeholder color from design tokens - neutral-400 */
-const PLACEHOLDER_COLOR = '#94A3B8';
+const PLACEHOLDER_COLOR = getColor('neutral', '400');
 
 export function Input({ label, error, className = '', style, ...props }: InputProps) {
   return (

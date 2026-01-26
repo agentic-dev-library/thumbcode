@@ -1,5 +1,6 @@
 import { ActivityIndicator, Pressable, type PressableProps } from 'react-native';
 import { Text } from '../primitives/Text';
+import { themeTokens } from '../theme/ThemeProvider';
 
 interface ButtonProps extends PressableProps {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -63,7 +64,13 @@ export function Button({
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'outline' || variant === 'ghost' ? '#1E293B' : '#FFFFFF'} />
+        <ActivityIndicator
+          color={
+            variant === 'outline' || variant === 'ghost'
+              ? themeTokens.colors.neutral[800]
+              : themeTokens.colors.neutral[50]
+          }
+        />
       ) : (
         <Text className={`${textColorClass} text-center font-semibold`}>{children}</Text>
       )}

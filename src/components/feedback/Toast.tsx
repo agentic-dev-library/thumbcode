@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CloseIcon, type IconColor, InfoIcon, SuccessIcon, WarningIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 
 type ToastVariant = 'success' | 'error' | 'warning' | 'info';
 type ToastPosition = 'top' | 'bottom';
@@ -52,25 +53,25 @@ interface VariantStyle {
 const variantStyles: Record<ToastVariant, VariantStyle> = {
   success: {
     bg: 'bg-teal-600/20',
-    border: '#14B8A6',
+    border: getColor('teal', '500'),
     Icon: SuccessIcon,
     iconColor: 'teal',
   },
   error: {
     bg: 'bg-coral-500/20',
-    border: '#FF7059',
+    border: getColor('coral', '500'),
     Icon: CloseIcon,
     iconColor: 'coral',
   },
   warning: {
     bg: 'bg-gold-500/20',
-    border: '#F5D563',
+    border: getColor('gold', '400'),
     Icon: WarningIcon,
     iconColor: 'gold',
   },
   info: {
     bg: 'bg-neutral-600/20',
-    border: '#6B7280',
+    border: getColor('neutral', '500'),
     Icon: InfoIcon,
     iconColor: 'warmGray',
   },

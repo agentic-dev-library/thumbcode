@@ -6,6 +6,7 @@
  */
 
 import { View, type ViewStyle } from 'react-native';
+import { getColor } from '@/utils/design-tokens';
 
 interface DividerProps {
   /** Orientation of the divider */
@@ -26,9 +27,9 @@ const spacingValues: Record<'none' | 'sm' | 'md' | 'lg', number> = {
 };
 
 const colorMap: Record<'default' | 'subtle' | 'strong', string> = {
-  default: '#334155', // surface-elevated
-  subtle: '#1E293B', // surface
-  strong: '#475569', // neutral-600
+  default: getColor('neutral', '700'), // surface-elevated
+  subtle: getColor('neutral', '800'), // surface
+  strong: getColor('neutral', '600'), // neutral-600
 };
 
 export function Divider({

@@ -6,6 +6,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AGENT_CONFIG } from '@thumbcode/config';
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -40,6 +41,44 @@ export interface Agent {
   currentTaskId?: string;
   lastActiveAt?: string;
   errorMessage?: string;
+}
+
+function createDefaultAgents(): Agent[] {
+  const now = new Date().toISOString();
+  return [
+    {
+      id: 'agent-architect',
+      role: 'architect',
+      name: 'Architect',
+      status: 'idle',
+      config: { provider: 'anthropic', model: AGENT_CONFIG.defaultModel, maxTokens: AGENT_CONFIG.defaultMaxTokens },
+      lastActiveAt: now,
+    },
+    {
+      id: 'agent-implementer',
+      role: 'implementer',
+      name: 'Implementer',
+      status: 'idle',
+      config: { provider: 'anthropic', model: AGENT_CONFIG.defaultModel, maxTokens: AGENT_CONFIG.defaultMaxTokens },
+      lastActiveAt: now,
+    },
+    {
+      id: 'agent-reviewer',
+      role: 'reviewer',
+      name: 'Reviewer',
+      status: 'idle',
+      config: { provider: 'anthropic', model: AGENT_CONFIG.defaultModel, maxTokens: AGENT_CONFIG.defaultMaxTokens },
+      lastActiveAt: now,
+    },
+    {
+      id: 'agent-tester',
+      role: 'tester',
+      name: 'Tester',
+      status: 'idle',
+      config: { provider: 'anthropic', model: AGENT_CONFIG.defaultModel, maxTokens: AGENT_CONFIG.defaultMaxTokens },
+      lastActiveAt: now,
+    },
+  ];
 }
 
 // Task assigned to an agent
@@ -80,7 +119,7 @@ export const useAgentStore = create<AgentState>()(
   devtools(
     persist(
       immer((set) => ({
-        agents: [],
+        agents: createDefaultAgents(),
         tasks: [],
         activeAgentId: null,
 

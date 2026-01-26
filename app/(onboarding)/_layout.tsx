@@ -5,13 +5,14 @@
  */
 
 import { Stack } from 'expo-router';
+import { getColor } from '@/utils/design-tokens';
 
 export default function OnboardingLayout() {
   return (
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: '#151820' },
+        contentStyle: { backgroundColor: getColor('charcoal') },
         animation: 'slide_from_right',
       }}
     >

@@ -264,9 +264,8 @@ export abstract class BaseAgent {
         }
 
         // Check for thinking content
-        const textBlocks = response.content.filter((b) => b.type === 'text');
-        for (const block of textBlocks) {
-          if (block.text) {
+        for (const block of response.content) {
+          if (block.type === 'text' && block.text) {
             this.emitEvent({ type: 'thinking', data: { thought: block.text } });
           }
         }

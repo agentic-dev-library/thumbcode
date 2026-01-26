@@ -6,7 +6,9 @@
  */
 
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
+import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface CodeBlockProps {
   code: string;
@@ -25,34 +27,42 @@ export function CodeBlock({ code, language, filename }: CodeBlockProps) {
   };
 
   return (
-    <View className="bg-charcoal overflow-hidden" style={{ borderRadius: '12px 8px 12px 10px' }}>
+    <View className="bg-charcoal overflow-hidden" style={organicBorderRadius.codeBlock}>
       {/* Header with language and filename */}
       <View className="flex-row justify-between items-center px-3 py-2 bg-neutral-800 border-b border-neutral-700">
         <View className="flex-row items-center">
-          <Text className="text-xs font-mono text-neutral-400">{language}</Text>
+          <Text variant="mono" size="xs" className="text-neutral-400">
+            {language}
+          </Text>
           {filename && (
             <>
-              <Text className="text-xs text-neutral-600 mx-2">•</Text>
-              <Text className="text-xs font-mono text-neutral-300">{filename}</Text>
+              <Text size="xs" className="text-neutral-600 mx-2">
+                •
+              </Text>
+              <Text variant="mono" size="xs" className="text-neutral-300">
+                {filename}
+              </Text>
             </>
           )}
         </View>
         <Pressable
           onPress={handleCopy}
           className="px-2 py-1 active:bg-neutral-700"
-          style={{ borderRadius: '4px 6px 4px 6px' }}
+          style={organicBorderRadius.badge}
           accessibilityRole="button"
           accessibilityLabel="Copy code"
           accessibilityHint="Copy the code to the clipboard"
         >
-          <Text className="text-xs font-body text-neutral-400">{copied ? 'Copied!' : 'Copy'}</Text>
+          <Text size="xs" className="text-neutral-400">
+            {copied ? 'Copied!' : 'Copy'}
+          </Text>
         </Pressable>
       </View>
 
       {/* Code content */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View className="p-3">
-          <Text className="font-mono text-sm text-neutral-200" style={{ lineHeight: 20 }}>
+          <Text variant="mono" size="sm" className="text-neutral-200" style={{ lineHeight: 20 }}>
             {code}
           </Text>
         </View>

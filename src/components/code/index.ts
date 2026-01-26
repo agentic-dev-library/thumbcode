@@ -5,4 +5,5 @@
  */
 
 export { DiffViewer } from './DiffViewer';
+export type { FileNode } from './FileTree';
 export { FileTree } from './FileTree';

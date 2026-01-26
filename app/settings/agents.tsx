@@ -13,6 +13,7 @@ import { LightbulbIcon } from '@/components/icons';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 
 interface SettingRowProps {
   title: string;
@@ -58,8 +59,8 @@ function SettingRow({ title, subtitle, value, badge, onPress, toggle }: SettingR
           <Switch
             value={toggle.value}
             onValueChange={toggle.onValueChange}
-            trackColor={{ false: '#374151', true: '#0D9488' }}
-            thumbColor={toggle.value ? '#fff' : '#9CA3AF'}
+            trackColor={{ false: getColor('neutral', '700'), true: getColor('teal', '600') }}
+            thumbColor={toggle.value ? getColor('neutral', '50') : getColor('neutral', '400')}
           />
         )}
 

@@ -5,6 +5,13 @@
  * Uses paint daube icons for brand consistency.
  */
 
+import {
+  selectCredentialByProvider,
+  selectGitHubProfile,
+  selectSettings,
+  useCredentialStore,
+  useUserStore,
+} from '@thumbcode/state';
 import { useRouter } from 'expo-router';
 import type React from 'react';
 import { Linking, Pressable, ScrollView, Switch, View } from 'react-native';
@@ -28,6 +35,7 @@ import {
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 
 interface SettingsItemProps {
   Icon: React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
@@ -93,8 +101,8 @@ function SettingsItem({
           <Switch
             value={toggle.value}
             onValueChange={toggle.onValueChange}
-            trackColor={{ false: '#374151', true: '#0D9488' }}
-            thumbColor={toggle.value ? '#fff' : '#9CA3AF'}
+            trackColor={{ false: getColor('neutral', '700'), true: getColor('teal', '600') }}
+            thumbColor={toggle.value ? getColor('neutral', '50') : getColor('neutral', '400')}
           />
         )}
 
@@ -108,9 +116,21 @@ export default function SettingsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  // Mock state - in production would come from stores
-  const hapticFeedback = true;
-  const notifications = true;
+  const profile = useUserStore(selectGitHubProfile);
+  const settings = useUserStore(selectSettings);
+  const updateNotificationPreferences = useUserStore((s) => s.updateNotificationPreferences);
+  const setTheme = useUserStore((s) => s.setTheme);
+
+  const githubCredential = useCredentialStore(selectCredentialByProvider('github'));
+  const anthropicCredential = useCredentialStore(selectCredentialByProvider('anthropic'));
+  const openaiCredential = useCredentialStore(selectCredentialByProvider('openai'));
+
+  const githubBadge = githubCredential?.status === 'valid' ? 'Connected' : undefined;
+  const anthropicBadge = anthropicCredential?.status === 'valid' ? 'Active' : undefined;
+  const openaiBadge = openaiCredential?.status === 'valid' ? 'Active' : undefined;
+
+  const themeLabel =
+    settings.theme === 'system' ? 'System' : settings.theme === 'dark' ? 'Dark' : 'Light';
 
   return (
     <ScrollView
@@ -124,13 +144,13 @@ export default function SettingsScreen() {
           className="bg-surface p-4 mb-6 flex-row items-center active:bg-neutral-700"
           style={organicBorderRadius.card}
         >
-          <Avatar name="User" size="lg" />
+          <Avatar name={profile?.login || 'User'} size="lg" />
           <VStack spacing="xs" className="ml-4 flex-1">
             <Text weight="semibold" className="text-white text-lg">
-              ThumbCode User
+              {profile?.name || profile?.login || 'ThumbCode User'}
             </Text>
             <Text size="sm" className="text-neutral-400">
-              View and edit profile
+              {profile?.login ? `github.com/${profile.login}` : 'Connect GitHub to enable sync'}
             </Text>
           </VStack>
           <Text className="text-neutral-600 text-lg">›</Text>
@@ -152,8 +172,14 @@ export default function SettingsScreen() {
               Icon={LinkIcon}
               iconColor="teal"
               title="GitHub"
-              subtitle="github.com/user"
-              badge="Connected"
+              subtitle={
+                githubCredential?.metadata?.username
+                  ? `github.com/${githubCredential.metadata.username}`
+                  : githubCredential?.status === 'valid'
+                    ? 'Connected'
+                    : 'Not connected'
+              }
+              badge={githubBadge}
               onPress={() => router.push('/settings/credentials')}
             />
             <Divider />
@@ -162,14 +188,15 @@ export default function SettingsScreen() {
               iconColor="coral"
               title="Anthropic"
               subtitle="Claude API"
-              badge="Active"
+              badge={anthropicBadge}
               onPress={() => router.push('/settings/credentials')}
             />
             <Divider />
             <SettingsItem
               Icon={AgentIcon}
               title="OpenAI"
-              subtitle="Not connected"
+              subtitle={openaiCredential?.status === 'valid' ? 'Connected' : 'Not connected'}
+              badge={openaiBadge}
               onPress={() => router.push('/settings/credentials')}
             />
           </View>
@@ -191,8 +218,16 @@ export default function SettingsScreen() {
               Icon={PaletteIcon}
               iconColor="gold"
               title="Appearance"
-              value="Dark"
-              onPress={() => {}}
+              value={themeLabel}
+              onPress={() => {
+                const next =
+                  settings.theme === 'system'
+                    ? 'dark'
+                    : settings.theme === 'dark'
+                      ? 'light'
+                      : 'system';
+                setTheme(next);
+              }}
             />
             <Divider />
             <SettingsItem
@@ -200,8 +235,8 @@ export default function SettingsScreen() {
               title="Haptic Feedback"
               showArrow={false}
               toggle={{
-                value: hapticFeedback,
-                onValueChange: () => {},
+                value: settings.notifications.hapticsEnabled,
+                onValueChange: (v) => updateNotificationPreferences({ hapticsEnabled: v }),
               }}
             />
             <Divider />
@@ -211,8 +246,8 @@ export default function SettingsScreen() {
               title="Notifications"
               showArrow={false}
               toggle={{
-                value: notifications,
-                onValueChange: () => {},
+                value: settings.notifications.pushEnabled,
+                onValueChange: (v) => updateNotificationPreferences({ pushEnabled: v }),
               }}
             />
             <Divider />

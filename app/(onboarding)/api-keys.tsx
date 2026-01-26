@@ -5,7 +5,9 @@
  * Uses paint daube icons for brand consistency.
  */
 
-import { CredentialService } from '@thumbcode/core/src/credentials/CredentialService';
+import { SECURE_STORE_KEYS } from '@thumbcode/config';
+import { CredentialService } from '@thumbcode/core';
+import { useCredentialStore } from '@thumbcode/state';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
@@ -15,6 +17,7 @@ import { CloseIcon, LightbulbIcon, SecurityIcon, SuccessIcon } from '@/component
 import { Container, VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 
 interface APIKeyState {
   key: string;
@@ -26,6 +29,8 @@ interface APIKeyState {
 export default function ApiKeysScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const addCredential = useCredentialStore((s) => s.addCredential);
+  const setValidationResult = useCredentialStore((s) => s.setValidationResult);
 
   const [anthropicKey, setAnthropicKey] = useState<APIKeyState>({
     key: '',
@@ -87,10 +92,42 @@ export default function ApiKeysScreen() {
 
   const handleContinue = async () => {
     if (anthropicKey.isValid) {
-      await CredentialService.store('anthropic', anthropicKey.key);
+      const res = await CredentialService.store('anthropic', anthropicKey.key);
+      const expiresAt = res.expiresAt ? res.expiresAt.toISOString() : undefined;
+      const maskedValue = `${anthropicKey.key.slice(0, 6)}…${anthropicKey.key.slice(-4)}`;
+      const id = addCredential({
+        provider: 'anthropic',
+        name: 'Anthropic',
+        secureStoreKey: SECURE_STORE_KEYS.anthropic,
+        expiresAt,
+        maskedValue,
+        metadata: res.metadata,
+      });
+      setValidationResult(id, {
+        isValid: res.isValid,
+        message: res.message,
+        expiresAt,
+        metadata: res.metadata,
+      });
     }
     if (openaiKey.isValid) {
-      await CredentialService.store('openai', openaiKey.key);
+      const res = await CredentialService.store('openai', openaiKey.key);
+      const expiresAt = res.expiresAt ? res.expiresAt.toISOString() : undefined;
+      const maskedValue = `${openaiKey.key.slice(0, 6)}…${openaiKey.key.slice(-4)}`;
+      const id = addCredential({
+        provider: 'openai',
+        name: 'OpenAI',
+        secureStoreKey: SECURE_STORE_KEYS.openai,
+        expiresAt,
+        maskedValue,
+        metadata: res.metadata,
+      });
+      setValidationResult(id, {
+        isValid: res.isValid,
+        message: res.message,
+        expiresAt,
+        metadata: res.metadata,
+      });
     }
     router.push('/(onboarding)/create-project');
   };
@@ -143,7 +180,9 @@ export default function ApiKeysScreen() {
               <Text weight="semibold" className="text-white flex-1">
                 Anthropic (Claude)
               </Text>
-              {anthropicKey.isValidating && <ActivityIndicator size="small" color="#14B8A6" />}
+              {anthropicKey.isValidating && (
+                <ActivityIndicator size="small" color={getColor('teal', '500')} />
+              )}
               {anthropicKey.isValid === true && (
                 <SuccessIcon size={18} color="teal" turbulence={0.15} />
               )}
@@ -171,7 +210,9 @@ export default function ApiKeysScreen() {
               <Text weight="semibold" className="text-white flex-1">
                 OpenAI (GPT-4)
               </Text>
-              {openaiKey.isValidating && <ActivityIndicator size="small" color="#14B8A6" />}
+              {openaiKey.isValidating && (
+                <ActivityIndicator size="small" color={getColor('teal', '500')} />
+              )}
               {openaiKey.isValid === true && (
                 <SuccessIcon size={18} color="teal" turbulence={0.15} />
               )}

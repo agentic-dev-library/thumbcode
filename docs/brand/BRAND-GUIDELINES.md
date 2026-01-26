@@ -24,45 +24,51 @@ ThumbCode is the bridge between mobile-native creators and professional software
 
 ### Color Palette
 
-Our "Warm Technical" palette combines organic warmth with professional capability.
+Our **P3 “Warm Technical”** palette combines organic warmth with professional capability.
+
+**Source of truth**:
+- Design tokens: `design-system/tokens.json`
+- Agent playbook: `CLAUDE.md`
+- Tailwind: `tailwind.config.ts`
 
 #### Primary: Coral
 The color of human connection and creative energy.
 
 | Token | Hex | Use |
 |-------|-----|-----|
-| primary-400 | #F28B79 | Main brand color, CTAs |
-| primary-500 | #E66550 | Hover states, emphasis |
-| primary-600 | #CD4C35 | Active states |
+| coral-500 | #FF7059 | Primary CTAs, key accents |
+| coral-600 | #E85A4F | Light mode variant / pressed |
+| coral-800 | #A33832 | High-contrast variant |
 
 #### Secondary: Deep Teal
 The color of depth, trust, and technical capability.
 
 | Token | Hex | Use |
 |-------|-----|-----|
-| secondary-400 | #51AFB9 | Links, interactive elements |
-| secondary-500 | #2C96A3 | Secondary actions |
-| secondary-600 | #1E7885 | Hover states |
+| teal-600 | #0D9488 | Primary secondary, links, badges |
+| teal-500 | #14B8A6 | Supporting elements |
+| teal-800 | #115E59 | High-contrast variant |
 
 #### Accent: Soft Gold
 The color of achievement, warmth, and highlight.
 
 | Token | Hex | Use |
 |-------|-----|-----|
-| accent-400 | #F2CF79 | Highlights, warnings |
-| accent-500 | #DEB84D | Badges, achievements |
+| gold-400 | #F5D563 | Highlights, warning/success emphasis |
+| gold-600 | #D4A84B | Light mode variant |
+| gold-700 | #A16207 | High-contrast variant |
 
-#### Neutrals: Warm Grays
-Grays with warmth, not cold digital gray.
+#### Base + Neutrals
+We ship **dark mode first** with a charcoal base and tokenized neutrals.
 
 | Token | Hex | Use |
 |-------|-----|-----|
-| neutral-50 | #FAF9F8 | Page background |
-| neutral-100 | #F5F3F1 | Card backgrounds |
-| neutral-200 | #EBE7E3 | Borders, dividers |
-| neutral-600 | #69635D | Secondary text |
-| neutral-800 | #322E2B | Primary text |
-| neutral-900 | #1E1B19 | Headlines |
+| charcoal | #151820 | Dark mode background |
+| neutral-50 | #F8FAFC | Light mode background |
+| neutral-400 | #94A3B8 | Placeholder/muted text |
+| neutral-700 | #334155 | Elevated surface |
+| neutral-800 | #1E293B | Surface |
+| neutral-900 | #0F172A | Deep background |
 
 ---
 
@@ -168,9 +174,16 @@ Icons should feel organic and friendly, not rigid.
 - Filled variants for emphasis
 - Can use brand colors for accent
 
-#### Recommended Sets
-- Lucide React (primary)
-- Phosphor Icons (secondary)
+#### In-App Icon System (Source of Truth)
+ThumbCode uses a **procedural “Paint Daube” SVG icon system** in `src/components/icons/` to match the brand’s organic aesthetic.
+
+**Rules:**
+- Do not ship emoji/unicode glyphs as icons in production UI.
+- Prefer paint-daube icons for app UI consistency.
+- If a future migration to Lucide happens, it must be done behind a single semantic wrapper (so screens don’t import raw icon libraries).
+
+#### External/Docs Icons (Optional)
+- Lucide can be used in docs-site if needed, but the app should remain consistent with PaintDaube.
 
 ---
 

@@ -57,3 +57,9 @@ export type {
   StoreOptions,
   ValidationResult,
 } from './credentials';
+
+// GitHub API
+export { GitHubApiService } from './github';
+
+// Security
+export { certificatePinningService, requestSigningService, runtimeSecurityService } from './security';

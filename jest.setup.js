@@ -32,6 +32,16 @@ jest.mock('expo-device', () => ({
   isRootedExperimentalAsync: jest.fn(() => Promise.resolve(false)),
 }));
 
+// Mock expo-constants (required by @thumbcode/config/env in Jest)
+jest.mock('expo-constants', () => ({
+  __esModule: true,
+  default: {
+    expoConfig: {
+      extra: {},
+    },
+  },
+}));
+
 // Mock expo-router
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
@@ -56,4 +66,11 @@ jest.mock('react-native-reanimated', () => {
 jest.mock('react-native/Libraries/Animated/NativeAnimatedModule', () => ({
   default: {},
   __esModule: true,
+}));
+
+// Mock react-native-safe-area-context
+jest.mock('react-native-safe-area-context', () => ({
+  useSafeAreaInsets: () => ({ top: 0, right: 0, bottom: 0, left: 0 }),
+  SafeAreaProvider: ({ children }) => children,
+  SafeAreaView: ({ children }) => children,
 }));

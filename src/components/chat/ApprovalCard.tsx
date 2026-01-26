@@ -7,6 +7,7 @@
  */
 
 import type { ApprovalMessage } from '@thumbcode/state';
+import type React from 'react';
 import { Pressable, View } from 'react-native';
 import {
   BranchIcon,
@@ -17,6 +18,8 @@ import {
   LightningIcon,
 } from '@/components/icons';
 import { Text } from '@/components/ui';
+import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 
 /** Action icon component type */
 type ActionIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
@@ -62,13 +65,13 @@ export function ApprovalCard({ message, onApprove, onReject }: ApprovalCardProps
     <View
       className="bg-surface-elevated p-4 max-w-[90%]"
       style={{
-        borderRadius: '16px 12px 16px 14px',
+        ...organicBorderRadius.card,
         borderLeftWidth: 4,
         borderLeftColor: isPending
-          ? '#F5D563' // Gold for pending
+          ? getColor('gold', '400') // Gold for pending
           : wasApproved
-            ? '#14B8A6' // Teal for approved
-            : '#FF7059', // Coral for rejected
+            ? getColor('teal', '500') // Teal for approved
+            : getColor('coral', '500'), // Coral for rejected
       }}
     >
       {/* Header */}
@@ -82,7 +85,7 @@ export function ApprovalCard({ message, onApprove, onReject }: ApprovalCardProps
         {!isPending && (
           <View
             className={`px-2 py-0.5 ${wasApproved ? 'bg-teal-600' : 'bg-coral-500'}`}
-            style={{ borderRadius: '6px 8px 6px 8px' }}
+            style={organicBorderRadius.badge}
           >
             <Text className="text-xs font-body text-white">
               {wasApproved ? 'Approved' : 'Rejected'}
@@ -102,7 +105,7 @@ export function ApprovalCard({ message, onApprove, onReject }: ApprovalCardProps
           <Pressable
             onPress={onReject}
             className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
-            style={{ borderRadius: '8px 10px 8px 12px' }}
+            style={organicBorderRadius.button}
             accessibilityRole="button"
             accessibilityLabel="Reject"
             accessibilityHint="Reject this action"
@@ -112,7 +115,7 @@ export function ApprovalCard({ message, onApprove, onReject }: ApprovalCardProps
           <Pressable
             onPress={onApprove}
             className="px-4 py-2 bg-teal-600 active:bg-teal-700 ml-2"
-            style={{ borderRadius: '8px 10px 8px 12px' }}
+            style={organicBorderRadius.button}
             accessibilityRole="button"
             accessibilityLabel="Approve"
             accessibilityHint="Approve this action"

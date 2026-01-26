@@ -5,9 +5,10 @@
  * Uses paint daube icons for brand consistency.
  */
 
+import { type Agent as StoreAgent, selectAgents, useAgentStore } from '@thumbcode/state';
 import { useRouter } from 'expo-router';
 import type React from 'react';
-import { useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBadge } from '@/components/display';
@@ -28,98 +29,27 @@ import { organicBorderRadius } from '@/lib/organic-styles';
 /** Agent avatar icon component */
 type AgentAvatarIcon = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 
-// Mock data
-const MOCK_AGENTS: Array<{
-  id: string;
-  name: string;
-  role: 'architect' | 'implementer' | 'reviewer' | 'tester';
-  status: 'idle' | 'coding' | 'reviewing' | 'error' | 'waiting_approval';
-  AvatarIcon: AgentAvatarIcon;
-  avatarColor: IconColor;
-  currentTask: { title: string; progress: number } | null;
-  metrics: { tasksCompleted: number; successRate: number; avgTaskTime: number };
-}> = [
-  {
-    id: '1',
-    name: 'Architect',
-    role: 'architect' as const,
-    status: 'idle' as const,
-    AvatarIcon: StarIcon,
-    avatarColor: 'gold',
-    currentTask: null,
-    metrics: {
-      tasksCompleted: 47,
-      successRate: 0.94,
-      avgTaskTime: 12, // minutes
-    },
-  },
-  {
-    id: '2',
-    name: 'Implementer',
-    role: 'implementer' as const,
-    status: 'coding' as const,
-    AvatarIcon: LightningIcon,
-    avatarColor: 'teal',
-    currentTask: {
-      title: 'Add user authentication',
-      progress: 65,
-    },
-    metrics: {
-      tasksCompleted: 156,
-      successRate: 0.89,
-      avgTaskTime: 25,
-    },
-  },
-  {
-    id: '3',
-    name: 'Reviewer',
-    role: 'reviewer' as const,
-    status: 'reviewing' as const,
-    AvatarIcon: ReviewIcon,
-    avatarColor: 'coral',
-    currentTask: {
-      title: 'Review PR #42',
-      progress: 30,
-    },
-    metrics: {
-      tasksCompleted: 89,
-      successRate: 0.98,
-      avgTaskTime: 8,
-    },
-  },
-  {
-    id: '4',
-    name: 'Tester',
-    role: 'tester' as const,
-    status: 'idle' as const,
-    AvatarIcon: SearchIcon,
-    avatarColor: 'teal',
-    currentTask: null,
-    metrics: {
-      tasksCompleted: 72,
-      successRate: 0.91,
-      avgTaskTime: 15,
-    },
-  },
-];
-
-function getStatusColor(status: string): 'success' | 'pending' | 'error' | 'inactive' {
+function getStatusColor(
+  status: StoreAgent['status']
+): 'success' | 'pending' | 'error' | 'inactive' {
   switch (status) {
-    case 'coding':
-    case 'reviewing':
+    case 'working':
+    case 'needs_review':
       return 'success';
     case 'idle':
+    case 'complete':
       return 'inactive';
     case 'error':
       return 'error';
-    case 'waiting_approval':
+    case 'awaiting_approval':
+    case 'blocked':
       return 'pending';
     default:
       return 'inactive';
   }
 }
 
-function getRoleColor(role: string): string {
+function getRoleColor(role: StoreAgent['role']): string {
   switch (role) {
     case 'architect':
       return 'bg-gold-500/20';
@@ -128,23 +58,76 @@ function getRoleColor(role: string): string {
     case 'reviewer':
       return 'bg-coral-500/20';
     case 'tester':
-      return 'bg-purple-500/20';
+      return 'bg-teal-500/20';
     default:
       return 'bg-neutral-500/20';
   }
 }
+
+function getAvatarIcon(role: StoreAgent['role']): AgentAvatarIcon {
+  switch (role) {
+    case 'architect':
+      return StarIcon;
+    case 'implementer':
+      return LightningIcon;
+    case 'reviewer':
+      return ReviewIcon;
+    case 'tester':
+      return SearchIcon;
+  }
+}
+
+function getAvatarColor(role: StoreAgent['role']): IconColor {
+  switch (role) {
+    case 'architect':
+      return 'gold';
+    case 'implementer':
+      return 'teal';
+    case 'reviewer':
+      return 'coral';
+    case 'tester':
+      return 'teal';
+  }
+}
+
+interface RoleFilterButtonProps {
+  role: string;
+  isSelected: boolean;
+  onPress: (role: string) => void;
+}
+
+const RoleFilterButton = memo(({ role, isSelected, onPress }: RoleFilterButtonProps) => (
+  <Pressable
+    testID={`role-filter-${role}`}
+    onPress={() => onPress(role)}
+    className={`px-4 py-2 ${isSelected ? 'bg-coral-500' : 'bg-surface'}`}
+    style={organicBorderRadius.button}
+  >
+    <Text className={`capitalize ${isSelected ? 'text-white' : 'text-neutral-400'}`}>{role}</Text>
+  </Pressable>
+));
 
 export default function AgentsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
-  const filteredAgents = selectedRole
-    ? MOCK_AGENTS.filter((agent) => agent.role === selectedRole)
-    : MOCK_AGENTS;
+  const agents = useAgentStore(selectAgents);
+  const tasks = useAgentStore((s) => s.tasks);
+  const handleRolePress = useCallback((role: string) => {
+    setSelectedRole(role);
+  }, []);
 
-  const activeAgents = MOCK_AGENTS.filter((a) => a.status !== 'idle').length;
-  const totalTasks = MOCK_AGENTS.reduce((acc, a) => acc + a.metrics.tasksCompleted, 0);
+  const handleAllPress = useCallback(() => {
+    setSelectedRole(null);
+  }, []);
+
+  const filteredAgents = selectedRole
+    ? agents.filter((agent) => agent.role === selectedRole)
+    : agents;
+
+  const activeAgents = agents.filter((a) => a.status !== 'idle').length;
+  const totalTasks = tasks.filter((t) => t.status === 'completed').length;
 
   return (
     <ScrollView
@@ -160,7 +143,7 @@ export default function AgentsScreen() {
               <AgentIcon size={28} color="coral" turbulence={0.2} />
             </View>
             <Text size="2xl" weight="bold" className="text-white">
-              {activeAgents}/{MOCK_AGENTS.length}
+              {activeAgents}/{agents.length}
             </Text>
             <Text size="sm" className="text-neutral-400">
               Active Agents
@@ -188,7 +171,8 @@ export default function AgentsScreen() {
           contentContainerStyle={{ gap: 8 }}
         >
           <Pressable
-            onPress={() => setSelectedRole(null)}
+            testID="role-filter-all"
+            onPress={handleAllPress}
             className={`px-4 py-2 ${!selectedRole ? 'bg-coral-500' : 'bg-surface'}`}
             style={organicBorderRadius.badge}
           >
@@ -196,18 +180,12 @@ export default function AgentsScreen() {
           </Pressable>
 
           {['architect', 'implementer', 'reviewer', 'tester'].map((role) => (
-            <Pressable
+            <RoleFilterButton
               key={role}
-              onPress={() => setSelectedRole(role)}
-              className={`px-4 py-2 ${selectedRole === role ? 'bg-coral-500' : 'bg-surface'}`}
-              style={organicBorderRadius.button}
-            >
-              <Text
-                className={`capitalize ${selectedRole === role ? 'text-white' : 'text-neutral-400'}`}
-              >
-                {role}
-              </Text>
-            </Pressable>
+              role={role}
+              isSelected={selectedRole === role}
+              onPress={handleRolePress}
+            />
           ))}
         </ScrollView>
 
@@ -226,7 +204,18 @@ export default function AgentsScreen() {
                     className={`w-14 h-14 items-center justify-center ${getRoleColor(agent.role)}`}
                     style={organicBorderRadius.card}
                   >
-                    <agent.AvatarIcon size={28} color={agent.avatarColor} turbulence={0.25} />
+                    <View>
+                      {(() => {
+                        const AvatarIcon = getAvatarIcon(agent.role);
+                        return (
+                          <AvatarIcon
+                            size={28}
+                            color={getAvatarColor(agent.role)}
+                            turbulence={0.25}
+                          />
+                        );
+                      })()}
+                    </View>
                   </View>
                   <VStack spacing="xs">
                     <Text weight="semibold" className="text-white text-lg">
@@ -239,28 +228,38 @@ export default function AgentsScreen() {
                 </HStack>
                 <StatusBadge
                   status={getStatusColor(agent.status)}
-                  label={agent.status.replace('_', ' ')}
+                  label={agent.status.replaceAll('_', ' ')}
                 />
               </HStack>
 
-              {agent.currentTask && (
-                <View className="bg-charcoal p-3 mb-4 rounded-lg">
-                  <HStack justify="between" align="center" className="mb-2">
-                    <Text size="sm" className="text-neutral-300">
-                      {agent.currentTask.title}
-                    </Text>
-                    <Text size="sm" className="text-teal-400">
-                      {agent.currentTask.progress}%
-                    </Text>
-                  </HStack>
-                  <ProgressBar value={agent.currentTask.progress} color="secondary" size="sm" />
-                </View>
-              )}
+              {(() => {
+                if (!agent.currentTaskId) return null;
+                const currentTask = tasks.find((t) => t.id === agent.currentTaskId);
+                if (!currentTask) return null;
+                const agentTasks = tasks.filter((t) => t.agentId === agent.id);
+                const completed = agentTasks.filter((t) => t.status === 'completed').length;
+                const total = agentTasks.length;
+                const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+                return (
+                  <View className="bg-charcoal p-3 mb-4" style={organicBorderRadius.card}>
+                    <HStack justify="between" align="center" className="mb-2">
+                      <Text size="sm" className="text-neutral-300 flex-1" numberOfLines={1}>
+                        {currentTask.description}
+                      </Text>
+                      <Text size="sm" className="text-teal-400">
+                        {progress}%
+                      </Text>
+                    </HStack>
+                    <ProgressBar value={progress} color="secondary" size="sm" />
+                  </View>
+                );
+              })()}
 
               <HStack justify="around">
                 <VStack align="center">
                   <Text weight="semibold" className="text-white">
-                    {agent.metrics.tasksCompleted}
+                    {tasks.filter((t) => t.agentId === agent.id && t.status === 'completed').length}
                   </Text>
                   <Text size="xs" className="text-neutral-500">
                     Tasks
@@ -268,7 +267,16 @@ export default function AgentsScreen() {
                 </VStack>
                 <VStack align="center">
                   <Text weight="semibold" className="text-white">
-                    {Math.round(agent.metrics.successRate * 100)}%
+                    {(() => {
+                      const done = tasks.filter(
+                        (t) => t.agentId === agent.id && t.status === 'completed'
+                      ).length;
+                      const failed = tasks.filter(
+                        (t) => t.agentId === agent.id && t.status === 'failed'
+                      ).length;
+                      const denom = done + failed;
+                      return denom > 0 ? `${Math.round((done / denom) * 100)}%` : '—';
+                    })()}
                   </Text>
                   <Text size="xs" className="text-neutral-500">
                     Success
@@ -276,10 +284,13 @@ export default function AgentsScreen() {
                 </VStack>
                 <VStack align="center">
                   <Text weight="semibold" className="text-white">
-                    {agent.metrics.avgTaskTime}m
+                    {
+                      tasks.filter((t) => t.agentId === agent.id && t.status === 'in_progress')
+                        .length
+                    }
                   </Text>
                   <Text size="xs" className="text-neutral-500">
-                    Avg Time
+                    Active
                   </Text>
                 </VStack>
               </HStack>

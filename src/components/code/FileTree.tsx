@@ -6,9 +6,11 @@
  * Uses paint daube icons for brand consistency.
  */
 
+import type React from 'react';
 import { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import {
+  ChevronDownIcon,
   FileCodeIcon,
   FileConfigIcon,
   FileDataIcon,
@@ -24,7 +26,7 @@ import {
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
-interface FileNode {
+export interface FileNode {
   name: string;
   type: 'file' | 'folder';
   path: string;
@@ -162,11 +164,13 @@ function FileTreeNodeRow({
       className={`flex-row items-center py-1.5 px-2 ${rowClass}`}
       style={{ paddingLeft: 8 + depth * 16 }}
     >
-      {isFolder && hasChildren ? (
-        <Text className="text-xs text-neutral-500 w-4 mr-1">{isExpanded ? '▼' : '▶'}</Text>
-      ) : (
-        <View className="w-4 mr-1" />
-      )}
+      <View className="w-4 mr-1 items-center justify-center">
+        {isFolder && hasChildren ? (
+          <View style={{ transform: [{ rotate: isExpanded ? '0deg' : '-90deg' }] }}>
+            <ChevronDownIcon size={12} color="warmGray" turbulence={0.12} />
+          </View>
+        ) : null}
+      </View>
       <View className="mr-2">
         <iconInfo.Icon size={16} color={iconInfo.color} turbulence={0.15} />
       </View>

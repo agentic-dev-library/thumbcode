@@ -27,6 +27,7 @@ export interface EditorPreferences {
 export interface NotificationPreferences {
   pushEnabled: boolean;
   soundEnabled: boolean;
+  hapticsEnabled: boolean;
   agentUpdates: boolean;
   prApprovals: boolean;
   chatMessages: boolean;
@@ -75,6 +76,7 @@ const DEFAULT_EDITOR_PREFERENCES: EditorPreferences = {
 const DEFAULT_NOTIFICATION_PREFERENCES: NotificationPreferences = {
   pushEnabled: true,
   soundEnabled: true,
+  hapticsEnabled: true,
   agentUpdates: true,
   prApprovals: true,
   chatMessages: true,

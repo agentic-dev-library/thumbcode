@@ -1,11 +1,12 @@
 import { ActivityIndicator, Pressable, type PressableProps } from 'react-native';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 import { Text } from './Text';
 
 /** Brand colors from design tokens for ActivityIndicator */
 const ACTIVITY_INDICATOR_COLORS = {
-  light: '#1E293B', // neutral-800 for outline variant
-  dark: '#FFFFFF', // white for filled variants
+  light: getColor('neutral', '800'), // neutral-800 for outline variant
+  dark: getColor('neutral', '50'), // off-white for filled variants
 } as const;
 
 interface ButtonProps extends PressableProps {

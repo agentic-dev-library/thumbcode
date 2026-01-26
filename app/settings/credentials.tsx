@@ -4,7 +4,11 @@
  * Manage API keys and connected services.
  */
 
+import { SECURE_STORE_KEYS } from '@thumbcode/config';
+import { CredentialService, GitHubAuthService } from '@thumbcode/core';
+import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@thumbcode/state';
 import { Stack, useRouter } from 'expo-router';
+import type React from 'react';
 import { useState } from 'react';
 import { Alert, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,6 +17,7 @@ import { type IconColor, LinkIcon, SecurityIcon } from '@/components/icons';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { getColor } from '@/utils/design-tokens';
 
 type CredentialIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 
@@ -123,7 +128,7 @@ function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: Api
           >
             <TextInput
               placeholder={placeholder}
-              placeholderTextColor="#6B7280"
+              placeholderTextColor={getColor('neutral', '400')}
               value={value}
               onChangeText={onChange}
               secureTextEntry
@@ -173,15 +178,20 @@ export default function CredentialsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  // Mock state
-  const [githubConnected, setGithubConnected] = useState(true);
+  const githubCredential = useCredentialStore(selectCredentialByProvider('github'));
+  const anthropicCredential = useCredentialStore(selectCredentialByProvider('anthropic'));
+  const openaiCredential = useCredentialStore(selectCredentialByProvider('openai'));
+  const addCredential = useCredentialStore((s) => s.addCredential);
+  const setValidationResult = useCredentialStore((s) => s.setValidationResult);
+  const removeCredential = useCredentialStore((s) => s.removeCredential);
+
+  const setAuthenticated = useUserStore((s) => s.setAuthenticated);
+  const setGitHubProfile = useUserStore((s) => s.setGitHubProfile);
+
   const [anthropicKey, setAnthropicKey] = useState('');
-  const [anthropicSet, setAnthropicSet] = useState(true);
   const [openaiKey, setOpenaiKey] = useState('');
-  const [openaiSet, setOpenaiSet] = useState(false);
 
   const handleGitHubConnect = () => {
-    // TODO: Implement GitHub OAuth flow
     router.push('/(onboarding)/github-auth');
   };
 
@@ -194,10 +204,46 @@ export default function CredentialsScreen() {
         {
           text: 'Disconnect',
           style: 'destructive',
-          onPress: () => setGithubConnected(false),
+          onPress: async () => {
+            const ok = await GitHubAuthService.signOut();
+            if (ok && githubCredential) {
+              removeCredential(githubCredential.id);
+              setGitHubProfile(null);
+              setAuthenticated(false);
+            }
+          },
         },
       ]
     );
+  };
+
+  const saveApiKey = async (type: 'anthropic' | 'openai', value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+
+    const validation = await CredentialService.store(type, trimmed, { skipValidation: false });
+    const expiresAt = validation.expiresAt?.toISOString();
+    const maskedValue = `${trimmed.slice(0, 6)}…${trimmed.slice(-4)}`;
+    const credentialId = addCredential({
+      provider: type,
+      name: type === 'anthropic' ? 'Anthropic' : 'OpenAI',
+      secureStoreKey: type === 'anthropic' ? SECURE_STORE_KEYS.anthropic : SECURE_STORE_KEYS.openai,
+      expiresAt,
+      maskedValue,
+      metadata: validation.metadata,
+    });
+    setValidationResult(credentialId, {
+      isValid: validation.isValid,
+      message: validation.message,
+      expiresAt,
+      metadata: validation.metadata,
+    });
+
+    if (!validation.isValid) {
+      Alert.alert('Invalid key', validation.message || 'Validation failed');
+    } else {
+      Alert.alert('Saved', validation.message || 'Credential stored successfully');
+    }
   };
 
   return (
@@ -231,9 +277,15 @@ export default function CredentialsScreen() {
                 Icon={LinkIcon}
                 iconColor="teal"
                 title="GitHub"
-                subtitle={githubConnected ? 'github.com/user' : 'Connect to access repositories'}
-                isConnected={githubConnected}
-                lastUsed="5 minutes ago"
+                subtitle={
+                  githubCredential?.metadata?.username
+                    ? `github.com/${githubCredential.metadata.username}`
+                    : githubCredential?.status === 'valid'
+                      ? 'Connected'
+                      : 'Connect to access repositories'
+                }
+                isConnected={githubCredential?.status === 'valid'}
+                lastUsed={githubCredential?.lastValidatedAt}
                 onConnect={handleGitHubConnect}
                 onDisconnect={handleGitHubDisconnect}
               />
@@ -257,8 +309,8 @@ export default function CredentialsScreen() {
                 placeholder="sk-ant-..."
                 value={anthropicKey}
                 onChange={setAnthropicKey}
-                onSave={() => setAnthropicSet(true)}
-                isSet={anthropicSet}
+                onSave={() => saveApiKey('anthropic', anthropicKey)}
+                isSet={anthropicCredential?.status === 'valid'}
               />
               <Divider />
               <ApiKeyInput
@@ -266,8 +318,8 @@ export default function CredentialsScreen() {
                 placeholder="sk-..."
                 value={openaiKey}
                 onChange={setOpenaiKey}
-                onSave={() => setOpenaiSet(true)}
-                isSet={openaiSet}
+                onSave={() => saveApiKey('openai', openaiKey)}
+                isSet={openaiCredential?.status === 'valid'}
               />
             </View>
           </VStack>

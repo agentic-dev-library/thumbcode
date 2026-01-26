@@ -9,6 +9,7 @@
  */
 
 import type { TextStyle, ViewStyle } from 'react-native';
+import { getColor } from '@/utils/design-tokens';
 
 /**
  * Shared input border radius values
@@ -50,11 +51,36 @@ export const organicBorderRadius = {
     borderBottomLeftRadius: 4, // 0.25rem
   } as ViewStyle,
 
+  /** Small pills (sender tags, compact chips) */
+  pill: inputBorderRadiusValues as ViewStyle,
+
   /** Text inputs, form fields (for View containers) */
   input: inputBorderRadiusValues as ViewStyle,
 
   /** Text inputs (for TextInput components - typed as TextStyle for compatibility) */
   textInput: inputBorderRadiusValues as TextStyle,
+
+  /** Chat bubbles (text messages) */
+  chatBubbleUser: {
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 6,
+    borderBottomRightRadius: 16,
+    borderBottomLeftRadius: 14,
+  } as ViewStyle,
+  chatBubbleAgent: {
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 16,
+    borderBottomRightRadius: 16,
+    borderBottomLeftRadius: 14,
+  } as ViewStyle,
+
+  /** Code blocks and monospace containers */
+  codeBlock: {
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 12,
+    borderBottomLeftRadius: 8,
+  } as ViewStyle,
 
   /** Hero elements, large icons, feature images */
   hero: {
@@ -96,7 +122,7 @@ export const organicBorderRadius = {
 export const organicShadow = {
   /** Standard card shadow */
   card: {
-    shadowColor: '#000',
+    shadowColor: getColor('charcoal'),
     shadowOffset: { width: 2, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
@@ -105,7 +131,7 @@ export const organicShadow = {
 
   /** Elevated surfaces, modals */
   elevated: {
-    shadowColor: '#000',
+    shadowColor: getColor('charcoal'),
     shadowOffset: { width: 4, height: 8 },
     shadowOpacity: 0.12,
     shadowRadius: 16,
@@ -114,7 +140,7 @@ export const organicShadow = {
 
   /** Floating elements, FABs */
   float: {
-    shadowColor: '#000',
+    shadowColor: getColor('charcoal'),
     shadowOffset: { width: 8, height: 16 },
     shadowOpacity: 0.16,
     shadowRadius: 32,

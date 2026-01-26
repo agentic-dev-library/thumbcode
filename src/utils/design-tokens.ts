@@ -7,7 +7,17 @@
 import tokens from '../../design-system/tokens.json';
 
 export type ColorKey = keyof typeof tokens.colors;
-export type ColorShade = '300' | '400' | '500' | '600' | '700' | '800';
+export type ColorShade =
+  | '50'
+  | '100'
+  | '200'
+  | '300'
+  | '400'
+  | '500'
+  | '600'
+  | '700'
+  | '800'
+  | '900';
 
 /**
  * Retrieves the hex color value for a named color and shade.
@@ -63,8 +73,10 @@ export function getColorWithOpacity(
  * @param hex - Hex color string (with or without a leading `#`)
  * @returns The RGB components as `{ r, g, b }`. Returns `{ r: 0, g: 0, b: 0 }` if `hex` is not a valid 6-digit hex color
  */
+const HEX_REGEX = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
+
 function hexToRgb(hex: string): { r: number; g: number; b: number } {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  const result = HEX_REGEX.exec(hex);
   if (!result) {
     throw new Error(`Invalid hex color: ${hex}`);
   }
