@@ -7,7 +7,7 @@
 
 import type React from 'react';
 import { View } from 'react-native';
-import { CloseIcon, type IconColor, SuccessIcon } from '@/components/icons';
+import { CloseIcon, type IconColor, InfoIcon, SuccessIcon, WarningIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
@@ -110,14 +110,13 @@ const statusConfig: Record<
   {
     variant: BadgeVariant;
     Icon?: BadgeIconComponent;
-    textIcon?: string;
     iconColor: IconColor;
     label: string;
   }
 > = {
-  active: { variant: 'success', textIcon: '●', iconColor: 'teal', label: 'Active' },
-  inactive: { variant: 'default', textIcon: '○', iconColor: 'warmGray', label: 'Inactive' },
-  pending: { variant: 'warning', textIcon: '◐', iconColor: 'gold', label: 'Pending' },
+  active: { variant: 'success', Icon: SuccessIcon, iconColor: 'teal', label: 'Active' },
+  inactive: { variant: 'default', Icon: InfoIcon, iconColor: 'warmGray', label: 'Inactive' },
+  pending: { variant: 'warning', Icon: WarningIcon, iconColor: 'gold', label: 'Pending' },
   error: { variant: 'error', Icon: CloseIcon, iconColor: 'coral', label: 'Error' },
   success: { variant: 'success', Icon: SuccessIcon, iconColor: 'teal', label: 'Success' },
 };
@@ -126,13 +125,7 @@ export function StatusBadge({ status, label, size = 'md' }: StatusBadgeProps) {
   const config = statusConfig[status];
 
   return (
-    <Badge
-      variant={config.variant}
-      size={size}
-      Icon={config.Icon}
-      iconColor={config.iconColor}
-      textIcon={config.textIcon}
-    >
+    <Badge variant={config.variant} size={size} Icon={config.Icon} iconColor={config.iconColor}>
       {label || config.label}
     </Badge>
   );
