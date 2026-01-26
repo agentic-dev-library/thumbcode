@@ -30,14 +30,14 @@ export const organicBorderRadius = {
 
 export const organicShadow = {
   card: {
-    shadowColor: '#000',
+    shadowColor: '#151820',
     shadowOffset: { width: 2, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 3,
   } as ViewStyle,
   elevated: {
-    shadowColor: '#000',
+    shadowColor: '#151820',
     shadowOffset: { width: 4, height: 8 },
     shadowOpacity: 0.12,
     shadowRadius: 16,

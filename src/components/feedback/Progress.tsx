@@ -76,16 +76,13 @@ export function ProgressBar({
       )}
       <View
         className="bg-neutral-700 overflow-hidden w-full"
-        style={{
-          height,
-          borderRadius: height / 2,
-        }}
+        style={[organicBorderRadius.pill, { height }]}
       >
         <Animated.View
           className={barColors[color]}
           style={{
             height,
-            borderRadius: height / 2,
+            ...organicBorderRadius.pill,
             width: widthAnim.interpolate({
               inputRange: [0, 100],
               outputRange: ['0%', '100%'],

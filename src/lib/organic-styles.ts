@@ -9,6 +9,7 @@
  */
 
 import type { TextStyle, ViewStyle } from 'react-native';
+import { getColor } from '@/utils/design-tokens';
 
 /**
  * Shared input border radius values
@@ -121,7 +122,7 @@ export const organicBorderRadius = {
 export const organicShadow = {
   /** Standard card shadow */
   card: {
-    shadowColor: '#000',
+    shadowColor: getColor('charcoal'),
     shadowOffset: { width: 2, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
@@ -130,7 +131,7 @@ export const organicShadow = {
 
   /** Elevated surfaces, modals */
   elevated: {
-    shadowColor: '#000',
+    shadowColor: getColor('charcoal'),
     shadowOffset: { width: 4, height: 8 },
     shadowOpacity: 0.12,
     shadowRadius: 16,
@@ -139,7 +140,7 @@ export const organicShadow = {
 
   /** Floating elements, FABs */
   float: {
-    shadowColor: '#000',
+    shadowColor: getColor('charcoal'),
     shadowOffset: { width: 8, height: 16 },
     shadowOpacity: 0.16,
     shadowRadius: 32,
