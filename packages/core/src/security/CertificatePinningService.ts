@@ -38,14 +38,12 @@ class CertificatePinningService {
    */
   async initialize() {
     if (this.isInitialized) {
-      console.log('Certificate pinning is already initialized.');
       return;
     }
 
     try {
       await initializeSslPinning(PINNING_CONFIG);
       this.isInitialized = true;
-      console.log('Certificate pinning initialized successfully.');
     } catch (error) {
       console.error('Failed to initialize certificate pinning:', error);
       // In a production environment, you might want to handle this error
