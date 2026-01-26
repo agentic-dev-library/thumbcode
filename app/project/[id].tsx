@@ -125,7 +125,7 @@ export default function ProjectDetailScreen() {
       setErrorMessage(null);
       const branchResult = await GitService.currentBranch(project.localPath);
       if (!cancelled) {
-        setCurrentBranch(branchResult.success ? branchResult.data : project.defaultBranch);
+        setCurrentBranch(branchResult.success && branchResult.data ? branchResult.data : project.defaultBranch);
       }
     };
     load();
