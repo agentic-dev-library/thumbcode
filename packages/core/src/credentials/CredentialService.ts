@@ -442,13 +442,15 @@ class CredentialServiceClass {
     const results = new Map<CredentialType, ValidationResult>();
     const storedTypes = await this.getStoredCredentialTypes();
 
-    for (const type of storedTypes) {
-      const { secret } = await this.retrieve(type);
-      if (secret) {
-        const result = await this.validateCredential(type, secret);
-        results.set(type, result);
-      }
-    }
+    await Promise.all(
+      storedTypes.map(async (type) => {
+        const { secret } = await this.retrieve(type);
+        if (secret) {
+          const result = await this.validateCredential(type, secret);
+          results.set(type, result);
+        }
+      })
+    );
 
     return results;
   }
