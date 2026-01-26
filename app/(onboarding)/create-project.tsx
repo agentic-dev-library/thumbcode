@@ -47,8 +47,8 @@ async function ensureSigningSecret(): Promise<void> {
 }
 
 async function getGitHubToken(): Promise<string | null> {
-  const { secret } = await CredentialService.retrieve('github');
-  return secret;
+  const result = await CredentialService.retrieve('github');
+  return result?.secret ?? null;
 }
 
 async function cloneRepository(repo: RepoListItem): Promise<{ dir: string }> {
