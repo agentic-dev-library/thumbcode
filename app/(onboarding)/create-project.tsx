@@ -40,6 +40,8 @@ async function fetchRepoList(): Promise<RepoListItem[]> {
 }
 
 async function ensureSigningSecret(): Promise<void> {
+  const existing = await CredentialService.retrieve('mcp_signing_secret');
+  if (existing.secret) return;
   const secretBytes = Crypto.getRandomBytes(32);
   await CredentialService.store('mcp_signing_secret', bytesToHex(secretBytes));
 }
@@ -143,6 +145,7 @@ export default function CreateProjectScreen() {
         repoUrl: selectedRepo.cloneUrl,
         localPath: dir,
         defaultBranch: selectedRepo.defaultBranch,
+        status: 'active',
       });
       setActiveProject(projectId);
       initWorkspace(projectId, selectedRepo.defaultBranch);

@@ -37,6 +37,8 @@ export interface Branch {
   lastCommitSha?: string;
 }
 
+export type ProjectStatus = 'active' | 'idle' | 'error';
+
 // Project configuration
 export interface Project {
   id: string;
@@ -44,9 +46,14 @@ export interface Project {
   repoUrl: string;
   localPath: string;
   defaultBranch: string;
+  status: ProjectStatus;
   createdAt: string;
   lastOpenedAt: string;
 }
+
+type AddProjectInput = Omit<Project, 'id' | 'createdAt' | 'lastOpenedAt' | 'status'> & {
+  status?: ProjectStatus;
+};
 
 // Workspace state for active editing
 export interface Workspace {
@@ -70,7 +77,7 @@ interface ProjectState {
   error: string | null;
 
   // Project actions
-  addProject: (project: Omit<Project, 'id' | 'createdAt' | 'lastOpenedAt'>) => string;
+  addProject: (project: AddProjectInput) => string;
   removeProject: (projectId: string) => void;
   setActiveProject: (projectId: string | null) => void;
   updateProject: (projectId: string, updates: Partial<Project>) => void;
@@ -117,6 +124,7 @@ export const useProjectStore = create<ProjectState>()(
             state.projects.push({
               ...project,
               id: projectId,
+              status: project.status ?? 'active',
               createdAt: now,
               lastOpenedAt: now,
             });
@@ -263,7 +271,23 @@ export const useProjectStore = create<ProjectState>()(
       })),
       {
         name: 'thumbcode-project-storage',
+        version: 1,
         storage: createJSONStorage(() => AsyncStorage),
+        migrate: (persisted) => {
+          type PersistedProject = Omit<Project, 'status'> & { status?: ProjectStatus };
+          type PersistedState = {
+            projects?: PersistedProject[];
+            activeProjectId?: string | null;
+          };
+          const state = persisted as unknown as PersistedState;
+          return {
+            ...state,
+            projects: (state.projects ?? []).map((p) => ({
+              ...p,
+              status: p.status ?? 'idle',
+            })),
+          };
+        },
         // Only persist projects, not workspace state
         partialize: (state) => ({
           projects: state.projects,

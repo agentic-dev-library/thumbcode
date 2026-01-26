@@ -74,7 +74,7 @@ export {
   selectHasUnsavedChanges,
   selectRecentProjects,
 } from './projectStore';
-export type { Branch, Commit, FileNode, Project, Workspace } from './projectStore';
+export type { Branch, Commit, FileNode, Project, ProjectStatus, Workspace } from './projectStore';
 
 // User store
 export {

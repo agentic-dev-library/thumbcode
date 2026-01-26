@@ -110,7 +110,7 @@ export default function ProjectsScreen() {
                         {project.repoUrl}
                       </Text>
                     </VStack>
-                    {getStatusBadge('idle')}
+                    {getStatusBadge(project.status ?? 'idle')}
                   </HStack>
 
                   <HStack spacing="md" className="mb-3">
