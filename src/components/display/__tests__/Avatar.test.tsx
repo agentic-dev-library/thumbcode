@@ -1,7 +1,6 @@
-import React from 'react';
+import { Text } from 'react-native';
 import { create } from 'react-test-renderer';
 import { Avatar } from '../Avatar';
-import { Text } from 'react-native';
 
 describe('Avatar', () => {
   it('renders correct initials for full name', () => {
@@ -29,12 +28,12 @@ describe('Avatar', () => {
   });
 
   it('updates initials when name changes', () => {
-     const component = create(<Avatar name="John Doe" />);
-     let textComponent = component.root.findByType(Text);
-     expect(textComponent.props.children).toBe('JD');
+    const component = create(<Avatar name="John Doe" />);
+    let textComponent = component.root.findByType(Text);
+    expect(textComponent.props.children).toBe('JD');
 
-     component.update(<Avatar name="Jane Smith" />);
-     textComponent = component.root.findByType(Text);
-     expect(textComponent.props.children).toBe('JS');
+    component.update(<Avatar name="Jane Smith" />);
+    textComponent = component.root.findByType(Text);
+    expect(textComponent.props.children).toBe('JS');
   });
 });

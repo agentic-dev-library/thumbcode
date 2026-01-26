@@ -32,6 +32,16 @@ jest.mock('expo-device', () => ({
   isRootedExperimentalAsync: jest.fn(() => Promise.resolve(false)),
 }));
 
+// Mock expo-constants (required by @thumbcode/config/env in Jest)
+jest.mock('expo-constants', () => ({
+  __esModule: true,
+  default: {
+    expoConfig: {
+      extra: {},
+    },
+  },
+}));
+
 // Mock expo-router
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),

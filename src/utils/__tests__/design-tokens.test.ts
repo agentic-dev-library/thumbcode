@@ -8,11 +8,12 @@ describe('getColorWithOpacity', () => {
   });
 
   it('should use default shade 500', () => {
-     const result = getColorWithOpacity('coral', undefined, 1);
-     expect(result).toBe('rgba(255, 112, 89, 1)');
+    const result = getColorWithOpacity('coral');
+    expect(result).toBe('rgba(255, 112, 89, 1)');
   });
 
   it('should throw error for invalid color', () => {
-    expect(() => getColorWithOpacity('invalid' as any, '500', 0.5)).toThrow();
+    // @ts-expect-error - intentionally passing invalid token key for runtime guard test
+    expect(() => getColorWithOpacity('invalid', '500', 0.5)).toThrow();
   });
 });
