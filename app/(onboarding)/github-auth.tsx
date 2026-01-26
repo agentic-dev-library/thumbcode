@@ -93,7 +93,7 @@ export default function GitHubAuthScreen() {
         provider: 'github',
         name: 'GitHub',
         secureStoreKey: 'thumbcode_cred_github',
-        expiresAt: validation.expiresAt,
+        expiresAt: validation.expiresAt?.toISOString(),
         maskedValue,
         metadata: meta
           ? {
@@ -107,7 +107,7 @@ export default function GitHubAuthScreen() {
       setValidationResult(credentialId, {
         isValid: validation.isValid,
         message: validation.message,
-        expiresAt: validation.expiresAt,
+        expiresAt: validation.expiresAt?.toISOString(),
         metadata: validation.metadata,
       });
     }
