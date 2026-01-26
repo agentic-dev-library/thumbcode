@@ -222,19 +222,20 @@ export default function CredentialsScreen() {
     if (!trimmed) return;
 
     const validation = await CredentialService.store(type, trimmed, { skipValidation: false });
+    const expiresAt = validation.expiresAt?.toISOString();
     const maskedValue = `${trimmed.slice(0, 6)}…${trimmed.slice(-4)}`;
     const credentialId = addCredential({
       provider: type,
       name: type === 'anthropic' ? 'Anthropic' : 'OpenAI',
       secureStoreKey: type === 'anthropic' ? SECURE_STORE_KEYS.anthropic : SECURE_STORE_KEYS.openai,
-      expiresAt: validation.expiresAt,
+      expiresAt,
       maskedValue,
       metadata: validation.metadata,
     });
     setValidationResult(credentialId, {
       isValid: validation.isValid,
       message: validation.message,
-      expiresAt: validation.expiresAt,
+      expiresAt,
       metadata: validation.metadata,
     });
 

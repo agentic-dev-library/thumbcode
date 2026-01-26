@@ -118,7 +118,7 @@ export default function GitHubAuthScreen() {
         login: user.login,
         id: user.id,
         avatarUrl: user.avatar_url,
-        name: user.name,
+        name: user.name ?? undefined,
         publicRepos: 0,
         followers: 0,
         following: 0,

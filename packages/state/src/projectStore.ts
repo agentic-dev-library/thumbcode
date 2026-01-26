@@ -37,7 +37,7 @@ export interface Branch {
   lastCommitSha?: string;
 }
 
-export type ProjectStatus = 'active' | 'idle' | 'error';
+export type LocalProjectStatus = 'active' | 'idle' | 'error';
 
 // Project configuration
 export interface Project {
@@ -46,13 +46,13 @@ export interface Project {
   repoUrl: string;
   localPath: string;
   defaultBranch: string;
-  status: ProjectStatus;
+  status: LocalProjectStatus;
   createdAt: string;
   lastOpenedAt: string;
 }
 
 type AddProjectInput = Omit<Project, 'id' | 'createdAt' | 'lastOpenedAt' | 'status'> & {
-  status?: ProjectStatus;
+  status?: LocalProjectStatus;
 };
 
 // Workspace state for active editing
@@ -274,7 +274,7 @@ export const useProjectStore = create<ProjectState>()(
         version: 1,
         storage: createJSONStorage(() => AsyncStorage),
         migrate: (persisted) => {
-          type PersistedProject = Omit<Project, 'status'> & { status?: ProjectStatus };
+          type PersistedProject = Omit<Project, 'status'> & { status?: LocalProjectStatus };
           type PersistedState = {
             projects?: PersistedProject[];
             activeProjectId?: string | null;

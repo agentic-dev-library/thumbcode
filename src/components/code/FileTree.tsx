@@ -26,7 +26,7 @@ import {
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
-interface FileNode {
+export interface FileNode {
   name: string;
   type: 'file' | 'folder';
   path: string;

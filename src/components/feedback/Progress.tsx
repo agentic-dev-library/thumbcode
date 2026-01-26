@@ -111,7 +111,7 @@ const circleColors = {
   primary: getColor('coral', '500'),
   secondary: getColor('teal', '500'),
   success: getColor('teal', '600'),
-  warning: getColor('gold', '400'),
+  warning: getColor('gold', '500'),
 };
 
 export function ProgressCircle({

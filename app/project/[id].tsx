@@ -11,7 +11,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FileTree } from '@/components/code';
+import { FileTree, type FileNode as FileTreeNode } from '@/components/code';
 import { Avatar, Badge, StatusBadge } from '@/components/display';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
@@ -19,23 +19,16 @@ import { organicBorderRadius } from '@/lib/organic-styles';
 
 type Tab = 'files' | 'commits' | 'tasks' | 'agents';
 
-type UiFileNode = {
-  name: string;
-  type: 'file' | 'folder';
-  path: string;
-  children?: UiFileNode[];
-};
-
 async function buildFileTree(
   dir: string,
   basePath = '',
   depth = 0,
   maxDepth = 6
-): Promise<UiFileNode[]> {
+): Promise<FileTreeNode[]> {
   if (depth > maxDepth) return [];
   const entries = await FileSystem.readDirectoryAsync(`${dir}/${basePath}`.replace(/\/+$/, ''));
 
-  const nodes: UiFileNode[] = [];
+  const nodes: FileTreeNode[] = [];
   for (const name of entries) {
     if (name.startsWith('.git')) continue;
     const relPath = basePath ? `${basePath}/${name}` : name;
@@ -63,7 +56,7 @@ async function buildFileTree(
   return nodes;
 }
 
-async function fetchProjectFileNodes(localPath: string): Promise<UiFileNode[]> {
+async function fetchProjectFileNodes(localPath: string): Promise<FileTreeNode[]> {
   return await buildFileTree(localPath);
 }
 
@@ -92,7 +85,7 @@ export default function ProjectDetailScreen() {
   const [activeTab, setActiveTab] = useState<Tab>('files');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [isLoadingFiles, setIsLoadingFiles] = useState(false);
-  const [fileNodes, setFileNodes] = useState<UiFileNode[]>([]);
+  const [fileNodes, setFileNodes] = useState<FileTreeNode[]>([]);
   const [isLoadingCommits, setIsLoadingCommits] = useState(false);
   const [commits, setCommits] = useState<
     Array<{ sha: string; message: string; author: string; date: string }>
@@ -164,21 +157,23 @@ export default function ProjectDetailScreen() {
       setIsLoadingCommits(true);
       setErrorMessage(null);
       const result = await GitService.log(project.localPath, 20);
-      if (!cancelled) {
-        if (result.success) {
-          setCommits(
-            result.data.map((c) => ({
-              sha: c.oid.slice(0, 7),
-              message: c.message.split('\n')[0] ?? c.message,
-              author: c.author.name,
-              date: formatCommitDate(c.author.timestamp),
-            }))
-          );
-        } else {
-          setErrorMessage(result.error || 'Failed to load commits');
-        }
+      if (cancelled) return;
+
+      if (!(result.success && Array.isArray(result.data))) {
+        setErrorMessage(result.error || 'Failed to load commits');
         setIsLoadingCommits(false);
+        return;
       }
+
+      setCommits(
+        result.data.map((c) => ({
+          sha: c.oid.slice(0, 7),
+          message: c.message?.split('\n')[0] ?? c.message ?? '',
+          author: c.author?.name ?? 'Unknown',
+          date: formatCommitDate(c.author?.timestamp ?? 0),
+        }))
+      );
+      setIsLoadingCommits(false);
     };
     loadCommits();
     return () => {

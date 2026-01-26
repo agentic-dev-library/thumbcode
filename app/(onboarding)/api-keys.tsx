@@ -93,37 +93,39 @@ export default function ApiKeysScreen() {
   const handleContinue = async () => {
     if (anthropicKey.isValid) {
       const res = await CredentialService.store('anthropic', anthropicKey.key);
+      const expiresAt = res.expiresAt ? res.expiresAt.toISOString() : undefined;
       const maskedValue = `${anthropicKey.key.slice(0, 6)}…${anthropicKey.key.slice(-4)}`;
       const id = addCredential({
         provider: 'anthropic',
         name: 'Anthropic',
         secureStoreKey: SECURE_STORE_KEYS.anthropic,
-        expiresAt: res.expiresAt,
+        expiresAt,
         maskedValue,
         metadata: res.metadata,
       });
       setValidationResult(id, {
         isValid: res.isValid,
         message: res.message,
-        expiresAt: res.expiresAt,
+        expiresAt,
         metadata: res.metadata,
       });
     }
     if (openaiKey.isValid) {
       const res = await CredentialService.store('openai', openaiKey.key);
+      const expiresAt = res.expiresAt ? res.expiresAt.toISOString() : undefined;
       const maskedValue = `${openaiKey.key.slice(0, 6)}…${openaiKey.key.slice(-4)}`;
       const id = addCredential({
         provider: 'openai',
         name: 'OpenAI',
         secureStoreKey: SECURE_STORE_KEYS.openai,
-        expiresAt: res.expiresAt,
+        expiresAt,
         maskedValue,
         metadata: res.metadata,
       });
       setValidationResult(id, {
         isValid: res.isValid,
         message: res.message,
-        expiresAt: res.expiresAt,
+        expiresAt,
         metadata: res.metadata,
       });
     }
