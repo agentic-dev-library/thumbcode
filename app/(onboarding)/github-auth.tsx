@@ -53,7 +53,8 @@ export default function GitHubAuthScreen() {
       return;
     }
 
-    setIsAuthenticating(false);
+    // Automatically start polling for token
+    checkAuth();
   };
 
   const openGitHub = async () => {
