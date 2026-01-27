@@ -23,6 +23,18 @@ import { GitHubAuthService } from '../auth/GitHubAuthService';
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
+// Mock config to speed up tests
+jest.mock('@thumbcode/config', () => ({
+  GITHUB_OAUTH: {
+    deviceCodeUrl: 'https://github.com/login/device/code',
+    accessTokenUrl: 'https://github.com/login/oauth/access_token',
+    verificationUri: 'https://github.com/login/device',
+    scopes: 'repo,user,read:org',
+    pollInterval: 100, // Short interval for testing
+    maxPollAttempts: 60,
+  },
+}));
+
 // Mock CredentialService
 jest.mock('../credentials/CredentialService', () => ({
   CredentialService: {
@@ -257,6 +269,49 @@ describe('GitHubAuthService', () => {
       expect(result.authorized).toBe(false);
       expect(result.shouldContinue).toBe(false);
       expect(result.errorCode).toBe('access_denied');
+    });
+
+    it('should retry on transient network error', async () => {
+      // First, start the device flow
+      const deviceCodeResponse = {
+        device_code: 'test-device-code',
+        user_code: 'TEST-1234',
+        verification_uri: 'https://github.com/login/device',
+        expires_in: 900,
+        interval: 1, // Short interval for testing
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(deviceCodeResponse),
+      });
+
+      await GitHubAuthService.startDeviceFlow({
+        clientId: 'test-client-id',
+      });
+
+      // Mock network error followed by success
+      mockFetch
+        .mockRejectedValueOnce(new Error('Network error'))
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              access_token: 'test-access-token',
+              token_type: 'bearer',
+              scope: 'repo,user',
+            }),
+        });
+
+      const onPollAttempt = jest.fn();
+      const result = await GitHubAuthService.pollForToken({
+        clientId: 'test-client-id',
+        onPollAttempt,
+      });
+
+      expect(result.authorized).toBe(true);
+      expect(result.accessToken).toBe('test-access-token');
+      expect(onPollAttempt).toHaveBeenCalled();
     });
   });
 
