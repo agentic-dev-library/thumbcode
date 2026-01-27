@@ -107,13 +107,23 @@ const fs = {
 
     stat: async (filepath: string) => {
       const info = await FileSystem.getInfoAsync(filepath);
+      if (!info.exists) {
+        const error = new Error(`ENOENT: no such file or directory, stat '${filepath}'`);
+        (error as any).code = 'ENOENT';
+        throw error;
+      }
       return {
         isFile: () => !info.isDirectory,
         isDirectory: () => info.isDirectory,
         isSymbolicLink: () => false,
-        size: info.exists && 'size' in info ? info.size : 0,
+        size: 'size' in info ? info.size : 0,
         mode: 0o644,
-        mtimeMs: info.exists && 'modificationTime' in info ? info.modificationTime * 1000 : 0,
+        mtimeMs: 'modificationTime' in info ? info.modificationTime * 1000 : 0,
+        ctimeMs: 'modificationTime' in info ? info.modificationTime * 1000 : 0,
+        uid: 0,
+        gid: 0,
+        dev: 0,
+        ino: 0,
       };
     },
 
@@ -718,51 +728,59 @@ class GitServiceClass {
       let totalDeletions = 0;
 
       // Compare each file
-      for (const filepath of allFiles) {
-        const blobA = filesInA.get(filepath);
-        const blobB = filesInB.get(filepath);
+      const allFilesArray = Array.from(allFiles);
+      const BATCH_SIZE = 20;
 
-        if (blobA === blobB) {
-          // File unchanged
-          continue;
-        }
+      for (let i = 0; i < allFilesArray.length; i += BATCH_SIZE) {
+        const batch = allFilesArray.slice(i, i + BATCH_SIZE);
+        await Promise.all(
+          batch.map(async (filepath) => {
+            const blobA = filesInA.get(filepath);
+            const blobB = filesInB.get(filepath);
 
-        let type: FileDiff['type'];
-        let oldContent = '';
-        let newContent = '';
+            if (blobA === blobB) {
+              // File unchanged
+              return;
+            }
 
-        if (!blobA && blobB) {
-          // File added in B
-          type = 'add';
-          newContent = (await readBlobContent(dir, oidB, filepath)) || '';
-        } else if (blobA && !blobB) {
-          // File deleted in B
-          type = 'delete';
-          oldContent = (await readBlobContent(dir, oidA, filepath)) || '';
-        } else {
-          // File modified
-          type = 'modify';
-          oldContent = (await readBlobContent(dir, oidA, filepath)) || '';
-          newContent = (await readBlobContent(dir, oidB, filepath)) || '';
-        }
+            let type: FileDiff['type'];
+            let oldContent = '';
+            let newContent = '';
 
-        // Generate unified diff
-        const { patch, additions, deletions } = createUnifiedPatch(
-          filepath,
-          oldContent,
-          newContent
+            if (!blobA && blobB) {
+              // File added in B
+              type = 'add';
+              newContent = (await readBlobContent(dir, oidB, filepath)) || '';
+            } else if (blobA && !blobB) {
+              // File deleted in B
+              type = 'delete';
+              oldContent = (await readBlobContent(dir, oidA, filepath)) || '';
+            } else {
+              // File modified
+              type = 'modify';
+              oldContent = (await readBlobContent(dir, oidA, filepath)) || '';
+              newContent = (await readBlobContent(dir, oidB, filepath)) || '';
+            }
+
+            // Generate unified diff
+            const { patch, additions, deletions } = createUnifiedPatch(
+              filepath,
+              oldContent,
+              newContent
+            );
+
+            totalAdditions += additions;
+            totalDeletions += deletions;
+
+            files.push({
+              path: filepath,
+              type,
+              additions,
+              deletions,
+              patch,
+            });
+          })
         );
-
-        totalAdditions += additions;
-        totalDeletions += deletions;
-
-        files.push({
-          path: filepath,
-          type,
-          additions,
-          deletions,
-          patch,
-        });
       }
 
       const stats: DiffStats = {
