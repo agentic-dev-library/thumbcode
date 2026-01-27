@@ -64,6 +64,7 @@ export default function GitHubAuthScreen() {
     setIsAuthenticating(true);
     setErrorMessage(null);
 
+    // Poll for authorization completion using Device Flow
     const result = await GitHubAuthService.pollForToken({
       clientId: env.githubClientId,
       onPollAttempt: (attempt, max) => setPollStatus({ attempt, max }),
