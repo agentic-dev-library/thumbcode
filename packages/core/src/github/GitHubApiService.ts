@@ -74,6 +74,38 @@ class GitHubApiServiceClass {
       updatedAt: r.updated_at,
     }));
   }
+
+  async createRepository(options: {
+    name: string;
+    description?: string;
+    isPrivate?: boolean;
+  }): Promise<Repository> {
+    const repo = await this.request<GitHubRepoResponse>('/user/repos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: options.name,
+        description: options.description || '',
+        private: options.isPrivate ?? true,
+        auto_init: true,
+      }),
+    });
+
+    return {
+      provider: 'github',
+      owner: repo.owner.login,
+      name: repo.name,
+      fullName: repo.full_name,
+      defaultBranch: repo.default_branch,
+      cloneUrl: repo.clone_url,
+      isPrivate: repo.private,
+      description: repo.description ?? undefined,
+      language: repo.language ?? undefined,
+      stars: repo.stargazers_count,
+      forks: repo.forks_count,
+      updatedAt: repo.updated_at,
+    };
+  }
 }
 
 export const GitHubApiService = new GitHubApiServiceClass();
