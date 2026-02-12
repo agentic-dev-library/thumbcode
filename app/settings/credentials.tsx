@@ -10,7 +10,7 @@ import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@t
 import { Stack, useRouter } from 'expo-router';
 import type React from 'react';
 import { useState } from 'react';
-import { Alert, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge } from '@/components/display';
 import { type IconColor, LinkIcon, SecurityIcon } from '@/components/icons';
@@ -94,20 +94,29 @@ interface ApiKeyInputProps {
   onChange: (value: string) => void;
   onSave: () => void;
   isSet: boolean;
+  isSaving?: boolean;
+  error?: string;
 }
 
-function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: Readonly<ApiKeyInputProps>) {
+function ApiKeyInput({
+  label,
+  placeholder,
+  value,
+  onChange,
+  onSave,
+  isSet,
+  isSaving,
+  error,
+}: Readonly<ApiKeyInputProps>) {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleSave = () => {
-    // Only mark as set if the key is not empty
     if (value.trim()) {
       onSave();
-      setIsEditing(false);
     }
   };
 
-  const canSave = value.trim().length > 0;
+  const canSave = value.trim().length > 0 && !isSaving;
 
   return (
     <View className="py-4">
@@ -123,7 +132,7 @@ function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: Rea
       {isEditing || !isSet ? (
         <VStack spacing="sm">
           <View
-            className="bg-charcoal border border-neutral-700 px-4 py-3"
+            className={`bg-charcoal border px-4 py-3 ${error ? 'border-coral-500' : 'border-neutral-700'}`}
             style={organicBorderRadius.input}
           >
             <TextInput
@@ -134,9 +143,15 @@ function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: Rea
               secureTextEntry
               autoCapitalize="none"
               autoCorrect={false}
+              editable={!isSaving}
               className="text-white font-mono text-sm"
             />
           </View>
+          {error && (
+            <Text size="sm" className="text-coral-500">
+              {error}
+            </Text>
+          )}
           <HStack spacing="sm">
             <Pressable
               onPress={handleSave}
@@ -144,15 +159,23 @@ function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: Rea
               className={`flex-1 py-3 ${canSave ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}
               style={organicBorderRadius.button}
             >
-              <Text
-                className={`text-center font-semibold ${canSave ? 'text-white' : 'text-neutral-500'}`}
-              >
-                Save
-              </Text>
+              {isSaving ? (
+                <ActivityIndicator size="small" color="#ffffff" />
+              ) : (
+                <Text
+                  className={`text-center font-semibold ${canSave ? 'text-white' : 'text-neutral-500'}`}
+                >
+                  Save
+                </Text>
+              )}
             </Pressable>
             {isSet && (
               <Pressable
-                onPress={() => setIsEditing(false)}
+                onPress={() => {
+                  setIsEditing(false);
+                  onChange('');
+                }}
+                disabled={isSaving}
                 className="flex-1 bg-surface py-3 active:bg-neutral-700"
                 style={organicBorderRadius.button}
               >
@@ -190,6 +213,8 @@ export default function CredentialsScreen() {
 
   const [anthropicKey, setAnthropicKey] = useState('');
   const [openaiKey, setOpenaiKey] = useState('');
+  const [savingType, setSavingType] = useState<'anthropic' | 'openai' | null>(null);
+  const [saveError, setSaveError] = useState<{ type: string; message: string } | null>(null);
 
   const handleGitHubConnect = () => {
     router.push('/(onboarding)/github-auth');
@@ -222,28 +247,53 @@ export default function CredentialsScreen() {
     const trimmed = value.trim();
     if (!trimmed) return;
 
-    const validation = await CredentialService.store(type, trimmed, { skipValidation: false });
-    const expiresAt = validation.expiresAt?.toISOString();
-    const maskedValue = `${trimmed.slice(0, 6)}…${trimmed.slice(-4)}`;
-    const credentialId = addCredential({
-      provider: type,
-      name: type === 'anthropic' ? 'Anthropic' : 'OpenAI',
-      secureStoreKey: type === 'anthropic' ? SECURE_STORE_KEYS.anthropic : SECURE_STORE_KEYS.openai,
-      expiresAt,
-      maskedValue,
-      metadata: validation.metadata,
-    });
-    setValidationResult(credentialId, {
-      isValid: validation.isValid,
-      message: validation.message,
-      expiresAt,
-      metadata: validation.metadata,
-    });
+    setSavingType(type);
+    setSaveError(null);
 
-    if (!validation.isValid) {
-      Alert.alert('Invalid key', validation.message || 'Validation failed');
-    } else {
+    try {
+      // Validate first before storing
+      const validation = await CredentialService.validateCredential(type, trimmed);
+
+      if (!validation.isValid) {
+        setSaveError({ type, message: validation.message || 'Invalid API key' });
+        return;
+      }
+
+      // Only store if validation passed
+      const storeResult = await CredentialService.store(type, trimmed, { skipValidation: true });
+      if (!storeResult.isValid) {
+        setSaveError({ type, message: storeResult.message || 'Failed to store credential' });
+        return;
+      }
+
+      const expiresAt = validation.expiresAt?.toISOString();
+      const maskedValue = `${trimmed.slice(0, 6)}…${trimmed.slice(-4)}`;
+      const credentialId = addCredential({
+        provider: type,
+        name: type === 'anthropic' ? 'Anthropic' : 'OpenAI',
+        secureStoreKey: type === 'anthropic' ? SECURE_STORE_KEYS.anthropic : SECURE_STORE_KEYS.openai,
+        expiresAt,
+        maskedValue,
+        metadata: validation.metadata,
+      });
+      setValidationResult(credentialId, {
+        isValid: true,
+        message: validation.message,
+        expiresAt,
+        metadata: validation.metadata,
+      });
+
+      if (type === 'anthropic') setAnthropicKey('');
+      else setOpenaiKey('');
+
       Alert.alert('Saved', validation.message || 'Credential stored successfully');
+    } catch (error) {
+      setSaveError({
+        type,
+        message: error instanceof Error ? error.message : 'Validation failed',
+      });
+    } finally {
+      setSavingType(null);
     }
   };
 
@@ -309,18 +359,28 @@ export default function CredentialsScreen() {
                 label="Anthropic (Claude)"
                 placeholder="sk-ant-..."
                 value={anthropicKey}
-                onChange={setAnthropicKey}
+                onChange={(v) => {
+                  setAnthropicKey(v);
+                  if (saveError?.type === 'anthropic') setSaveError(null);
+                }}
                 onSave={() => saveApiKey('anthropic', anthropicKey)}
                 isSet={anthropicCredential?.status === 'valid'}
+                isSaving={savingType === 'anthropic'}
+                error={saveError?.type === 'anthropic' ? saveError.message : undefined}
               />
               <Divider />
               <ApiKeyInput
                 label="OpenAI (Optional)"
                 placeholder="sk-..."
                 value={openaiKey}
-                onChange={setOpenaiKey}
+                onChange={(v) => {
+                  setOpenaiKey(v);
+                  if (saveError?.type === 'openai') setSaveError(null);
+                }}
                 onSave={() => saveApiKey('openai', openaiKey)}
                 isSet={openaiCredential?.status === 'valid'}
+                isSaving={savingType === 'openai'}
+                error={saveError?.type === 'openai' ? saveError.message : undefined}
               />
             </View>
           </VStack>
