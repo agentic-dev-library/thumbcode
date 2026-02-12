@@ -23,11 +23,7 @@ export interface AIStreamChunk {
 /** Provider-agnostic AI client interface */
 export interface AIClient {
   /** Send a message and receive the full response */
-  sendMessage(
-    messages: AIMessage[],
-    systemPrompt: string,
-    signal?: AbortSignal
-  ): Promise<string>;
+  sendMessage(messages: AIMessage[], systemPrompt: string, signal?: AbortSignal): Promise<string>;
 
   /** Stream a message response, calling onChunk for each text delta */
   streamMessage(

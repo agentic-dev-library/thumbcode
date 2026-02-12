@@ -5,9 +5,9 @@
  * and session management using mocked SecureStore and fetch.
  */
 
-import * as SecureStore from 'expo-secure-store';
-import * as LocalAuthentication from 'expo-local-authentication';
 import { CredentialService } from '@thumbcode/core';
+import * as LocalAuthentication from 'expo-local-authentication';
+import * as SecureStore from 'expo-secure-store';
 
 // In-memory store to simulate SecureStore
 const secureStoreMap = new Map<string, string>();
@@ -17,19 +17,15 @@ beforeEach(() => {
   jest.clearAllMocks();
 
   // Wire up SecureStore mocks to an in-memory map
-  (SecureStore.setItemAsync as jest.Mock).mockImplementation(
-    async (key: string, value: string) => {
-      secureStoreMap.set(key, value);
-    }
-  );
+  (SecureStore.setItemAsync as jest.Mock).mockImplementation(async (key: string, value: string) => {
+    secureStoreMap.set(key, value);
+  });
   (SecureStore.getItemAsync as jest.Mock).mockImplementation(
     async (key: string) => secureStoreMap.get(key) ?? null
   );
-  (SecureStore.deleteItemAsync as jest.Mock).mockImplementation(
-    async (key: string) => {
-      secureStoreMap.delete(key);
-    }
-  );
+  (SecureStore.deleteItemAsync as jest.Mock).mockImplementation(async (key: string) => {
+    secureStoreMap.delete(key);
+  });
 
   // Default biometric mocks
   (LocalAuthentication.hasHardwareAsync as jest.Mock).mockResolvedValue(true);
@@ -37,9 +33,9 @@ beforeEach(() => {
   (LocalAuthentication.authenticateAsync as jest.Mock).mockResolvedValue({
     success: true,
   });
-  (
-    LocalAuthentication.supportedAuthenticationTypesAsync as jest.Mock
-  ).mockResolvedValue([LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION]);
+  (LocalAuthentication.supportedAuthenticationTypesAsync as jest.Mock).mockResolvedValue([
+    LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION,
+  ]);
 });
 
 describe('Auth Flow Integration', () => {
@@ -71,7 +67,7 @@ describe('Auth Flow Integration', () => {
     });
 
     it('stores and retrieves a GitHub token', async () => {
-      const token = 'ghp_' + 'a'.repeat(36);
+      const token = `ghp_${'a'.repeat(36)}`;
       const result = await CredentialService.store('github', token, {
         skipValidation: true,
       });
@@ -107,10 +103,7 @@ describe('Auth Flow Integration', () => {
 
   describe('Format validation', () => {
     it('rejects an invalid Anthropic key format', async () => {
-      const result = await CredentialService.store(
-        'anthropic',
-        'bad-key-format'
-      );
+      const result = await CredentialService.store('anthropic', 'bad-key-format');
       expect(result.isValid).toBe(false);
       expect(result.message).toBe('Invalid credential format');
     });
@@ -128,11 +121,9 @@ describe('Auth Flow Integration', () => {
     });
 
     it('accepts MCP server credentials without format validation', async () => {
-      const result = await CredentialService.store(
-        'mcp_server',
-        'any-arbitrary-value',
-        { skipValidation: true }
-      );
+      const result = await CredentialService.store('mcp_server', 'any-arbitrary-value', {
+        skipValidation: true,
+      });
       expect(result.isValid).toBe(true);
     });
   });
@@ -144,17 +135,13 @@ describe('Auth Flow Integration', () => {
     });
 
     it('reports biometric unavailable when no hardware', async () => {
-      (LocalAuthentication.hasHardwareAsync as jest.Mock).mockResolvedValue(
-        false
-      );
+      (LocalAuthentication.hasHardwareAsync as jest.Mock).mockResolvedValue(false);
       const available = await CredentialService.isBiometricAvailable();
       expect(available).toBe(false);
     });
 
     it('reports biometric unavailable when not enrolled', async () => {
-      (LocalAuthentication.isEnrolledAsync as jest.Mock).mockResolvedValue(
-        false
-      );
+      (LocalAuthentication.isEnrolledAsync as jest.Mock).mockResolvedValue(false);
       const available = await CredentialService.isBiometricAvailable();
       expect(available).toBe(false);
     });
@@ -165,22 +152,20 @@ describe('Auth Flow Integration', () => {
         error: 'user_cancel',
       });
 
-      const result = await CredentialService.store(
-        'anthropic',
-        'sk-ant-test-key-bio',
-        { requireBiometric: true, skipValidation: true }
-      );
+      const result = await CredentialService.store('anthropic', 'sk-ant-test-key-bio', {
+        requireBiometric: true,
+        skipValidation: true,
+      });
 
       expect(result.isValid).toBe(false);
       expect(result.message).toBe('Biometric authentication failed');
     });
 
     it('allows storage when biometric auth succeeds', async () => {
-      const result = await CredentialService.store(
-        'anthropic',
-        'sk-ant-test-key-bio-success',
-        { requireBiometric: true, skipValidation: true }
-      );
+      const result = await CredentialService.store('anthropic', 'sk-ant-test-key-bio-success', {
+        requireBiometric: true,
+        skipValidation: true,
+      });
 
       expect(result.isValid).toBe(true);
     });
@@ -238,11 +223,7 @@ describe('Auth Flow Integration', () => {
       await CredentialService.store('anthropic', 'sk-ant-stored-type', {
         skipValidation: true,
       });
-      await CredentialService.store(
-        'github',
-        'ghp_' + 'x'.repeat(36),
-        { skipValidation: true }
-      );
+      await CredentialService.store('github', `ghp_${'x'.repeat(36)}`, { skipValidation: true });
 
       const types = await CredentialService.getStoredCredentialTypes();
       expect(types).toContain('anthropic');

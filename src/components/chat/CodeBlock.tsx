@@ -71,14 +71,14 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
         <View className="p-3">
           {tokenizedLines.map((lineTokens, lineIndex) => (
             <Text
-              key={lineIndex}
+              key={`L${lineIndex}:${lineTokens[0]?.value.slice(0, 8)}`}
               variant="mono"
               size="sm"
               style={{ lineHeight: 20 }}
             >
               {lineTokens.map((token, tokenIndex) => (
                 <Text
-                  key={tokenIndex}
+                  key={`${tokenIndex}:${token.type}:${token.value.slice(0, 12)}`}
                   variant="mono"
                   size="sm"
                   style={{ color: TOKEN_COLORS[token.type] }}

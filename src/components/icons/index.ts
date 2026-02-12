@@ -16,55 +16,24 @@
  * @see PaintDaubeIcon for full documentation
  */
 
-// Core component, types, and constants
-export type { IconColor, IconVariant, PaintDaubeIconProps } from './PaintDaubeIcon';
-export { BRAND_COLORS, PaintDaubeIcon } from './PaintDaubeIcon';
-
 // Preset icons - Core
+// Preset icons - Navigation & UI
+// Preset icons - Empty states & feedback
+// Preset icons - File types
+// Preset icons - UI controls
 export {
   AgentIcon,
-  CelebrateIcon,
-  ChatIcon,
-  CodeIcon,
-  FolderIcon,
-  GitHubIcon,
-  GitIcon,
-  KeyIcon,
-  LightningIcon,
-  MobileIcon,
-  SecurityIcon,
-  SettingsIcon,
-  StarIcon,
-  SuccessIcon,
-  ThumbIcon,
-} from './icon-presets';
-
-// Preset icons - Navigation & UI
-export {
   BellIcon,
   BookIcon,
   BrainIcon,
   BranchIcon,
+  CelebrateIcon,
+  ChatIcon,
+  ChevronDownIcon,
+  CloseIcon,
+  CodeIcon,
   EditIcon,
-  HomeIcon,
-  InfoIcon,
-  KeyboardIcon,
-  LegalIcon,
-  LinkIcon,
-  PaletteIcon,
-  ReviewIcon,
-  SearchIcon,
-  SupportIcon,
-  TasksIcon,
-  UserIcon,
-  VibrateIcon,
-} from './icon-presets';
-
-// Preset icons - Empty states & feedback
-export { ErrorIcon, InboxIcon, TestIcon } from './icon-presets';
-
-// Preset icons - File types
-export {
+  ErrorIcon,
   FileCodeIcon,
   FileConfigIcon,
   FileDataIcon,
@@ -73,8 +42,35 @@ export {
   FileMediaIcon,
   FileStyleIcon,
   FileWebIcon,
+  FolderIcon,
   FolderOpenIcon,
+  GitHubIcon,
+  GitIcon,
+  HomeIcon,
+  InboxIcon,
+  InfoIcon,
+  KeyboardIcon,
+  KeyIcon,
+  LegalIcon,
+  LightbulbIcon,
+  LightningIcon,
+  LinkIcon,
+  MobileIcon,
+  PaletteIcon,
+  ReviewIcon,
+  SearchIcon,
+  SecurityIcon,
+  SettingsIcon,
+  StarIcon,
+  SuccessIcon,
+  SupportIcon,
+  TasksIcon,
+  TestIcon,
+  ThumbIcon,
+  UserIcon,
+  VibrateIcon,
+  WarningIcon,
 } from './icon-presets';
-
-// Preset icons - UI controls
-export { ChevronDownIcon, CloseIcon, LightbulbIcon, WarningIcon } from './icon-presets';
+// Core component, types, and constants
+export type { IconColor, IconVariant, PaintDaubeIconProps } from './PaintDaubeIcon';
+export { BRAND_COLORS, PaintDaubeIcon } from './PaintDaubeIcon';

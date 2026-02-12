@@ -51,9 +51,7 @@ jest.mock('@thumbcode/state', () => ({
   ),
   useAgentStore: jest.fn((selector) =>
     selector({
-      agents: [
-        { id: 'a1', name: 'Architect', role: 'architect', status: 'idle' },
-      ],
+      agents: [{ id: 'a1', name: 'Architect', role: 'architect', status: 'idle' }],
       tasks: [],
     })
   ),

@@ -12,7 +12,11 @@ import type { IconVariant } from './PaintDaubeIcon';
  * Generates an organic path with slight imperfections
  * Uses seed for reproducible randomness
  */
-export function generateOrganicOffset(seed: number, index: number, maxOffset: number = 1.5): number {
+export function generateOrganicOffset(
+  seed: number,
+  index: number,
+  maxOffset: number = 1.5
+): number {
   // Simple seeded pseudo-random
   const x = Math.sin(seed * 9999 + index * 7919) * 10000;
   return (x - Math.floor(x) - 0.5) * maxOffset * 2;

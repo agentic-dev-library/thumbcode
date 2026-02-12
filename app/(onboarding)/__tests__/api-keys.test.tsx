@@ -23,12 +23,8 @@ jest.mock('@thumbcode/config', () => ({
 // Mock @thumbcode/core
 jest.mock('@thumbcode/core', () => ({
   CredentialService: {
-    validateCredential: jest.fn(() =>
-      Promise.resolve({ isValid: false, message: 'Test' })
-    ),
-    store: jest.fn(() =>
-      Promise.resolve({ isValid: true, message: 'OK' })
-    ),
+    validateCredential: jest.fn(() => Promise.resolve({ isValid: false, message: 'Test' })),
+    store: jest.fn(() => Promise.resolve({ isValid: true, message: 'OK' })),
   },
 }));
 
