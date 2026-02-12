@@ -7,7 +7,7 @@
  */
 
 import type { ApprovalMessage } from '@thumbcode/state';
-import type React from 'react';
+import React, { useMemo } from 'react';
 import { Pressable, View } from 'react-native';
 import {
   BranchIcon,
@@ -61,19 +61,21 @@ export function ApprovalCard({ message, onApprove, onReject }: ApprovalCardProps
   const isPending = message.metadata.approved === undefined;
   const wasApproved = message.metadata.approved === true;
 
+  const cardStyle = useMemo(
+    () => ({
+      ...organicBorderRadius.card,
+      borderLeftWidth: 4,
+      borderLeftColor: isPending
+        ? getColor('gold', '400') // Gold for pending
+        : wasApproved
+          ? getColor('teal', '500') // Teal for approved
+          : getColor('coral', '500'), // Coral for rejected
+    }),
+    [isPending, wasApproved]
+  );
+
   return (
-    <View
-      className="bg-surface-elevated p-4 max-w-[90%]"
-      style={{
-        ...organicBorderRadius.card,
-        borderLeftWidth: 4,
-        borderLeftColor: isPending
-          ? getColor('gold', '400') // Gold for pending
-          : wasApproved
-            ? getColor('teal', '500') // Teal for approved
-            : getColor('coral', '500'), // Coral for rejected
-      }}
-    >
+    <View className="bg-surface-elevated p-4 max-w-[90%]" style={cardStyle}>
       {/* Header */}
       <View className="flex-row items-center mb-2">
         <View className="mr-2">
