@@ -9,11 +9,17 @@ const ACTIVITY_INDICATOR_COLORS = {
   dark: getColor('neutral', '50'), // off-white for filled variants
 } as const;
 
+/** Props for the Button component */
 interface ButtonProps extends PressableProps {
+  /** Visual style variant of the button */
   variant?: 'primary' | 'secondary' | 'outline';
+  /** Size preset controlling padding */
   size?: 'sm' | 'md' | 'lg';
+  /** When true, shows a spinner and disables interaction */
   loading?: boolean;
+  /** Additional NativeWind class names */
   className?: string;
+  /** Button label or content */
   children: React.ReactNode;
 }
 

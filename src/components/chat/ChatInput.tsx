@@ -13,10 +13,15 @@ import { organicBorderRadius } from '@/lib/organic-styles';
 import { ChatService } from '@/services/chat';
 import { getColor } from '@/utils/design-tokens';
 
+/** Props for the ChatInput component */
 interface ChatInputProps {
+  /** ID of the chat thread to send messages to */
   threadId: string;
+  /** Target agent to direct the message to */
   targetAgent?: MessageSender;
+  /** Placeholder text for the input field */
   placeholder?: string;
+  /** Whether the input is disabled */
   disabled?: boolean;
 }
 

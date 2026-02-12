@@ -13,12 +13,19 @@ import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
+/** Props for the ErrorFallback component */
 interface ErrorFallbackProps {
+  /** The error that was caught, or null if unknown */
   error: Error | null;
+  /** React component stack trace for debugging */
   componentStack?: string | null;
+  /** Callback to retry the failed operation */
   onRetry?: () => void;
+  /** Callback to report the issue (defaults to opening a GitHub issue) */
   onReportIssue?: () => void;
+  /** Custom title for the error display */
   title?: string;
+  /** Custom description message for the error display */
   message?: string;
 }
 
@@ -123,11 +130,11 @@ export function ErrorFallback({
   );
 }
 
-/**
- * Compact error fallback for inline use
- */
+/** Props for the CompactErrorFallback component, used for inline error displays */
 interface CompactErrorFallbackProps {
+  /** Error message to display */
   message?: string;
+  /** Callback to retry the failed operation */
   onRetry?: () => void;
 }
 

@@ -11,7 +11,9 @@ import { FlatList, Text, View } from 'react-native';
 import { ChatService } from '@/services/chat';
 import { ChatMessage } from './ChatMessage';
 
+/** Props for the ChatThread component */
 interface ChatThreadProps {
+  /** ID of the thread to display */
   threadId: string;
 }
 

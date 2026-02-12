@@ -16,13 +16,19 @@ import { Badge } from '@/components/display';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
+/** Props for the ThreadList component */
 interface ThreadListProps {
+  /** Called when a thread is selected */
   onSelectThread: (threadId: string) => void;
+  /** Called when the user wants to create a new thread */
   onCreateThread?: () => void;
 }
 
+/** Props for the ThreadItem component */
 interface ThreadItemProps {
+  /** The chat thread to display */
   thread: ChatThread;
+  /** Called when the thread item is pressed */
   onPress: () => void;
 }
 

@@ -9,6 +9,7 @@ import { View, type ViewStyle } from 'react-native';
 
 type SpacerSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
 
+/** Props for the Spacer component */
 interface SpacerProps {
   /** Fixed size in pixels or preset */
   size?: SpacerSize;
