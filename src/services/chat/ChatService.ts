@@ -16,6 +16,7 @@ import type {
 } from '@thumbcode/state';
 import { useCredentialStore, useChatStore } from '@thumbcode/state';
 import { createAIClient } from '../ai/AIClientFactory';
+import { getAgentSystemPrompt } from '../ai/AgentPrompts';
 import type { AIMessage, AIProvider } from '../ai/types';
 
 // Event types for streaming updates
@@ -259,8 +260,8 @@ class ChatServiceImpl {
       const recentMessages = messages.slice(-10);
       const aiMessages = this.toAIMessages(recentMessages);
 
-      // System prompt for the agent (generic for now, will be specialized in US-014)
-      const systemPrompt = `You are ${agent}, a specialized AI agent in the ThumbCode development platform. Help the user with their request.`;
+      // Get agent-specific system prompt
+      const systemPrompt = getAgentSystemPrompt(agent);
 
       // Create empty response message for streaming into
       const messageId = useChatStore.getState().addMessage({
