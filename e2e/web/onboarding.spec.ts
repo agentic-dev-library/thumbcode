@@ -2,13 +2,30 @@ import { expect, test } from '@playwright/test';
 import { disableAnimations } from './utils/visual';
 
 /**
- * Helper to click a Pressable element by text
- * Uses .first() and force click for reliability with React Native elements
+ * Helper to click a Pressable element by text.
+ * Uses page.mouse to perform a real click at the element's coordinates.
+ * This is needed because RN Web Pressable uses the responder system which
+ * only responds to real browser pointer events, and the elements may be
+ * outside the visible scroll area (body overflow:hidden).
  */
 async function clickPressable(page: import('@playwright/test').Page, text: string | RegExp) {
-  const element = page.getByText(text).first();
-  await element.scrollIntoViewIfNeeded();
-  await element.click({ force: true });
+  const textEl = page.getByText(text).first();
+  await textEl.waitFor({ state: 'attached', timeout: 10_000 });
+  const box = await textEl.boundingBox();
+  if (box) {
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  } else {
+    await textEl.evaluate((el) => {
+      let target: HTMLElement | null = el as HTMLElement;
+      while (target && target !== document.body) {
+        const style = window.getComputedStyle(target);
+        if (style.cursor === 'pointer') break;
+        target = target.parentElement;
+      }
+      if (!target || target === document.body) target = el as HTMLElement;
+      target.click();
+    });
+  }
 }
 
 test.describe('Onboarding Flow', () => {
