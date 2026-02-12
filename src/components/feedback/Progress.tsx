@@ -2,15 +2,10 @@
  * Progress Components
  *
  * Progress bars and indicators for tracking completion status.
- * Uses paint daube icons for brand consistency.
+ * Web-native implementation using CSS transitions and SVG.
  */
 
-import { useEffect, useRef } from 'react';
-import { Animated, View } from 'react-native';
-import { SuccessIcon } from '@/components/icons';
-import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
-import { getColor } from '@/utils/design-tokens';
+import { CircleCheck } from 'lucide-react';
 
 interface ProgressBarProps {
   /** Progress value between 0 and 100 */
@@ -28,9 +23,9 @@ interface ProgressBarProps {
 }
 
 const barSizes = {
-  sm: 4,
-  md: 8,
-  lg: 12,
+  sm: 'h-1',
+  md: 'h-2',
+  lg: 'h-3',
 };
 
 const barColors = {
@@ -49,48 +44,28 @@ export function ProgressBar({
   animated = true,
 }: Readonly<ProgressBarProps>) {
   const clampedValue = Math.min(100, Math.max(0, value));
-  const widthAnim = useRef(new Animated.Value(clampedValue)).current;
-
-  useEffect(() => {
-    if (animated) {
-      Animated.spring(widthAnim, {
-        toValue: clampedValue,
-        useNativeDriver: false,
-        tension: 50,
-        friction: 10,
-      }).start();
-    } else {
-      widthAnim.setValue(clampedValue);
-    }
-  }, [clampedValue, animated, widthAnim]);
-
-  const height = barSizes[size];
 
   return (
-    <View className="w-full">
+    <div className="w-full">
       {showLabel && (
-        <View className="flex-row justify-between mb-1">
-          <Text className="font-body text-sm text-neutral-300">{label || 'Progress'}</Text>
-          <Text className="font-body text-sm text-neutral-400">{Math.round(clampedValue)}%</Text>
-        </View>
+        <div className="flex justify-between mb-1">
+          <span className="font-body text-sm text-neutral-300">{label || 'Progress'}</span>
+          <span className="font-body text-sm text-neutral-400">{Math.round(clampedValue)}%</span>
+        </div>
       )}
-      <View
-        className="bg-neutral-700 overflow-hidden w-full"
-        style={[organicBorderRadius.pill, { height }]}
+      <div
+        className={`bg-neutral-700 overflow-hidden w-full ${barSizes[size]}`}
+        style={{ borderRadius: '8px 10px 8px 12px' }}
       >
-        <Animated.View
-          className={barColors[color]}
+        <div
+          className={`${barColors[color]} h-full ${animated ? 'transition-all duration-500 ease-out' : ''}`}
           style={{
-            height,
-            ...organicBorderRadius.pill,
-            width: widthAnim.interpolate({
-              inputRange: [0, 100],
-              outputRange: ['0%', '100%'],
-            }),
+            width: `${clampedValue}%`,
+            borderRadius: '8px 10px 8px 12px',
           }}
         />
-      </View>
-    </View>
+      </div>
+    </div>
   );
 }
 
@@ -108,10 +83,10 @@ interface ProgressCircleProps {
 }
 
 const circleColors = {
-  primary: getColor('coral', '500'),
-  secondary: getColor('teal', '500'),
-  success: getColor('teal', '600'),
-  warning: getColor('gold', '500'),
+  primary: '#FF7059',
+  secondary: '#14B8A6',
+  success: '#0D9488',
+  warning: '#F5D563',
 };
 
 export function ProgressCircle({
@@ -122,58 +97,43 @@ export function ProgressCircle({
   showLabel = true,
 }: Readonly<ProgressCircleProps>) {
   const clampedValue = Math.min(100, Math.max(0, value));
-  const rotateAnim = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.timing(rotateAnim, {
-      toValue: clampedValue,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-  }, [clampedValue, rotateAnim]);
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (clampedValue / 100) * circumference;
 
   return (
-    <View style={{ width: size, height: size }} className="items-center justify-center">
-      <View className="absolute items-center justify-center" style={{ width: size, height: size }}>
+    <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="-rotate-90">
         {/* Background circle */}
-        <View
-          className="absolute border-neutral-700"
-          style={{
-            width: size - strokeWidth,
-            height: size - strokeWidth,
-            borderRadius: (size - strokeWidth) / 2,
-            borderWidth: strokeWidth,
-          }}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+          className="text-neutral-700"
         />
-        {/* Progress indicator using rotation technique */}
-        <View
-          className="absolute overflow-hidden"
-          style={{
-            width: size,
-            height: size,
-            transform: [{ rotate: '-90deg' }],
-          }}
-        >
-          <View
-            style={{
-              width: size,
-              height: size,
-              borderRadius: size / 2,
-              borderWidth: strokeWidth,
-              borderColor: circleColors[color],
-              borderLeftColor: 'transparent',
-              borderBottomColor: 'transparent',
-              transform: [{ rotate: `${(clampedValue / 100) * 360}deg` }],
-            }}
-          />
-        </View>
-      </View>
+        {/* Progress arc */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke={circleColors[color]}
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          className="transition-all duration-500 ease-out"
+        />
+      </svg>
       {showLabel && (
-        <Text className="font-body text-sm text-white font-semibold">
+        <span className="absolute font-body text-sm text-white font-semibold">
           {Math.round(clampedValue)}%
-        </Text>
+        </span>
       )}
-    </View>
+    </div>
   );
 }
 
@@ -188,8 +148,8 @@ interface StepsProgressProps {
 
 export function StepsProgress({ totalSteps, currentStep, labels }: Readonly<StepsProgressProps>) {
   return (
-    <View className="w-full">
-      <View className="flex-row items-center">
+    <div className="w-full">
+      <div className="flex items-center">
         {Array.from({ length: totalSteps }, (_, i) => {
           const stepNum = i + 1;
           const isCompleted = stepNum < currentStep;
@@ -200,42 +160,41 @@ export function StepsProgress({ totalSteps, currentStep, labels }: Readonly<Step
           else if (isCurrent) stepBg = 'bg-coral-500';
 
           return (
-            <View key={stepNum} className="flex-row items-center flex-1 last:flex-none">
-              <View
-                className={`w-8 h-8 items-center justify-center ${stepBg}`}
-                style={organicBorderRadius.button}
+            <div key={stepNum} className={`flex items-center ${stepNum < totalSteps ? 'flex-1' : ''}`}>
+              <div
+                className={`w-8 h-8 flex items-center justify-center ${stepBg} rounded-organic-button`}
               >
                 {isCompleted ? (
-                  <SuccessIcon size={14} color="warmGray" turbulence={0.15} />
+                  <CircleCheck size={14} className="text-white" />
                 ) : (
-                  <Text className="font-body text-sm text-white font-semibold">{stepNum}</Text>
+                  <span className="font-body text-sm text-white font-semibold">{stepNum}</span>
                 )}
-              </View>
+              </div>
               {stepNum < totalSteps && (
-                <View
+                <div
                   className={`flex-1 h-0.5 mx-2 ${isCompleted ? 'bg-teal-600' : 'bg-neutral-700'}`}
                 />
               )}
-            </View>
+            </div>
           );
         })}
-      </View>
+      </div>
       {labels && (
-        <View className="flex-row mt-2">
-          {labels.map((label, i) => {
+        <div className="flex mt-2">
+          {labels.map((stepLabel, i) => {
             const colorClass = i + 1 <= currentStep ? 'text-white' : 'text-neutral-500';
             let alignClass = 'text-center';
-            if (i === 0) alignClass = '';
+            if (i === 0) alignClass = 'text-left';
             if (i === labels.length - 1) alignClass = 'text-right';
 
             return (
-              <Text key={label} className={`flex-1 text-xs font-body ${colorClass} ${alignClass}`}>
-                {label}
-              </Text>
+              <span key={stepLabel} className={`flex-1 text-xs font-body ${colorClass} ${alignClass}`}>
+                {stepLabel}
+              </span>
             );
           })}
-        </View>
+        </div>
       )}
-    </View>
+    </div>
   );
 }

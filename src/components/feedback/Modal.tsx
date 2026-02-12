@@ -2,14 +2,13 @@
  * Modal Component
  *
  * A dialog/modal overlay with organic styling.
+ * Web-native implementation using HTML <dialog> element.
  * Supports different sizes and footer actions.
  */
 
 import type { ReactNode } from 'react';
-import { Pressable, Modal as RNModal, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CloseIcon } from '@/components/icons';
-import { organicBorderRadius } from '@/lib/organic-styles';
+import { useEffect, useRef } from 'react';
+import { X } from 'lucide-react';
 
 interface ModalProps {
   /** Whether the modal is visible */
@@ -31,10 +30,10 @@ interface ModalProps {
 }
 
 const modalSizes = {
-  sm: 320,
-  md: 400,
-  lg: 500,
-  full: '100%' as const,
+  sm: 'max-w-xs',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  full: 'max-w-full h-full',
 };
 
 export function Modal({
@@ -47,69 +46,74 @@ export function Modal({
   footer,
   scrollable = false,
 }: Readonly<ModalProps>) {
-  const insets = useSafeAreaInsets();
-  const maxWidth = modalSizes[size];
-  const isFull = size === 'full';
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
-  const ContentWrapper = scrollable ? ScrollView : View;
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    if (visible && !dialog.open) {
+      dialog.showModal();
+    } else if (!visible && dialog.open) {
+      dialog.close();
+    }
+  }, [visible]);
+
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
+    if (closeOnBackdrop && e.target === dialogRef.current) {
+      onClose();
+    }
+  };
+
+  const isFull = size === 'full';
+  const sizeClass = modalSizes[size];
 
   return (
-    <RNModal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable
-        className="flex-1 justify-center items-center bg-black/60"
-        onPress={() => closeOnBackdrop && onClose()}
-        accessibilityLabel="Close"
-        accessibilityHint="Close the modal"
+    <dialog
+      ref={dialogRef}
+      onClose={onClose}
+      onClick={handleBackdropClick}
+      className="backdrop:bg-black/60 bg-transparent p-0 m-auto open:flex items-center justify-center"
+    >
+      <div
+        className={`bg-surface w-full ${sizeClass} ${isFull ? 'flex flex-col' : 'max-h-[80vh]'}`}
         style={{
-          paddingTop: isFull ? insets.top : 24,
-          paddingBottom: isFull ? insets.bottom : 24,
-          paddingHorizontal: isFull ? 0 : 16,
+          borderRadius: isFull ? undefined : '18px 16px 20px 14px',
         }}
+        onClick={(e) => e.stopPropagation()}
       >
-        <Pressable
-          onPress={(e) => e.stopPropagation()}
-          className="bg-surface w-full"
-          style={[
-            {
-              maxWidth: isFull ? undefined : maxWidth,
-              maxHeight: isFull ? '100%' : '80%',
-              flex: isFull ? 1 : undefined,
-            },
-            !isFull && organicBorderRadius.modal,
-          ]}
+        {/* Header */}
+        {title && (
+          <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-700">
+            <h2 className="font-display text-lg text-white flex-1" role="heading">
+              {title}
+            </h2>
+            <button
+              onClick={onClose}
+              className="w-8 h-8 flex items-center justify-center -mr-2 text-neutral-400 hover:text-white transition-colors"
+              aria-label="Close"
+              type="button"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        )}
+
+        {/* Content */}
+        <div
+          className={`px-5 py-4 ${scrollable ? 'overflow-y-auto' : ''} ${isFull ? 'flex-1' : ''}`}
         >
-          {/* Header */}
-          {title && (
-            <View className="flex-row items-center justify-between px-5 py-4 border-b border-neutral-700">
-              <Text className="font-display text-lg text-white flex-1" accessibilityRole="header">
-                {title}
-              </Text>
-              <Pressable
-                onPress={onClose}
-                className="w-8 h-8 items-center justify-center -mr-2"
-                accessibilityRole="button"
-                accessibilityLabel="Close"
-                accessibilityHint="Close the modal"
-              >
-                <CloseIcon size={18} color="warmGray" turbulence={0.15} />
-              </Pressable>
-            </View>
-          )}
+          {children}
+        </div>
 
-          {/* Content */}
-          <ContentWrapper className="px-5 py-4" showsVerticalScrollIndicator={false}>
-            {children}
-          </ContentWrapper>
-
-          {/* Footer */}
-          {footer && (
-            <View className="flex-row justify-end px-5 py-4 border-t border-neutral-700 gap-3">
-              {footer}
-            </View>
-          )}
-        </Pressable>
-      </Pressable>
-    </RNModal>
+        {/* Footer */}
+        {footer && (
+          <div className="flex justify-end px-5 py-4 border-t border-neutral-700 gap-3">
+            {footer}
+          </div>
+        )}
+      </div>
+    </dialog>
   );
 }
 
@@ -142,7 +146,7 @@ export function ConfirmDialog({
   cancelText = 'Cancel',
   variant = 'default',
 }: Readonly<ConfirmDialogProps>) {
-  const confirmColor = variant === 'destructive' ? 'bg-coral-500' : 'bg-teal-600';
+  const confirmColor = variant === 'destructive' ? 'bg-coral-500 hover:bg-coral-600' : 'bg-teal-600 hover:bg-teal-700';
 
   return (
     <Modal
@@ -152,33 +156,29 @@ export function ConfirmDialog({
       size="sm"
       footer={
         <>
-          <Pressable
-            onPress={onClose}
-            className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
-            style={organicBorderRadius.button}
-            accessibilityRole="button"
-            accessibilityLabel={cancelText}
-            accessibilityHint="Cancel and close the dialog"
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white font-body transition-colors rounded-organic-button"
+            type="button"
+            aria-label={cancelText}
           >
-            <Text className="font-body text-white">{cancelText}</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => {
+            {cancelText}
+          </button>
+          <button
+            onClick={() => {
               onConfirm();
               onClose();
             }}
-            className={`px-4 py-2 ${confirmColor} active:opacity-80`}
-            style={organicBorderRadius.button}
-            accessibilityRole="button"
-            accessibilityLabel={confirmText}
-            accessibilityHint="Confirm the action"
+            className={`px-4 py-2 ${confirmColor} text-white font-body font-semibold transition-colors rounded-organic-button`}
+            type="button"
+            aria-label={confirmText}
           >
-            <Text className="font-body text-white font-semibold">{confirmText}</Text>
-          </Pressable>
+            {confirmText}
+          </button>
         </>
       }
     >
-      <Text className="font-body text-neutral-300">{message}</Text>
+      <p className="font-body text-neutral-300">{message}</p>
     </Modal>
   );
 }

@@ -2,26 +2,12 @@
  * BottomSheet Component
  *
  * A slide-up panel from the bottom of the screen.
- * Common on mobile for contextual actions and forms.
+ * Web-native implementation using CSS transforms and transitions.
  */
 
 import type { ReactNode } from 'react';
-import { useEffect, useRef } from 'react';
-import {
-  Animated,
-  Dimensions,
-  Modal,
-  PanResponder,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CloseIcon } from '@/components/icons';
-import { organicBorderRadius } from '@/lib/organic-styles';
-
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+import { useEffect, useState } from 'react';
+import { X } from 'lucide-react';
 
 interface BottomSheetProps {
   /** Whether the sheet is visible */
@@ -49,108 +35,83 @@ export function BottomSheet({
   scrollable = false,
   showHandle = true,
 }: Readonly<BottomSheetProps>) {
-  const insets = useSafeAreaInsets();
-  const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
     if (visible) {
-      Animated.spring(translateY, {
-        toValue: 0,
-        useNativeDriver: true,
-        tension: 50,
-        friction: 10,
-      }).start();
+      // Trigger animation on next frame
+      requestAnimationFrame(() => setIsAnimating(true));
     } else {
-      Animated.timing(translateY, {
-        toValue: SCREEN_HEIGHT,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
+      setIsAnimating(false);
     }
-  }, [visible, translateY]);
+  }, [visible]);
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        return Math.abs(gestureState.dy) > 5;
-      },
-      onPanResponderMove: (_, gestureState) => {
-        if (gestureState.dy > 0) {
-          translateY.setValue(gestureState.dy);
-        }
-      },
-      onPanResponderRelease: (_, gestureState) => {
-        if (gestureState.dy > 100 || gestureState.vy > 0.5) {
-          onClose();
-        } else {
-          Animated.spring(translateY, {
-            toValue: 0,
-            useNativeDriver: true,
-          }).start();
-        }
-      },
-    })
-  ).current;
+  if (!visible && !isAnimating) return null;
 
   const sheetHeight =
     height === 'auto'
-      ? undefined
+      ? 'auto'
       : height === 'half'
-        ? SCREEN_HEIGHT * 0.5
+        ? '50vh'
         : height === 'full'
-          ? SCREEN_HEIGHT - insets.top
-          : height;
-
-  const ContentWrapper = scrollable ? ScrollView : View;
+          ? 'calc(100vh - 40px)'
+          : `${height}px`;
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <View className="flex-1 justify-end bg-black/50">
-        <Pressable className="absolute inset-0" onPress={onClose} accessible={false} />
+    <div className="fixed inset-0 z-50">
+      {/* Backdrop */}
+      <div
+        className={`absolute inset-0 bg-black transition-opacity duration-200 ${
+          isAnimating ? 'opacity-50' : 'opacity-0'
+        }`}
+        onClick={onClose}
+      />
 
-        <Animated.View
-          className="bg-surface"
-          style={[
-            {
-              transform: [{ translateY }],
-              height: sheetHeight,
-              maxHeight: SCREEN_HEIGHT - insets.top - 40,
-              paddingBottom: insets.bottom,
-            },
-            organicBorderRadius.modal,
-          ]}
+      {/* Sheet */}
+      <div
+        className={`absolute bottom-0 left-0 right-0 bg-surface transition-transform duration-300 ease-out ${
+          isAnimating ? 'translate-y-0' : 'translate-y-full'
+        }`}
+        style={{
+          height: sheetHeight,
+          maxHeight: 'calc(100vh - 40px)',
+          borderRadius: '18px 16px 0 0',
+        }}
+        onTransitionEnd={() => {
+          if (!visible) setIsAnimating(false);
+        }}
+      >
+        {/* Drag handle */}
+        {showHandle && (
+          <div className="flex justify-center pt-3 pb-2">
+            <div className="w-10 h-1 bg-neutral-600 rounded-full" />
+          </div>
+        )}
+
+        {/* Header */}
+        {title && (
+          <div className="flex items-center justify-between px-5 py-3 border-b border-neutral-700">
+            <span className="font-display text-lg text-white">{title}</span>
+            <button
+              onClick={onClose}
+              className="w-8 h-8 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
+              aria-label="Close"
+              type="button"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        )}
+
+        {/* Content */}
+        <div
+          className={`flex-1 px-5 py-4 ${scrollable ? 'overflow-y-auto' : ''}`}
+          style={{ maxHeight: title ? 'calc(100% - 100px)' : 'calc(100% - 32px)' }}
         >
-          {/* Drag handle */}
-          {showHandle && (
-            <View className="items-center pt-3 pb-2" {...panResponder.panHandlers}>
-              <View className="w-10 h-1 bg-neutral-600 rounded-full" />
-            </View>
-          )}
-
-          {/* Header */}
-          {title && (
-            <View className="flex-row items-center justify-between px-5 py-3 border-b border-neutral-700">
-              <Text className="font-display text-lg text-white">{title}</Text>
-              <Pressable
-                onPress={onClose}
-                className="w-8 h-8 items-center justify-center"
-                accessibilityRole="button"
-                accessibilityLabel="Close"
-                accessibilityHint="Close the bottom sheet"
-              >
-                <CloseIcon size={18} color="warmGray" turbulence={0.15} />
-              </Pressable>
-            </View>
-          )}
-
-          {/* Content */}
-          <ContentWrapper className="flex-1 px-5 py-4" showsVerticalScrollIndicator={false}>
-            {children}
-          </ContentWrapper>
-        </Animated.View>
-      </View>
-    </Modal>
+          {children}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -190,54 +151,47 @@ export function ActionSheet({
   return (
     <BottomSheet visible={visible} onClose={onClose} height="auto" showHandle={false}>
       {(title || message) && (
-        <View className="items-center mb-4 pb-4 border-b border-neutral-700">
+        <div className="text-center mb-4 pb-4 border-b border-neutral-700">
           {title && (
-            <Text className="font-display text-base text-white mb-1" accessibilityRole="header">
+            <h3 className="font-display text-base text-white mb-1" role="heading">
               {title}
-            </Text>
+            </h3>
           )}
           {message && (
-            <Text className="font-body text-sm text-neutral-400 text-center">{message}</Text>
+            <p className="font-body text-sm text-neutral-400 text-center">{message}</p>
           )}
-        </View>
+        </div>
       )}
 
       {options.map((option, index) => (
-        <Pressable
+        <button
           key={option.label}
-          onPress={() => {
+          onClick={() => {
             option.onPress();
             onClose();
           }}
           disabled={option.disabled}
-          className={`py-4 ${index > 0 ? 'border-t border-neutral-800' : ''} ${
-            option.disabled ? 'opacity-50' : 'active:bg-neutral-800'
+          className={`w-full py-4 text-center font-body transition-colors ${
+            index > 0 ? 'border-t border-neutral-800' : ''
+          } ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-neutral-800 cursor-pointer'} ${
+            option.destructive ? 'text-coral-400' : 'text-white'
           }`}
-          accessibilityRole="button"
-          accessibilityLabel={option.label}
-          accessibilityHint={`Perform the action: ${option.label}`}
+          type="button"
+          aria-label={option.label}
         >
-          <Text
-            className={`font-body text-center ${
-              option.destructive ? 'text-coral-400' : 'text-white'
-            }`}
-          >
-            {option.label}
-          </Text>
-        </Pressable>
+          {option.label}
+        </button>
       ))}
 
       {showCancel && (
-        <Pressable
-          onPress={onClose}
-          className="mt-2 py-4 bg-neutral-800 active:bg-neutral-700"
-          accessibilityRole="button"
-          accessibilityLabel={cancelText}
-          accessibilityHint="Cancel and close the action sheet"
-          style={organicBorderRadius.button}
+        <button
+          onClick={onClose}
+          className="w-full mt-2 py-4 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 font-body font-semibold text-center transition-colors rounded-organic-button"
+          type="button"
+          aria-label={cancelText}
         >
-          <Text className="font-body text-center text-neutral-300 font-semibold">{cancelText}</Text>
-        </Pressable>
+          {cancelText}
+        </button>
       )}
     </BottomSheet>
   );
