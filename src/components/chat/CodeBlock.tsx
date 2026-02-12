@@ -1,14 +1,15 @@
 /**
  * Code Block Component
  *
- * Renders code snippets with syntax highlighting placeholder and copy functionality.
- * Uses JetBrains Mono font per brand guidelines.
+ * Renders code snippets with syntax highlighting and copy functionality.
+ * Uses JetBrains Mono font per brand guidelines with brand-colored tokens.
  */
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { TOKEN_COLORS, tokenize } from '@/lib/syntax-highlighter';
 
 /** Props for the CodeBlock component */
 interface CodeBlockProps {
@@ -22,6 +23,8 @@ interface CodeBlockProps {
 
 export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>) {
   const [copied, setCopied] = useState(false);
+
+  const tokenizedLines = useMemo(() => tokenize(code, language), [code, language]);
 
   const handleCopy = async () => {
     // In React Native, we'd use Clipboard API
@@ -63,12 +66,29 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
         </Pressable>
       </View>
 
-      {/* Code content */}
+      {/* Code content with syntax highlighting */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View className="p-3">
-          <Text variant="mono" size="sm" className="text-neutral-200" style={{ lineHeight: 20 }}>
-            {code}
-          </Text>
+          {tokenizedLines.map((lineTokens, lineIndex) => (
+            <Text
+              key={lineIndex}
+              variant="mono"
+              size="sm"
+              style={{ lineHeight: 20 }}
+            >
+              {lineTokens.map((token, tokenIndex) => (
+                <Text
+                  key={tokenIndex}
+                  variant="mono"
+                  size="sm"
+                  style={{ color: TOKEN_COLORS[token.type] }}
+                >
+                  {token.value}
+                </Text>
+              ))}
+              {'\n'}
+            </Text>
+          ))}
         </View>
       </ScrollView>
     </View>
