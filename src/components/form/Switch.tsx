@@ -2,11 +2,8 @@
  * Switch Component
  *
  * A toggle switch for boolean settings with organic styling.
- * Provides visual feedback for on/off states.
+ * Web-native replacement using a hidden checkbox input.
  */
-
-import { useEffect, useRef } from 'react';
-import { Animated, Pressable, Text, View } from 'react-native';
 
 interface SwitchProps {
   /** Whether the switch is on */
@@ -24,9 +21,9 @@ interface SwitchProps {
 }
 
 const sizeStyles = {
-  sm: { width: 36, height: 20, thumb: 16, offset: 2 },
-  md: { width: 44, height: 24, thumb: 20, offset: 2 },
-  lg: { width: 52, height: 28, thumb: 24, offset: 2 },
+  sm: { track: 'w-9 h-5', thumb: 'w-4 h-4', translate: 'translate-x-4' },
+  md: { track: 'w-11 h-6', thumb: 'w-5 h-5', translate: 'translate-x-5' },
+  lg: { track: 'w-[52px] h-7', thumb: 'w-6 h-6', translate: 'translate-x-6' },
 };
 
 export function Switch({
@@ -38,54 +35,39 @@ export function Switch({
   size = 'md',
 }: Readonly<SwitchProps>) {
   const styles = sizeStyles[size];
-  const translateX = useRef(
-    new Animated.Value(value ? styles.width - styles.thumb - styles.offset * 2 : 0)
-  ).current;
-
-  useEffect(() => {
-    Animated.spring(translateX, {
-      toValue: value ? styles.width - styles.thumb - styles.offset * 2 : 0,
-      useNativeDriver: true,
-      tension: 50,
-      friction: 8,
-    }).start();
-  }, [value, translateX, styles]);
 
   return (
-    <Pressable
-      onPress={() => !disabled && onValueChange(!value)}
-      disabled={disabled}
-      className={`flex-row items-center justify-between ${disabled ? 'opacity-50' : ''}`}
-      accessibilityRole="switch"
-      accessibilityState={{ checked: value, disabled }}
+    <label
+      className={`flex items-center justify-between cursor-pointer ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
     >
       {(label || description) && (
-        <View className="flex-1 mr-3">
-          {label && <Text className="font-body text-white text-base">{label}</Text>}
+        <div className="flex-1 mr-3">
+          {label && <span className="block font-body text-white text-base">{label}</span>}
           {description && (
-            <Text className="font-body text-sm text-neutral-400 mt-0.5">{description}</Text>
+            <span className="block font-body text-sm text-neutral-400 mt-0.5">{description}</span>
           )}
-        </View>
+        </div>
       )}
-      <View
-        className={`justify-center ${value ? 'bg-teal-600' : 'bg-neutral-600'}`}
-        style={{
-          width: styles.width,
-          height: styles.height,
-          borderRadius: styles.height / 2,
-          padding: styles.offset,
-        }}
+      <input
+        type="checkbox"
+        checked={value}
+        onChange={() => onValueChange(!value)}
+        disabled={disabled}
+        className="sr-only"
+        role="switch"
+        aria-checked={value}
+      />
+      <span
+        className={`relative inline-flex items-center rounded-full transition-colors duration-200 ${styles.track} ${
+          value ? 'bg-teal-600' : 'bg-neutral-600'
+        }`}
       >
-        <Animated.View
-          className="bg-white"
-          style={{
-            width: styles.thumb,
-            height: styles.thumb,
-            borderRadius: styles.thumb / 2,
-            transform: [{ translateX }],
-          }}
+        <span
+          className={`absolute top-0.5 left-0.5 bg-white rounded-full transition-transform duration-200 ${styles.thumb} ${
+            value ? styles.translate : 'translate-x-0'
+          }`}
         />
-      </View>
-    </Pressable>
+      </span>
+    </label>
   );
 }

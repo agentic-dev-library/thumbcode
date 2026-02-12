@@ -2,15 +2,19 @@
  * TextArea Component
  *
  * A multi-line text input with organic styling.
- * Supports auto-resize and character limits.
+ * Supports character count, label, helper, and error states.
+ * Web-native <textarea> replacement for React Native TextInput multiline.
  */
 
 import { useState } from 'react';
-import { Text, TextInput, type TextInputProps, View } from 'react-native';
-import { organicBorderRadius } from '@/lib/organic-styles';
-import { getColor } from '@/utils/design-tokens';
 
-interface TextAreaProps extends Omit<TextInputProps, 'multiline'> {
+interface TextAreaProps {
+  /** Current value */
+  value?: string;
+  /** Callback when text changes */
+  onChange?: (text: string) => void;
+  /** Placeholder text */
+  placeholder?: string;
   /** Label text above the input */
   label?: string;
   /** Helper text below the input */
@@ -21,13 +25,24 @@ interface TextAreaProps extends Omit<TextInputProps, 'multiline'> {
   maxLength?: number;
   /** Show character count */
   showCount?: boolean;
-  /** Minimum height in lines */
+  /** Minimum number of visible rows */
   minRows?: number;
-  /** Maximum height in lines */
+  /** Maximum number of visible rows */
   maxRows?: number;
+  /** Whether the textarea is disabled */
+  disabled?: boolean;
+  /** Whether the field is required */
+  required?: boolean;
+  /** Additional CSS class names */
+  className?: string;
+  /** Test identifier */
+  testID?: string;
 }
 
 export function TextArea({
+  value,
+  onChange,
+  placeholder,
   label,
   helper,
   error,
@@ -35,75 +50,69 @@ export function TextArea({
   showCount = false,
   minRows = 3,
   maxRows = 8,
-  value,
-  onChangeText,
-  ...props
+  disabled = false,
+  required = false,
+  className = '',
+  testID,
 }: Readonly<TextAreaProps>) {
   const [isFocused, setIsFocused] = useState(false);
-  const charCount = value?.toString().length ?? 0;
+  const charCount = value?.length ?? 0;
+  const hasError = Boolean(error);
 
   const lineHeight = 20;
-  const padding = 24; // vertical padding total
+  const padding = 24;
   const minHeight = lineHeight * minRows + padding;
   const maxHeight = lineHeight * maxRows + padding;
 
-  const hasError = Boolean(error);
-  const borderColor = hasError
+  const borderClass = hasError
     ? 'border-coral-500'
     : isFocused
       ? 'border-teal-500'
       : 'border-neutral-600';
 
   return (
-    <View className="w-full">
-      {label && <Text className="font-body text-sm text-neutral-300 mb-1.5">{label}</Text>}
-      <TextInput
-        {...props}
-        value={value?.toString()}
-        onChangeText={onChangeText}
-        multiline
+    <div className="w-full">
+      {label && (
+        <label className="block font-body text-sm text-neutral-300 mb-1.5">
+          {label}
+          {required && <span className="text-coral-500 ml-0.5">*</span>}
+        </label>
+      )}
+      <textarea
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
+        placeholder={placeholder}
+        disabled={disabled}
         maxLength={maxLength}
-        onFocus={(e) => {
-          setIsFocused(true);
-          props.onFocus?.(e);
-        }}
-        onBlur={(e) => {
-          setIsFocused(false);
-          props.onBlur?.(e);
-        }}
-        className={`bg-neutral-800 text-white font-body px-4 py-3 border ${borderColor}`}
-        placeholderTextColor={getColor('neutral', '400')}
-        style={[
-          organicBorderRadius.textInput,
-          {
-            minHeight,
-            maxHeight,
-            textAlignVertical: 'top',
-            lineHeight,
-          },
-        ]}
+        rows={minRows}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        className={`w-full bg-neutral-800 text-white font-body px-4 py-3 border rounded-organic-input placeholder:text-neutral-400 resize-y transition-colors disabled:opacity-50 ${borderClass} ${className}`}
+        style={{ minHeight, maxHeight, lineHeight: `${lineHeight}px` }}
+        data-testid={testID}
+        aria-invalid={hasError || undefined}
+        aria-describedby={error || helper || showCount ? `${testID}-hint` : undefined}
       />
-      <View className="flex-row justify-between mt-1">
+      <div className="flex justify-between mt-1">
         {(helper || error) && (
-          <Text
-            className={`font-body text-xs flex-1 ${
-              hasError ? 'text-coral-400' : 'text-neutral-500'
-            }`}
+          <p
+            id={testID ? `${testID}-hint` : undefined}
+            className={`font-body text-xs flex-1 ${hasError ? 'text-coral-400' : 'text-neutral-500'}`}
           >
             {error || helper}
-          </Text>
+          </p>
         )}
         {showCount && (
-          <Text
+          <span
             className={`font-body text-xs ${
               maxLength && charCount >= maxLength ? 'text-coral-400' : 'text-neutral-500'
             }`}
           >
             {charCount}
             {maxLength ? `/${maxLength}` : ''}
-          </Text>
+          </span>
         )}
-      </View>
-    </View>
+      </div>
+    </div>
   );
 }
