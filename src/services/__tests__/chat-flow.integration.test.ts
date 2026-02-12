@@ -7,7 +7,7 @@
 
 import { useChatStore } from '@thumbcode/state';
 import { ChatService } from '../chat/ChatService';
-import type { ChatEvent } from '../chat/ChatService';
+import type { ChatEvent } from '../chat/types';
 
 // Reset store before each test
 beforeEach(() => {
@@ -79,12 +79,8 @@ describe('Chat Flow Integration', () => {
 
       expect(ChatService.getMessages(thread1)).toHaveLength(1);
       expect(ChatService.getMessages(thread2)).toHaveLength(1);
-      expect(ChatService.getMessages(thread1)[0].content).toBe(
-        'Message in thread 1'
-      );
-      expect(ChatService.getMessages(thread2)[0].content).toBe(
-        'Message in thread 2'
-      );
+      expect(ChatService.getMessages(thread1)[0].content).toBe('Message in thread 1');
+      expect(ChatService.getMessages(thread2)[0].content).toBe('Message in thread 2');
     });
 
     it('clears messages from one thread without affecting others', async () => {
@@ -196,8 +192,7 @@ describe('Chat Flow Integration', () => {
 
       // Verify events
       const approvalEvents = events.filter(
-        (e) =>
-          e.type === 'approval_request' || e.type === 'approval_response'
+        (e) => e.type === 'approval_request' || e.type === 'approval_response'
       );
       expect(approvalEvents).toHaveLength(2);
 
@@ -263,9 +258,7 @@ describe('Chat Flow Integration', () => {
       const messages = ChatService.getMessages(threadId);
       expect(messages).toHaveLength(1);
       expect(messages[0].contentType).toBe('code');
-      expect(messages[0].content).toBe(
-        'function hello() { return "world"; }'
-      );
+      expect(messages[0].content).toBe('function hello() { return "world"; }');
       expect(messages[0].metadata?.language).toBe('typescript');
       expect(messages[0].metadata?.filename).toBe('hello.ts');
     });
@@ -295,9 +288,7 @@ describe('Chat Flow Integration', () => {
 
       const results = ChatService.searchMessages('login');
       expect(results).toHaveLength(2);
-      expect(
-        results.every((m) => m.content.toLowerCase().includes('login'))
-      ).toBe(true);
+      expect(results.every((m) => m.content.toLowerCase().includes('login'))).toBe(true);
     });
 
     it('returns results sorted by timestamp descending', async () => {
