@@ -12,9 +12,7 @@ jest.mock('@thumbcode/config/env', () => ({
 jest.mock('@thumbcode/core', () => ({
   CredentialService: {
     retrieve: jest.fn(() => Promise.resolve({ secret: null })),
-    validateCredential: jest.fn(() =>
-      Promise.resolve({ isValid: false, message: 'Test' })
-    ),
+    validateCredential: jest.fn(() => Promise.resolve({ isValid: false, message: 'Test' })),
   },
   GitHubAuthService: {
     startDeviceFlow: jest.fn(() => Promise.resolve({ success: false })),

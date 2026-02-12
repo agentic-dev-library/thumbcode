@@ -54,7 +54,7 @@ export default function ChatScreen() {
     // Slight delay so FlatList has laid out before scrolling to end
     const timer = setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 50);
     return () => clearTimeout(timer);
-  }, [activeThreadId, messages.length]);
+  }, [activeThreadId]);
 
   const handleCreateThread = () => {
     const id = ChatService.createThread({

@@ -13,12 +13,8 @@ jest.mock('@thumbcode/state', () => ({
       respondToApproval: jest.fn(),
     })
   ),
-  useProjectStore: jest.fn((selector) =>
-    selector({ projects: [] })
-  ),
-  useUserStore: jest.fn((selector) =>
-    selector({ githubProfile: null })
-  ),
+  useProjectStore: jest.fn((selector) => selector({ projects: [] })),
+  useUserStore: jest.fn((selector) => selector({ githubProfile: null })),
 }));
 
 // Mock @thumbcode/core

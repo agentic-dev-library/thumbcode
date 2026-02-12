@@ -34,9 +34,7 @@ jest.mock('@thumbcode/config', () => ({
 // Mock @thumbcode/core
 jest.mock('@thumbcode/core', () => ({
   CredentialService: {
-    store: jest.fn(() =>
-      Promise.resolve({ isValid: true, message: 'OK' })
-    ),
+    store: jest.fn(() => Promise.resolve({ isValid: true, message: 'OK' })),
   },
   GitHubAuthService: {
     signOut: jest.fn(() => Promise.resolve(true)),

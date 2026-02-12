@@ -271,7 +271,8 @@ export default function CredentialsScreen() {
       const credentialId = addCredential({
         provider: type,
         name: type === 'anthropic' ? 'Anthropic' : 'OpenAI',
-        secureStoreKey: type === 'anthropic' ? SECURE_STORE_KEYS.anthropic : SECURE_STORE_KEYS.openai,
+        secureStoreKey:
+          type === 'anthropic' ? SECURE_STORE_KEYS.anthropic : SECURE_STORE_KEYS.openai,
         expiresAt,
         maskedValue,
         metadata: validation.metadata,

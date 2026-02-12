@@ -5,8 +5,8 @@
  * error boundary, onboarding context, gesture handler, and safe area.
  */
 
-import type { ReactNode } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import type { ReactNode } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ErrorBoundary } from '@/components/error';

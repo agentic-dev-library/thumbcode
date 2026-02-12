@@ -23,7 +23,12 @@ interface TooltipProps {
   delay?: number;
 }
 
-export function Tooltip({ content, children, position = 'top', delay = 500 }: Readonly<TooltipProps>) {
+export function Tooltip({
+  content,
+  children,
+  position = 'top',
+  delay = 500,
+}: Readonly<TooltipProps>) {
   const [visible, setVisible] = useState(false);
   const [layout, setLayout] = useState<LayoutRectangle | null>(null);
   const opacity = useRef(new Animated.Value(0)).current;

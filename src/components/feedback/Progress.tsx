@@ -229,10 +229,7 @@ export function StepsProgress({ totalSteps, currentStep, labels }: Readonly<Step
             if (i === labels.length - 1) alignClass = 'text-right';
 
             return (
-              <Text
-                key={label}
-                className={`flex-1 text-xs font-body ${colorClass} ${alignClass}`}
-              >
+              <Text key={label} className={`flex-1 text-xs font-body ${colorClass} ${alignClass}`}>
                 {label}
               </Text>
             );

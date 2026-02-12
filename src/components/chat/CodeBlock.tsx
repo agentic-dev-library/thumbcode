@@ -70,12 +70,7 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View className="p-3">
           {tokenizedLines.map((lineTokens, lineIndex) => (
-            <Text
-              key={lineIndex}
-              variant="mono"
-              size="sm"
-              style={{ lineHeight: 20 }}
-            >
+            <Text key={lineIndex} variant="mono" size="sm" style={{ lineHeight: 20 }}>
               {lineTokens.map((token, tokenIndex) => (
                 <Text
                   key={tokenIndex}

@@ -23,9 +23,7 @@ jest.mock('openai', () => {
 
 describe('OpenAIClient', () => {
   let client: OpenAIClient;
-  const testMessages: AIMessage[] = [
-    { role: 'user', content: 'Hello' },
-  ];
+  const testMessages: AIMessage[] = [{ role: 'user', content: 'Hello' }];
   const testSystemPrompt = 'You are a helpful assistant.';
 
   beforeEach(() => {
