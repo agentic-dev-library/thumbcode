@@ -16,23 +16,55 @@
  * @see PaintDaubeIcon for full documentation
  */
 
-export type { IconColor, IconVariant } from './PaintDaubeIcon';
+// Core component, types, and constants
+export type { IconColor, IconVariant, PaintDaubeIconProps } from './PaintDaubeIcon';
+export { BRAND_COLORS, PaintDaubeIcon } from './PaintDaubeIcon';
+
+// Preset icons - Core
 export {
-  // Preset icons - Core
   AgentIcon,
-  BellIcon,
-  BookIcon,
-  BRAND_COLORS,
-  BrainIcon,
-  BranchIcon,
   CelebrateIcon,
   ChatIcon,
-  // Preset icons - UI controls
-  ChevronDownIcon,
-  CloseIcon,
   CodeIcon,
+  FolderIcon,
+  GitHubIcon,
+  GitIcon,
+  KeyIcon,
+  LightningIcon,
+  MobileIcon,
+  SecurityIcon,
+  SettingsIcon,
+  StarIcon,
+  SuccessIcon,
+  ThumbIcon,
+} from './icon-presets';
+
+// Preset icons - Navigation & UI
+export {
+  BellIcon,
+  BookIcon,
+  BrainIcon,
+  BranchIcon,
   EditIcon,
-  ErrorIcon,
+  HomeIcon,
+  InfoIcon,
+  KeyboardIcon,
+  LegalIcon,
+  LinkIcon,
+  PaletteIcon,
+  ReviewIcon,
+  SearchIcon,
+  SupportIcon,
+  TasksIcon,
+  UserIcon,
+  VibrateIcon,
+} from './icon-presets';
+
+// Preset icons - Empty states & feedback
+export { ErrorIcon, InboxIcon, TestIcon } from './icon-presets';
+
+// Preset icons - File types
+export {
   FileCodeIcon,
   FileConfigIcon,
   FileDataIcon,
@@ -41,36 +73,8 @@ export {
   FileMediaIcon,
   FileStyleIcon,
   FileWebIcon,
-  FolderIcon,
-  // Preset icons - File types
   FolderOpenIcon,
-  GitHubIcon,
-  GitIcon,
-  // Preset icons - Navigation & UI
-  HomeIcon,
-  // Preset icons - Empty states & feedback
-  InboxIcon,
-  InfoIcon,
-  KeyboardIcon,
-  KeyIcon,
-  LegalIcon,
-  LightbulbIcon,
-  LightningIcon,
-  LinkIcon,
-  MobileIcon,
-  PaintDaubeIcon,
-  PaletteIcon,
-  ReviewIcon,
-  SearchIcon,
-  SecurityIcon,
-  SettingsIcon,
-  StarIcon,
-  SuccessIcon,
-  SupportIcon,
-  TasksIcon,
-  TestIcon,
-  ThumbIcon,
-  UserIcon,
-  VibrateIcon,
-  WarningIcon,
-} from './PaintDaubeIcon';
+} from './icon-presets';
+
+// Preset icons - UI controls
+export { ChevronDownIcon, CloseIcon, LightbulbIcon, WarningIcon } from './icon-presets';
