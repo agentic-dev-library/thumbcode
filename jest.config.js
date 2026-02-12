@@ -7,7 +7,7 @@ module.exports = {
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.test.{ts,tsx}',
     '<rootDir>/packages/state/src/__tests__/**/*.test.{ts,tsx}',
-    '<rootDir>/packages/core/src/__tests__/**/*.test.{ts,tsx}',
+    '<rootDir>/packages/core/src/**/__tests__/**/*.test.{ts,tsx}',
     '<rootDir>/packages/config/src/__tests__/**/*.test.{ts,tsx}',
     '<rootDir>/packages/ui/src/__tests__/**/*.test.{ts,tsx}',
     '<rootDir>/app/**/__tests__/**/*.test.{ts,tsx}',
