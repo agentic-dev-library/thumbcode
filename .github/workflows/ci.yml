@@ -123,7 +123,7 @@ jobs:
           flag-name: unit-tests
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@e44258ba9960290153797304da5002008f5870c3 # v3.0.0
+        uses: SonarSource/sonarcloud-github-action@dbba82084534a66a1ef8411b438289a429188031 # v3.1.0
         if: always()
         continue-on-error: true
         env:

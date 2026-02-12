@@ -1,4 +1,5 @@
 import { Text } from 'react-native';
+// @ts-ignore
 import { create } from 'react-test-renderer';
 import { Avatar } from '../Avatar';
 
