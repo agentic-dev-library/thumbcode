@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const port = 3000;
+const port = 4173;
 const baseURL = `http://localhost:${port}`;
 
 export default defineConfig({
@@ -36,7 +36,7 @@ export default defineConfig({
   },
 
   webServer: {
-    command: `pnpm exec serve dist --listen ${port}`,
+    command: `python3 scripts/fix-web-export.py dist && pnpm exec serve dist --listen ${port}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 180 * 1000,
