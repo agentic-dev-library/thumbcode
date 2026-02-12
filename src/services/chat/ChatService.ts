@@ -5,6 +5,7 @@
  * Handles message streaming, thread management, and agent coordination.
  */
 
+import { CredentialService } from '@thumbcode/core';
 import type {
   ApprovalMessage,
   ChatThread,
@@ -13,7 +14,9 @@ import type {
   MessageContentType,
   MessageSender,
 } from '@thumbcode/state';
-import { useChatStore } from '@thumbcode/state';
+import { useCredentialStore, useChatStore } from '@thumbcode/state';
+import { createAIClient } from '../ai/AIClientFactory';
+import type { AIMessage, AIProvider } from '../ai/types';
 
 // Event types for streaming updates
 export type ChatEventType =
@@ -185,6 +188,48 @@ class ChatServiceImpl {
   }
 
   /**
+   * Resolve the user's AI provider and API key from secure storage.
+   * Tries anthropic first, then openai.
+   */
+  private async resolveAICredentials(): Promise<{ provider: AIProvider; apiKey: string }> {
+    // Check which AI credentials are available via the credential store metadata
+    const credentialStore = useCredentialStore.getState();
+    const anthropicMeta = credentialStore.getCredentialByProvider('anthropic');
+    const openaiMeta = credentialStore.getCredentialByProvider('openai');
+
+    // Try anthropic first, then openai
+    if (anthropicMeta) {
+      const result = await CredentialService.retrieve('anthropic');
+      if (result.secret) {
+        return { provider: 'anthropic', apiKey: result.secret };
+      }
+    }
+
+    if (openaiMeta) {
+      const result = await CredentialService.retrieve('openai');
+      if (result.secret) {
+        return { provider: 'openai', apiKey: result.secret };
+      }
+    }
+
+    throw new Error(
+      'No AI API key configured. Please add an Anthropic or OpenAI API key in Settings.'
+    );
+  }
+
+  /**
+   * Convert thread messages to AIMessage format for the AI client
+   */
+  private toAIMessages(messages: Message[]): AIMessage[] {
+    return messages
+      .filter((m) => m.sender !== 'system')
+      .map((m) => ({
+        role: (m.sender === 'user' ? 'user' : 'assistant') as AIMessage['role'],
+        content: m.content,
+      }));
+  }
+
+  /**
    * Request a response from an agent
    */
   private async requestAgentResponse(
@@ -205,15 +250,87 @@ class ChatServiceImpl {
     });
 
     try {
+      // Resolve AI credentials
+      const { provider, apiKey } = await this.resolveAICredentials();
+      const aiClient = createAIClient(provider, apiKey);
+
       // Get thread context (recent messages for context)
       const messages = this.getMessages(threadId);
-      const recentMessages = messages.slice(-10); // Last 10 messages for context
+      const recentMessages = messages.slice(-10);
+      const aiMessages = this.toAIMessages(recentMessages);
 
-      // In a full implementation, this would call the AI agent orchestrator
-      // For now, we simulate a response
-      await this.simulateAgentResponse(threadId, agent, recentMessages, abortController.signal);
+      // System prompt for the agent (generic for now, will be specialized in US-014)
+      const systemPrompt = `You are ${agent}, a specialized AI agent in the ThumbCode development platform. Help the user with their request.`;
+
+      // Create empty response message for streaming into
+      const messageId = useChatStore.getState().addMessage({
+        threadId,
+        sender: agent,
+        content: '',
+        contentType: 'text',
+      });
+
+      this.emit({
+        type: 'message_start',
+        threadId,
+        messageId,
+        sender: agent,
+      });
+
+      // Stream the AI response
+      let currentContent = '';
+
+      await aiClient.streamMessage(
+        aiMessages,
+        systemPrompt,
+        (chunk) => {
+          if (chunk.done) return;
+
+          currentContent += chunk.text;
+
+          // Update message content in the store
+          const store = useChatStore.getState();
+          const threadMessages = store.messages[threadId] || [];
+          const messageIndex = threadMessages.findIndex((m) => m.id === messageId);
+          if (messageIndex !== -1) {
+            threadMessages[messageIndex].content = currentContent;
+          }
+
+          this.emit({
+            type: 'message_delta',
+            threadId,
+            messageId,
+            delta: chunk.text,
+            sender: agent,
+          });
+        },
+        abortController.signal
+      );
+
+      // Mark message as delivered
+      useChatStore.getState().updateMessageStatus(messageId, threadId, 'delivered');
+
+      this.emit({
+        type: 'message_complete',
+        threadId,
+        messageId,
+        sender: agent,
+      });
     } catch (error) {
       if (error instanceof Error && error.name !== 'AbortError') {
+        // Add error message to the thread so the user sees what went wrong
+        const errorContent =
+          error.message.includes('API key') || error.message.includes('No AI')
+            ? error.message
+            : `Failed to get response: ${error.message}`;
+
+        useChatStore.getState().addMessage({
+          threadId,
+          sender: 'system',
+          content: errorContent,
+          contentType: 'text',
+        });
+
         this.emit({
           type: 'error',
           threadId,
@@ -230,86 +347,6 @@ class ChatServiceImpl {
       });
       this.abortControllers.delete(threadId);
     }
-  }
-
-  /**
-   * Simulate an agent response (placeholder for real AI integration)
-   */
-  private async simulateAgentResponse(
-    threadId: string,
-    agent: MessageSender,
-    _context: Message[],
-    signal: AbortSignal
-  ): Promise<void> {
-    // Simulate processing delay
-    await this.delay(500, signal);
-
-    // Create placeholder response message
-    const messageId = useChatStore.getState().addMessage({
-      threadId,
-      sender: agent,
-      content: '',
-      contentType: 'text',
-    });
-
-    this.emit({
-      type: 'message_start',
-      threadId,
-      messageId,
-      sender: agent,
-    });
-
-    // Simulate streaming response
-    const responseText = this.getAgentResponsePlaceholder(agent);
-    let currentContent = '';
-
-    for (const char of responseText) {
-      if (signal.aborted) break;
-      await this.delay(20, signal);
-
-      currentContent += char;
-
-      // Update message content (in real implementation, this would be done differently)
-      const store = useChatStore.getState();
-      const messages = store.messages[threadId] || [];
-      const messageIndex = messages.findIndex((m) => m.id === messageId);
-      if (messageIndex !== -1) {
-        messages[messageIndex].content = currentContent;
-      }
-
-      this.emit({
-        type: 'message_delta',
-        threadId,
-        messageId,
-        delta: char,
-        sender: agent,
-      });
-    }
-
-    // Mark message as delivered
-    useChatStore.getState().updateMessageStatus(messageId, threadId, 'delivered');
-
-    this.emit({
-      type: 'message_complete',
-      threadId,
-      messageId,
-      sender: agent,
-    });
-  }
-
-  /**
-   * Get a placeholder response based on agent type
-   */
-  private getAgentResponsePlaceholder(agent: MessageSender): string {
-    const responses: Record<MessageSender, string> = {
-      architect: "I've analyzed the requirements and here's my proposed architecture...",
-      implementer: "I'm working on the implementation. Here's the code I've written...",
-      reviewer: "I've reviewed the code. Here are my findings and suggestions...",
-      tester: "I've created the test cases. Here are the test results...",
-      user: '',
-      system: '',
-    };
-    return responses[agent] || 'Processing your request...';
   }
 
   /**
@@ -419,20 +456,6 @@ class ChatServiceImpl {
     );
   }
 
-  /**
-   * Helper to delay with abort support
-   */
-  private delay(ms: number, signal?: AbortSignal): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const timeout = setTimeout(resolve, ms);
-      if (signal) {
-        signal.addEventListener('abort', () => {
-          clearTimeout(timeout);
-          reject(new DOMException('Aborted', 'AbortError'));
-        });
-      }
-    });
-  }
 }
 
 // Export singleton instance
