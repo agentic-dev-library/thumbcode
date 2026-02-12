@@ -835,57 +835,64 @@ class GitServiceClass {
       const matrix = await git.statusMatrix({ fs, dir });
       const headOid = await git.resolveRef({ fs, dir, ref: 'HEAD' });
 
+      const results = await Promise.all(
+        matrix.map(async ([filepath, head, workdir, _stage]) => {
+          // Skip unmodified files
+          if (head === 1 && workdir === 1) return null;
+
+          let type: FileDiff['type'];
+          let oldContent = '';
+          let newContent = '';
+
+          if (head === 0 && workdir === 2) {
+            // New file (untracked or added)
+            type = 'add';
+            try {
+              newContent = await FileSystem.readAsStringAsync(`${dir}/${filepath}`);
+            } catch {
+              newContent = '';
+            }
+          } else if (head === 1 && workdir === 0) {
+            // Deleted file
+            type = 'delete';
+            oldContent = (await readBlobContent(dir, headOid, filepath)) || '';
+          } else {
+            // Modified file
+            type = 'modify';
+            oldContent = (await readBlobContent(dir, headOid, filepath)) || '';
+            try {
+              newContent = await FileSystem.readAsStringAsync(`${dir}/${filepath}`);
+            } catch {
+              newContent = '';
+            }
+          }
+
+          const { patch, additions, deletions } = createUnifiedPatch(
+            filepath,
+            oldContent,
+            newContent
+          );
+
+          return {
+            path: filepath,
+            type,
+            additions,
+            deletions,
+            patch,
+          };
+        })
+      );
+
       const files: FileDiff[] = [];
       let totalAdditions = 0;
       let totalDeletions = 0;
 
-      for (const [filepath, head, workdir, _stage] of matrix) {
-        // Skip unmodified files
-        if (head === 1 && workdir === 1) continue;
-
-        let type: FileDiff['type'];
-        let oldContent = '';
-        let newContent = '';
-
-        if (head === 0 && workdir === 2) {
-          // New file (untracked or added)
-          type = 'add';
-          try {
-            newContent = await FileSystem.readAsStringAsync(`${dir}/${filepath}`);
-          } catch {
-            newContent = '';
-          }
-        } else if (head === 1 && workdir === 0) {
-          // Deleted file
-          type = 'delete';
-          oldContent = (await readBlobContent(dir, headOid, filepath)) || '';
-        } else {
-          // Modified file
-          type = 'modify';
-          oldContent = (await readBlobContent(dir, headOid, filepath)) || '';
-          try {
-            newContent = await FileSystem.readAsStringAsync(`${dir}/${filepath}`);
-          } catch {
-            newContent = '';
-          }
+      for (const result of results) {
+        if (result) {
+          files.push(result);
+          totalAdditions += result.additions;
+          totalDeletions += result.deletions;
         }
-
-        const { patch, additions, deletions } = createUnifiedPatch(
-          filepath,
-          oldContent,
-          newContent
-        );
-
-        totalAdditions += additions;
-        totalDeletions += deletions;
-
-        files.push({
-          path: filepath,
-          type,
-          additions,
-          deletions,
-          patch,
-        });
       }
 
       return {
