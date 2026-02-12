@@ -8,6 +8,8 @@ module.exports = {
     '<rootDir>/src/**/__tests__/**/*.test.{ts,tsx}',
     '<rootDir>/packages/state/src/__tests__/**/*.test.{ts,tsx}',
     '<rootDir>/packages/core/src/__tests__/**/*.test.{ts,tsx}',
+    '<rootDir>/packages/config/src/__tests__/**/*.test.{ts,tsx}',
+    '<rootDir>/packages/ui/src/__tests__/**/*.test.{ts,tsx}',
     '<rootDir>/app/**/__tests__/**/*.test.{ts,tsx}',
   ],
   // Exclude packages with their own jest config (e.g., agent-intelligence uses ts-jest)
@@ -17,6 +19,8 @@ module.exports = {
     'app/**/*.{ts,tsx}',
     'packages/state/src/**/*.{ts,tsx}',
     'packages/core/src/**/*.{ts,tsx}',
+    'packages/config/src/**/*.{ts,tsx}',
+    'packages/ui/src/**/*.{ts,tsx}',
     '!src/**/*.d.ts',
     '!src/types/**/*',
     '!**/__tests__/**/*',
