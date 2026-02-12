@@ -5,34 +5,31 @@
  *
  * Usage:
  * ```typescript
- * import { GitService } from '@thumbcode/core/git';
+ * import { GitCloneService, GitCommitService } from '@thumbcode/core/git';
  *
  * // Clone a repository
- * await GitService.clone({
+ * await GitCloneService.clone({
  *   url: 'https://github.com/user/repo.git',
- *   dir: GitService.getRepoBaseDir() + '/repo',
+ *   dir: GitCloneService.getRepoBaseDir() + '/repo',
  *   credentials: { password: token },
  * });
  *
  * // Stage and commit
- * await GitService.stage({ dir, filepath: 'src/file.ts' });
- * await GitService.commit({
+ * await GitCommitService.stage({ dir, filepath: 'src/file.ts' });
+ * await GitCommitService.commit({
  *   dir,
  *   message: 'feat: add new feature',
  *   author: { name: 'John Doe', email: 'john@example.com' },
  * });
  *
  * // Push changes
- * await GitService.push({
+ * await GitCloneService.push({
  *   dir,
  *   credentials: { password: token },
  * });
  * ```
  */
 
-export { GitService } from './GitService';
-
-// Focused services for direct import
 export { GitBranchService } from './GitBranchService';
 export { GitCloneService } from './GitCloneService';
 export { GitCommitService } from './GitCommitService';

@@ -34,6 +34,5 @@ export type {
 // Validation utilities
 export { validateAnthropicKey, validateGitHubToken } from './validation';
 
-// Focused modules for direct import
 export { KeyValidator } from './KeyValidator';
 export { KeyStorage } from './KeyStorage';

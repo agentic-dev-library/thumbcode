@@ -1,7 +1,7 @@
 /**
- * GitHub Auth Service - Unified Facade
+ * GitHub Auth Service
  *
- * Thin facade that delegates to focused auth modules:
+ * Coordinates auth modules for GitHub OAuth device flow:
  * - DeviceFlowHandler: device code request, flow initiation
  * - PollingService: token polling with retry and backoff
  * - TokenManager: auth status, user info, sign-out

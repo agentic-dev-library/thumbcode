@@ -5,7 +5,7 @@
  * Uses paint daube icons for brand consistency.
  */
 
-import { CredentialService, GitHubApiService, GitService } from '@thumbcode/core';
+import { CredentialService, GitCloneService, GitHubApiService } from '@thumbcode/core';
 import { useProjectStore } from '@thumbcode/state';
 import type { Repository } from '@thumbcode/types';
 import * as Crypto from 'expo-crypto';
@@ -50,14 +50,14 @@ async function getGitHubToken(): Promise<string | null> {
 }
 
 async function cloneRepository(repo: RepoListItem): Promise<{ dir: string }> {
-  const dir = `${GitService.getRepoBaseDir()}/${repo.fullName.replace('/', '__')}`;
+  const dir = `${GitCloneService.getRepoBaseDir()}/${repo.fullName.replace('/', '__')}`;
   const githubToken = await getGitHubToken();
 
   if (repo.isPrivate && !githubToken) {
     throw new Error('This repository is private. Please connect GitHub first.');
   }
 
-  const result = await GitService.clone({
+  const result = await GitCloneService.clone({
     url: repo.cloneUrl,
     dir,
     branch: repo.defaultBranch,

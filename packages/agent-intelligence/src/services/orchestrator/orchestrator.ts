@@ -1,7 +1,7 @@
 /**
- * Agent Orchestrator - Unified Facade
+ * Agent Orchestrator
  *
- * Thin facade that delegates to focused orchestration modules:
+ * Coordinates orchestration modules for multi-agent task management:
  * - AgentCoordinator: agent lifecycle and task execution
  * - TaskAssigner: task creation, assignment, and queries
  * - OrchestrationStateManager: state, metrics, and execution planning

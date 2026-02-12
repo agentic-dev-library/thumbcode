@@ -1,19 +1,13 @@
 /**
- * Chat Service - Unified Facade
+ * Chat Service
  *
- * Thin facade that delegates to focused chat modules:
+ * Coordinates chat modules for thread management and agent communication:
  * - MessageStore: thread CRUD, message queries, search
  * - StreamHandler: event system, abort controllers, streaming infrastructure
  * - AgentResponseService: agent response simulation, approval workflows
  */
 
-import type {
-  ApprovalMessage,
-  ChatThread,
-  CodeMessage,
-  Message,
-  MessageSender,
-} from '@thumbcode/state';
+import type { ChatThread, Message, MessageSender } from '@thumbcode/state';
 import { AgentResponseService } from './AgentResponseService';
 import { MessageStore } from './MessageStore';
 import { StreamHandler } from './StreamHandler';
@@ -124,6 +118,3 @@ class ChatServiceImpl {
 
 // Export singleton instance
 export const ChatService = new ChatServiceImpl();
-
-// Export types for consumers
-export type { Message, ChatThread, CodeMessage, ApprovalMessage };

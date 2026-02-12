@@ -1,8 +1,8 @@
 /**
- * Base Agent - Unified Facade
+ * Base Agent
  *
  * Abstract base class for specialized AI agents.
- * Delegates to focused trait modules:
+ * Composes trait modules for agent behavior:
  * - Promptable: task formatting and prompt construction
  * - Reviewable: the agentic execution loop (standard and streaming)
  * - Committable: result parsing from conversation history
@@ -20,7 +20,6 @@ import type {
   AgentExecutionResult,
 } from './types';
 
-// Re-export types for backward compatibility
 export type { AgentContext, AgentEvent, AgentEventCallback, AgentExecutionResult } from './types';
 
 /**

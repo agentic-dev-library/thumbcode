@@ -1,7 +1,7 @@
 /**
- * Credential Service - Unified Facade
+ * Credential Service
  *
- * Thin facade that delegates to focused credential modules:
+ * Coordinates credential modules for secure key management:
  * - KeyValidator: API key validation against provider endpoints
  * - KeyStorage: secure storage, retrieval, biometric auth
  */
