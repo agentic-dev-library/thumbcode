@@ -1,7 +1,9 @@
 import { View, type ViewProps } from 'react-native';
 import { organicBorderRadius, organicShadow } from '@/lib/organic-styles';
 
+/** Props for the Card component */
 interface CardProps extends ViewProps {
+  /** Visual variant controlling background and shadow style */
   variant?: 'default' | 'elevated';
 }
 

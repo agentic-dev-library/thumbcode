@@ -10,9 +10,13 @@ import { Pressable, ScrollView, View } from 'react-native';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
+/** Props for the CodeBlock component */
 interface CodeBlockProps {
+  /** The code content to display */
   code: string;
+  /** Programming language for syntax highlighting */
   language: string;
+  /** Optional filename shown in the header */
   filename?: string;
 }
 

@@ -1,9 +1,14 @@
 import { Text as RNText, type TextProps as RNTextProps } from 'react-native';
 
+/** Props for the Text component */
 interface TextProps extends RNTextProps {
+  /** Font family variant (display, body, or monospace) */
   variant?: 'display' | 'body' | 'mono';
+  /** Text size preset */
   size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
+  /** Font weight */
   weight?: 'normal' | 'medium' | 'semibold' | 'bold';
+  /** Additional NativeWind class names */
   className?: string;
 }
 

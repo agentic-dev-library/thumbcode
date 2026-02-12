@@ -25,9 +25,13 @@ import { getColor } from '@/utils/design-tokens';
 /** Action icon component type */
 type ActionIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 
+/** Props for the ApprovalCard component */
 interface ApprovalCardProps {
+  /** The approval message to display */
   message: ApprovalMessage;
+  /** Called when the user approves the action */
   onApprove: () => void;
+  /** Called when the user rejects the action */
   onReject: () => void;
 }
 

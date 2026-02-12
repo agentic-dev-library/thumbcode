@@ -82,9 +82,13 @@ export type IconVariant =
   | 'warning' // Warning symbol
   | 'chevronDown'; // Dropdown arrow
 
+/** Props for the PaintDaubeIcon component */
 interface PaintDaubeIconProps {
+  /** The icon variant to render (e.g. 'agent', 'mobile', 'code') */
   variant: IconVariant;
+  /** Brand color for the icon stroke */
   color?: IconColor;
+  /** Icon size in pixels (width and height) */
   size?: number;
   /** Intensity of the turbulence effect (0-1) */
   turbulence?: number;

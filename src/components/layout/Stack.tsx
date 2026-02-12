@@ -13,15 +13,25 @@ type StackAlign = 'start' | 'center' | 'end' | 'stretch' | 'baseline';
 type StackJustify = 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
 type StackSpacing = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
 
+/** Props for the Stack layout component */
 interface StackProps {
+  /** Child components to arrange in the stack */
   children: ReactNode;
+  /** Layout direction of the stack */
   direction?: StackDirection;
+  /** Gap between children (preset name or pixel value) */
   spacing?: StackSpacing;
+  /** Cross-axis alignment of children */
   align?: StackAlign;
+  /** Main-axis alignment of children */
   justify?: StackJustify;
+  /** Whether children should wrap to the next line */
   wrap?: boolean;
+  /** Flex factor for the stack container */
   flex?: number;
+  /** Additional NativeWind class names */
   className?: string;
+  /** Additional inline styles */
   style?: StyleProp<ViewStyle>;
 }
 

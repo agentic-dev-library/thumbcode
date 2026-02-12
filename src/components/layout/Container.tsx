@@ -11,13 +11,21 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type ContainerSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 
+/** Props for the Container component */
 interface ContainerProps {
+  /** Child components to render inside the container */
   children: ReactNode;
+  /** Maximum width constraint for the container */
   size?: ContainerSize;
+  /** Padding amount applied to the container */
   padding?: 'none' | 'sm' | 'md' | 'lg';
+  /** Whether to apply safe area insets (true for all, or specify a direction) */
   safeArea?: boolean | 'top' | 'bottom' | 'horizontal';
+  /** Whether to center the container horizontally */
   center?: boolean;
+  /** Additional NativeWind class names */
   className?: string;
+  /** Additional inline styles */
   style?: ViewStyle;
 }
 

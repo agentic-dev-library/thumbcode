@@ -12,8 +12,11 @@ import { organicBorderRadius } from '@/lib/organic-styles';
 import { ApprovalCard } from './ApprovalCard';
 import { CodeBlock } from './CodeBlock';
 
+/** Props for the ChatMessage component */
 interface ChatMessageProps {
+  /** The message to render */
   message: Message;
+  /** Called when the user responds to an approval request */
   onApprovalResponse?: (messageId: string, approved: boolean) => void;
 }
 

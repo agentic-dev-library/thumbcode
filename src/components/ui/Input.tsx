@@ -7,8 +7,11 @@ import { organicBorderRadius } from '@/lib/organic-styles';
 import { getColor } from '@/utils/design-tokens';
 import { Text } from './Text';
 
+/** Props for the Input component */
 interface InputProps extends RNTextInputProps {
+  /** Optional label text displayed above the input */
   label?: string;
+  /** Optional error message displayed below the input */
   error?: string;
 }
 

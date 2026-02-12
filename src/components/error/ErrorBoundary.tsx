@@ -9,10 +9,15 @@ import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { logger } from '@/lib/logger';
 import { ErrorFallback } from './ErrorFallback';
 
+/** Props for the ErrorBoundary component */
 interface Props {
+  /** Child components to render when no error is caught */
   children: ReactNode;
+  /** Custom fallback UI to display when an error is caught */
   fallback?: ReactNode;
+  /** Callback invoked when an error is caught by the boundary */
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  /** Array of values that, when changed, reset the error boundary state */
   resetKeys?: unknown[];
 }
 
