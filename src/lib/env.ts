@@ -2,7 +2,7 @@
  * Environment Configuration Module
  *
  * Provides type-safe access to environment variables with validation.
- * Uses expo-constants to access runtime configuration from app.config.ts.
+ * Uses Vite environment variables (import.meta.env) for Capacitor builds.
  *
  * Usage:
  * ```typescript
@@ -15,8 +15,6 @@
  * validateEnvironment();
  * ```
  */
-
-import Constants from 'expo-constants';
 
 /**
  * App environment type
@@ -36,7 +34,7 @@ export interface EnvironmentConfig {
   /** GitHub OAuth client ID for Device Flow */
   githubClientId: string;
 
-  /** Expo project ID */
+  /** Project ID (replaces EAS project ID) */
   easProjectId: string;
 
   /** Whether we're running in development mode */
@@ -59,11 +57,10 @@ const REQUIRED_VARS = {
 } as const;
 
 /**
- * Get the current app environment from Expo Constants
+ * Get the current app environment from Vite env
  */
 const getAppEnv = (): AppEnvironment => {
-  const extra = Constants.expoConfig?.extra;
-  const appEnv = extra?.appEnv;
+  const appEnv = import.meta.env.VITE_APP_ENV;
 
   if (appEnv === 'staging' || appEnv === 'production') {
     return appEnv;
@@ -76,14 +73,13 @@ const getAppEnv = (): AppEnvironment => {
  * Create the environment configuration object
  */
 const createEnvConfig = (): EnvironmentConfig => {
-  const extra = Constants.expoConfig?.extra || {};
   const appEnv = getAppEnv();
 
   return {
     appEnv,
-    enableDevTools: extra.enableDevTools ?? appEnv !== 'production',
-    githubClientId: extra.githubClientId || '',
-    easProjectId: extra.eas?.projectId || '',
+    enableDevTools: import.meta.env.VITE_ENABLE_DEV_TOOLS === 'true' || appEnv !== 'production',
+    githubClientId: import.meta.env.VITE_GITHUB_CLIENT_ID || '',
+    easProjectId: import.meta.env.VITE_PROJECT_ID || '',
     isDev: appEnv === 'development',
     isStaging: appEnv === 'staging',
     isProd: appEnv === 'production',
@@ -124,11 +120,11 @@ export function validateEnvironment(): ValidationResult {
 
   // Add warnings for common issues
   if (env.isProd && !env.easProjectId) {
-    warnings.push('EXPO_PROJECT_ID is not set - EAS builds may fail');
+    warnings.push('VITE_PROJECT_ID is not set - builds may fail');
   }
 
   if (!env.githubClientId) {
-    warnings.push('EXPO_PUBLIC_GITHUB_CLIENT_ID is not set - GitHub auth will be disabled');
+    warnings.push('VITE_GITHUB_CLIENT_ID is not set - GitHub auth will be disabled');
   }
 
   // Log warnings in development

@@ -3,8 +3,12 @@
  *
  * Provides checks for the security of the runtime environment,
  * such as detecting rooted or jailbroken devices.
+ * Uses @capacitor/device for platform detection.
+ *
+ * Note: Capacitor's Device plugin does not provide direct root/jailbreak detection.
+ * We use platform-based heuristics and log warnings instead.
  */
-import * as Device from 'expo-device';
+import { Device } from '@capacitor/device';
 import { Alert, BackHandler } from 'react-native';
 
 class RuntimeSecurityService {
@@ -20,6 +24,11 @@ class RuntimeSecurityService {
   /**
    * Checks if the device is rooted or jailbroken and takes appropriate action.
    * This check is performed only once per application session.
+   *
+   * Note: Capacitor does not have built-in root detection like Expo.
+   * This method uses Device.getInfo() to gather platform info and applies
+   * platform-specific heuristics. For production use, consider integrating
+   * a dedicated root detection library.
    */
   async checkAndHandleRootedStatus(): Promise<void> {
     if (this.hasChecked) {
@@ -28,9 +37,15 @@ class RuntimeSecurityService {
     this.hasChecked = true;
 
     try {
-      const isRooted = await Device.isRootedExperimentalAsync();
+      const info = await Device.getInfo();
 
-      if (isRooted) {
+      // Capacitor does not have direct root detection.
+      // On Android, we check if the device is running in a virtual device
+      // (which is often the case for rooted environments in testing).
+      // For real root detection in production, a native plugin would be needed.
+      const isLikelyRooted = info.platform === 'android' && info.isVirtual;
+
+      if (isLikelyRooted) {
         Alert.alert(
           'Security Alert',
           'This application cannot be run on a rooted or jailbroken device for security reasons. The app will now exit.',
