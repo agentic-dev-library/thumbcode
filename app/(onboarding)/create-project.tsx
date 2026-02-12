@@ -206,11 +206,7 @@ function CreateRepoForm({
         </Pressable>
       </View>
 
-      <Input
-        placeholder="repository-name"
-        value={newRepoName}
-        onChangeText={onNameChange}
-      />
+      <Input placeholder="repository-name" value={newRepoName} onChangeText={onNameChange} />
 
       <Input
         placeholder="Description (optional)"

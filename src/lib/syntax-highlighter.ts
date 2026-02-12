@@ -206,25 +206,26 @@ function buildTokenRegex(isJson: boolean, isBash: boolean, isPython: boolean): R
   return new RegExp(patterns.join('|'), 'g');
 }
 
+function isQuotedString(value: string): boolean {
+  const first = value[0];
+  const last = value[value.length - 1];
+  return (first === '"' || first === "'" || first === '`') && first === last;
+}
+
+function isComment(value: string, hasHashComments: boolean): boolean {
+  if (value.startsWith('//') || value.startsWith('/*')) return true;
+  return hasHashComments && value.startsWith('#');
+}
+
 function classifyToken(
   value: string,
   keywords: Set<string>,
   isJson: boolean,
-  hasHashComments: boolean,
+  hasHashComments: boolean
 ): TokenType {
   if (/^\s+$/.test(value)) return 'plain';
-
-  if (value.startsWith('//') || value.startsWith('/*')) return 'comment';
-  if (hasHashComments && value.startsWith('#')) return 'comment';
-
-  if (
-    (value.startsWith('"') && value.endsWith('"')) ||
-    (value.startsWith("'") && value.endsWith("'")) ||
-    (value.startsWith('`') && value.endsWith('`'))
-  ) {
-    return 'string';
-  }
-
+  if (isComment(value, hasHashComments)) return 'comment';
+  if (isQuotedString(value)) return 'string';
   if (/^(?:0[xXbBoO])?[\d]/.test(value) || /^\.\d/.test(value)) return 'number';
 
   if (/^[a-zA-Z_$]/.test(value)) {
