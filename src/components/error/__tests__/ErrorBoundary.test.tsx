@@ -1,6 +1,5 @@
-import { Component } from 'react';
-import { create } from 'react-test-renderer';
 import { Text } from 'react-native';
+import { create } from 'react-test-renderer';
 import { ErrorBoundary, withErrorBoundary } from '../ErrorBoundary';
 
 jest.mock('@/lib/logger', () => ({
@@ -134,10 +133,7 @@ describe('withErrorBoundary', () => {
   });
 
   it('uses custom fallback when provided', () => {
-    const WrappedThrowing = withErrorBoundary(
-      ThrowingComponent,
-      <Text>Custom fallback</Text>
-    );
+    const WrappedThrowing = withErrorBoundary(ThrowingComponent, <Text>Custom fallback</Text>);
     const tree = create(<WrappedThrowing />);
     const json = JSON.stringify(tree.toJSON());
     expect(json).toContain('Custom fallback');

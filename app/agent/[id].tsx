@@ -224,11 +224,7 @@ export default function AgentDetailScreen() {
           <Container padding="lg">
             {activeTab === 'overview' ? (
               <VStack spacing="md">
-                <AgentMetrics
-                  completed={completed}
-                  failed={failed}
-                  successRate={successRate}
-                />
+                <AgentMetrics completed={completed} failed={failed} successRate={successRate} />
                 <AgentActions
                   agentId={agent.id}
                   onSetIdle={(id) => updateAgentStatus(id, 'idle')}

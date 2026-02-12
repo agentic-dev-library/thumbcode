@@ -96,26 +96,27 @@ test.describe('User Interactions - Basic', () => {
 // Direct navigation to onboarding sub-routes (/create-project, /complete) is
 // redirected away by RootLayoutNav; these pages can only be reached by clicking
 // through the onboarding flow. Skip until deep-link support is added.
-test.describe.skip('User Interactions - Full Flow', () => {
-  test.setTimeout(120_000);
+test.describe
+  .skip('User Interactions - Full Flow', () => {
+    test.setTimeout(120_000);
 
-  test.beforeEach(async ({ page }) => {
-    await disableAnimations(page);
-  });
+    test.beforeEach(async ({ page }) => {
+      await disableAnimations(page);
+    });
 
-  test('should display project creation step', async ({ page }) => {
-    await page.goto('/create-project');
-    await page.waitForTimeout(1000);
-    await expect(page.getByText('Create Your First Project')).toBeVisible();
-    await expect(page.getByText('Select Repository')).toBeVisible();
-  });
+    test('should display project creation step', async ({ page }) => {
+      await page.goto('/create-project');
+      await page.waitForTimeout(1000);
+      await expect(page.getByText('Create Your First Project')).toBeVisible();
+      await expect(page.getByText('Select Repository')).toBeVisible();
+    });
 
-  test('should show completion screen', async ({ page }) => {
-    await page.goto('/complete');
-    await page.waitForTimeout(1000);
-    await expect(page.getByText(/All Set/i).first()).toBeVisible();
+    test('should show completion screen', async ({ page }) => {
+      await page.goto('/complete');
+      await page.waitForTimeout(1000);
+      await expect(page.getByText(/All Set/i).first()).toBeVisible();
+    });
   });
-});
 
 test.describe('Dashboard Interactions', () => {
   test.setTimeout(120_000);
@@ -158,31 +159,32 @@ test.describe('Agents Page Interactions', () => {
 });
 
 // Chat page crashes on web with error boundary; skip until fixed
-test.describe.skip('Chat Page Interactions', () => {
-  test.setTimeout(120_000);
+test.describe
+  .skip('Chat Page Interactions', () => {
+    test.setTimeout(120_000);
 
-  test.beforeEach(async ({ page }) => {
-    await completeOnboarding(page);
-    await clickTab(page, 'Chat');
-    await page.waitForTimeout(500);
-    await disableAnimations(page);
-  });
+    test.beforeEach(async ({ page }) => {
+      await completeOnboarding(page);
+      await clickTab(page, 'Chat');
+      await page.waitForTimeout(500);
+      await disableAnimations(page);
+    });
 
-  test('should display chat page', async ({ page }) => {
-    await expect(page).toHaveURL(/\/chat/);
-  });
+    test('should display chat page', async ({ page }) => {
+      await expect(page).toHaveURL(/\/chat/);
+    });
 
-  test('should show chat interface', async ({ page }) => {
-    const hasChat = await page
-      .getByText(/thread|new thread|chat|message/i)
-      .first()
-      .isVisible()
-      .catch(() => false);
-    const hasError = await page
-      .getByText(/something went wrong|try again/i)
-      .first()
-      .isVisible()
-      .catch(() => false);
-    expect(hasChat || hasError).toBe(true);
+    test('should show chat interface', async ({ page }) => {
+      const hasChat = await page
+        .getByText(/thread|new thread|chat|message/i)
+        .first()
+        .isVisible()
+        .catch(() => false);
+      const hasError = await page
+        .getByText(/something went wrong|try again/i)
+        .first()
+        .isVisible()
+        .catch(() => false);
+      expect(hasChat || hasError).toBe(true);
+    });
   });
-});

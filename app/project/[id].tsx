@@ -11,7 +11,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { type FileNode as FileTreeNode } from '@/components/code';
+import type { FileNode as FileTreeNode } from '@/components/code';
 import { Container } from '@/components/layout';
 import {
   ProjectAgents,

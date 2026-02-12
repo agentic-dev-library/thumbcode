@@ -4,8 +4,8 @@
  * Components for the settings screens including credential management.
  */
 
-export { CredentialItem, ApiKeyInput } from './CredentialSection';
-export type { CredentialItemProps, ApiKeyInputProps } from './CredentialSection';
-export { SettingsItem } from './SettingsItem';
+export type { ApiKeyInputProps, CredentialItemProps } from './CredentialSection';
+export { ApiKeyInput, CredentialItem } from './CredentialSection';
 export type { SettingsItemProps } from './SettingsItem';
+export { SettingsItem } from './SettingsItem';
 export { SettingsSection } from './SettingsSection';

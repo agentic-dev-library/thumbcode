@@ -3,16 +3,12 @@ import { Switch } from '../Switch';
 
 describe('Switch', () => {
   it('renders with default props', () => {
-    const { toJSON } = render(
-      <Switch value={false} onValueChange={jest.fn()} />
-    );
+    const { toJSON } = render(<Switch value={false} onValueChange={jest.fn()} />);
     expect(toJSON()).toBeTruthy();
   });
 
   it('renders label text', () => {
-    const { toJSON } = render(
-      <Switch value={false} onValueChange={jest.fn()} label="Dark mode" />
-    );
+    const { toJSON } = render(<Switch value={false} onValueChange={jest.fn()} label="Dark mode" />);
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Dark mode');
   });
@@ -32,18 +28,14 @@ describe('Switch', () => {
 
   it('calls onValueChange with true when toggled on', () => {
     const onValueChange = jest.fn();
-    const { UNSAFE_getByProps } = render(
-      <Switch value={false} onValueChange={onValueChange} />
-    );
+    const { UNSAFE_getByProps } = render(<Switch value={false} onValueChange={onValueChange} />);
     fireEvent.press(UNSAFE_getByProps({ accessibilityRole: 'switch' }));
     expect(onValueChange).toHaveBeenCalledWith(true);
   });
 
   it('calls onValueChange with false when toggled off', () => {
     const onValueChange = jest.fn();
-    const { UNSAFE_getByProps } = render(
-      <Switch value={true} onValueChange={onValueChange} />
-    );
+    const { UNSAFE_getByProps } = render(<Switch value={true} onValueChange={onValueChange} />);
     fireEvent.press(UNSAFE_getByProps({ accessibilityRole: 'switch' }));
     expect(onValueChange).toHaveBeenCalledWith(false);
   });
@@ -58,9 +50,7 @@ describe('Switch', () => {
   });
 
   it('sets accessibility state correctly', () => {
-    const { toJSON } = render(
-      <Switch value={true} onValueChange={jest.fn()} disabled />
-    );
+    const { toJSON } = render(<Switch value={true} onValueChange={jest.fn()} disabled />);
     const json = JSON.stringify(toJSON());
     expect(json).toContain('"role":"switch"');
     expect(json).toContain('"aria-disabled":true');

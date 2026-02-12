@@ -9,8 +9,8 @@ import { useChatStore, useCredentialStore } from '@thumbcode/state';
 import * as SecureStore from 'expo-secure-store';
 
 import { AgentResponseService } from '../AgentResponseService';
-import { StreamHandler } from '../StreamHandler';
 import { MessageStore } from '../MessageStore';
+import { StreamHandler } from '../StreamHandler';
 
 // Mock AI dependencies
 jest.mock('../../ai/AIClientFactory', () => ({
@@ -36,7 +36,7 @@ describe('AgentResponseService', () => {
       threads: [],
       messages: {},
       activeThreadId: null,
-      typingIndicators: {},
+      isTyping: {},
     });
     useCredentialStore.setState({
       credentials: [],
@@ -207,12 +207,12 @@ describe('AgentResponseService', () => {
 
     it('should stream response and emit events', async () => {
       const mockClient = {
-        streamMessage: jest.fn().mockImplementation(
-          async (_msgs: any, _prompt: any, onChunk: any) => {
+        streamMessage: jest
+          .fn()
+          .mockImplementation(async (_msgs: any, _prompt: any, onChunk: any) => {
             onChunk({ text: 'Hello', done: false });
             onChunk({ text: ' world', done: true });
-          }
-        ),
+          }),
       };
       createAIClient.mockReturnValue(mockClient);
 

@@ -26,20 +26,13 @@ describe('Toast', () => {
   });
 
   it('returns null when not visible', () => {
-    const { toJSON } = render(
-      <Toast visible={false} message="Hidden" onDismiss={jest.fn()} />
-    );
+    const { toJSON } = render(<Toast visible={false} message="Hidden" onDismiss={jest.fn()} />);
     expect(toJSON()).toBeNull();
   });
 
   it('renders title when provided', () => {
     const { toJSON } = render(
-      <Toast
-        visible
-        message="Details here"
-        title="Success!"
-        onDismiss={jest.fn()}
-      />
+      <Toast visible message="Details here" title="Success!" onDismiss={jest.fn()} />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Success!');
@@ -47,18 +40,14 @@ describe('Toast', () => {
   });
 
   it('renders dismiss button with accessibility', () => {
-    const { toJSON } = render(
-      <Toast visible message="Test" onDismiss={jest.fn()} />
-    );
+    const { toJSON } = render(<Toast visible message="Test" onDismiss={jest.fn()} />);
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Dismiss notification');
   });
 
   it('calls onDismiss when dismiss button is pressed', () => {
     const onDismiss = jest.fn();
-    const { UNSAFE_getByProps } = render(
-      <Toast visible message="Test" onDismiss={onDismiss} />
-    );
+    const { UNSAFE_getByProps } = render(<Toast visible message="Test" onDismiss={onDismiss} />);
     fireEvent.press(UNSAFE_getByProps({ accessibilityLabel: 'Dismiss notification' }));
     expect(onDismiss).toHaveBeenCalled();
   });
@@ -94,9 +83,7 @@ describe('Toast', () => {
   });
 
   it('renders info variant icon', () => {
-    const { toJSON } = render(
-      <Toast visible message="FYI" variant="info" onDismiss={jest.fn()} />
-    );
+    const { toJSON } = render(<Toast visible message="FYI" variant="info" onDismiss={jest.fn()} />);
     const json = JSON.stringify(toJSON());
     expect(json).toContain('InfoIcon');
   });

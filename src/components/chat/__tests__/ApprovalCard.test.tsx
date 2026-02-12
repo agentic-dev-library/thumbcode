@@ -18,9 +18,7 @@ jest.mock('@/utils/design-tokens', () => ({
   getColor: jest.fn((_color: string, _shade?: string) => '#000000'),
 }));
 
-const createMessage = (
-  overrides: Partial<ApprovalMessage['metadata']> = {}
-): ApprovalMessage => ({
+const createMessage = (overrides: Partial<ApprovalMessage['metadata']> = {}): ApprovalMessage => ({
   id: 'msg-1',
   threadId: 'thread-1',
   sender: 'architect',

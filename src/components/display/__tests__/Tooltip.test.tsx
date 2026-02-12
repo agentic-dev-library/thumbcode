@@ -1,5 +1,5 @@
-import { create } from 'react-test-renderer';
 import { Text } from 'react-native';
+import { create } from 'react-test-renderer';
 import { InfoTip, Tooltip } from '../Tooltip';
 
 jest.mock('@/lib/organic-styles', () => ({

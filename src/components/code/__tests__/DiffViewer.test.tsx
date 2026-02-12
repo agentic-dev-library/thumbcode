@@ -27,9 +27,7 @@ describe('DiffViewer', () => {
   });
 
   it('parses diff from old and new content', () => {
-    const { toJSON } = render(
-      <DiffViewer oldContent={oldContent} newContent={newContent} />
-    );
+    const { toJSON } = render(<DiffViewer oldContent={oldContent} newContent={newContent} />);
     const json = JSON.stringify(toJSON());
     expect(json).toContain('line one');
     expect(json).toContain('line modified');
@@ -38,11 +36,7 @@ describe('DiffViewer', () => {
 
   it('renders filename in header', () => {
     const { toJSON } = render(
-      <DiffViewer
-        oldContent={oldContent}
-        newContent={newContent}
-        filename="src/app.tsx"
-      />
+      <DiffViewer oldContent={oldContent} newContent={newContent} filename="src/app.tsx" />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('src/app.tsx');
@@ -74,9 +68,7 @@ describe('DiffViewer', () => {
     const diff = [
       { type: 'context' as const, content: 'visible content', oldLineNumber: 1, newLineNumber: 1 },
     ];
-    const { toJSON, UNSAFE_getByProps } = render(
-      <DiffViewer diff={diff} filename="file.ts" />
-    );
+    const { toJSON, UNSAFE_getByProps } = render(<DiffViewer diff={diff} filename="file.ts" />);
     // Content is visible initially
     let json = JSON.stringify(toJSON());
     expect(json).toContain('visible content');
