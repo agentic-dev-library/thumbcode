@@ -30,7 +30,7 @@ export function FormField({
   helper,
   error,
   labelRight,
-}: FormFieldProps) {
+}: Readonly<FormFieldProps>) {
   const hasError = Boolean(error);
 
   return (

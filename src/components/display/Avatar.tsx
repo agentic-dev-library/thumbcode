@@ -58,7 +58,7 @@ export function Avatar({
   status,
   borderColor,
   bgColor = 'bg-neutral-700',
-}: AvatarProps) {
+}: Readonly<AvatarProps>) {
   const { dimension, fontSize, statusSize } = avatarSizes[size];
   const initials = useMemo(() => getInitials(name), [name]);
 
@@ -118,7 +118,7 @@ interface AvatarGroupProps {
   size?: AvatarSize;
 }
 
-export function AvatarGroup({ avatars, max = 4, size = 'sm' }: AvatarGroupProps) {
+export function AvatarGroup({ avatars, max = 4, size = 'sm' }: Readonly<AvatarGroupProps>) {
   const { dimension, fontSize } = avatarSizes[size];
   const visibleAvatars = avatars.slice(0, max);
   const remaining = avatars.length - max;

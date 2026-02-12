@@ -23,7 +23,7 @@ interface TooltipProps {
   delay?: number;
 }
 
-export function Tooltip({ content, children, position = 'top', delay = 500 }: TooltipProps) {
+export function Tooltip({ content, children, position = 'top', delay = 500 }: Readonly<TooltipProps>) {
   const [visible, setVisible] = useState(false);
   const [layout, setLayout] = useState<LayoutRectangle | null>(null);
   const opacity = useRef(new Animated.Value(0)).current;
@@ -115,7 +115,7 @@ interface InfoTipProps {
   size?: 'sm' | 'md';
 }
 
-export function InfoTip({ content, size = 'sm' }: InfoTipProps) {
+export function InfoTip({ content, size = 'sm' }: Readonly<InfoTipProps>) {
   const dimension = size === 'sm' ? 16 : 20;
   const fontSize = size === 'sm' ? 10 : 12;
 

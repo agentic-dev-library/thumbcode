@@ -43,7 +43,7 @@ export function Select({
   label,
   error,
   disabled = false,
-}: SelectProps) {
+}: Readonly<SelectProps>) {
   const [isOpen, setIsOpen] = useState(false);
 
   const selectedOption = options.find((opt) => opt.value === value);

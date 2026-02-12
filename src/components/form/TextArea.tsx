@@ -38,7 +38,7 @@ export function TextArea({
   value,
   onChangeText,
   ...props
-}: TextAreaProps) {
+}: Readonly<TextAreaProps>) {
   const [isFocused, setIsFocused] = useState(false);
   const charCount = value?.toString().length ?? 0;
 

@@ -25,7 +25,7 @@ interface TabIconProps {
   focused: boolean;
 }
 
-function TabIcon({ Icon, label, focused }: TabIconProps) {
+function TabIcon({ Icon, label, focused }: Readonly<TabIconProps>) {
   return (
     <View className="items-center justify-center py-2">
       <View className={`mb-1 ${focused ? 'opacity-100' : 'opacity-50'}`}>

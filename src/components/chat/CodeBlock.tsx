@@ -20,7 +20,7 @@ interface CodeBlockProps {
   filename?: string;
 }
 
-export function CodeBlock({ code, language, filename }: CodeBlockProps) {
+export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {

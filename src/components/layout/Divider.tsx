@@ -37,7 +37,7 @@ export function Divider({
   variant = 'default',
   spacing = 'md',
   className = '',
-}: DividerProps) {
+}: Readonly<DividerProps>) {
   const spacingValue = spacingValues[spacing];
   const color = colorMap[variant];
 

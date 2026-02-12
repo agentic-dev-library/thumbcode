@@ -39,7 +39,7 @@ export function Checkbox({
   description,
   disabled = false,
   size = 'md',
-}: CheckboxProps) {
+}: Readonly<CheckboxProps>) {
   const styles = sizeStyles[size];
 
   return (

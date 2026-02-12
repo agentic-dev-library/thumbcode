@@ -52,7 +52,7 @@ export function Container({
   center = false,
   className = '',
   style,
-}: ContainerProps) {
+}: Readonly<ContainerProps>) {
   const insets = useSafeAreaInsets();
 
   const maxWidth = sizeStyles[size];

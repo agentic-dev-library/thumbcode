@@ -64,7 +64,7 @@ function getParticipantBadge(participant: ChatThread['participants'][number]) {
   return colorMap[participant] || 'bg-neutral-600';
 }
 
-function ThreadItem({ thread, onPress }: ThreadItemProps) {
+function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
   const hasUnread = thread.unreadCount > 0;
   const accessibilityLabel = [thread.title, hasUnread ? `${thread.unreadCount} unread` : '']
     .filter(Boolean)
@@ -142,7 +142,7 @@ function ThreadItem({ thread, onPress }: ThreadItemProps) {
   );
 }
 
-export function ThreadList({ onSelectThread, onCreateThread }: ThreadListProps) {
+export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadListProps>) {
   const pinnedThreads = useChatStore(selectPinnedThreads);
   const recentThreads = useChatStore(selectRecentThreads);
 

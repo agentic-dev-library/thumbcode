@@ -51,9 +51,7 @@ export default function ChatScreen() {
 
   useEffect(() => {
     if (!activeThreadId) return;
-    // Ensure the effect re-runs when message count changes (for auto-scroll).
-    void messages.length;
-    // Slight delay so FlatList has laid out
+    // Slight delay so FlatList has laid out before scrolling to end
     const timer = setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 50);
     return () => clearTimeout(timer);
   }, [activeThreadId, messages.length]);

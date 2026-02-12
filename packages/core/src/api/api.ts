@@ -12,7 +12,14 @@ export async function secureFetch(
   input: RequestInfo | URL,
   init?: RequestInit
 ): Promise<Response> {
-  const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+  let url: string;
+  if (typeof input === 'string') {
+    url = input;
+  } else if (input instanceof URL) {
+    url = input.href;
+  } else {
+    url = input.url;
+  }
 
   // Securely validate the hostname to prevent subdomain attacks
   // Only match exact hostname OR legitimate subdomains (prefixed with '.')
@@ -22,7 +29,14 @@ export async function secureFetch(
 
   if (isValidMcpHost) {
     const method = init?.method?.toUpperCase() || 'GET';
-    const body = init?.body ? (typeof init.body === 'string' ? init.body : JSON.stringify(init.body)) : undefined;
+    let body: string | undefined;
+    if (!init?.body) {
+      body = undefined;
+    } else if (typeof init.body === 'string') {
+      body = init.body;
+    } else {
+      body = JSON.stringify(init.body);
+    }
 
     const signingHeaders = await requestSigningService.signRequest(url, method, body);
 

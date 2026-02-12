@@ -1050,7 +1050,7 @@ export function PaintDaubeIcon({
   size = 24,
   turbulence = 0.3,
   seed = 42,
-}: PaintDaubeIconProps) {
+}: Readonly<PaintDaubeIconProps>) {
   const filterId = `paint-daube-${variant}-${seed}`;
   const strokeColor = BRAND_COLORS[color];
   const pathData = ICON_PATHS[variant](seed);

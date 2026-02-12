@@ -62,7 +62,7 @@ function SettingsItem({
   showArrow = true,
   onPress,
   toggle,
-}: SettingsItemProps) {
+}: Readonly<SettingsItemProps>) {
   return (
     <Pressable
       onPress={onPress}
@@ -129,8 +129,8 @@ export default function SettingsScreen() {
   const anthropicBadge = anthropicCredential?.status === 'valid' ? 'Active' : undefined;
   const openaiBadge = openaiCredential?.status === 'valid' ? 'Active' : undefined;
 
-  const themeLabel =
-    settings.theme === 'system' ? 'System' : settings.theme === 'dark' ? 'Dark' : 'Light';
+  const themeLabelMap: Record<string, string> = { system: 'System', dark: 'Dark', light: 'Light' };
+  const themeLabel = themeLabelMap[settings.theme] ?? 'System';
 
   return (
     <ScrollView

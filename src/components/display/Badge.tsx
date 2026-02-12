@@ -57,7 +57,7 @@ export function Badge({
   iconColor,
   textIcon,
   dot = false,
-}: BadgeProps) {
+}: Readonly<BadgeProps>) {
   const colors = variantStyles[variant];
   const sizing = sizeStyles[size];
 
@@ -121,7 +121,7 @@ const statusConfig: Record<
   success: { variant: 'success', Icon: SuccessIcon, iconColor: 'teal', label: 'Success' },
 };
 
-export function StatusBadge({ status, label, size = 'md' }: StatusBadgeProps) {
+export function StatusBadge({ status, label, size = 'md' }: Readonly<StatusBadgeProps>) {
   const config = statusConfig[status];
 
   return (

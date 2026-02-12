@@ -86,7 +86,7 @@ export function Toast({
   duration = 4000,
   onDismiss,
   action,
-}: ToastProps) {
+}: Readonly<ToastProps>) {
   const insets = useSafeAreaInsets();
   const translateY = useRef(new Animated.Value(100)).current;
   const opacity = useRef(new Animated.Value(0)).current;

@@ -61,7 +61,7 @@ function getActionInfo(actionType: ApprovalMessage['metadata']['actionType']): A
   return actionMap[actionType] || actionMap.commit;
 }
 
-export function ApprovalCard({ message, onApprove, onReject }: ApprovalCardProps) {
+export function ApprovalCard({ message, onApprove, onReject }: Readonly<ApprovalCardProps>) {
   const actionInfo = getActionInfo(message.metadata.actionType);
   const isPending = message.metadata.approved === undefined;
   const wasApproved = message.metadata.approved === true;

@@ -29,14 +29,14 @@ import type {
  * Multi-agent orchestrator
  */
 export class AgentOrchestrator {
-  private config: OrchestratorConfig;
+  private readonly config: OrchestratorConfig;
   private state: OrchestratorState;
-  private aiClient: AIClient;
-  private agentInstances: Map<string, BaseAgent> = new Map();
+  private readonly aiClient: AIClient;
+  private readonly agentInstances: Map<string, BaseAgent> = new Map();
   private eventCallbacks: OrchestratorEventCallback[] = [];
   private taskIdCounter = 0;
-  private startTime: number;
-  private taskResults: TaskResult[] = [];
+  private readonly startTime: number;
+  private readonly taskResults: TaskResult[] = [];
 
   constructor(config: OrchestratorConfig, apiKey: string) {
     this.config = config;

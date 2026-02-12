@@ -27,8 +27,15 @@ const sizeValues: Record<Exclude<SpacerSize, number>, number> = {
   xl: 32,
 };
 
-export function Spacer({ size, flex = 1, direction = 'vertical' }: SpacerProps) {
-  const dimension = size ? (typeof size === 'number' ? size : sizeValues[size]) : undefined;
+export function Spacer({ size, flex = 1, direction = 'vertical' }: Readonly<SpacerProps>) {
+  let dimension: number | undefined;
+  if (!size) {
+    dimension = undefined;
+  } else if (typeof size === 'number') {
+    dimension = size;
+  } else {
+    dimension = sizeValues[size];
+  }
 
   const style: ViewStyle = {
     flex: size ? undefined : flex,
