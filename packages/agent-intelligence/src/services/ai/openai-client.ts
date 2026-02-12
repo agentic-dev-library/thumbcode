@@ -5,6 +5,7 @@
  */
 
 import OpenAI from 'openai';
+import { createStreamParserState, finalizeStream, processStreamChunk } from './openai-stream-parser';
 import type {
   AIClient,
   CompletionOptions,
@@ -95,127 +96,26 @@ export function createOpenAIClient(apiKey: string): AIClient {
         stream_options: { include_usage: true },
       });
 
-      let collectedText = '';
-      let collectedToolCalls: Map<number, { id: string; name: string; arguments: string }> =
-        new Map();
-      let responseId = '';
-      let model = options.model;
-      let finishReason: string | null = null;
-      let inputTokens = 0;
-      let outputTokens = 0;
+      const state = createStreamParserState(options.model);
 
       onEvent({ type: 'message_start' });
       onEvent({ type: 'content_block_start', index: 0, content_block: { type: 'text', text: '' } });
 
       for await (const chunk of stream) {
-        responseId = chunk.id;
-        model = chunk.model;
-
-        if (chunk.usage) {
-          inputTokens = chunk.usage.prompt_tokens;
-          outputTokens = chunk.usage.completion_tokens;
-        }
-
-        const choice = chunk.choices[0];
-        if (!choice) continue;
-
-        if (choice.finish_reason) {
-          finishReason = choice.finish_reason;
-        }
-
-        const delta = choice.delta;
-
-        if (delta.content) {
-          collectedText += delta.content;
-          onEvent({
-            type: 'content_block_delta',
-            index: 0,
-            delta: { type: 'text', text: delta.content },
-          });
-        }
-
-        if (delta.tool_calls) {
-          for (const toolCall of delta.tool_calls) {
-            const index = toolCall.index;
-            let current = collectedToolCalls.get(index);
-
-            if (!current) {
-              current = {
-                id: toolCall.id || '',
-                name: toolCall.function?.name || '',
-                arguments: '',
-              };
-              collectedToolCalls.set(index, current);
-
-              onEvent({
-                type: 'content_block_start',
-                index: index + 1,
-                content_block: {
-                  type: 'tool_use',
-                  id: current.id,
-                  name: current.name,
-                  input: {},
-                },
-              });
-            }
-
-            if (toolCall.id) current.id = toolCall.id;
-            if (toolCall.function?.name) current.name = toolCall.function.name;
-            if (toolCall.function?.arguments) {
-              current.arguments += toolCall.function.arguments;
-              onEvent({
-                type: 'content_block_delta',
-                index: index + 1,
-                delta: { type: 'tool_use', partial_json: toolCall.function.arguments },
-              });
-            }
-          }
-        }
+        processStreamChunk(state, chunk, onEvent);
       }
 
-      onEvent({ type: 'content_block_stop', index: 0 });
-
-      for (const [index] of collectedToolCalls) {
-        onEvent({ type: 'content_block_stop', index: index + 1 });
-      }
-
-      onEvent({
-        type: 'message_delta',
-        usage: { outputTokens },
-      });
-      onEvent({ type: 'message_stop' });
-
-      const content: ContentBlock[] = [];
-
-      if (collectedText) {
-        content.push({ type: 'text', text: collectedText });
-      }
-
-      for (const toolCall of collectedToolCalls.values()) {
-        let parsedInput: Record<string, unknown> = {};
-        try {
-          parsedInput = JSON.parse(toolCall.arguments);
-        } catch {
-          parsedInput = {};
-        }
-
-        content.push({
-          type: 'tool_use',
-          id: toolCall.id,
-          name: toolCall.name,
-          input: parsedInput,
-        });
-      }
+      const result = finalizeStream(state, onEvent);
 
       return {
-        id: responseId,
-        content,
-        model,
-        stopReason: mapOpenAIStopReason(finishReason),
+        id: result.responseId,
+        content: result.content,
+        model: result.model,
+        stopReason: mapOpenAIStopReason(result.finishReason),
         usage: {
-          inputTokens,
-          outputTokens,
-          totalTokens: inputTokens + outputTokens,
+          inputTokens: result.inputTokens,
+          outputTokens: result.outputTokens,
+          totalTokens: result.inputTokens + result.outputTokens,
         },
       };
     },
@@ -231,7 +131,6 @@ function formatMessagesForOpenAI(
 ): OpenAI.Chat.Completions.ChatCompletionMessageParam[] {
   const result: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [];
 
-  // Add system prompt if provided
   if (systemPrompt) {
     result.push({ role: 'system', content: systemPrompt });
   }
@@ -253,7 +152,6 @@ function formatMessagesForOpenAI(
         content: msg.content,
       });
     } else {
-      // Handle tool results
       const toolResults = msg.content.filter((b) => b.type === 'tool_result');
       for (const toolResult of toolResults) {
         result.push({
@@ -263,7 +161,6 @@ function formatMessagesForOpenAI(
         });
       }
 
-      // Handle regular content
       const textBlocks = msg.content.filter((b) => b.type === 'text');
       if (textBlocks.length > 0) {
         result.push({
@@ -272,7 +169,6 @@ function formatMessagesForOpenAI(
         });
       }
 
-      // Handle tool use (for assistant messages)
       if (msg.role === 'assistant') {
         const toolUseBlocks = msg.content.filter((b) => b.type === 'tool_use');
         if (toolUseBlocks.length > 0) {
