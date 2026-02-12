@@ -24,10 +24,10 @@ module.exports = {
   coverageThreshold: {
     global: {
       // TODO: Increase thresholds as test coverage improves
-      statements: 5,
-      branches: 5,
-      functions: 5,
-      lines: 5,
+      statements: 20,
+      branches: 20,
+      functions: 20,
+      lines: 20,
     },
   },
 };
