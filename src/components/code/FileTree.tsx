@@ -148,9 +148,13 @@ function FileTreeNodeRow({
   accessibilityHint: string;
 }) {
   // Get the appropriate icon based on file type or folder state
-  const iconInfo = isFolder
-    ? { Icon: isExpanded ? FolderOpenIcon : FolderIcon, color: 'gold' as IconColor }
-    : getFileIconInfo(node.name);
+  let iconInfo: FileIconInfo;
+  if (isFolder) {
+    const Icon = isExpanded ? FolderOpenIcon : FolderIcon;
+    iconInfo = { Icon, color: 'gold' };
+  } else {
+    iconInfo = getFileIconInfo(node.name);
+  }
 
   const rowClass = isSelected ? 'bg-teal-600/20' : 'active:bg-neutral-700';
   const textClass = isSelected ? 'text-teal-300' : 'text-neutral-200';

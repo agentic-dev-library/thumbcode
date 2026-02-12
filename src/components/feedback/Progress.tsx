@@ -132,12 +132,6 @@ export function ProgressCircle({
     }).start();
   }, [clampedValue, rotateAnim]);
 
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  // Note: strokeDashoffset would be used with SVG, kept for future SVG-based implementation
-  const _strokeDashoffset = circumference - (circumference * clampedValue) / 100;
-  void _strokeDashoffset;
-
   return (
     <View style={{ width: size, height: size }} className="items-center justify-center">
       <View className="absolute items-center justify-center" style={{ width: size, height: size }}>
@@ -201,12 +195,14 @@ export function StepsProgress({ totalSteps, currentStep, labels }: StepsProgress
           const isCompleted = stepNum < currentStep;
           const isCurrent = stepNum === currentStep;
 
+          let stepBg = 'bg-neutral-700';
+          if (isCompleted) stepBg = 'bg-teal-600';
+          else if (isCurrent) stepBg = 'bg-coral-500';
+
           return (
             <View key={stepNum} className="flex-row items-center flex-1 last:flex-none">
               <View
-                className={`w-8 h-8 items-center justify-center ${
-                  isCompleted ? 'bg-teal-600' : isCurrent ? 'bg-coral-500' : 'bg-neutral-700'
-                }`}
+                className={`w-8 h-8 items-center justify-center ${stepBg}`}
                 style={organicBorderRadius.button}
               >
                 {isCompleted ? (
@@ -226,16 +222,21 @@ export function StepsProgress({ totalSteps, currentStep, labels }: StepsProgress
       </View>
       {labels && (
         <View className="flex-row mt-2">
-          {labels.map((label, i) => (
-            <Text
-              key={label}
-              className={`flex-1 text-xs font-body ${
-                i + 1 <= currentStep ? 'text-white' : 'text-neutral-500'
-              } ${i === 0 ? '' : 'text-center'} ${i === labels.length - 1 ? 'text-right' : ''}`}
-            >
-              {label}
-            </Text>
-          ))}
+          {labels.map((label, i) => {
+            const colorClass = i + 1 <= currentStep ? 'text-white' : 'text-neutral-500';
+            let alignClass = 'text-center';
+            if (i === 0) alignClass = '';
+            if (i === labels.length - 1) alignClass = 'text-right';
+
+            return (
+              <Text
+                key={label}
+                className={`flex-1 text-xs font-body ${colorClass} ${alignClass}`}
+              >
+                {label}
+              </Text>
+            );
+          })}
         </View>
       )}
     </View>

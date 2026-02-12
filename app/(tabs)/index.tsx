@@ -24,6 +24,17 @@ import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
+function statusToActivityType(status: string): string {
+  switch (status) {
+    case 'completed':
+      return 'commit';
+    case 'failed':
+      return 'review';
+    default:
+      return 'task';
+  }
+}
+
 function getStatusColor(status: string): string {
   switch (status) {
     case 'working':
@@ -80,7 +91,7 @@ export default function HomeScreen() {
       const agent = agents.find((a) => a.id === t.agentId);
       return {
         id: t.id,
-        type: t.status === 'completed' ? 'commit' : t.status === 'failed' ? 'review' : 'task',
+        type: statusToActivityType(t.status),
         agent: agent?.name || 'Agent',
         message: t.description,
         project: 'workspace',

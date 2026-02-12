@@ -93,8 +93,6 @@ export function DiffViewer({
   viewMode: _viewMode = 'unified',
   showLineNumbers = true,
 }: DiffViewerProps) {
-  // Note: viewMode 'split' is not yet implemented, only 'unified' is used
-  void _viewMode;
   const [collapsed, setCollapsed] = useState(false);
 
   const lines = diff || (oldContent && newContent ? parseDiff(oldContent, newContent) : []);

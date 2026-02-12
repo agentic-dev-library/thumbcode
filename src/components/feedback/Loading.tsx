@@ -117,7 +117,7 @@ export function Skeleton({
     ).start();
   }, [pulseAnim]);
 
-  const dimension = circle ? (typeof height === 'number' ? height : 40) : undefined;
+  const dimension = circle ? height : undefined;
 
   return (
     <Animated.View
