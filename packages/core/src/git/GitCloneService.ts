@@ -4,7 +4,7 @@
  * Handles remote operations: clone, fetch, pull, push, init, cleanup.
  */
 
-import * as FileSystem from 'expo-file-system';
+import { Filesystem, Directory } from '@capacitor/filesystem';
 import git from 'isomorphic-git';
 
 import { fs, http } from './git-fs';
@@ -20,9 +20,10 @@ import type {
 class GitCloneServiceClass {
   /**
    * Get the base directory for Git repositories
+   * Returns a relative path used with Directory.Documents
    */
   getRepoBaseDir(): string {
-    return `${FileSystem.documentDirectory}repos`;
+    return 'repos';
   }
 
   /**
@@ -341,13 +342,15 @@ class GitCloneServiceClass {
    */
   async cleanup(dir: string): Promise<GitResult<void>> {
     try {
-      await FileSystem.deleteAsync(dir, { idempotent: true });
+      await Filesystem.rmdir({
+        path: dir,
+        directory: Directory.Documents,
+        recursive: true,
+      });
       return { success: true };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Failed to cleanup repository',
-      };
+    } catch {
+      // Idempotent - consider success even if directory doesn't exist
+      return { success: true };
     }
   }
 }

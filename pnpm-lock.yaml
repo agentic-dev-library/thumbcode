@@ -24,6 +24,9 @@ importers:
       '@capacitor/core':
         specifier: ^8.1.0
         version: 8.1.0
+      '@capacitor/filesystem':
+        specifier: ^8.1.1
+        version: 8.1.1(@capacitor/core@8.1.0)
       '@capacitor/ios':
         specifier: ^8.1.0
         version: 8.1.0(@capacitor/core@8.1.0)
@@ -90,9 +93,6 @@ importers:
       expo-linking:
         specifier: ~7.0.0
         version: 7.0.5(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1)
-      expo-local-authentication:
-        specifier: ~15.0.0
-        version: 15.0.2(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1))
       expo-notifications:
         specifier: ~0.29.0
         version: 0.29.14(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1)
@@ -320,6 +320,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@aparajita/capacitor-biometric-auth':
+        specifier: ^10.0.0
+        version: 10.0.0
       '@thumbcode/config':
         specifier: workspace:*
         version: link:../config
@@ -335,9 +338,6 @@ importers:
       expo-file-system:
         specifier: ~18.0.0
         version: 18.0.12(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))
-      expo-local-authentication:
-        specifier: ~15.0.0
-        version: 15.0.2(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1))
       isomorphic-git:
         specifier: ^1.27.0
         version: 1.36.1
@@ -1269,10 +1269,18 @@ packages:
   '@capacitor/core@8.1.0':
     resolution: {integrity: sha512-UfMBMWc1v7J+14AhH03QmeNwV3HZx3qnOWhpwnHfzALEwAwlV/itQOQqcasMQYhOHWL0tiymc5ByaLTn7KKQxw==}
 
+  '@capacitor/filesystem@8.1.1':
+    resolution: {integrity: sha512-g8szun+Nj9O/CIWNJ1c4cTsGchJE3B7080X+eh3hQXKf9UdRDllwVJy6reoI5EngwWh9xUgkI7fwkxg5BONrKw==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
+
   '@capacitor/ios@8.1.0':
     resolution: {integrity: sha512-wPaQ8ayL0UY+SxydZbrmfzPs8TryZVEB6hrL/XBnXxQtb6rpEmIy/3GIltPwM+/T4m/IuaSDZOToWK65ruC00g==}
     peerDependencies:
       '@capacitor/core': ^8.1.0
+
+  '@capacitor/synapse@1.0.4':
+    resolution: {integrity: sha512-/C1FUo8/OkKuAT4nCIu/34ny9siNHr9qtFezu4kxm6GY1wNFxrCFWjfYx5C1tUhVGz3fxBABegupkpjXvjCHrw==}
 
   '@capsizecss/unpack@4.0.0':
     resolution: {integrity: sha512-VERIM64vtTP1C4mxQ5thVT9fK0apjPFobqybMtA1UdUujWka24ERHbRHFGmpbbhp73MhV+KSsHQH9C6uOTdEQA==}
@@ -4542,11 +4550,6 @@ packages:
     peerDependencies:
       react: '*'
       react-native: '*'
-
-  expo-local-authentication@15.0.2:
-    resolution: {integrity: sha512-v7TOfovuivGWffA8B0FudEas+njMKTrjhaPpJYLASiTLTP3zUYqtumNgZ9pkaDB6Cagq0+DeNH39AI8tdEBUkQ==}
-    peerDependencies:
-      expo: '*'
 
   expo-manifests@1.0.10:
     resolution: {integrity: sha512-oxDUnURPcL4ZsOBY6X1DGWGuoZgVAFzp6PISWV7lPP2J0r8u1/ucuChBgpK7u1eLGFp6sDIPwXyEUCkI386XSQ==}
@@ -9722,9 +9725,16 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@capacitor/filesystem@8.1.1(@capacitor/core@8.1.0)':
+    dependencies:
+      '@capacitor/core': 8.1.0
+      '@capacitor/synapse': 1.0.4
+
   '@capacitor/ios@8.1.0(@capacitor/core@8.1.0)':
     dependencies:
       '@capacitor/core': 8.1.0
+
+  '@capacitor/synapse@1.0.4': {}
 
   '@capsizecss/unpack@4.0.0':
     dependencies:
@@ -13751,11 +13761,6 @@ snapshots:
     transitivePeerDependencies:
       - expo
       - supports-color
-
-  expo-local-authentication@15.0.2(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1)):
-    dependencies:
-      expo: 52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1)
-      invariant: 2.2.4
 
   expo-manifests@1.0.10(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1)):
     dependencies:
