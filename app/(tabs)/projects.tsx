@@ -8,8 +8,6 @@
 import { selectProjects, useProjectStore } from '@thumbcode/state';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, TextInput, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge, EmptyState } from '@/components/display';
 import {
   AgentIcon,
@@ -39,7 +37,6 @@ function getStatusBadge(status: 'active' | 'idle' | 'error') {
 
 export default function ProjectsScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = useState('');
 
   const projects = useProjectStore(selectProjects);
@@ -51,30 +48,28 @@ export default function ProjectsScreen() {
   );
 
   return (
-    <View className="flex-1 bg-charcoal">
+    <div className="flex-1 bg-charcoal">
       <Container padding="md">
         {/* Search */}
-        <View
+        <div
           className="bg-surface flex-row items-center px-4 py-3 mb-4"
           style={organicBorderRadius.card}
         >
-          <View className="mr-3">
+          <div className="mr-3">
             <SearchIcon size={20} color="warmGray" turbulence={0.2} />
-          </View>
-          <TextInput
+          </div>
+          <input
             placeholder="Search projects..."
-            placeholderTextColor={getColor('neutral', '400')}
             value={searchQuery}
             onChangeText={setSearchQuery}
             className="flex-1 text-white font-body"
           />
-        </View>
+        </div>
       </Container>
 
-      <ScrollView
+      <div
         className="flex-1"
-        contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
-        showsVerticalScrollIndicator={false}
+}
       >
         <Container padding="md">
           {filteredProjects.length === 0 ? (
@@ -95,9 +90,9 @@ export default function ProjectsScreen() {
           ) : (
             <VStack spacing="md">
               {filteredProjects.map((project) => (
-                <Pressable
+                <button type="button"
                   key={project.id}
-                  onPress={() => router.push(`/project/${project.id}`)}
+                  onClick={() => router.push(`/project/${project.id}`)}
                   className="bg-surface p-4 active:bg-neutral-700"
                   style={organicBorderRadius.card}
                 >
@@ -147,31 +142,24 @@ export default function ProjectsScreen() {
                       Opened {new Date(project.lastOpenedAt).toLocaleDateString()}
                     </Text>
                   </HStack>
-                </Pressable>
+                </button>
               ))}
             </VStack>
           )}
         </Container>
-      </ScrollView>
+      </div>
 
       {/* FAB */}
-      <Pressable
-        onPress={() => router.push('/(onboarding)/create-project')}
+      <button type="button"
+        onClick={() => router.push('/(onboarding)/create-project')}
         className="absolute bottom-6 right-6 w-14 h-14 bg-coral-500 items-center justify-center active:bg-coral-600"
-        style={[
-          organicBorderRadius.cta,
-          {
-            marginBottom: insets.bottom,
-            shadowColor: getColor('coral', '500'),
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.3,
-            shadowRadius: 8,
-            elevation: 8,
-          },
-        ]}
+        style={{
+          ...organicBorderRadius.cta,
+          boxShadow: '0 4px 8px rgba(255, 112, 89, 0.3)',
+        }}
       >
         <Text className="text-white text-2xl">+</Text>
-      </Pressable>
-    </View>
+      </button>
+    </div>
   );
 }

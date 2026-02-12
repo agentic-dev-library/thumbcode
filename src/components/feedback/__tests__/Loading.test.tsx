@@ -1,13 +1,13 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import { LoadingOverlay, Skeleton, Spinner } from '../Loading';
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { card: {} },
 }));
 
-jest.mock('@/utils/design-tokens', () => ({
-  getColor: jest.fn(() => '#FF7059'),
-  getColorWithOpacity: jest.fn(() => 'rgba(255,112,89,0.2)'),
+vi.mock('@/utils/design-tokens', () => ({
+  getColor: vi.fn(() => '#FF7059'),
+  getColorWithOpacity: vi.fn(() => 'rgba(255,112,89,0.2)'),
 }));
 
 describe('Spinner', () => {

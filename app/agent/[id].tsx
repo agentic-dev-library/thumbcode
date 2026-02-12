@@ -8,8 +8,6 @@ import { type Agent, useAgentStore } from '@thumbcode/state';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import type React from 'react';
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AgentActions, AgentHistory, AgentMetrics } from '@/components/agents';
 import { Badge, StatusBadge } from '@/components/display';
 import { ProgressBar } from '@/components/feedback';
@@ -88,7 +86,6 @@ function getAvatarColor(role: Agent['role']): IconColor {
 
 export default function AgentDetailScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<'overview' | 'history'>('overview');
 
@@ -109,23 +106,23 @@ export default function AgentDetailScreen() {
 
   if (!id || !agent) {
     return (
-      <View className="flex-1 bg-charcoal items-center justify-center px-6">
+      <div className="flex-1 bg-charcoal items-center justify-center px-6">
         <Text variant="display" size="xl" className="text-white text-center mb-2">
           Agent not found
         </Text>
         <Text className="text-neutral-500 text-center mb-6">
           This agent ID doesn't exist in local state. Go back and select an agent from the list.
         </Text>
-        <Pressable
-          onPress={() => router.back()}
+        <button type="button"
+          onClick={() => router.back()}
           className="bg-surface px-4 py-3 active:bg-neutral-700"
           style={organicBorderRadius.button}
-          accessibilityRole="button"
-          accessibilityLabel="Go back"
+          role="button"
+          aria-label="Go back"
         >
           <Text className="text-white text-center font-semibold">Back</Text>
-        </Pressable>
-      </View>
+        </button>
+      </div>
     );
   }
 
@@ -140,16 +137,16 @@ export default function AgentDetailScreen() {
         }}
       />
 
-      <View className="flex-1 bg-charcoal" style={{ paddingTop: insets.top }}>
+      <div className="flex-1 bg-charcoal" >
         {/* Header */}
         <Container padding="lg" className="border-b border-neutral-800">
           <HStack spacing="lg" align="center">
-            <View
+            <div
               className={`w-20 h-20 items-center justify-center ${getRoleColor(agent.role)}`}
               style={organicBorderRadius.hero}
             >
               <AvatarIcon size={40} color={getAvatarColor(agent.role)} turbulence={0.25} />
-            </View>
+            </div>
 
             <VStack spacing="xs" className="flex-1">
               <HStack spacing="sm" align="center">
@@ -174,7 +171,7 @@ export default function AgentDetailScreen() {
         {/* Current Task */}
         {currentTask && (
           <Container padding="md" className="border-b border-neutral-800">
-            <View className="bg-surface p-4" style={organicBorderRadius.card}>
+            <div className="bg-surface p-4" style={organicBorderRadius.card}>
               <HStack justify="between" align="center" className="mb-2">
                 <Text size="sm" className="text-neutral-400">
                   Current Task
@@ -193,33 +190,32 @@ export default function AgentDetailScreen() {
                 </Text>
               </HStack>
               <ProgressBar value={progress} color="secondary" size="md" />
-            </View>
+            </div>
           </Container>
         )}
 
         {/* Tabs */}
-        <View className="flex-row border-b border-neutral-800">
+        <div className="flex-row border-b border-neutral-800">
           {(['overview', 'history'] as const).map((tab) => (
-            <Pressable
+            <button type="button"
               key={tab}
-              onPress={() => setActiveTab(tab)}
+              onClick={() => setActiveTab(tab)}
               className={`flex-1 py-3 ${activeTab === tab ? 'border-b-2 border-coral-500' : ''}`}
-              accessibilityRole="button"
-              accessibilityLabel={`Show ${tab}`}
+              role="button"
+              aria-label={`Show ${tab}`}
             >
               <Text
                 className={`text-center capitalize ${activeTab === tab ? 'text-coral-500 font-semibold' : 'text-neutral-400'}`}
               >
                 {tab}
               </Text>
-            </Pressable>
+            </button>
           ))}
-        </View>
+        </div>
 
-        <ScrollView
+        <div
           className="flex-1"
-          contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
-          showsVerticalScrollIndicator={false}
+}
         >
           <Container padding="lg">
             {activeTab === 'overview' ? (
@@ -235,8 +231,8 @@ export default function AgentDetailScreen() {
               <AgentHistory tasks={tasks} />
             )}
           </Container>
-        </ScrollView>
-      </View>
+        </div>
+      </div>
     </>
   );
 }

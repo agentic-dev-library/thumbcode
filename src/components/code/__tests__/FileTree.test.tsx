@@ -1,7 +1,7 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { fireEvent, render } from '@testing-library/react';
 import { type FileNode, FileTree } from '../FileTree';
 
-jest.mock('@/components/icons', () => ({
+vi.mock('@/components/icons', () => ({
   ChevronDownIcon: () => 'ChevronDownIcon',
   FileCodeIcon: () => 'FileCodeIcon',
   FileConfigIcon: () => 'FileConfigIcon',
@@ -15,7 +15,7 @@ jest.mock('@/components/icons', () => ({
   FolderOpenIcon: () => 'FolderOpenIcon',
 }));
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { card: {} },
 }));
 
@@ -67,7 +67,7 @@ describe('FileTree', () => {
   });
 
   it('calls onSelectFile when a file is pressed', () => {
-    const onSelectFile = jest.fn();
+    const onSelectFile = vi.fn();
     const { UNSAFE_getAllByProps } = render(
       <FileTree data={mockData} onSelectFile={onSelectFile} defaultExpanded={['src']} />
     );
@@ -78,7 +78,7 @@ describe('FileTree', () => {
       btn.props.accessibilityLabel?.includes('App.tsx')
     );
     if (appButton) {
-      fireEvent.press(appButton);
+      fireEvent.click(appButton);
       expect(onSelectFile).toHaveBeenCalledWith('src/App.tsx');
     }
   });

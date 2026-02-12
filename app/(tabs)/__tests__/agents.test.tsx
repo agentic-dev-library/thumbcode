@@ -1,12 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react';
 import AgentsScreen from '../agents';
 
 // Mock dependencies
-jest.mock('expo-router', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-  }),
-}));
 
 // Skipping tests due to environment issues with jest-expo/react-native-web
 // where finding elements by text/testID is failing despite rendering occurring.
@@ -26,7 +21,7 @@ describe.skip('AgentsScreen', () => {
     render(<AgentsScreen />);
 
     // Select 'implementer' role filter using testID
-    fireEvent.press(screen.getByTestId('role-filter-implementer'));
+    fireEvent.click(screen.getByTestId('role-filter-implementer'));
 
     // After filtering:
     // 'Implementer' (name) SHOULD be present.
@@ -56,11 +51,11 @@ describe.skip('AgentsScreen', () => {
   it('resets filter when All is pressed', () => {
     render(<AgentsScreen />);
 
-    fireEvent.press(screen.getByTestId('role-filter-implementer'));
+    fireEvent.click(screen.getByTestId('role-filter-implementer'));
     expect(screen.queryByText('Architect')).toBeNull();
 
     // Select 'All'
-    fireEvent.press(screen.getByTestId('role-filter-all'));
+    fireEvent.click(screen.getByTestId('role-filter-all'));
     expect(screen.getAllByText('Architect').length).toBeGreaterThan(0);
   });
 });

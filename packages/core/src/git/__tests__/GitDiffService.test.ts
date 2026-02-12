@@ -9,46 +9,41 @@ import git from 'isomorphic-git';
 import { GitDiffService } from '../GitDiffService';
 
 // Mock isomorphic-git
-jest.mock('isomorphic-git', () => ({
+vi.mock('isomorphic-git', () => ({
   __esModule: true,
   default: {
-    statusMatrix: jest.fn(),
-    resolveRef: jest.fn(),
-    readCommit: jest.fn(),
-    readTree: jest.fn(),
-    readBlob: jest.fn(),
+    statusMatrix: vi.fn(),
+    resolveRef: vi.fn(),
+    readCommit: vi.fn(),
+    readTree: vi.fn(),
+    readBlob: vi.fn(),
   },
 }));
 
 // Mock git-fs
-jest.mock('../git-fs', () => ({
+vi.mock('../git-fs', () => ({
   fs: {
     promises: {
-      mkdir: jest.fn().mockResolvedValue(undefined),
+      mkdir: vi.fn().mockResolvedValue(undefined),
     },
   },
   http: {},
 }));
 
 // Mock expo-file-system
-jest.mock('expo-file-system', () => ({
-  documentDirectory: '/mock/documents/',
-  readAsStringAsync: jest.fn(),
-  deleteAsync: jest.fn(),
-}));
 
 // Mock diff module
-jest.mock('diff', () => ({
-  createPatch: jest.fn().mockReturnValue(
+vi.mock('diff', () => ({
+  createPatch: vi.fn().mockReturnValue(
     '--- old\n+++ new\n@@ -1,1 +1,1 @@\n-old line\n+new line\n'
   ),
 }));
 
-const mockGit = git as jest.Mocked<typeof git>;
+const mockGit = git as Mocked<typeof git>;
 
 describe('GitDiffService', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('status', () => {

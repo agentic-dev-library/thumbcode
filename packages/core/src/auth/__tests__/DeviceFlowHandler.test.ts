@@ -5,7 +5,7 @@
  * requesting device code, error handling, and abort support.
  */
 
-jest.mock('@thumbcode/config', () => ({
+vi.mock('@thumbcode/config', () => ({
   GITHUB_OAUTH: {
     deviceCodeUrl: 'https://github.com/login/device/code',
     accessTokenUrl: 'https://github.com/login/oauth/access_token',
@@ -17,14 +17,14 @@ jest.mock('@thumbcode/config', () => ({
 
 import { DeviceFlowHandler } from '../DeviceFlowHandler';
 
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 describe('DeviceFlowHandler', () => {
   let handler: DeviceFlowHandler;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     handler = new DeviceFlowHandler();
   });
 
@@ -62,7 +62,7 @@ describe('DeviceFlowHandler', () => {
     });
 
     it('should fail when clientId is empty', async () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
       const result = await handler.startDeviceFlow({
         clientId: '',
         onError,
@@ -80,7 +80,7 @@ describe('DeviceFlowHandler', () => {
         json: () => Promise.resolve(mockDeviceCodeResponse),
       });
 
-      const onUserCode = jest.fn();
+      const onUserCode = vi.fn();
       await handler.startDeviceFlow({
         clientId: 'test-client-id',
         onUserCode,
@@ -98,7 +98,7 @@ describe('DeviceFlowHandler', () => {
         json: () => Promise.resolve(mockDeviceCodeResponse),
       });
 
-      const onSetState = jest.fn();
+      const onSetState = vi.fn();
       await handler.startDeviceFlow(
         { clientId: 'test-client-id' },
         undefined,
@@ -116,8 +116,8 @@ describe('DeviceFlowHandler', () => {
         text: () => Promise.resolve('Unauthorized'),
       });
 
-      const onError = jest.fn();
-      const onSetState = jest.fn();
+      const onError = vi.fn();
+      const onSetState = vi.fn();
       const result = await handler.startDeviceFlow(
         { clientId: 'test-client-id', onError },
         undefined,
@@ -133,7 +133,7 @@ describe('DeviceFlowHandler', () => {
     it('should handle network errors', async () => {
       mockFetch.mockRejectedValueOnce(new Error('Network failure'));
 
-      const onError = jest.fn();
+      const onError = vi.fn();
       const result = await handler.startDeviceFlow({
         clientId: 'test-client-id',
         onError,

@@ -3,18 +3,18 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import { secureFetch } from '../api/api';
 
 // Mock secureFetch
-jest.mock('../api/api', () => ({
-  secureFetch: jest.fn(),
+vi.mock('../api/api', () => ({
+  secureFetch: vi.fn(),
 }));
 
 describe('CredentialService Performance', () => {
   const mockDelay = 100;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Mock SecureStoragePlugin to return items for specific keys
-    (SecureStoragePlugin.get as jest.Mock).mockImplementation(async ({ key }: { key: string }) => {
+    (SecureStoragePlugin.get as Mock).mockImplementation(async ({ key }: { key: string }) => {
       if (key.includes('github')) {
         return { value: JSON.stringify({ secret: 'ghp_000000000000000000000000000000000000', storedAt: '2023-01-01', type: 'github' }) };
       }
@@ -28,7 +28,7 @@ describe('CredentialService Performance', () => {
     });
 
     // Mock secureFetch to simulate network delay
-    (secureFetch as jest.Mock).mockImplementation(async () => {
+    (secureFetch as Mock).mockImplementation(async () => {
       await new Promise((resolve) => setTimeout(resolve, mockDelay));
       return {
         ok: true,

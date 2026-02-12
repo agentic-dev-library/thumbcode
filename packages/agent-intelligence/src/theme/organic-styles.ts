@@ -1,4 +1,3 @@
-import type { ViewStyle } from 'react-native';
 
 /**
  * Organic Style Constants (agent-intelligence)
@@ -14,7 +13,7 @@ export const organicBorderRadius = {
     borderTopRightRadius: 10,
     borderBottomRightRadius: 8,
     borderBottomLeftRadius: 12,
-  } as ViewStyle,
+  } as React.CSSProperties,
 
   /** Primary and secondary buttons */
   button: {
@@ -22,7 +21,7 @@ export const organicBorderRadius = {
     borderTopRightRadius: 12,
     borderBottomRightRadius: 10,
     borderBottomLeftRadius: 14,
-  } as ViewStyle,
+  } as React.CSSProperties,
 
   /** Small badges, tags, chips */
   badge: {
@@ -30,7 +29,7 @@ export const organicBorderRadius = {
     borderTopRightRadius: 8,
     borderBottomRightRadius: 10,
     borderBottomLeftRadius: 4,
-  } as ViewStyle,
+  } as React.CSSProperties,
 
   /** Chat bubbles (text messages) */
   chatBubbleUser: {
@@ -38,13 +37,13 @@ export const organicBorderRadius = {
     borderTopRightRadius: 6,
     borderBottomRightRadius: 16,
     borderBottomLeftRadius: 14,
-  } as ViewStyle,
+  } as React.CSSProperties,
   chatBubbleAgent: {
     borderTopLeftRadius: 6,
     borderTopRightRadius: 16,
     borderBottomRightRadius: 16,
     borderBottomLeftRadius: 14,
-  } as ViewStyle,
+  } as React.CSSProperties,
 
   /** Code blocks and monospace containers */
   codeBlock: {
@@ -52,6 +51,6 @@ export const organicBorderRadius = {
     borderTopRightRadius: 10,
     borderBottomRightRadius: 12,
     borderBottomLeftRadius: 8,
-  } as ViewStyle,
+  } as React.CSSProperties,
 } as const;
 

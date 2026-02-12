@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import WelcomeScreen from '../welcome';
 
 describe('WelcomeScreen', () => {

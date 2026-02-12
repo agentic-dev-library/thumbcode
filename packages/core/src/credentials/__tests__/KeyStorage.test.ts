@@ -11,19 +11,19 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import { KeyStorage } from '../KeyStorage';
 import type { KeyValidator } from '../KeyValidator';
 
-const mockValidator: jest.Mocked<KeyValidator> = {
-  validateCredential: jest.fn(),
-  maskSecret: jest.fn(),
+const mockValidator: Mocked<KeyValidator> = {
+  validateCredential: vi.fn(),
+  maskSecret: vi.fn(),
 } as any;
 
-const mockSecureStorage = SecureStoragePlugin as jest.Mocked<typeof SecureStoragePlugin>;
-const mockBiometricAuth = BiometricAuth as jest.Mocked<typeof BiometricAuth>;
+const mockSecureStorage = SecureStoragePlugin as Mocked<typeof SecureStoragePlugin>;
+const mockBiometricAuth = BiometricAuth as Mocked<typeof BiometricAuth>;
 
 describe('KeyStorage', () => {
   let storage: KeyStorage;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     storage = new KeyStorage(mockValidator);
   });
 

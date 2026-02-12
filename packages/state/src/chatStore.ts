@@ -5,9 +5,8 @@
  * Supports multiple conversation threads with different agents.
  */
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { createJSONStorage, devtools, persist } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 // Message sender types
@@ -255,7 +254,6 @@ export const useChatStore = create<ChatState>()(
       })),
       {
         name: 'thumbcode-chat-storage',
-        storage: createJSONStorage(() => AsyncStorage),
         // Limit persisted messages to prevent storage bloat
         partialize: (state) => ({
           threads: state.threads,

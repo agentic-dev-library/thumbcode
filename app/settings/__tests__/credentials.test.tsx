@@ -1,29 +1,20 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 
 // Provide minimal document stub for react-native-web TextInput
 if (typeof document === 'undefined') {
   (global as Record<string, unknown>).document = {
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    createElement: jest.fn(() => ({ style: {} })),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    createElement: vi.fn(() => ({ style: {} })),
   };
 }
 
 import CredentialsScreen from '../credentials';
 
 // Mock expo-router Stack
-jest.mock('expo-router', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-    back: jest.fn(),
-  }),
-  Stack: {
-    Screen: () => null,
-  },
-}));
 
 // Mock @thumbcode/config
-jest.mock('@thumbcode/config', () => ({
+vi.mock('@thumbcode/config', () => ({
   SECURE_STORE_KEYS: {
     anthropic: 'thumbcode_cred_anthropic',
     openai: 'thumbcode_cred_openai',
@@ -32,30 +23,30 @@ jest.mock('@thumbcode/config', () => ({
 }));
 
 // Mock @thumbcode/core
-jest.mock('@thumbcode/core', () => ({
+vi.mock('@thumbcode/core', () => ({
   CredentialService: {
-    store: jest.fn(() => Promise.resolve({ isValid: true, message: 'OK' })),
+    store: vi.fn(() => Promise.resolve({ isValid: true, message: 'OK' })),
   },
   GitHubAuthService: {
-    signOut: jest.fn(() => Promise.resolve(true)),
+    signOut: vi.fn(() => Promise.resolve(true)),
   },
 }));
 
 // Mock @thumbcode/state
-jest.mock('@thumbcode/state', () => ({
-  useCredentialStore: jest.fn((selector) =>
+vi.mock('@thumbcode/state', () => ({
+  useCredentialStore: vi.fn((selector) =>
     selector({
       credentials: [],
-      addCredential: jest.fn(() => 'cred-1'),
-      setValidationResult: jest.fn(),
-      removeCredential: jest.fn(),
+      addCredential: vi.fn(() => 'cred-1'),
+      setValidationResult: vi.fn(),
+      removeCredential: vi.fn(),
     })
   ),
   selectCredentialByProvider: () => () => null,
-  useUserStore: jest.fn((selector) =>
+  useUserStore: vi.fn((selector) =>
     selector({
-      setAuthenticated: jest.fn(),
-      setGitHubProfile: jest.fn(),
+      setAuthenticated: vi.fn(),
+      setGitHubProfile: vi.fn(),
     })
   ),
 }));

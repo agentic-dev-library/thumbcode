@@ -7,8 +7,6 @@
 
 import { Tabs } from 'expo-router';
 import type React from 'react';
-import { Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   AgentIcon,
   ChatIcon,
@@ -27,21 +25,20 @@ interface TabIconProps {
 
 function TabIcon({ Icon, label, focused }: Readonly<TabIconProps>) {
   return (
-    <View className="items-center justify-center py-2">
-      <View className={`mb-1 ${focused ? 'opacity-100' : 'opacity-50'}`}>
+    <div className="items-center justify-center py-2">
+      <div className={`mb-1 ${focused ? 'opacity-100' : 'opacity-50'}`}>
         <Icon size={24} color={focused ? 'coral' : 'warmGray'} turbulence={0.2} />
-      </View>
+      </div>
       <Text
         className={`text-xs font-body ${focused ? 'text-coral-500 font-semibold' : 'text-neutral-400'}`}
       >
         {label}
       </Text>
-    </View>
+    </div>
   );
 }
 
 export default function TabLayout() {
-  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
@@ -59,8 +56,8 @@ export default function TabLayout() {
           backgroundColor: getColor('neutral', '800'),
           borderTopColor: getColor('neutral', '700'),
           borderTopWidth: 1,
-          height: 80 + insets.bottom,
-          paddingBottom: insets.bottom,
+          height: 80,
+          paddingBottom: 16,
         },
         tabBarActiveTintColor: getColor('coral', '500'),
         tabBarInactiveTintColor: getColor('neutral', '400'),

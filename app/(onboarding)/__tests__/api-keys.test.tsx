@@ -1,18 +1,18 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 
 // Provide minimal document stub for react-native-web TextInput
 if (typeof document === 'undefined') {
   (global as Record<string, unknown>).document = {
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    createElement: jest.fn(() => ({ style: {} })),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    createElement: vi.fn(() => ({ style: {} })),
   };
 }
 
 import ApiKeysScreen from '../api-keys';
 
 // Mock @thumbcode/config
-jest.mock('@thumbcode/config', () => ({
+vi.mock('@thumbcode/config', () => ({
   SECURE_STORE_KEYS: {
     anthropic: 'thumbcode_cred_anthropic',
     openai: 'thumbcode_cred_openai',
@@ -21,19 +21,19 @@ jest.mock('@thumbcode/config', () => ({
 }));
 
 // Mock @thumbcode/core
-jest.mock('@thumbcode/core', () => ({
+vi.mock('@thumbcode/core', () => ({
   CredentialService: {
-    validateCredential: jest.fn(() => Promise.resolve({ isValid: false, message: 'Test' })),
-    store: jest.fn(() => Promise.resolve({ isValid: true, message: 'OK' })),
+    validateCredential: vi.fn(() => Promise.resolve({ isValid: false, message: 'Test' })),
+    store: vi.fn(() => Promise.resolve({ isValid: true, message: 'OK' })),
   },
 }));
 
 // Mock @thumbcode/state
-jest.mock('@thumbcode/state', () => ({
-  useCredentialStore: jest.fn((selector) =>
+vi.mock('@thumbcode/state', () => ({
+  useCredentialStore: vi.fn((selector) =>
     selector({
-      addCredential: jest.fn(() => 'cred-1'),
-      setValidationResult: jest.fn(),
+      addCredential: vi.fn(() => 'cred-1'),
+      setValidationResult: vi.fn(),
     })
   ),
 }));

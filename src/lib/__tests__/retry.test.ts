@@ -12,24 +12,24 @@ import {
 } from '../retry';
 
 // Mock the logger
-jest.mock('../logger', () => ({
+vi.mock('../logger', () => ({
   logger: {
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    fatal: jest.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    fatal: vi.fn(),
   },
 }));
 
 describe('Retry Utility', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('retry', () => {
     it('should succeed on first attempt', async () => {
-      const fn = jest.fn().mockResolvedValue('success');
+      const fn = vi.fn().mockResolvedValue('success');
       const result = await retry(fn);
       expect(result).toBe('success');
       expect(fn).toHaveBeenCalledTimes(1);
@@ -51,7 +51,7 @@ describe('Retry Utility', () => {
     });
 
     it('should throw after max attempts', async () => {
-      const fn = jest.fn().mockRejectedValue(new Error('Always fails'));
+      const fn = vi.fn().mockRejectedValue(new Error('Always fails'));
 
       await expect(
         retry(fn, {
@@ -64,7 +64,7 @@ describe('Retry Utility', () => {
     });
 
     it('should respect maxAttempts option', async () => {
-      const fn = jest.fn().mockRejectedValue(new Error('Fail'));
+      const fn = vi.fn().mockRejectedValue(new Error('Fail'));
 
       await expect(
         retry(fn, {
@@ -77,7 +77,7 @@ describe('Retry Utility', () => {
     });
 
     it('should normalize maxAttempts to at least 1', async () => {
-      const fn = jest.fn().mockRejectedValue(new Error('Fail'));
+      const fn = vi.fn().mockRejectedValue(new Error('Fail'));
 
       await expect(
         retry(fn, {
@@ -91,8 +91,8 @@ describe('Retry Utility', () => {
     });
 
     it('should call onRetry callback', async () => {
-      const fn = jest.fn().mockRejectedValueOnce(new Error('Fail')).mockResolvedValue('success');
-      const onRetry = jest.fn();
+      const fn = vi.fn().mockRejectedValueOnce(new Error('Fail')).mockResolvedValue('success');
+      const onRetry = vi.fn();
 
       await retry(fn, {
         maxAttempts: 3,
@@ -105,8 +105,8 @@ describe('Retry Utility', () => {
     });
 
     it('should call onFailure callback when all retries fail', async () => {
-      const fn = jest.fn().mockRejectedValue(new Error('Fail'));
-      const onFailure = jest.fn();
+      const fn = vi.fn().mockRejectedValue(new Error('Fail'));
+      const onFailure = vi.fn();
 
       await expect(
         retry(fn, {
@@ -121,7 +121,7 @@ describe('Retry Utility', () => {
     });
 
     it('should respect isRetryable option', async () => {
-      const fn = jest.fn().mockRejectedValue(new Error('Non-retryable'));
+      const fn = vi.fn().mockRejectedValue(new Error('Non-retryable'));
 
       await expect(
         retry(fn, {
@@ -181,7 +181,7 @@ describe('Retry Utility', () => {
 
   describe('withRetry', () => {
     it('should wrap a function with retry logic', async () => {
-      const fn = jest.fn().mockResolvedValue('success');
+      const fn = vi.fn().mockResolvedValue('success');
       const wrappedFn = withRetry(fn, { maxAttempts: 3 });
 
       const result = await wrappedFn('arg1', 'arg2');
@@ -190,7 +190,7 @@ describe('Retry Utility', () => {
     });
 
     it('should pass arguments to wrapped function', async () => {
-      const fn = jest.fn().mockImplementation((a: number, b: number) => Promise.resolve(a + b));
+      const fn = vi.fn().mockImplementation((a: number, b: number) => Promise.resolve(a + b));
       const wrappedFn = withRetry(fn);
 
       const result = await wrappedFn(2, 3);

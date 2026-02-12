@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
-import { View, type ViewProps } from 'react-native';
 
-interface ContainerProps extends ViewProps {
+interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'padded' | 'centered';
   children: ReactNode;
 }
@@ -21,8 +20,8 @@ export function Container({ variant = 'default', className = '', children, ...pr
   }[variant];
 
   return (
-    <View className={`${variantClasses} ${className}`} {...props}>
+    <div className={`${variantClasses} ${className}`} {...props}>
       {children}
-    </View>
+    </div>
   );
 }

@@ -2,7 +2,7 @@
  * Agent Store Tests
  */
 
-import { act, renderHook } from '@testing-library/react-native';
+import { act, renderHook } from '@testing-library/react';
 import type { Agent } from '../agentStore';
 import {
   selectActiveAgent,

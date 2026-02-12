@@ -1,12 +1,7 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import EditorSettingsScreen from '../editor';
 
 // Mock expo-router Stack
-jest.mock('expo-router', () => ({
-  Stack: {
-    Screen: () => null,
-  },
-}));
 
 describe('EditorSettingsScreen', () => {
   it('renders without crashing', () => {

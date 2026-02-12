@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import { Button } from '../Button';
 
 describe('Button', () => {
@@ -17,7 +17,7 @@ describe('Button', () => {
   });
 
   it('is disabled when disabled prop is true', () => {
-    const onPress = jest.fn();
+    const onPress = vi.fn();
     const { root, toJSON } = render(
       <Button disabled onPress={onPress}>
         Test Button

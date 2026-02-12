@@ -7,9 +7,7 @@
 
 import { useRouter } from 'expo-router';
 import type React from 'react';
-import { useEffect, useRef } from 'react';
-import { Animated, Pressable, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useEffect, useState } from 'react';
 import {
   AgentIcon,
   CelebrateIcon,
@@ -62,27 +60,13 @@ const CAPABILITIES: Capability[] = [
 
 export default function CompleteScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { completeOnboarding } = useOnboarding();
-  const scaleAnim = useRef(new Animated.Value(0.5)).current;
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Entrance animation
-    Animated.parallel([
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: 50,
-        friction: 7,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [scaleAnim, fadeAnim]);
+    // Trigger entrance animation on mount
+    requestAnimationFrame(() => setIsVisible(true));
+  }, []);
 
   const handleGetStarted = async () => {
     // Mark onboarding as complete in storage
@@ -91,25 +75,26 @@ export default function CompleteScreen() {
   };
 
   return (
-    <View className="flex-1 bg-charcoal" style={{ paddingTop: insets.top }}>
+    <div className="flex-1 bg-charcoal">
       <Container padding="lg" className="flex-1">
         {/* Celebration */}
         <VStack align="center" className="mt-12 mb-10">
-          <Animated.View
+          <div
             style={{
-              transform: [{ scale: scaleAnim }],
-              opacity: fadeAnim,
+              transform: isVisible ? 'scale(1)' : 'scale(0.5)',
+              opacity: isVisible ? 1 : 0,
+              transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease',
             }}
           >
-            <View
+            <div
               className="w-32 h-32 bg-teal-600/20 items-center justify-center"
               style={organicBorderRadius.hero}
             >
               <CelebrateIcon size={64} color="gold" turbulence={0.3} />
-            </View>
-          </Animated.View>
+            </div>
+          </div>
 
-          <Animated.View style={{ opacity: fadeAnim }}>
+          <div style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.5s ease' }}>
             <VStack spacing="sm" align="center" className="mt-6">
               <Text variant="display" size="3xl" weight="bold" className="text-white text-center">
                 You're All Set!
@@ -118,54 +103,53 @@ export default function CompleteScreen() {
                 ThumbCode is ready. Start building amazing apps with your AI team.
               </Text>
             </VStack>
-          </Animated.View>
+          </div>
         </VStack>
 
         {/* Capabilities */}
-        <Animated.View style={{ opacity: fadeAnim }}>
+        <div style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.5s ease 0.2s' }}>
           <VStack spacing="sm">
             {CAPABILITIES.map((cap) => (
-              <View
+              <div
                 key={cap.title}
                 className="bg-surface p-4 flex-row items-center"
                 style={organicBorderRadius.button}
               >
-                <View
+                <div
                   className="w-12 h-12 bg-charcoal items-center justify-center mr-4"
                   style={organicBorderRadius.card}
                 >
                   <cap.Icon size={24} color={cap.iconColor} turbulence={0.2} />
-                </View>
-                <View className="flex-1">
+                </div>
+                <div className="flex-1">
                   <Text weight="semibold" className="text-white">
                     {cap.title}
                   </Text>
                   <Text size="sm" className="text-neutral-400">
                     {cap.description}
                   </Text>
-                </View>
+                </div>
                 <SuccessIcon size={20} color="teal" turbulence={0.2} />
-              </View>
+              </div>
             ))}
           </VStack>
-        </Animated.View>
+        </div>
       </Container>
 
       {/* Bottom CTA */}
-      <View
-        className="border-t border-neutral-800 px-6 py-4"
-        style={{ paddingBottom: insets.bottom + 16 }}
+      <div
+        className="border-t border-neutral-800 px-6 py-4 pb-8"
       >
-        <Pressable
-          onPress={handleGetStarted}
+        <button type="button"
+          onClick={handleGetStarted}
           className="bg-coral-500 py-4 active:bg-coral-600"
           style={organicBorderRadius.cta}
         >
           <Text weight="semibold" className="text-white text-center text-lg">
             Start Building →
           </Text>
-        </Pressable>
-      </View>
-    </View>
+        </button>
+      </div>
+    </div>
   );
 }

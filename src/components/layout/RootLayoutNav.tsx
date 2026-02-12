@@ -9,10 +9,8 @@
  */
 
 import { useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { useOnboarding } from '@/contexts/onboarding';
-import { getColor } from '@/utils/design-tokens';
 
 export function RootLayoutNav() {
   const { isLoading, hasCompletedOnboarding } = useOnboarding();
@@ -33,9 +31,9 @@ export function RootLayoutNav() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 bg-charcoal items-center justify-center">
-        <ActivityIndicator size="large" color={getColor('coral', '500')} />
-      </View>
+      <div className="flex-1 bg-charcoal flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
+      </div>
     );
   }
 

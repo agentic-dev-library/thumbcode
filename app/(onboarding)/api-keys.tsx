@@ -10,8 +10,6 @@ import { CredentialService } from '@thumbcode/core';
 import { useCredentialStore } from '@thumbcode/state';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StepsProgress } from '@/components/feedback';
 import { CloseIcon, LightbulbIcon, SecurityIcon, SuccessIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
@@ -28,7 +26,6 @@ interface APIKeyState {
 
 export default function ApiKeysScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const addCredential = useCredentialStore((s) => s.addCredential);
   const setValidationResult = useCredentialStore((s) => s.setValidationResult);
 
@@ -133,11 +130,10 @@ export default function ApiKeysScreen() {
   };
 
   return (
-    <View className="flex-1 bg-charcoal" style={{ paddingTop: insets.top }}>
-      <ScrollView
+    <div className="flex-1 bg-charcoal" >
+      <div
         className="flex-1"
-        contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
-        showsVerticalScrollIndicator={false}
+}
         keyboardShouldPersistTaps="handled"
       >
         <Container padding="lg">
@@ -159,29 +155,29 @@ export default function ApiKeysScreen() {
           </VStack>
 
           {/* Security Notice */}
-          <View className="bg-teal-600/10 p-4 mb-6" style={organicBorderRadius.card}>
-            <View className="flex-row items-center mb-2">
-              <View className="mr-2">
+          <div className="bg-teal-600/10 p-4 mb-6" style={organicBorderRadius.card}>
+            <div className="flex-row items-center mb-2">
+              <div className="mr-2">
                 <SecurityIcon size={20} color="teal" turbulence={0.2} />
-              </View>
+              </div>
               <Text weight="semibold" className="text-teal-400">
                 Your Keys, Your Device
               </Text>
-            </View>
+            </div>
             <Text size="sm" className="text-neutral-400">
               Keys will be stored securely on your device. They never leave your phone and are not
               accessible to us.
             </Text>
-          </View>
+          </div>
 
           {/* Anthropic Key */}
           <VStack spacing="sm" className="mb-6">
-            <View className="flex-row items-center">
+            <div className="flex-row items-center">
               <Text weight="semibold" className="text-white flex-1">
                 Anthropic (Claude)
               </Text>
               {anthropicKey.isValidating && (
-                <ActivityIndicator size="small" color={getColor('teal', '500')} />
+                <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
               )}
               {anthropicKey.isValid === true && (
                 <SuccessIcon size={18} color="teal" turbulence={0.15} />
@@ -189,13 +185,13 @@ export default function ApiKeysScreen() {
               {anthropicKey.isValid === false && (
                 <CloseIcon size={18} color="coral" turbulence={0.15} />
               )}
-            </View>
+            </div>
 
             <Input
               placeholder="sk-ant-api03-..."
               value={anthropicKey.key}
               onChangeText={handleAnthropicChange}
-              secureTextEntry
+              type="password"
               error={anthropicKey.error}
             />
 
@@ -206,12 +202,12 @@ export default function ApiKeysScreen() {
 
           {/* OpenAI Key */}
           <VStack spacing="sm" className="mb-6">
-            <View className="flex-row items-center">
+            <div className="flex-row items-center">
               <Text weight="semibold" className="text-white flex-1">
                 OpenAI (GPT-4)
               </Text>
               {openaiKey.isValidating && (
-                <ActivityIndicator size="small" color={getColor('teal', '500')} />
+                <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
               )}
               {openaiKey.isValid === true && (
                 <SuccessIcon size={18} color="teal" turbulence={0.15} />
@@ -219,13 +215,13 @@ export default function ApiKeysScreen() {
               {openaiKey.isValid === false && (
                 <CloseIcon size={18} color="coral" turbulence={0.15} />
               )}
-            </View>
+            </div>
 
             <Input
               placeholder="sk-proj-..."
               value={openaiKey.key}
               onChangeText={handleOpenAIChange}
-              secureTextEntry
+              type="password"
               error={openaiKey.error}
             />
 
@@ -235,35 +231,35 @@ export default function ApiKeysScreen() {
           </VStack>
 
           {/* Optional Badge */}
-          <View className="bg-surface p-4" style={organicBorderRadius.card}>
-            <View className="flex-row items-start">
-              <View className="mr-2 mt-0.5">
+          <div className="bg-surface p-4" style={organicBorderRadius.card}>
+            <div className="flex-row items-start">
+              <div className="mr-2 mt-0.5">
                 <LightbulbIcon size={16} color="gold" turbulence={0.2} />
-              </View>
+              </div>
               <Text size="sm" className="text-neutral-400 flex-1">
                 <Text className="text-white">Tip:</Text> You can add more providers later in
                 Settings. At least one key is recommended to enable AI agents.
               </Text>
-            </View>
-          </View>
+            </div>
+          </div>
         </Container>
-      </ScrollView>
+      </div>
 
       {/* Bottom Buttons */}
-      <View
+      <div
         className="border-t border-neutral-800 px-6 py-4 flex-row gap-4"
-        style={{ paddingBottom: insets.bottom + 16 }}
+        style={{ paddingBottom: 16 }}
       >
-        <Pressable
-          onPress={handleSkip}
+        <button type="button"
+          onClick={handleSkip}
           className="flex-1 bg-neutral-800 py-4 active:bg-neutral-700"
           style={organicBorderRadius.cta}
         >
           <Text className="text-neutral-300 text-center">Skip for Now</Text>
-        </Pressable>
+        </button>
 
-        <Pressable
-          onPress={handleContinue}
+        <button type="button"
+          onClick={handleContinue}
           disabled={!hasAtLeastOneKey}
           className={`flex-1 py-4 ${hasAtLeastOneKey ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}
           style={organicBorderRadius.cta}
@@ -274,8 +270,8 @@ export default function ApiKeysScreen() {
           >
             Continue
           </Text>
-        </Pressable>
-      </View>
-    </View>
+        </button>
+      </div>
+    </div>
   );
 }

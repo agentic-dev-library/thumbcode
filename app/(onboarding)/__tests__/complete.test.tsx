@@ -1,12 +1,12 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import CompleteScreen from '../complete';
 
 // Mock onboarding context
-jest.mock('@/contexts/onboarding', () => ({
+vi.mock('@/contexts/onboarding', () => ({
   useOnboarding: () => ({
     isLoading: false,
     hasCompletedOnboarding: false,
-    completeOnboarding: jest.fn(() => Promise.resolve()),
+    completeOnboarding: vi.fn(() => Promise.resolve()),
   }),
 }));
 

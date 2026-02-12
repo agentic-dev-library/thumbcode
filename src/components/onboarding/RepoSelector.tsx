@@ -5,7 +5,6 @@
  */
 
 import type { Repository } from '@thumbcode/types';
-import { ActivityIndicator, Pressable, Switch, View } from 'react-native';
 import { FolderIcon, SecurityIcon, StarIcon, SuccessIcon } from '@/components/icons';
 import { VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
@@ -75,92 +74,92 @@ export function RepoSelector({
       {/* Repo List */}
       <VStack spacing="sm">
         {isLoadingRepos ? (
-          <View className="py-8 items-center justify-center">
-            <ActivityIndicator color={getColor('neutral', '50')} />
+          <div className="py-8 items-center justify-center">
+            <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
             <Text size="sm" className="text-neutral-500 mt-3 text-center">
               Loading repositories…
             </Text>
-          </View>
+          </div>
         ) : filteredRepos.length === 0 ? (
-          <View className="py-8 items-center justify-center">
+          <div className="py-8 items-center justify-center">
             <Text className="text-neutral-400 text-center">No repositories found.</Text>
             {errorMessage && (
               <Text size="sm" className="text-coral-400 text-center mt-2">
                 {errorMessage}
               </Text>
             )}
-          </View>
+          </div>
         ) : (
           filteredRepos.map((repo) => (
-            <Pressable
+            <button type="button"
               key={repo.key}
-              onPress={() => onSelectRepo(repo)}
+              onClick={() => onSelectRepo(repo)}
               className={`p-4 ${selectedRepo?.key === repo.key ? 'bg-teal-600/20 border-teal-600' : 'bg-surface border-transparent'} border`}
               style={organicBorderRadius.card}
             >
-              <View className="flex-row items-center mb-2">
-                <View className="mr-2">
+              <div className="flex-row items-center mb-2">
+                <div className="mr-2">
                   {repo.isPrivate ? (
                     <SecurityIcon size={18} color="warmGray" turbulence={0.15} />
                   ) : (
                     <FolderIcon size={18} color="gold" turbulence={0.15} />
                   )}
-                </View>
+                </div>
                 <Text weight="semibold" className="text-white flex-1">
                   {repo.name}
                 </Text>
                 {selectedRepo?.key === repo.key && (
                   <SuccessIcon size={18} color="teal" turbulence={0.15} />
                 )}
-              </View>
+              </div>
               <Text size="sm" className="text-neutral-400" numberOfLines={1}>
                 {repo.description || 'No description'}
               </Text>
-              <View className="flex-row items-center mt-1">
+              <div className="flex-row items-center mt-1">
                 <Text size="xs" className="text-neutral-500">
                   {repo.fullName}
                 </Text>
                 {(repo.stars || 0) > 0 && (
-                  <View className="flex-row items-center ml-2">
+                  <div className="flex-row items-center ml-2">
                     <StarIcon size={12} color="gold" turbulence={0.15} />
                     <Text size="xs" className="text-neutral-500 ml-1">
                       {repo.stars}
                     </Text>
-                  </View>
+                  </div>
                 )}
-              </View>
-            </Pressable>
+              </div>
+            </button>
           ))
         )}
       </VStack>
 
       {/* Create New Repository */}
       {mode === 'select' ? (
-        <Pressable
-          onPress={() => onModeChange('create')}
+        <button type="button"
+          onClick={() => onModeChange('create')}
           className="mt-4 p-4 border border-dashed border-teal-600/50 active:bg-teal-600/10"
           style={organicBorderRadius.card}
         >
-          <View className="flex-row items-center justify-center">
+          <div className="flex-row items-center justify-center">
             <Text className="text-teal-400">+ Create new repository</Text>
-          </View>
-        </Pressable>
+          </div>
+        </button>
       ) : (
         <VStack
           spacing="sm"
           className="mt-4 p-4 bg-surface border border-teal-600/30"
           style={organicBorderRadius.card}
         >
-          <View className="flex-row items-center justify-between mb-2">
+          <div className="flex-row items-center justify-between mb-2">
             <Text weight="semibold" className="text-white">
               New Repository
             </Text>
-            <Pressable onPress={() => onModeChange('select')}>
+            <button type="button" onClick={() => onModeChange('select')}>
               <Text size="sm" className="text-neutral-400">
                 Cancel
               </Text>
-            </Pressable>
-          </View>
+            </button>
+          </div>
 
           <Input
             placeholder="repository-name"
@@ -174,18 +173,15 @@ export function RepoSelector({
             onChangeText={onNewRepoDescriptionChange}
           />
 
-          <View className="flex-row items-center justify-between py-2">
+          <div className="flex-row items-center justify-between py-2">
             <Text className="text-neutral-300">Private repository</Text>
-            <Switch
-              value={newRepoPrivate}
-              onValueChange={onNewRepoPrivateChange}
-              trackColor={{
-                false: getColor('neutral', '700'),
-                true: getColor('teal', '600'),
-              }}
-              thumbColor={getColor('neutral', '50')}
+            <input type="checkbox"
+              checked={newRepoPrivate}
+              onChange={onNewRepoPrivateChange}
+              }
+              
             />
-          </View>
+          </div>
 
           {errorMessage && mode === 'create' && (
             <Text size="sm" className="text-coral-500">
@@ -193,14 +189,14 @@ export function RepoSelector({
             </Text>
           )}
 
-          <Pressable
-            onPress={onCreateNewRepo}
+          <button type="button"
+            onClick={onCreateNewRepo}
             disabled={!newRepoName.trim() || isCreatingRepo}
             className={`py-3 ${newRepoName.trim() && !isCreatingRepo ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}
             style={organicBorderRadius.button}
           >
             {isCreatingRepo ? (
-              <ActivityIndicator size="small" color="#ffffff" />
+              <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
             ) : (
               <Text
                 weight="semibold"
@@ -209,7 +205,7 @@ export function RepoSelector({
                 Create Repository
               </Text>
             )}
-          </Pressable>
+          </button>
         </VStack>
       )}
     </>

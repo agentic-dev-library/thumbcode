@@ -9,7 +9,6 @@
  * We use platform-based heuristics and log warnings instead.
  */
 import { Device } from '@capacitor/device';
-import { Alert, BackHandler } from 'react-native';
 
 class RuntimeSecurityService {
   private hasChecked = false;
@@ -46,10 +45,10 @@ class RuntimeSecurityService {
       const isLikelyRooted = info.platform === 'android' && info.isVirtual;
 
       if (isLikelyRooted) {
-        Alert.alert(
+        window.alert(
           'Security Alert',
           'This application cannot be run on a rooted or jailbroken device for security reasons. The app will now exit.',
-          [{ text: 'OK', onPress: () => BackHandler.exitApp() }],
+          [{ text: 'OK', onPress: () => window.close() }],
           { cancelable: false }
         );
       }

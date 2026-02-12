@@ -6,7 +6,6 @@
  */
 
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 import { TOKEN_COLORS, tokenize } from '@/lib/syntax-highlighter';
@@ -34,10 +33,10 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
   };
 
   return (
-    <View className="bg-charcoal overflow-hidden" style={organicBorderRadius.codeBlock}>
+    <div className="bg-charcoal overflow-hidden" style={organicBorderRadius.codeBlock}>
       {/* Header with language and filename */}
-      <View className="flex-row justify-between items-center px-3 py-2 bg-neutral-800 border-b border-neutral-700">
-        <View className="flex-row items-center">
+      <div className="flex-row justify-between items-center px-3 py-2 bg-neutral-800 border-b border-neutral-700">
+        <div className="flex-row items-center">
           <Text variant="mono" size="xs" className="text-neutral-400">
             {language}
           </Text>
@@ -51,24 +50,26 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
               </Text>
             </>
           )}
-        </View>
-        <Pressable
-          onPress={handleCopy}
+        </div>
+        <button type="button"
+          onClick={handleCopy}
           className="px-2 py-1 active:bg-neutral-700"
           style={organicBorderRadius.badge}
-          accessibilityRole="button"
-          accessibilityLabel="Copy code"
-          accessibilityHint="Copy the code to the clipboard"
+          role="button"
+          aria-label="Copy code"
+          aria-description="Copy the code to the clipboard"
         >
           <Text size="xs" className="text-neutral-400">
             {copied ? 'Copied!' : 'Copy'}
           </Text>
-        </Pressable>
-      </View>
+        </button>
+      </div>
 
       {/* Code content with syntax highlighting */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View className="p-3">
+      <div
+
+>
+        <div className="p-3">
           {tokenizedLines.map((lineTokens, lineIndex) => (
             <Text
               key={`L${lineIndex}:${lineTokens[0]?.value.slice(0, 8)}`}
@@ -89,8 +90,8 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
               {'\n'}
             </Text>
           ))}
-        </View>
-      </ScrollView>
-    </View>
+        </div>
+      </div>
+    </div>
   );
 }

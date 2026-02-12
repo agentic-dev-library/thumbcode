@@ -9,8 +9,6 @@ import { useAgentStore, useProjectStore } from '@thumbcode/state';
 import * as FileSystem from 'expo-file-system';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { FileNode as FileTreeNode } from '@/components/code';
 import { Container } from '@/components/layout';
 import {
@@ -79,7 +77,6 @@ function formatCommitDate(ts: number) {
 export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
 
   const project = useProjectStore((s) => s.projects.find((p) => p.id === id));
   const workspace = useProjectStore((s) => s.workspace);
@@ -189,23 +186,23 @@ export default function ProjectDetailScreen() {
 
   if (!project) {
     return (
-      <View className="flex-1 bg-charcoal items-center justify-center px-6">
+      <div className="flex-1 bg-charcoal items-center justify-center px-6">
         <Text variant="display" size="xl" className="text-white text-center mb-2">
           Project not found
         </Text>
         <Text className="text-neutral-500 text-center mb-6">
           This project ID doesn't exist locally. Go back and create or select a project.
         </Text>
-        <Pressable
-          onPress={() => router.back()}
+        <button type="button"
+          onClick={() => router.back()}
           className="bg-surface px-4 py-3 active:bg-neutral-700"
           style={organicBorderRadius.button}
-          accessibilityRole="button"
-          accessibilityLabel="Go back"
+          role="button"
+          aria-label="Go back"
         >
           <Text className="text-white text-center font-semibold">Back</Text>
-        </Pressable>
-      </View>
+        </button>
+      </div>
     );
   }
 
@@ -213,7 +210,7 @@ export default function ProjectDetailScreen() {
     <>
       <Stack.Screen options={{ headerTitle: project.name }} />
 
-      <View className="flex-1 bg-charcoal">
+      <div className="flex-1 bg-charcoal">
         <ProjectHeader
           repoUrl={project.repoUrl}
           currentBranch={currentBranch || project.defaultBranch}
@@ -224,29 +221,28 @@ export default function ProjectDetailScreen() {
         />
 
         {/* Tabs */}
-        <View className="flex-row border-b border-neutral-800">
+        <div className="flex-row border-b border-neutral-800">
           {(['files', 'commits', 'tasks', 'agents'] as const).map((tab) => (
-            <Pressable
+            <button type="button"
               key={tab}
-              onPress={() => setActiveTab(tab)}
+              onClick={() => setActiveTab(tab)}
               className={`flex-1 py-3 ${activeTab === tab ? 'border-b-2 border-coral-500' : ''}`}
-              accessibilityRole="button"
-              accessibilityLabel={`Show ${tab}`}
+              role="button"
+              aria-label={`Show ${tab}`}
             >
               <Text
                 className={`text-center capitalize ${activeTab === tab ? 'text-coral-500 font-semibold' : 'text-neutral-400'}`}
               >
                 {tab}
               </Text>
-            </Pressable>
+            </button>
           ))}
-        </View>
+        </div>
 
         {/* Content */}
-        <ScrollView
+        <div
           className="flex-1"
-          contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
-          showsVerticalScrollIndicator={false}
+}
         >
           <Container padding="lg">
             {activeTab === 'files' && (
@@ -271,8 +267,8 @@ export default function ProjectDetailScreen() {
               />
             )}
           </Container>
-        </ScrollView>
-      </View>
+        </div>
+      </div>
     </>
   );
 }

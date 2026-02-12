@@ -14,16 +14,13 @@ import {
   useUserStore,
 } from '@thumbcode/state';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChatInput, ChatMessage, ThreadList } from '@/components/chat';
 import { ChevronDownIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
 import { ChatService } from '@/services/chat';
 
 export default function ChatScreen() {
-  const insets = useSafeAreaInsets();
-  const listRef = useRef<FlatList<Message>>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   const activeThreadId = useChatStore((s) => s.activeThreadId);
   const setActiveThread = useChatStore((s) => s.setActiveThread);
@@ -51,8 +48,12 @@ export default function ChatScreen() {
 
   useEffect(() => {
     if (!activeThreadId) return;
-    // Slight delay so FlatList has laid out before scrolling to end
-    const timer = setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 50);
+    // Slight delay so list has laid out before scrolling to end
+    const timer = setTimeout(() => {
+      if (listRef.current) {
+        listRef.current.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' });
+      }
+    }, 50);
     return () => clearTimeout(timer);
   }, [activeThreadId]);
 
@@ -71,7 +72,7 @@ export default function ChatScreen() {
       const repoDir = project?.localPath;
 
       if (!repoDir) {
-        Alert.alert('Error', 'No repository path found for project');
+        window.alert('Error', 'No repository path found for project');
         return false;
       }
 
@@ -111,7 +112,7 @@ export default function ChatScreen() {
           }
         } catch (error) {
           console.error('Failed to commit:', error);
-          Alert.alert('Commit Failed', error instanceof Error ? error.message : 'Unknown error');
+          window.alert('Commit Failed', error instanceof Error ? error.message : 'Unknown error');
         }
         return;
       }
@@ -122,68 +123,56 @@ export default function ChatScreen() {
   );
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      className="flex-1 bg-charcoal"
-      keyboardVerticalOffset={90}
-    >
+    <div className="flex-1 bg-charcoal">
       {!activeThreadId ? (
-        <View className="flex-1" style={{ paddingTop: insets.top }}>
+        <div className="flex-1" >
           <ThreadList onSelectThread={setActiveThread} onCreateThread={handleCreateThread} />
-        </View>
+        </div>
       ) : (
-        <View className="flex-1" style={{ paddingTop: insets.top }}>
+        <div className="flex-1" >
           {/* Thread header */}
-          <View className="flex-row items-center px-4 py-3 border-b border-neutral-800 bg-charcoal">
-            <Pressable
-              onPress={() => setActiveThread(null)}
-              accessibilityRole="button"
-              accessibilityLabel="Back"
-              accessibilityHint="Return to thread list"
+          <div className="flex-row items-center px-4 py-3 border-b border-neutral-800 bg-charcoal">
+            <button type="button"
+              onClick={() => setActiveThread(null)}
+              role="button"
+              aria-label="Back"
+              aria-description="Return to thread list"
               className="mr-3 p-2 -ml-2"
             >
-              <View style={{ transform: [{ rotate: '90deg' }] }}>
+              <div style={{ transform: 'rotate(90deg)' }}>
                 <ChevronDownIcon size={18} color="warmGray" turbulence={0.12} />
-              </View>
-            </Pressable>
+              </div>
+            </button>
             <Text variant="display" size="lg" className="text-white flex-1" numberOfLines={1}>
               {activeThreadTitle || 'Chat'}
             </Text>
-          </View>
+          </div>
 
           {/* Messages */}
-          <FlatList
-            ref={listRef}
-            data={messages}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <ChatMessage message={item} onApprovalResponse={handleApprovalResponse} />
-            )}
-            contentContainerStyle={{
-              paddingTop: 12,
-              paddingBottom: 12,
-            }}
-            showsVerticalScrollIndicator={false}
-          />
+          <div ref={listRef} style={{ overflowY: 'auto', flex: 1 }}>
+            {messages.map((item) => (
+              <ChatMessage key={item.id} message={item} onApprovalResponse={handleApprovalResponse} />
+            ))}
+          </div>
 
           {/* Typing indicator */}
           {typingLabel && (
-            <View className="px-4 py-2">
+            <div className="px-4 py-2">
               <Text size="sm" className="text-neutral-500">
                 {typingLabel}
               </Text>
-            </View>
+            </div>
           )}
 
           {/* Input */}
-          <View
+          <div
             className="border-t border-neutral-800 bg-charcoal"
-            style={{ paddingBottom: insets.bottom + 12 }}
+            style={{ paddingBottom: 12 }}
           >
             <ChatInput threadId={activeThreadId} />
-          </View>
-        </View>
+          </div>
+        </div>
       )}
-    </KeyboardAvoidingView>
+    </div>
   );
 }

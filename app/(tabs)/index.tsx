@@ -8,8 +8,6 @@
 import { selectAgents, selectProjects, useAgentStore, useProjectStore } from '@thumbcode/state';
 import { useRouter } from 'expo-router';
 import type React from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar, Badge } from '@/components/display';
 import { ProgressBar } from '@/components/feedback';
 import {
@@ -67,7 +65,6 @@ function ActivityIcon({ type, size = 20 }: { type: string; size?: number }): Rea
 
 export default function HomeScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const projects = useProjectStore(selectProjects);
   const agents = useAgentStore(selectAgents);
   const tasks = useAgentStore((s) => s.tasks);
@@ -100,10 +97,9 @@ export default function HomeScreen() {
     });
 
   return (
-    <ScrollView
+    <div
       className="flex-1 bg-charcoal"
-      contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
-      showsVerticalScrollIndicator={false}
+}
     >
       <Container padding="lg">
         {/* Welcome */}
@@ -117,43 +113,43 @@ export default function HomeScreen() {
         </VStack>
 
         {/* Quick Stats */}
-        <View className="flex-row flex-wrap gap-3 mb-6">
-          <View className="bg-surface p-4 flex-1 min-w-[140px]" style={organicBorderRadius.card}>
-            <View className="mb-2">
+        <div className="flex-row flex-wrap gap-3 mb-6">
+          <div className="bg-surface p-4 flex-1 min-w-[140px]" style={organicBorderRadius.card}>
+            <div className="mb-2">
               <FolderIcon size={32} color="teal" turbulence={0.2} />
-            </View>
+            </div>
             <Text size="2xl" weight="bold" className="text-white">
               {projects.length}
             </Text>
             <Text size="sm" className="text-neutral-400">
               Projects
             </Text>
-          </View>
+          </div>
 
-          <View className="bg-surface p-4 flex-1 min-w-[140px]" style={organicBorderRadius.card}>
-            <View className="mb-2">
+          <div className="bg-surface p-4 flex-1 min-w-[140px]" style={organicBorderRadius.card}>
+            <div className="mb-2">
               <AgentIcon size={32} color="coral" turbulence={0.2} />
-            </View>
+            </div>
             <Text size="2xl" weight="bold" className="text-white">
               {runningAgents}
             </Text>
             <Text size="sm" className="text-neutral-400">
               Running Agents
             </Text>
-          </View>
+          </div>
 
-          <View className="bg-surface p-4 flex-1 min-w-[140px]" style={organicBorderRadius.card}>
-            <View className="mb-2">
+          <div className="bg-surface p-4 flex-1 min-w-[140px]" style={organicBorderRadius.card}>
+            <div className="mb-2">
               <TasksIcon size={32} color="gold" turbulence={0.2} />
-            </View>
+            </div>
             <Text size="2xl" weight="bold" className="text-white">
               {pendingTasks}
             </Text>
             <Text size="sm" className="text-neutral-400">
               Pending Tasks
             </Text>
-          </View>
-        </View>
+          </div>
+        </div>
 
         {/* Agent Status */}
         <VStack spacing="md" className="mb-6">
@@ -161,18 +157,18 @@ export default function HomeScreen() {
             <Text weight="semibold" className="text-white text-lg">
               Agent Team
             </Text>
-            <Pressable onPress={() => router.push('/(tabs)/agents')}>
+            <button type="button" onClick={() => router.push('/(tabs)/agents')}>
               <Text size="sm" className="text-coral-500">
                 View All →
               </Text>
-            </Pressable>
+            </button>
           </HStack>
 
-          <View className="flex-row flex-wrap gap-3">
+          <div className="flex-row flex-wrap gap-3">
             {agents.map((agent) => (
-              <Pressable
+              <button type="button"
                 key={agent.id}
-                onPress={() => router.push(`/agent/${agent.id}`)}
+                onClick={() => router.push(`/agent/${agent.id}`)}
                 className="bg-surface p-3 flex-row items-center"
                 style={organicBorderRadius.card}
               >
@@ -182,19 +178,19 @@ export default function HomeScreen() {
                     {agent.name}
                   </Text>
                   <HStack spacing="xs" align="center">
-                    <View className={`w-2 h-2 rounded-full ${getStatusColor(agent.status)}`} />
+                    <div className={`w-2 h-2 rounded-full ${getStatusColor(agent.status)}`} />
                     <Text size="xs" className="text-neutral-400 capitalize">
                       {agent.status}
                     </Text>
                   </HStack>
                 </VStack>
-              </Pressable>
+              </button>
             ))}
-          </View>
+          </div>
         </VStack>
 
         {/* Today's Progress */}
-        <View className="bg-surface p-4 mb-6" style={organicBorderRadius.card}>
+        <div className="bg-surface p-4 mb-6" style={organicBorderRadius.card}>
           <HStack justify="between" align="center" className="mb-3">
             <Text weight="semibold" className="text-white">
               Today's Progress
@@ -209,7 +205,7 @@ export default function HomeScreen() {
             }
             color="secondary"
           />
-        </View>
+        </div>
 
         {/* Recent Activity */}
         <VStack spacing="md">
@@ -217,26 +213,26 @@ export default function HomeScreen() {
             <Text weight="semibold" className="text-white text-lg">
               Recent Activity
             </Text>
-            <Pressable>
+            <button type="button">
               <Text size="sm" className="text-coral-500">
                 See All →
               </Text>
-            </Pressable>
+            </button>
           </HStack>
 
           <VStack spacing="sm">
             {recentActivity.map((activity) => (
-              <View
+              <div
                 key={activity.id}
                 className="bg-surface p-4 flex-row"
                 style={organicBorderRadius.card}
               >
-                <View
+                <div
                   className="w-10 h-10 bg-charcoal items-center justify-center mr-3"
                   style={organicBorderRadius.button}
                 >
                   <ActivityIcon type={activity.type} />
-                </View>
+                </div>
                 <VStack spacing="xs" className="flex-1">
                   <Text size="sm" className="text-white">
                     {activity.message}
@@ -259,11 +255,11 @@ export default function HomeScreen() {
                     </Text>
                   </HStack>
                 </VStack>
-              </View>
+              </div>
             ))}
           </VStack>
         </VStack>
       </Container>
-    </ScrollView>
+    </div>
   );
 }

@@ -1,12 +1,7 @@
-import { act, render, waitFor } from '@testing-library/react-native';
+import { act, render, waitFor } from '@testing-library/react';
 import React from 'react';
-import { Text, View } from 'react-native';
 import { OnboardingProvider, useOnboarding } from '../onboarding';
 
-jest.mock('@react-native-async-storage/async-storage', () => ({
-  getItem: jest.fn(() => Promise.resolve('false')),
-  setItem: jest.fn(() => Promise.resolve()),
-}));
 
 describe('OnboardingContext Performance', () => {
   it('should have stable context value reference across re-renders', async () => {

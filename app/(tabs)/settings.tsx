@@ -13,8 +13,6 @@ import {
   useUserStore,
 } from '@thumbcode/state';
 import { useRouter } from 'expo-router';
-import { Linking, Pressable, ScrollView } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '@/components/display';
 import {
   AgentIcon,
@@ -37,7 +35,6 @@ import { organicBorderRadius } from '@/lib/organic-styles';
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
 
   const profile = useUserStore(selectGitHubProfile);
   const settings = useUserStore(selectSettings);
@@ -56,14 +53,13 @@ export default function SettingsScreen() {
   const themeLabel = themeLabelMap[settings.theme] ?? 'System';
 
   return (
-    <ScrollView
+    <div
       className="flex-1 bg-charcoal"
-      contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
-      showsVerticalScrollIndicator={false}
+}
     >
       <Container padding="lg">
         {/* Profile */}
-        <Pressable
+        <button type="button"
           className="bg-surface p-4 mb-6 flex-row items-center active:bg-neutral-700"
           style={organicBorderRadius.card}
         >
@@ -77,7 +73,7 @@ export default function SettingsScreen() {
             </Text>
           </VStack>
           <Text className="text-neutral-600 text-lg">›</Text>
-        </Pressable>
+        </button>
 
         {/* Credentials */}
         <SettingsSection title="CREDENTIALS">
@@ -93,7 +89,7 @@ export default function SettingsScreen() {
                   : 'Not connected'
             }
             badge={githubBadge}
-            onPress={() => router.push('/settings/credentials')}
+            onClick={() => router.push('/settings/credentials')}
           />
           <Divider />
           <SettingsItem
@@ -102,7 +98,7 @@ export default function SettingsScreen() {
             title="Anthropic"
             subtitle="Claude API"
             badge={anthropicBadge}
-            onPress={() => router.push('/settings/credentials')}
+            onClick={() => router.push('/settings/credentials')}
           />
           <Divider />
           <SettingsItem
@@ -110,7 +106,7 @@ export default function SettingsScreen() {
             title="OpenAI"
             subtitle={openaiCredential?.status === 'valid' ? 'Connected' : 'Not connected'}
             badge={openaiBadge}
-            onPress={() => router.push('/settings/credentials')}
+            onClick={() => router.push('/settings/credentials')}
           />
         </SettingsSection>
 
@@ -121,7 +117,7 @@ export default function SettingsScreen() {
             iconColor="gold"
             title="Appearance"
             value={themeLabel}
-            onPress={() => {
+            onClick={() => {
               const next =
                 settings.theme === 'system'
                   ? 'dark'
@@ -156,7 +152,7 @@ export default function SettingsScreen() {
           <SettingsItem
             Icon={KeyboardIcon}
             title="Editor Settings"
-            onPress={() => router.push('/settings/editor')}
+            onClick={() => router.push('/settings/editor')}
           />
         </SettingsSection>
 
@@ -167,7 +163,7 @@ export default function SettingsScreen() {
             iconColor="teal"
             title="Agent Behavior"
             subtitle="Auto-review, approval settings"
-            onPress={() => router.push('/settings/agents')}
+            onClick={() => router.push('/settings/agents')}
           />
           <Divider />
           <SettingsItem
@@ -175,7 +171,7 @@ export default function SettingsScreen() {
             iconColor="teal"
             title="Branch Protection"
             subtitle="Protected branches and rules"
-            onPress={() => router.push('/settings/agents')}
+            onClick={() => router.push('/settings/agents')}
           />
         </SettingsSection>
 
@@ -184,33 +180,33 @@ export default function SettingsScreen() {
           <SettingsItem
             Icon={BookIcon}
             title="Documentation"
-            onPress={() => Linking.openURL('https://thumbcode.dev/docs')}
+            onClick={() => window.open('https://thumbcode.dev/docs')}
           />
           <Divider />
           <SettingsItem
             Icon={SupportIcon}
             iconColor="coral"
             title="Support"
-            onPress={() => Linking.openURL('https://thumbcode.dev/support')}
+            onClick={() => window.open('https://thumbcode.dev/support')}
           />
           <Divider />
           <SettingsItem
             Icon={LegalIcon}
             title="Terms & Privacy"
-            onPress={() => Linking.openURL('https://thumbcode.dev/legal')}
+            onClick={() => window.open('https://thumbcode.dev/legal')}
           />
           <Divider />
           <SettingsItem Icon={InfoIcon} title="Version" value="1.0.0" showArrow={false} />
         </SettingsSection>
 
         {/* Danger Zone */}
-        <Pressable
+        <button type="button"
           className="bg-coral-500/10 p-4 items-center active:bg-coral-500/20"
           style={organicBorderRadius.card}
         >
           <Text className="text-coral-500 font-semibold">Sign Out</Text>
-        </Pressable>
+        </button>
       </Container>
-    </ScrollView>
+    </div>
   );
 }

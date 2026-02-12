@@ -6,8 +6,6 @@
 
 import { Stack } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, Switch, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
@@ -26,8 +24,8 @@ interface SettingRowProps {
 
 function SettingRow({ title, subtitle, value, onPress, toggle }: Readonly<SettingRowProps>) {
   return (
-    <Pressable
-      onPress={onPress}
+    <button type="button"
+      onClick={onPress}
       disabled={!onPress && !toggle}
       className={`py-4 ${onPress ? 'active:bg-neutral-800' : ''}`}
     >
@@ -44,17 +42,17 @@ function SettingRow({ title, subtitle, value, onPress, toggle }: Readonly<Settin
         {value && <Text className="text-neutral-400">{value}</Text>}
 
         {toggle && (
-          <Switch
-            value={toggle.value}
-            onValueChange={toggle.onValueChange}
-            trackColor={{ false: getColor('neutral', '700'), true: getColor('teal', '600') }}
-            thumbColor={toggle.value ? getColor('neutral', '50') : getColor('neutral', '400')}
+          <input type="checkbox"
+            checked={toggle.value}
+            onChange={toggle.onValueChange}
+            }
+            
           />
         )}
 
         {onPress && !toggle && <Text className="text-neutral-600">›</Text>}
       </HStack>
-    </Pressable>
+    </button>
   );
 }
 
@@ -67,23 +65,23 @@ interface OptionSelectorProps {
 
 function OptionSelector({ title, options, selected, onSelect }: Readonly<OptionSelectorProps>) {
   return (
-    <View className="py-4">
+    <div className="py-4">
       <Text className="text-white mb-3">{title}</Text>
       <HStack spacing="sm" className="flex-wrap">
         {options.map((option) => (
-          <Pressable
+          <button type="button"
             key={option.value}
-            onPress={() => onSelect(option.value)}
+            onClick={() => onSelect(option.value)}
             className={`px-4 py-2 ${selected === option.value ? 'bg-coral-500' : 'bg-surface-elevated'}`}
             style={organicBorderRadius.button}
           >
             <Text className={selected === option.value ? 'text-white' : 'text-neutral-400'}>
               {option.label}
             </Text>
-          </Pressable>
+          </button>
         ))}
       </HStack>
-    </View>
+    </div>
   );
 }
 
@@ -103,7 +101,6 @@ function getThemeColor(theme: Theme, type: keyof typeof themeColors): string {
 }
 
 export default function EditorSettingsScreen() {
-  const insets = useSafeAreaInsets();
 
   // Editor settings state
   const [fontSize, setFontSize] = useState('14');
@@ -125,24 +122,23 @@ export default function EditorSettingsScreen() {
         }}
       />
 
-      <ScrollView
+      <div
         className="flex-1 bg-charcoal"
-        contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
-        showsVerticalScrollIndicator={false}
+}
       >
         <Container padding="lg">
           {/* Appearance */}
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
+            style={{ ...organicBorderRadius.card,  overflow: 'hidden'  }}
           >
-            <View className="px-4 py-3 border-b border-neutral-700">
+            <div className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
                 APPEARANCE
               </Text>
-            </View>
-            <View className="px-4">
+            </div>
+            <div className="px-4">
               <OptionSelector
                 title="Theme"
                 options={[
@@ -177,21 +173,21 @@ export default function EditorSettingsScreen() {
                 subtitle="Show code minimap on the right"
                 toggle={{ value: minimap, onValueChange: setMinimap }}
               />
-            </View>
+            </div>
           </VStack>
 
           {/* Formatting */}
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
+            style={{ ...organicBorderRadius.card,  overflow: 'hidden'  }}
           >
-            <View className="px-4 py-3 border-b border-neutral-700">
+            <div className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
                 FORMATTING
               </Text>
-            </View>
-            <View className="px-4">
+            </div>
+            <div className="px-4">
               <OptionSelector
                 title="Tab Size"
                 options={[
@@ -220,41 +216,41 @@ export default function EditorSettingsScreen() {
                 subtitle="Colorize matching brackets"
                 toggle={{ value: bracketPairColors, onValueChange: setBracketPairColors }}
               />
-            </View>
+            </div>
           </VStack>
 
           {/* Behavior */}
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
+            style={{ ...organicBorderRadius.card,  overflow: 'hidden'  }}
           >
-            <View className="px-4 py-3 border-b border-neutral-700">
+            <div className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
                 BEHAVIOR
               </Text>
-            </View>
-            <View className="px-4">
+            </div>
+            <div className="px-4">
               <SettingRow
                 title="Auto Save"
                 subtitle="Automatically save files after changes"
                 toggle={{ value: autoSave, onValueChange: setAutoSave }}
               />
-            </View>
+            </div>
           </VStack>
 
           {/* Preview */}
           <VStack
             spacing="none"
             className="bg-surface"
-            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
+            style={{ ...organicBorderRadius.card,  overflow: 'hidden'  }}
           >
-            <View className="px-4 py-3 border-b border-neutral-700">
+            <div className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
                 PREVIEW
               </Text>
-            </View>
-            <View className={`p-4 m-4 rounded-lg ${getThemeColor(theme as Theme, 'background')}`}>
+            </div>
+            <div className={`p-4 m-4 rounded-lg ${getThemeColor(theme as Theme, 'background')}`}>
               <Text
                 className={`font-mono ${getThemeColor(theme as Theme, 'type')}`}
                 style={{ fontSize: parseInt(fontSize, 10) }}
@@ -282,10 +278,10 @@ export default function EditorSettingsScreen() {
                 {lineNumbers ? '3  ' : ''}
                 {'}'}
               </Text>
-            </View>
+            </div>
           </VStack>
         </Container>
-      </ScrollView>
+      </div>
     </>
   );
 }

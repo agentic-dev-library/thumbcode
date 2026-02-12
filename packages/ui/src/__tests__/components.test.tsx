@@ -5,7 +5,7 @@
  * Spinner, Alert, and theme utilities.
  */
 
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import React from 'react';
 import { Text } from '../primitives/Text';
 import { Button } from '../form/Button';
@@ -16,7 +16,7 @@ import { ThemeProvider, themeTokens } from '../theme/ThemeProvider';
 import { organicBorderRadius, organicShadow } from '../theme/organicStyles';
 
 // Mock @expo/vector-icons used by Icon component
-jest.mock('@expo/vector-icons', () => {
+vi.mock('@expo/vector-icons', () => {
   const { createElement } = require('react');
   return {
     Ionicons: ({ name, ...props }: { name: string }) =>

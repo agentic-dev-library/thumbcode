@@ -5,7 +5,6 @@
  * with a button to open GitHub.
  */
 
-import { ActivityIndicator, Pressable, View } from 'react-native';
 import { LinkIcon } from '@/components/icons';
 import { VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
@@ -30,39 +29,39 @@ export function DeviceCodeDisplay({
   if (!userCode) {
     return (
       <VStack spacing="lg">
-        <View className="bg-surface p-6" style={organicBorderRadius.card}>
-          <View className="items-center mb-4">
+        <div className="bg-surface p-6" style={organicBorderRadius.card}>
+          <div className="items-center mb-4">
             <LinkIcon size={40} color="teal" turbulence={0.25} />
-          </View>
+          </div>
           <Text weight="semibold" className="text-white text-center mb-2">
             Secure Device Flow
           </Text>
           <Text size="sm" className="text-neutral-400 text-center">
             We use GitHub's Device Flow authentication - your credentials are never shared with us.
           </Text>
-        </View>
+        </div>
 
-        <Pressable
-          onPress={onStartDeviceFlow}
+        <button type="button"
+          onClick={onStartDeviceFlow}
           disabled={isAuthenticating}
           className={`bg-neutral-800 py-4 ${isAuthenticating ? 'opacity-70' : 'active:bg-neutral-700'}`}
           style={organicBorderRadius.cta}
         >
           {isAuthenticating ? (
-            <ActivityIndicator color={getColor('neutral', '50')} />
+            <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
           ) : (
             <Text weight="semibold" className="text-white text-center">
               Start GitHub Authentication
             </Text>
           )}
-        </Pressable>
+        </button>
       </VStack>
     );
   }
 
   return (
     <VStack spacing="lg">
-      <View className="bg-surface p-6" style={organicBorderRadius.card}>
+      <div className="bg-surface p-6" style={organicBorderRadius.card}>
         <Text size="sm" className="text-neutral-400 text-center mb-2">
           Enter this code on GitHub:
         </Text>
@@ -74,32 +73,32 @@ export function DeviceCodeDisplay({
         >
           {userCode}
         </Text>
-      </View>
+      </div>
 
-      <Pressable
-        onPress={onOpenGitHub}
+      <button type="button"
+        onClick={onOpenGitHub}
         className="bg-neutral-800 py-4 active:bg-neutral-700"
         style={organicBorderRadius.cta}
       >
         <Text weight="semibold" className="text-white text-center">
           Open GitHub →
         </Text>
-      </Pressable>
+      </button>
 
-      <Pressable
-        onPress={onCheckAuth}
+      <button type="button"
+        onClick={onCheckAuth}
         disabled={isAuthenticating}
         className={`bg-teal-600 py-4 ${isAuthenticating ? 'opacity-70' : 'active:bg-teal-700'}`}
         style={organicBorderRadius.cta}
       >
         {isAuthenticating ? (
-          <ActivityIndicator color={getColor('neutral', '50')} />
+          <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
         ) : (
           <Text weight="semibold" className="text-white text-center">
             I've Entered the Code
           </Text>
         )}
-      </Pressable>
+      </button>
     </VStack>
   );
 }

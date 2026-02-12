@@ -1,18 +1,17 @@
 import { runtimeSecurityService } from '../security/RuntimeSecurityService';
 import { Device } from '@capacitor/device';
-import { Alert, BackHandler } from 'react-native';
 
-jest.mock('@capacitor/device');
+vi.mock('@capacitor/device');
 
 describe('RuntimeSecurityService', () => {
-  let alertSpy: jest.SpyInstance;
-  let exitAppSpy: jest.SpyInstance;
+  let alertSpy: MockInstance;
+  let exitAppSpy: MockInstance;
 
   beforeEach(() => {
     runtimeSecurityService._reset();
     // Set up spies on the actual Alert and BackHandler modules
-    alertSpy = jest.spyOn(Alert, 'alert').mockImplementation();
-    exitAppSpy = jest.spyOn(BackHandler, 'exitApp').mockImplementation();
+    alertSpy = vi.spyOn(Alert, 'alert').mockImplementation();
+    exitAppSpy = vi.spyOn(BackHandler, 'exitApp').mockImplementation();
   });
 
   afterEach(() => {
@@ -26,7 +25,7 @@ describe('RuntimeSecurityService', () => {
 
   describe('checkAndHandleRootedStatus', () => {
     it('should not alert or exit if the device is not rooted', async () => {
-      (Device.getInfo as jest.Mock).mockResolvedValue({
+      (Device.getInfo as Mock).mockResolvedValue({
         platform: 'android',
         isVirtual: false,
         model: 'Pixel',
@@ -41,7 +40,7 @@ describe('RuntimeSecurityService', () => {
     });
 
     it('should alert and exit if the device appears rooted (virtual Android)', async () => {
-      (Device.getInfo as jest.Mock).mockResolvedValue({
+      (Device.getInfo as Mock).mockResolvedValue({
         platform: 'android',
         isVirtual: true,
         model: 'Emulator',

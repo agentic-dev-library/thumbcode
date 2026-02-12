@@ -3,18 +3,6 @@
  */
 
 // Mock expo-constants before importing env module
-jest.mock('expo-constants', () => ({
-  expoConfig: {
-    extra: {
-      appEnv: 'development',
-      enableDevTools: true,
-      githubClientId: 'test-client-id',
-      eas: {
-        projectId: 'test-project-id',
-      },
-    },
-  },
-}));
 
 // Import after mocking
 import { apiUrls, env, isFeatureEnabled, validateEnvironment } from '../env';

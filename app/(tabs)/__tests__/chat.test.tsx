@@ -1,40 +1,40 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import ChatScreen from '../chat';
 
 // Mock @thumbcode/state stores
-jest.mock('@thumbcode/state', () => ({
-  useChatStore: jest.fn((selector) =>
+vi.mock('@thumbcode/state', () => ({
+  useChatStore: vi.fn((selector) =>
     selector({
       activeThreadId: null,
       threads: [],
       messages: {},
       isTyping: {},
-      setActiveThread: jest.fn(),
-      respondToApproval: jest.fn(),
+      setActiveThread: vi.fn(),
+      respondToApproval: vi.fn(),
     })
   ),
-  useProjectStore: jest.fn((selector) => selector({ projects: [] })),
-  useUserStore: jest.fn((selector) => selector({ githubProfile: null })),
+  useProjectStore: vi.fn((selector) => selector({ projects: [] })),
+  useUserStore: vi.fn((selector) => selector({ githubProfile: null })),
 }));
 
 // Mock @thumbcode/core
-jest.mock('@thumbcode/core', () => ({
+vi.mock('@thumbcode/core', () => ({
   GitService: {
-    stage: jest.fn(),
-    commit: jest.fn(),
+    stage: vi.fn(),
+    commit: vi.fn(),
   },
 }));
 
 // Mock chat service
-jest.mock('@/services/chat', () => ({
+vi.mock('@/services/chat', () => ({
   ChatService: {
-    createThread: jest.fn(() => 'thread-1'),
-    sendMessage: jest.fn(),
+    createThread: vi.fn(() => 'thread-1'),
+    sendMessage: vi.fn(),
   },
 }));
 
 // Mock chat components to avoid deep dependency chain
-jest.mock('@/components/chat', () => ({
+vi.mock('@/components/chat', () => ({
   ChatInput: () => null,
   ChatMessage: () => null,
   ThreadList: () => {

@@ -8,7 +8,7 @@ if (!fsNode.existsSync(MOCK_DOC_DIR)) {
   fsNode.mkdirSync(MOCK_DOC_DIR, { recursive: true });
 }
 
-jest.mock('@capacitor/filesystem', () => {
+vi.mock('@capacitor/filesystem', () => {
   const fs = require('fs');
   const path = require('path');
   const os = require('os');
@@ -22,13 +22,13 @@ jest.mock('@capacitor/filesystem', () => {
     Directory: { Documents: 'DOCUMENTS' },
     Encoding: { UTF8: 'utf8' },
     Filesystem: {
-      readFile: jest.fn(async ({ path: filepath, encoding }) => {
+      readFile: vi.fn(async ({ path: filepath, encoding }) => {
         const resolvedPath = filepath;
         const enc = encoding === 'utf8' ? 'utf8' : 'base64';
         const data = await fs.promises.readFile(resolvedPath, { encoding: enc });
         return { data };
       }),
-      writeFile: jest.fn(async ({ path: filepath, data, encoding, recursive }) => {
+      writeFile: vi.fn(async ({ path: filepath, data, encoding, recursive }) => {
         const resolvedPath = filepath;
         if (recursive) {
           await fs.promises.mkdir(path.dirname(resolvedPath), { recursive: true });
@@ -36,24 +36,24 @@ jest.mock('@capacitor/filesystem', () => {
         const content = encoding === 'utf8' ? data : Buffer.from(data, 'base64');
         return fs.promises.writeFile(resolvedPath, content);
       }),
-      deleteFile: jest.fn(async ({ path: filepath }) => {
+      deleteFile: vi.fn(async ({ path: filepath }) => {
         if (fs.existsSync(filepath)) {
           await fs.promises.unlink(filepath);
         }
       }),
-      rmdir: jest.fn(async ({ path: filepath, recursive }) => {
+      rmdir: vi.fn(async ({ path: filepath, recursive }) => {
         if (fs.existsSync(filepath)) {
           await fs.promises.rm(filepath, { recursive: recursive ?? false, force: true });
         }
       }),
-      readdir: jest.fn(async ({ path: dirpath }) => {
+      readdir: vi.fn(async ({ path: dirpath }) => {
         const entries = await fs.promises.readdir(dirpath);
         return { files: entries.map((name) => ({ name })) };
       }),
-      mkdir: jest.fn(async ({ path: dirpath, recursive }) => {
+      mkdir: vi.fn(async ({ path: dirpath, recursive }) => {
         return fs.promises.mkdir(dirpath, { recursive });
       }),
-      stat: jest.fn(async ({ path: filepath }) => {
+      stat: vi.fn(async ({ path: filepath }) => {
         try {
           const stats = await fs.promises.stat(filepath);
           return {

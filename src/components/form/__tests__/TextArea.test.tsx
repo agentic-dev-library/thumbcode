@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import { TextArea } from '../TextArea';
 
 // Add document stub for TextInput
@@ -6,12 +6,12 @@ if (typeof document === 'undefined') {
   (global as Record<string, unknown>).document = { createElement: () => ({}) };
 }
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { textInput: {} },
 }));
 
-jest.mock('@/utils/design-tokens', () => ({
-  getColor: jest.fn(() => '#9CA3AF'),
+vi.mock('@/utils/design-tokens', () => ({
+  getColor: vi.fn(() => '#9CA3AF'),
 }));
 
 describe('TextArea', () => {
@@ -53,7 +53,7 @@ describe('TextArea', () => {
   });
 
   it('calls onChangeText when text changes', () => {
-    const onChangeText = jest.fn();
+    const onChangeText = vi.fn();
     const { toJSON } = render(<TextArea value="initial" onChangeText={onChangeText} />);
     // Verify component renders with value
     const json = JSON.stringify(toJSON());

@@ -5,12 +5,12 @@
 import { PerformanceMonitor } from '../performance';
 
 // Mock logger
-jest.mock('../logger', () => ({
+vi.mock('../logger', () => ({
   logger: {
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
   },
 }));
 
@@ -19,7 +19,7 @@ describe('PerformanceMonitor', () => {
 
   beforeEach(() => {
     monitor = new PerformanceMonitor({ enabled: true });
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
@@ -209,11 +209,11 @@ describe('PerformanceMonitor', () => {
 
     it('should record fps and log warning for low frame rates', () => {
       const { logger } = require('../logger');
-      jest.clearAllMocks();
+      vi.clearAllMocks();
 
       // Use a custom mock for performance.now to simulate time passing
       let mockTime = 0;
-      jest.spyOn(performance, 'now').mockImplementation(() => mockTime);
+      vi.spyOn(performance, 'now').mockImplementation(() => mockTime);
 
       monitor.startFrameTracking();
 
@@ -232,24 +232,24 @@ describe('PerformanceMonitor', () => {
       expect(logger.warn).toHaveBeenCalledWith('Low frame rate detected', expect.any(Object));
 
       // Restore performance.now
-      (performance.now as jest.Mock).mockRestore();
+      (performance.now as Mock).mockRestore();
     });
   });
 
   describe('startReporting', () => {
     beforeEach(() => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
     });
 
     afterEach(() => {
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
 
     it('should start periodic reporting', () => {
       monitor.startReporting();
 
       // Verify timer was started
-      jest.advanceTimersByTime(10000);
+      vi.advanceTimersByTime(10000);
 
       // Should not throw
       monitor.stopReporting();
@@ -260,14 +260,14 @@ describe('PerformanceMonitor', () => {
       monitor.startReporting(); // Second call should be no-op
 
       // Should still only have one timer
-      jest.advanceTimersByTime(10000);
+      vi.advanceTimersByTime(10000);
 
       monitor.stopReporting();
     });
 
     it('should log performance report with slow components', () => {
       const { logger } = require('../logger');
-      jest.clearAllMocks();
+      vi.clearAllMocks();
 
       // Add slow components to trigger reporting
       monitor.configure({ slowRenderThreshold: 10 });
@@ -277,7 +277,7 @@ describe('PerformanceMonitor', () => {
 
       // Start reporting and wait for interval
       monitor.startReporting();
-      jest.advanceTimersByTime(10000);
+      vi.advanceTimersByTime(10000);
 
       // Should have logged performance report
       expect(logger.info).toHaveBeenCalledWith(

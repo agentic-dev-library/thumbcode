@@ -1,14 +1,13 @@
-import { Text } from 'react-native';
-import { act, create } from 'react-test-renderer';
+import { act, create } from '@testing-library/react';
 import { EmptyState, ErrorState, NoResults } from '../EmptyState';
 
-jest.mock('@/components/icons', () => ({
+vi.mock('@/components/icons', () => ({
   InboxIcon: () => 'InboxIcon',
   ErrorIcon: () => 'ErrorIcon',
   SearchIcon: () => 'SearchIcon',
 }));
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { button: {} },
 }));
 
@@ -28,7 +27,7 @@ describe('EmptyState', () => {
   });
 
   it('renders action button', () => {
-    const onPress = jest.fn();
+    const onPress = vi.fn();
     const tree = create(
       <EmptyState title="No projects" action={{ label: 'Create Project', onPress }} />
     );
@@ -37,7 +36,7 @@ describe('EmptyState', () => {
   });
 
   it('calls action onPress when pressed', () => {
-    const onPress = jest.fn();
+    const onPress = vi.fn();
     const tree = create(
       <EmptyState title="No projects" action={{ label: 'Create Project', onPress }} />
     );
@@ -55,7 +54,7 @@ describe('EmptyState', () => {
     const tree = create(
       <EmptyState
         title="No results"
-        secondaryAction={{ label: 'Learn More', onPress: jest.fn() }}
+        secondaryAction={{ label: 'Learn More', onPress: vi.fn() }}
       />
     );
     const json = JSON.stringify(tree.toJSON());
@@ -95,7 +94,7 @@ describe('ErrorState', () => {
   });
 
   it('renders retry button when onRetry is provided', () => {
-    const onRetry = jest.fn();
+    const onRetry = vi.fn();
     const tree = create(<ErrorState onRetry={onRetry} />);
     const json = JSON.stringify(tree.toJSON());
     expect(json).toContain('Try Again');
@@ -116,7 +115,7 @@ describe('NoResults', () => {
   });
 
   it('renders clear action when onClear is provided', () => {
-    const tree = create(<NoResults onClear={jest.fn()} />);
+    const tree = create(<NoResults onClear={vi.fn()} />);
     const json = JSON.stringify(tree.toJSON());
     expect(json).toContain('Clear Search');
   });

@@ -9,8 +9,6 @@ import { type Agent as StoreAgent, selectAgents, useAgentStore } from '@thumbcod
 import { useRouter } from 'expo-router';
 import type React from 'react';
 import { memo, useCallback, useState } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBadge } from '@/components/display';
 import { ProgressBar } from '@/components/feedback';
 import {
@@ -97,19 +95,18 @@ interface RoleFilterButtonProps {
 }
 
 const RoleFilterButton = memo(({ role, isSelected, onPress }: Readonly<RoleFilterButtonProps>) => (
-  <Pressable
-    testID={`role-filter-${role}`}
-    onPress={() => onPress(role)}
+  <button type="button"
+    data-testid={`role-filter-${role}`}
+    onClick={() => onPress(role)}
     className={`px-4 py-2 ${isSelected ? 'bg-coral-500' : 'bg-surface'}`}
     style={organicBorderRadius.button}
   >
     <Text className={`capitalize ${isSelected ? 'text-white' : 'text-neutral-400'}`}>{role}</Text>
-  </Pressable>
+  </button>
 ));
 
 export default function AgentsScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
   const agents = useAgentStore(selectAgents);
@@ -130,81 +127,79 @@ export default function AgentsScreen() {
   const totalTasks = tasks.filter((t) => t.status === 'completed').length;
 
   return (
-    <ScrollView
+    <div
       className="flex-1 bg-charcoal"
-      contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
-      showsVerticalScrollIndicator={false}
+}
     >
       <Container padding="lg">
         {/* Overview */}
-        <View className="flex-row gap-3 mb-6">
-          <View className="bg-surface p-4 flex-1" style={organicBorderRadius.card}>
-            <View className="mb-2">
+        <div className="flex-row gap-3 mb-6">
+          <div className="bg-surface p-4 flex-1" style={organicBorderRadius.card}>
+            <div className="mb-2">
               <AgentIcon size={28} color="coral" turbulence={0.2} />
-            </View>
+            </div>
             <Text size="2xl" weight="bold" className="text-white">
               {activeAgents}/{agents.length}
             </Text>
             <Text size="sm" className="text-neutral-400">
               Active Agents
             </Text>
-          </View>
+          </div>
 
-          <View className="bg-surface p-4 flex-1" style={organicBorderRadius.card}>
-            <View className="mb-2">
+          <div className="bg-surface p-4 flex-1" style={organicBorderRadius.card}>
+            <div className="mb-2">
               <SuccessIcon size={28} color="teal" turbulence={0.2} />
-            </View>
+            </div>
             <Text size="2xl" weight="bold" className="text-white">
               {totalTasks}
             </Text>
             <Text size="sm" className="text-neutral-400">
               Tasks Completed
             </Text>
-          </View>
-        </View>
+          </div>
+        </div>
 
         {/* Role Filter */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
+        <div
+
           className="mb-6"
-          contentContainerStyle={{ gap: 8 }}
+}
         >
-          <Pressable
-            testID="role-filter-all"
-            onPress={handleAllPress}
+          <button type="button"
+            data-testid="role-filter-all"
+            onClick={handleAllPress}
             className={`px-4 py-2 ${!selectedRole ? 'bg-coral-500' : 'bg-surface'}`}
             style={organicBorderRadius.badge}
           >
             <Text className={!selectedRole ? 'text-white' : 'text-neutral-400'}>All</Text>
-          </Pressable>
+          </button>
 
           {['architect', 'implementer', 'reviewer', 'tester'].map((role) => (
             <RoleFilterButton
               key={role}
               role={role}
               isSelected={selectedRole === role}
-              onPress={handleRolePress}
+              onClick={handleRolePress}
             />
           ))}
-        </ScrollView>
+        </div>
 
         {/* Agent Cards */}
         <VStack spacing="md">
           {filteredAgents.map((agent) => (
-            <Pressable
+            <button type="button"
               key={agent.id}
-              onPress={() => router.push(`/agent/${agent.id}`)}
+              onClick={() => router.push(`/agent/${agent.id}`)}
               className="bg-surface p-4 active:bg-neutral-700"
               style={organicBorderRadius.card}
             >
               <HStack justify="between" align="start" className="mb-4">
                 <HStack spacing="md" align="center">
-                  <View
+                  <div
                     className={`w-14 h-14 items-center justify-center ${getRoleColor(agent.role)}`}
                     style={organicBorderRadius.card}
                   >
-                    <View>
+                    <div>
                       {(() => {
                         const AvatarIcon = getAvatarIcon(agent.role);
                         return (
@@ -215,8 +210,8 @@ export default function AgentsScreen() {
                           />
                         );
                       })()}
-                    </View>
-                  </View>
+                    </div>
+                  </div>
                   <VStack spacing="xs">
                     <Text weight="semibold" className="text-white text-lg">
                       {agent.name}
@@ -242,7 +237,7 @@ export default function AgentsScreen() {
                 const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
 
                 return (
-                  <View className="bg-charcoal p-3 mb-4" style={organicBorderRadius.card}>
+                  <div className="bg-charcoal p-3 mb-4" style={organicBorderRadius.card}>
                     <HStack justify="between" align="center" className="mb-2">
                       <Text size="sm" className="text-neutral-300 flex-1" numberOfLines={1}>
                         {currentTask.description}
@@ -252,7 +247,7 @@ export default function AgentsScreen() {
                       </Text>
                     </HStack>
                     <ProgressBar value={progress} color="secondary" size="sm" />
-                  </View>
+                  </div>
                 );
               })()}
 
@@ -294,10 +289,10 @@ export default function AgentsScreen() {
                   </Text>
                 </VStack>
               </HStack>
-            </Pressable>
+            </button>
           ))}
         </VStack>
       </Container>
-    </ScrollView>
+    </div>
   );
 }

@@ -6,17 +6,17 @@ import { AnthropicClient } from '../AnthropicClient';
 import type { AIMessage, AIStreamChunk } from '../types';
 
 // Mock the Anthropic SDK
-const mockCreate = jest.fn();
-const mockStreamOn = jest.fn();
-const mockStreamFinalMessage = jest.fn();
+const mockCreate = vi.fn();
+const mockStreamOn = vi.fn();
+const mockStreamFinalMessage = vi.fn();
 
-jest.mock('@anthropic-ai/sdk', () => {
+vi.mock('@anthropic-ai/sdk', () => {
   return {
     __esModule: true,
-    default: jest.fn().mockImplementation(() => ({
+    default: vi.fn().mockImplementation(() => ({
       messages: {
         create: mockCreate,
-        stream: jest.fn().mockImplementation(() => {
+        stream: vi.fn().mockImplementation(() => {
           const stream = {
             on: mockStreamOn.mockReturnThis(),
             finalMessage: mockStreamFinalMessage,
@@ -34,7 +34,7 @@ describe('AnthropicClient', () => {
   const testSystemPrompt = 'You are a helpful assistant.';
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     client = new AnthropicClient('test-api-key');
   });
 
@@ -137,7 +137,7 @@ describe('AnthropicClient', () => {
     });
 
     it('should pass the abort signal to the stream', async () => {
-      const onChunk = jest.fn();
+      const onChunk = vi.fn();
       const controller = new AbortController();
 
       mockStreamOn.mockReturnThis();
@@ -146,7 +146,7 @@ describe('AnthropicClient', () => {
       });
 
       // We need to get the stream mock to check its call
-      const Anthropic = jest.requireMock('@anthropic-ai/sdk').default;
+      const Anthropic = require('@anthropic-ai/sdk').default;
       const _instance = new Anthropic();
 
       // Create a new client that uses this instance
@@ -160,7 +160,7 @@ describe('AnthropicClient', () => {
 
   describe('constructor', () => {
     it('should use the default model', () => {
-      const Anthropic = jest.requireMock('@anthropic-ai/sdk').default;
+      const Anthropic = require('@anthropic-ai/sdk').default;
       new AnthropicClient('test-key');
       expect(Anthropic).toHaveBeenCalledWith(
         expect.objectContaining({

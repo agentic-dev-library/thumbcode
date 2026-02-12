@@ -1,40 +1,29 @@
-import { ActivityIndicator, Pressable, type PressableProps } from 'react-native';
 import { organicBorderRadius } from '@/lib/organic-styles';
 import { getColor } from '@/utils/design-tokens';
 import { Text } from './Text';
 
-/** Brand colors from design tokens for ActivityIndicator */
-const ACTIVITY_INDICATOR_COLORS = {
-  light: getColor('neutral', '800'), // neutral-800 for outline variant
-  dark: getColor('neutral', '50'), // off-white for filled variants
+/** Brand colors from design tokens for spinner */
+const SPINNER_COLORS = {
+  light: getColor('neutral', '800'),
+  dark: getColor('neutral', '50'),
 } as const;
 
 /** Props for the Button component */
-interface ButtonProps extends PressableProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Visual style variant of the button */
   variant?: 'primary' | 'secondary' | 'outline';
   /** Size preset controlling padding */
   size?: 'sm' | 'md' | 'lg';
   /** When true, shows a spinner and disables interaction */
   loading?: boolean;
-  /** Additional NativeWind class names */
+  /** Additional Tailwind class names */
   className?: string;
   /** Button label or content */
   children: React.ReactNode;
 }
 
 /**
- * Render a styled Pressable button supporting variants, sizes, and a loading state.
- *
- * Renders an interactive Pressable that is disabled while `disabled` or `loading` is true.
- *
- * @param variant - Visual style of the button: 'primary', 'secondary', or 'outline' (default 'primary')
- * @param size - Size of the button: 'sm', 'md', or 'lg' (default 'md')
- * @param loading - When true, shows a spinner instead of the label and disables interaction
- * @param disabled - When true, disables interaction and reduces opacity
- * @param className - Additional class names appended to the computed button classes
- * @param children - Button label or content rendered when not loading
- * @returns A Pressable element that shows an ActivityIndicator when loading or the provided children as the label otherwise
+ * Render a styled button supporting variants, sizes, and a loading state.
  */
 export function Button({
   variant = 'primary',
@@ -59,11 +48,12 @@ export function Button({
   }[size];
 
   const textColorClass = variant === 'outline' ? 'text-neutral-800' : 'text-white';
-  const indicatorColor =
-    variant === 'outline' ? ACTIVITY_INDICATOR_COLORS.light : ACTIVITY_INDICATOR_COLORS.dark;
+  const spinnerBorder =
+    variant === 'outline' ? `border-neutral-800` : `border-white`;
 
   return (
-    <Pressable
+    <button
+      type="button"
       disabled={disabled || loading}
       className={`
         ${variantClasses}
@@ -72,17 +62,20 @@ export function Button({
         ${disabled || loading ? 'opacity-50' : 'opacity-100'}
         ${className}
       `}
-      style={(state) => [
-        organicBorderRadius.button,
-        typeof style === 'function' ? style(state) : style,
-      ]}
+      style={{
+        ...organicBorderRadius.button,
+        ...style,
+      }}
       {...props}
     >
       {loading ? (
-        <ActivityIndicator testID="activity-indicator" color={indicatorColor} />
+        <div
+          data-testid="activity-indicator"
+          className={`w-5 h-5 border-2 ${spinnerBorder} border-t-transparent rounded-full animate-spin mx-auto`}
+        />
       ) : (
         <Text className={`${textColorClass} text-center font-semibold`}>{children}</Text>
       )}
-    </Pressable>
+    </button>
   );
 }

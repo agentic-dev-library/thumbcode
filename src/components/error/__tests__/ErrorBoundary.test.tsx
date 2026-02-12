@@ -1,16 +1,15 @@
-import { Text } from 'react-native';
-import { create } from 'react-test-renderer';
+import { create } from '@testing-library/react';
 import { ErrorBoundary, withErrorBoundary } from '../ErrorBoundary';
 
-jest.mock('@/lib/logger', () => ({
+vi.mock('@/lib/logger', () => ({
   logger: {
-    error: jest.fn(),
-    warn: jest.fn(),
-    info: jest.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
   },
 }));
 
-jest.mock('../ErrorFallback', () => ({
+vi.mock('../ErrorFallback', () => ({
   ErrorFallback: ({ error, onRetry }: { error: Error | null; onRetry?: () => void }) => {
     const { Text, View, Pressable } = require('react-native');
     return (
@@ -79,7 +78,7 @@ describe('ErrorBoundary', () => {
   });
 
   it('calls onError callback when error is caught', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
     create(
       <ErrorBoundary onError={onError}>
         <ThrowingComponent />

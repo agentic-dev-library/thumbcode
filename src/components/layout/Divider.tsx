@@ -5,7 +5,6 @@
  * Supports horizontal and vertical orientations with organic styling.
  */
 
-import { View, type ViewStyle } from 'react-native';
 import { getColor } from '@/utils/design-tokens';
 
 interface DividerProps {
@@ -27,9 +26,9 @@ const spacingValues: Record<'none' | 'sm' | 'md' | 'lg', number> = {
 };
 
 const colorMap: Record<'default' | 'subtle' | 'strong', string> = {
-  default: getColor('neutral', '700'), // surface-elevated
-  subtle: getColor('neutral', '800'), // surface
-  strong: getColor('neutral', '600'), // neutral-600
+  default: getColor('neutral', '700'),
+  subtle: getColor('neutral', '800'),
+  strong: getColor('neutral', '600'),
 };
 
 export function Divider({
@@ -41,20 +40,22 @@ export function Divider({
   const spacingValue = spacingValues[spacing];
   const color = colorMap[variant];
 
-  const style: ViewStyle = {
+  const style: React.CSSProperties = {
     backgroundColor: color,
     ...(orientation === 'horizontal'
       ? {
           height: 1,
           width: '100%',
-          marginVertical: spacingValue,
+          marginTop: spacingValue,
+          marginBottom: spacingValue,
         }
       : {
           width: 1,
           height: '100%',
-          marginHorizontal: spacingValue,
+          marginLeft: spacingValue,
+          marginRight: spacingValue,
         }),
   };
 
-  return <View style={style} className={className} />;
+  return <div style={style} className={className} />;
 }

@@ -9,33 +9,33 @@ import git from 'isomorphic-git';
 import { GitBranchService } from '../GitBranchService';
 
 // Mock isomorphic-git
-jest.mock('isomorphic-git', () => ({
+vi.mock('isomorphic-git', () => ({
   __esModule: true,
   default: {
-    branch: jest.fn(),
-    deleteBranch: jest.fn(),
-    checkout: jest.fn(),
-    currentBranch: jest.fn(),
-    listBranches: jest.fn(),
-    resolveRef: jest.fn(),
+    branch: vi.fn(),
+    deleteBranch: vi.fn(),
+    checkout: vi.fn(),
+    currentBranch: vi.fn(),
+    listBranches: vi.fn(),
+    resolveRef: vi.fn(),
   },
 }));
 
 // Mock git-fs
-jest.mock('../git-fs', () => ({
+vi.mock('../git-fs', () => ({
   fs: {
     promises: {
-      mkdir: jest.fn().mockResolvedValue(undefined),
+      mkdir: vi.fn().mockResolvedValue(undefined),
     },
   },
   http: {},
 }));
 
-const mockGit = git as jest.Mocked<typeof git>;
+const mockGit = git as Mocked<typeof git>;
 
 describe('GitBranchService', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('createBranch', () => {

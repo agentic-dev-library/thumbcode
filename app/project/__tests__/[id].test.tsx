@@ -1,40 +1,24 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import { useLocalSearchParams } from 'expo-router';
 import ProjectDetailScreen from '../[id]';
 
 // Mock expo-file-system - use pending promises to avoid state update loops
-jest.mock('expo-file-system', () => ({
-  readDirectoryAsync: jest.fn(() => new Promise(() => {})),
-  getInfoAsync: jest.fn(() => new Promise(() => {})),
-  documentDirectory: '/tmp/',
-  cacheDirectory: '/tmp/cache/',
-}));
 
 // Mock expo-router
-jest.mock('expo-router', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-    back: jest.fn(),
-  }),
-  useLocalSearchParams: jest.fn(),
-  Stack: {
-    Screen: () => null,
-  },
-}));
 
 // Mock @thumbcode/core - use pending promises to avoid state update loops
-jest.mock('@thumbcode/core', () => ({
+vi.mock('@thumbcode/core', () => ({
   GitBranchService: {
-    currentBranch: jest.fn(() => new Promise(() => {})),
+    currentBranch: vi.fn(() => new Promise(() => {})),
   },
   GitCommitService: {
-    log: jest.fn(() => new Promise(() => {})),
+    log: vi.fn(() => new Promise(() => {})),
   },
 }));
 
 // Mock @thumbcode/state
-jest.mock('@thumbcode/state', () => ({
-  useProjectStore: jest.fn((selector) =>
+vi.mock('@thumbcode/state', () => ({
+  useProjectStore: vi.fn((selector) =>
     selector({
       projects: [
         {
@@ -48,10 +32,10 @@ jest.mock('@thumbcode/state', () => ({
         },
       ],
       workspace: null,
-      initWorkspace: jest.fn(),
+      initWorkspace: vi.fn(),
     })
   ),
-  useAgentStore: jest.fn((selector) =>
+  useAgentStore: vi.fn((selector) =>
     selector({
       agents: [{ id: 'a1', name: 'Architect', role: 'architect', status: 'idle' }],
       tasks: [],
@@ -60,7 +44,7 @@ jest.mock('@thumbcode/state', () => ({
 }));
 
 // Mock @/components/code
-jest.mock('@/components/code', () => ({
+vi.mock('@/components/code', () => ({
   FileTree: () => null,
 }));
 
@@ -78,21 +62,21 @@ afterAll(() => {
 
 describe('ProjectDetailScreen', () => {
   it('renders project not found when id is missing', () => {
-    (useLocalSearchParams as jest.Mock).mockReturnValue({ id: 'nonexistent' });
+    (useLocalSearchParams as Mock).mockReturnValue({ id: 'nonexistent' });
     const { toJSON } = render(<ProjectDetailScreen />);
     const tree = JSON.stringify(toJSON());
     expect(tree).toContain('Project not found');
   });
 
   it('renders project details when found', () => {
-    (useLocalSearchParams as jest.Mock).mockReturnValue({ id: 'proj-1' });
+    (useLocalSearchParams as Mock).mockReturnValue({ id: 'proj-1' });
     const { toJSON } = render(<ProjectDetailScreen />);
     const tree = JSON.stringify(toJSON());
     expect(tree).toContain('github.com/user/my-app');
   });
 
   it('shows tab navigation', () => {
-    (useLocalSearchParams as jest.Mock).mockReturnValue({ id: 'proj-1' });
+    (useLocalSearchParams as Mock).mockReturnValue({ id: 'proj-1' });
     const { toJSON } = render(<ProjectDetailScreen />);
     const tree = JSON.stringify(toJSON());
     expect(tree).toContain('files');

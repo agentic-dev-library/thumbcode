@@ -1,4 +1,3 @@
-import { Pressable, View } from 'react-native';
 import { Icon } from '../icons/Icon';
 import { Text } from '../primitives/Text';
 
@@ -18,24 +17,24 @@ interface HeaderProps {
  */
 export function Header({ title, onBack, rightElement }: HeaderProps) {
   return (
-    <View className="flex-row items-center justify-between pb-4">
-      <View className="w-10">
+    <div className="flex-row items-center justify-between pb-4">
+      <div className="w-10">
         {onBack && (
-          <Pressable
-            onPress={onBack}
+          <button type="button"
+            onClick={onBack}
             className="p-2"
-            accessibilityRole="button"
-            accessibilityLabel="Back"
-            accessibilityHint="Go to previous screen"
+            role="button"
+            aria-label="Back"
+            aria-description="Go to previous screen"
           >
             <Icon name="back" size={24} color="white" />
-          </Pressable>
+          </button>
         )}
-      </View>
-      <Text variant="display" size="2xl" className="text-white" accessibilityRole="header">
+      </div>
+      <Text variant="display" size="2xl" className="text-white" role="header">
         {title}
       </Text>
-      <View className="w-10">{rightElement}</View>
-    </View>
+      <div className="w-10">{rightElement}</div>
+    </div>
   );
 }

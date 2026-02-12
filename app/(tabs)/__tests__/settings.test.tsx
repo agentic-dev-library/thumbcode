@@ -1,22 +1,22 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import SettingsScreen from '../settings';
 
 // Mock @thumbcode/state
-jest.mock('@thumbcode/state', () => ({
-  useUserStore: jest.fn((selector) =>
+vi.mock('@thumbcode/state', () => ({
+  useUserStore: vi.fn((selector) =>
     selector({
       githubProfile: { login: 'testuser', name: 'Test User' },
       settings: {
         theme: 'dark',
         notifications: { pushEnabled: true, hapticsEnabled: true },
       },
-      updateNotificationPreferences: jest.fn(),
-      setTheme: jest.fn(),
+      updateNotificationPreferences: vi.fn(),
+      setTheme: vi.fn(),
     })
   ),
   selectGitHubProfile: (s: { githubProfile: unknown }) => s.githubProfile,
   selectSettings: (s: { settings: unknown }) => s.settings,
-  useCredentialStore: jest.fn((selector) =>
+  useCredentialStore: vi.fn((selector) =>
     selector({
       credentials: [],
     })

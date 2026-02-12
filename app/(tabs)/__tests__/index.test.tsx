@@ -1,9 +1,9 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import HomeScreen from '../index';
 
 // Mock @thumbcode/state stores
-jest.mock('@thumbcode/state', () => ({
-  useProjectStore: jest.fn((selector) =>
+vi.mock('@thumbcode/state', () => ({
+  useProjectStore: vi.fn((selector) =>
     selector({
       projects: [
         {
@@ -19,7 +19,7 @@ jest.mock('@thumbcode/state', () => ({
     })
   ),
   selectProjects: (s: { projects: unknown[] }) => s.projects,
-  useAgentStore: jest.fn((selector) =>
+  useAgentStore: vi.fn((selector) =>
     selector({
       agents: [
         { id: 'a1', name: 'Architect', role: 'architect', status: 'idle' },

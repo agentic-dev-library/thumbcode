@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import { ChatInput } from '../ChatInput';
 
 // Add document stub for TextInput
@@ -6,17 +6,17 @@ if (typeof document === 'undefined') {
   (global as Record<string, unknown>).document = { createElement: () => ({}) };
 }
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { textInput: {}, button: {} },
 }));
 
-jest.mock('@/utils/design-tokens', () => ({
-  getColor: jest.fn(() => '#9CA3AF'),
+vi.mock('@/utils/design-tokens', () => ({
+  getColor: vi.fn(() => '#9CA3AF'),
 }));
 
-jest.mock('@/services/chat', () => ({
+vi.mock('@/services/chat', () => ({
   ChatService: {
-    sendMessage: jest.fn(),
+    sendMessage: vi.fn(),
   },
 }));
 

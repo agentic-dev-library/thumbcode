@@ -9,8 +9,6 @@ import { CredentialService, GitHubAuthService } from '@thumbcode/core';
 import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@thumbcode/state';
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, ScrollView, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinkIcon, SecurityIcon } from '@/components/icons';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
 import { ApiKeyInput, CredentialItem } from '@/components/settings';
@@ -19,7 +17,6 @@ import { organicBorderRadius } from '@/lib/organic-styles';
 
 export default function CredentialsScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
 
   const githubCredential = useCredentialStore(selectCredentialByProvider('github'));
   const anthropicCredential = useCredentialStore(selectCredentialByProvider('anthropic'));
@@ -41,7 +38,7 @@ export default function CredentialsScreen() {
   };
 
   const handleGitHubDisconnect = () => {
-    Alert.alert(
+    window.alert(
       'Disconnect GitHub',
       'Are you sure you want to disconnect your GitHub account? You will need to reconnect to use ThumbCode.',
       [
@@ -115,7 +112,7 @@ export default function CredentialsScreen() {
       if (type === 'anthropic') setAnthropicKey('');
       else setOpenaiKey('');
 
-      Alert.alert('Saved', message || 'Credential stored successfully');
+      window.alert('Saved', message || 'Credential stored successfully');
     } catch (error) {
       setSaveError({
         type,
@@ -135,24 +132,23 @@ export default function CredentialsScreen() {
         }}
       />
 
-      <ScrollView
+      <div
         className="flex-1 bg-charcoal"
-        contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
-        showsVerticalScrollIndicator={false}
+}
       >
         <Container padding="lg">
           {/* Connected Services */}
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
+            style={{ ...organicBorderRadius.card,  overflow: 'hidden'  }}
           >
-            <View className="px-4 py-3 border-b border-neutral-700">
+            <div className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
                 CONNECTED SERVICES
               </Text>
-            </View>
-            <View className="px-4">
+            </div>
+            <div className="px-4">
               <CredentialItem
                 Icon={LinkIcon}
                 iconColor="teal"
@@ -169,21 +165,21 @@ export default function CredentialsScreen() {
                 onConnect={handleGitHubConnect}
                 onDisconnect={handleGitHubDisconnect}
               />
-            </View>
+            </div>
           </VStack>
 
           {/* API Keys */}
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
+            style={{ ...organicBorderRadius.card,  overflow: 'hidden'  }}
           >
-            <View className="px-4 py-3 border-b border-neutral-700">
+            <div className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
                 API KEYS
               </Text>
-            </View>
-            <View className="px-4">
+            </div>
+            <div className="px-4">
               <ApiKeyInput
                 label="Anthropic (Claude)"
                 placeholder="sk-ant-..."
@@ -211,15 +207,15 @@ export default function CredentialsScreen() {
                 isSaving={savingType === 'openai'}
                 error={saveError?.type === 'openai' ? saveError.message : undefined}
               />
-            </View>
+            </div>
           </VStack>
 
           {/* Security Info */}
-          <View className="bg-teal-500/10 p-4" style={organicBorderRadius.card}>
+          <div className="bg-teal-500/10 p-4" style={organicBorderRadius.card}>
             <HStack spacing="sm" align="start">
-              <View className="mt-0.5">
+              <div className="mt-0.5">
                 <SecurityIcon size={18} color="teal" turbulence={0.2} />
-              </View>
+              </div>
               <VStack spacing="xs" className="flex-1">
                 <Text className="text-teal-400 font-semibold">Secure Storage</Text>
                 <Text size="sm" className="text-teal-400/80">
@@ -228,9 +224,9 @@ export default function CredentialsScreen() {
                 </Text>
               </VStack>
             </HStack>
-          </View>
+          </div>
         </Container>
-      </ScrollView>
+      </div>
     </>
   );
 }

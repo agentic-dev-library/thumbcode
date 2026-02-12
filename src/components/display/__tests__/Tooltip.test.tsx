@@ -1,8 +1,7 @@
-import { Text } from 'react-native';
-import { create } from 'react-test-renderer';
+import { create } from '@testing-library/react';
 import { InfoTip, Tooltip } from '../Tooltip';
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { badge: {} },
 }));
 

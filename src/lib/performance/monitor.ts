@@ -30,7 +30,7 @@ interface PerformanceConfig {
 }
 
 const DEFAULT_CONFIG: PerformanceConfig = {
-  enabled: __DEV__,
+  enabled: import.meta.env.DEV,
   slowRenderThreshold: 16.67, // 60fps = 16.67ms per frame
   reportInterval: 10000, // Report every 10 seconds
   maxMetrics: 1000,

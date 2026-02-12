@@ -1,8 +1,7 @@
-import { Text } from 'react-native';
-import { create } from 'react-test-renderer';
+import { create } from '@testing-library/react';
 
 // Mock the component to bypass RN Modal rendering in jest-expo web
-jest.mock('../BottomSheet', () => {
+vi.mock('../BottomSheet', () => {
   const { View, Text, Pressable } = require('react-native');
 
   function BottomSheet({
@@ -94,11 +93,11 @@ jest.mock('../BottomSheet', () => {
   return { BottomSheet, ActionSheet };
 });
 
-jest.mock('@/components/icons', () => ({
+vi.mock('@/components/icons', () => ({
   CloseIcon: () => 'CloseIcon',
 }));
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { modal: {}, button: {} },
 }));
 
@@ -107,7 +106,7 @@ const { BottomSheet, ActionSheet } = require('../BottomSheet');
 describe('BottomSheet', () => {
   it('renders children when visible', () => {
     const tree = create(
-      <BottomSheet visible onClose={jest.fn()}>
+      <BottomSheet visible onClose={vi.fn()}>
         <Text>Sheet content</Text>
       </BottomSheet>
     );
@@ -117,7 +116,7 @@ describe('BottomSheet', () => {
 
   it('renders title when provided', () => {
     const tree = create(
-      <BottomSheet visible onClose={jest.fn()} title="Settings">
+      <BottomSheet visible onClose={vi.fn()} title="Settings">
         <Text>Content</Text>
       </BottomSheet>
     );
@@ -127,7 +126,7 @@ describe('BottomSheet', () => {
 
   it('renders close icon when title is present', () => {
     const tree = create(
-      <BottomSheet visible onClose={jest.fn()} title="Settings">
+      <BottomSheet visible onClose={vi.fn()} title="Settings">
         <Text>Content</Text>
       </BottomSheet>
     );
@@ -137,7 +136,7 @@ describe('BottomSheet', () => {
 
   it('does not render when not visible', () => {
     const tree = create(
-      <BottomSheet visible={false} onClose={jest.fn()}>
+      <BottomSheet visible={false} onClose={vi.fn()}>
         <Text>Hidden</Text>
       </BottomSheet>
     );
@@ -147,13 +146,13 @@ describe('BottomSheet', () => {
 
 describe('ActionSheet', () => {
   const mockOptions = [
-    { label: 'Edit', onPress: jest.fn() },
-    { label: 'Delete', onPress: jest.fn(), destructive: true },
-    { label: 'Archive', onPress: jest.fn(), disabled: true },
+    { label: 'Edit', onPress: vi.fn() },
+    { label: 'Delete', onPress: vi.fn(), destructive: true },
+    { label: 'Archive', onPress: vi.fn(), disabled: true },
   ];
 
   it('renders action options', () => {
-    const tree = create(<ActionSheet visible onClose={jest.fn()} options={mockOptions} />);
+    const tree = create(<ActionSheet visible onClose={vi.fn()} options={mockOptions} />);
     const json = JSON.stringify(tree.toJSON());
     expect(json).toContain('Edit');
     expect(json).toContain('Delete');
@@ -164,7 +163,7 @@ describe('ActionSheet', () => {
     const tree = create(
       <ActionSheet
         visible
-        onClose={jest.fn()}
+        onClose={vi.fn()}
         options={mockOptions}
         title="Choose action"
         message="What would you like to do?"
@@ -176,14 +175,14 @@ describe('ActionSheet', () => {
   });
 
   it('renders cancel button by default', () => {
-    const tree = create(<ActionSheet visible onClose={jest.fn()} options={mockOptions} />);
+    const tree = create(<ActionSheet visible onClose={vi.fn()} options={mockOptions} />);
     const json = JSON.stringify(tree.toJSON());
     expect(json).toContain('Cancel');
   });
 
   it('uses custom cancel text', () => {
     const tree = create(
-      <ActionSheet visible onClose={jest.fn()} options={mockOptions} cancelText="Dismiss" />
+      <ActionSheet visible onClose={vi.fn()} options={mockOptions} cancelText="Dismiss" />
     );
     const json = JSON.stringify(tree.toJSON());
     expect(json).toContain('Dismiss');
@@ -191,7 +190,7 @@ describe('ActionSheet', () => {
 
   it('hides cancel when showCancel is false', () => {
     const tree = create(
-      <ActionSheet visible onClose={jest.fn()} options={mockOptions} showCancel={false} />
+      <ActionSheet visible onClose={vi.fn()} options={mockOptions} showCancel={false} />
     );
     const json = JSON.stringify(tree.toJSON());
     expect(json).not.toContain('Cancel');

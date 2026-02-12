@@ -1,12 +1,12 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { fireEvent, render } from '@testing-library/react';
 import { Select } from '../Select';
 
-jest.mock('@/components/icons', () => ({
+vi.mock('@/components/icons', () => ({
   ChevronDownIcon: () => 'ChevronDownIcon',
   SuccessIcon: () => 'SuccessIcon',
 }));
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { input: {}, modal: {}, badge: {} },
 }));
 
@@ -19,7 +19,7 @@ const mockOptions = [
 describe('Select', () => {
   it('renders with placeholder when no value is selected', () => {
     const { toJSON } = render(
-      <Select value={null} onValueChange={jest.fn()} options={mockOptions} />
+      <Select value={null} onValueChange={vi.fn()} options={mockOptions} />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Select an option');
@@ -29,7 +29,7 @@ describe('Select', () => {
     const { toJSON } = render(
       <Select
         value={null}
-        onValueChange={jest.fn()}
+        onValueChange={vi.fn()}
         options={mockOptions}
         placeholder="Choose framework"
       />
@@ -40,7 +40,7 @@ describe('Select', () => {
 
   it('displays selected value label', () => {
     const { toJSON } = render(
-      <Select value="react" onValueChange={jest.fn()} options={mockOptions} />
+      <Select value="react" onValueChange={vi.fn()} options={mockOptions} />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('React');
@@ -48,7 +48,7 @@ describe('Select', () => {
 
   it('renders label text', () => {
     const { toJSON } = render(
-      <Select value={null} onValueChange={jest.fn()} options={mockOptions} label="Framework" />
+      <Select value={null} onValueChange={vi.fn()} options={mockOptions} label="Framework" />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Framework');
@@ -58,7 +58,7 @@ describe('Select', () => {
     const { toJSON } = render(
       <Select
         value={null}
-        onValueChange={jest.fn()}
+        onValueChange={vi.fn()}
         options={mockOptions}
         error="Selection required"
       />
@@ -69,17 +69,17 @@ describe('Select', () => {
 
   it('renders combobox trigger that can be pressed', () => {
     const { UNSAFE_getByProps } = render(
-      <Select value={null} onValueChange={jest.fn()} options={mockOptions} label="Framework" />
+      <Select value={null} onValueChange={vi.fn()} options={mockOptions} label="Framework" />
     );
     const combobox = UNSAFE_getByProps({ accessibilityRole: 'combobox' });
     expect(combobox).toBeTruthy();
     // Press should not throw
-    fireEvent.press(combobox);
+    fireEvent.click(combobox);
   });
 
   it('does not open modal when disabled', () => {
     const { toJSON } = render(
-      <Select value={null} onValueChange={jest.fn()} options={mockOptions} disabled />
+      <Select value={null} onValueChange={vi.fn()} options={mockOptions} disabled />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('"aria-disabled":true');

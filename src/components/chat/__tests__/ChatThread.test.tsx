@@ -1,7 +1,7 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import { ChatThread } from '../ChatThread';
 
-jest.mock('@/components/icons', () => ({
+vi.mock('@/components/icons', () => ({
   BranchIcon: () => 'BranchIcon',
   EditIcon: () => 'EditIcon',
   FileIcon: () => 'FileIcon',
@@ -9,7 +9,7 @@ jest.mock('@/components/icons', () => ({
   LightningIcon: () => 'LightningIcon',
 }));
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: {
     pill: {},
     chatBubbleUser: {},
@@ -21,17 +21,17 @@ jest.mock('@/lib/organic-styles', () => ({
   },
 }));
 
-jest.mock('@/utils/design-tokens', () => ({
-  getColor: jest.fn(() => '#000000'),
+vi.mock('@/utils/design-tokens', () => ({
+  getColor: vi.fn(() => '#000000'),
 }));
 
-jest.mock('../CodeBlock', () => ({
+vi.mock('../CodeBlock', () => ({
   CodeBlock: ({ code }: { code: string }) => code,
 }));
 
-jest.mock('@/services/chat', () => ({
+vi.mock('@/services/chat', () => ({
   ChatService: {
-    respondToApproval: jest.fn(),
+    respondToApproval: vi.fn(),
   },
 }));
 
@@ -56,8 +56,8 @@ const mockMessages = [
   },
 ];
 
-jest.mock('@thumbcode/state', () => ({
-  useChatStore: jest.fn((selector: (state: unknown) => unknown) =>
+vi.mock('@thumbcode/state', () => ({
+  useChatStore: vi.fn((selector: (state: unknown) => unknown) =>
     selector({
       threads: {
         'thread-1': {
@@ -68,8 +68,8 @@ jest.mock('@thumbcode/state', () => ({
       },
     })
   ),
-  selectThreadMessages: jest.fn(() => () => mockMessages),
-  selectTypingIndicators: jest.fn(() => () => []),
+  selectThreadMessages: vi.fn(() => () => mockMessages),
+  selectTypingIndicators: vi.fn(() => () => []),
 }));
 
 describe('ChatThread', () => {

@@ -5,9 +5,8 @@
  * Integrates with isomorphic-git for client-side Git operations.
  */
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { createJSONStorage, devtools, persist } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 // File tree node for displaying repository structure
@@ -272,7 +271,6 @@ export const useProjectStore = create<ProjectState>()(
       {
         name: 'thumbcode-project-storage',
         version: 1,
-        storage: createJSONStorage(() => AsyncStorage),
         migrate: (persisted) => {
           type PersistedProject = Omit<Project, 'status'> & { status?: LocalProjectStatus };
           type PersistedState = {

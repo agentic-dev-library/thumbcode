@@ -6,8 +6,8 @@
  */
 
 import type { ReactNode } from 'react';
-import { useRef, useState } from 'react';
-import { Animated, type LayoutRectangle, Pressable, Text, View } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
@@ -30,60 +30,51 @@ export function Tooltip({
   delay = 500,
 }: Readonly<TooltipProps>) {
   const [visible, setVisible] = useState(false);
-  const [layout, setLayout] = useState<LayoutRectangle | null>(null);
-  const opacity = useRef(new Animated.Value(0)).current;
+  const containerRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const showTooltip = () => {
+  const showTooltip = useCallback(() => {
     timeoutRef.current = setTimeout(() => {
       setVisible(true);
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 150,
-        useNativeDriver: true,
-      }).start();
     }, delay);
-  };
+  }, [delay]);
 
-  const hideTooltip = () => {
+  const hideTooltip = useCallback(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
-    Animated.timing(opacity, {
-      toValue: 0,
-      duration: 100,
-      useNativeDriver: true,
-    }).start(() => setVisible(false));
-  };
+    setVisible(false);
+  }, []);
 
-  const getTooltipStyle = () => {
-    if (!layout) return {};
+  const getTooltipStyle = (): React.CSSProperties => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return {};
 
     const offset = 8;
     switch (position) {
       case 'top':
         return {
-          bottom: layout.height + offset,
+          bottom: rect.height + offset,
           left: '50%',
-          transform: [{ translateX: -50 }],
+          transform: 'translateX(-50%)',
         };
       case 'bottom':
         return {
-          top: layout.height + offset,
+          top: rect.height + offset,
           left: '50%',
-          transform: [{ translateX: -50 }],
+          transform: 'translateX(-50%)',
         };
       case 'left':
         return {
-          right: layout.width + offset,
+          right: rect.width + offset,
           top: '50%',
-          transform: [{ translateY: -50 }],
+          transform: 'translateY(-50%)',
         };
       case 'right':
         return {
-          left: layout.width + offset,
+          left: rect.width + offset,
           top: '50%',
-          transform: [{ translateY: -50 }],
+          transform: 'translateY(-50%)',
         };
       default:
         return {};
@@ -91,25 +82,31 @@ export function Tooltip({
   };
 
   return (
-    <View onLayout={(e) => setLayout(e.nativeEvent.layout)} className="relative">
-      <Pressable
-        onLongPress={showTooltip}
-        onPressOut={hideTooltip}
-        delayLongPress={delay}
-        accessibilityHint="Long press for more info"
+    <div ref={containerRef} className="relative">
+      <button
+        type="button"
+        onMouseDown={showTooltip}
+        onMouseUp={hideTooltip}
+        onMouseLeave={hideTooltip}
+        aria-description="Long press for more info"
       >
         {children}
-      </Pressable>
+      </button>
 
       {visible && (
-        <Animated.View
+        <div
           className="absolute z-50 bg-neutral-800 px-3 py-2"
-          style={[{ opacity }, organicBorderRadius.badge, getTooltipStyle() as object]}
+          style={{
+            ...organicBorderRadius.badge,
+            ...getTooltipStyle(),
+            opacity: visible ? 1 : 0,
+            transition: 'opacity 0.15s ease',
+          }}
         >
           <Text className="font-body text-sm text-white whitespace-nowrap">{content}</Text>
-        </Animated.View>
+        </div>
       )}
-    </View>
+    </div>
   );
 }
 
@@ -126,16 +123,16 @@ export function InfoTip({ content, size = 'sm' }: Readonly<InfoTipProps>) {
 
   return (
     <Tooltip content={content}>
-      <View
+      <div
         className="items-center justify-center bg-neutral-700 rounded-full"
         style={{ width: dimension, height: dimension }}
-        accessibilityRole="button"
-        accessibilityLabel="Information"
+        role="button"
+        aria-label="Information"
       >
         <Text className="font-body text-neutral-300" style={{ fontSize, lineHeight: fontSize + 2 }}>
           ?
         </Text>
-      </View>
+      </div>
     </Tooltip>
   );
 }

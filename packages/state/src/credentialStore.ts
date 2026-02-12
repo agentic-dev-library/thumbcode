@@ -6,9 +6,8 @@
  * This store tracks which credentials exist and their status.
  */
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { createJSONStorage, devtools, persist } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 // Supported credential providers
@@ -183,7 +182,6 @@ export const useCredentialStore = create<CredentialState>()(
       })),
       {
         name: 'thumbcode-credential-metadata',
-        storage: createJSONStorage(() => AsyncStorage),
       }
     ),
     { name: 'CredentialStore' }

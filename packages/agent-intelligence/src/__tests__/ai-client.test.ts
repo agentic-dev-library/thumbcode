@@ -21,10 +21,10 @@ function mockCreateAsyncIterator<T>(items: T[]) {
 }
 
 // Mock the Anthropic SDK
-jest.mock('@anthropic-ai/sdk', () => {
-  return jest.fn().mockImplementation(() => ({
+vi.mock('@anthropic-ai/sdk', () => {
+  return vi.fn().mockImplementation(() => ({
     messages: {
-      create: jest.fn().mockResolvedValue({
+      create: vi.fn().mockResolvedValue({
         id: 'msg_123',
         content: [{ type: 'text', text: 'Hello, world!' }],
         model: 'claude-3-5-sonnet-20241022',
@@ -34,7 +34,7 @@ jest.mock('@anthropic-ai/sdk', () => {
           output_tokens: 5,
         },
       }),
-      stream: jest.fn().mockImplementation(() => {
+      stream: vi.fn().mockImplementation(() => {
         const events = [
           { type: 'message_start' },
           {
@@ -52,7 +52,7 @@ jest.mock('@anthropic-ai/sdk', () => {
         ];
         return {
           ...mockCreateAsyncIterator(events),
-          finalMessage: jest.fn().mockResolvedValue({
+          finalMessage: vi.fn().mockResolvedValue({
             id: 'msg_123',
             content: [{ type: 'text', text: 'Hello' }],
             model: 'claude-3-5-sonnet-20241022',
@@ -69,11 +69,11 @@ jest.mock('@anthropic-ai/sdk', () => {
 });
 
 // Mock the OpenAI SDK
-jest.mock('openai', () => {
-  return jest.fn().mockImplementation(() => ({
+vi.mock('openai', () => {
+  return vi.fn().mockImplementation(() => ({
     chat: {
       completions: {
-        create: jest.fn().mockImplementation((params) => {
+        create: vi.fn().mockImplementation((params) => {
           if (params.stream) {
             const streamEvents = [
               {

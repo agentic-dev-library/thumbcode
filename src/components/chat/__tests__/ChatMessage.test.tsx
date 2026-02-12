@@ -1,8 +1,8 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import type { Message } from '@thumbcode/state';
 import { ChatMessage } from '../ChatMessage';
 
-jest.mock('@/components/icons', () => ({
+vi.mock('@/components/icons', () => ({
   BranchIcon: () => 'BranchIcon',
   EditIcon: () => 'EditIcon',
   FileIcon: () => 'FileIcon',
@@ -10,7 +10,7 @@ jest.mock('@/components/icons', () => ({
   LightningIcon: () => 'LightningIcon',
 }));
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: {
     pill: {},
     chatBubbleUser: {},
@@ -22,12 +22,12 @@ jest.mock('@/lib/organic-styles', () => ({
   },
 }));
 
-jest.mock('@/utils/design-tokens', () => ({
-  getColor: jest.fn(() => '#000000'),
+vi.mock('@/utils/design-tokens', () => ({
+  getColor: vi.fn(() => '#000000'),
 }));
 
 // Mock CodeBlock since it has complex dependencies
-jest.mock('../CodeBlock', () => ({
+vi.mock('../CodeBlock', () => ({
   CodeBlock: ({ code }: { code: string }) => code,
 }));
 

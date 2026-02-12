@@ -1,38 +1,38 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { fireEvent, render } from '@testing-library/react';
 import { Toast } from '../Toast';
 
-jest.mock('@/components/icons', () => ({
+vi.mock('@/components/icons', () => ({
   CloseIcon: () => 'CloseIcon',
   InfoIcon: () => 'InfoIcon',
   SuccessIcon: () => 'SuccessIcon',
   WarningIcon: () => 'WarningIcon',
 }));
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { toast: {} },
 }));
 
-jest.mock('@/utils/design-tokens', () => ({
-  getColor: jest.fn(() => '#000000'),
+vi.mock('@/utils/design-tokens', () => ({
+  getColor: vi.fn(() => '#000000'),
 }));
 
 describe('Toast', () => {
   it('renders message when visible', () => {
     const { toJSON } = render(
-      <Toast visible message="Operation successful" onDismiss={jest.fn()} />
+      <Toast visible message="Operation successful" onDismiss={vi.fn()} />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Operation successful');
   });
 
   it('returns null when not visible', () => {
-    const { toJSON } = render(<Toast visible={false} message="Hidden" onDismiss={jest.fn()} />);
+    const { toJSON } = render(<Toast visible={false} message="Hidden" onDismiss={vi.fn()} />);
     expect(toJSON()).toBeNull();
   });
 
   it('renders title when provided', () => {
     const { toJSON } = render(
-      <Toast visible message="Details here" title="Success!" onDismiss={jest.fn()} />
+      <Toast visible message="Details here" title="Success!" onDismiss={vi.fn()} />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Success!');
@@ -40,25 +40,25 @@ describe('Toast', () => {
   });
 
   it('renders dismiss button with accessibility', () => {
-    const { toJSON } = render(<Toast visible message="Test" onDismiss={jest.fn()} />);
+    const { toJSON } = render(<Toast visible message="Test" onDismiss={vi.fn()} />);
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Dismiss notification');
   });
 
   it('calls onDismiss when dismiss button is pressed', () => {
-    const onDismiss = jest.fn();
+    const onDismiss = vi.fn();
     const { UNSAFE_getByProps } = render(<Toast visible message="Test" onDismiss={onDismiss} />);
-    fireEvent.press(UNSAFE_getByProps({ accessibilityLabel: 'Dismiss notification' }));
+    fireEvent.click(UNSAFE_getByProps({ accessibilityLabel: 'Dismiss notification' }));
     expect(onDismiss).toHaveBeenCalled();
   });
 
   it('renders action button when provided', () => {
-    const onAction = jest.fn();
+    const onAction = vi.fn();
     const { toJSON } = render(
       <Toast
         visible
         message="File deleted"
-        onDismiss={jest.fn()}
+        onDismiss={vi.fn()}
         action={{ label: 'Undo', onPress: onAction }}
       />
     );
@@ -68,7 +68,7 @@ describe('Toast', () => {
 
   it('renders success variant icon', () => {
     const { toJSON } = render(
-      <Toast visible message="Done" variant="success" onDismiss={jest.fn()} />
+      <Toast visible message="Done" variant="success" onDismiss={vi.fn()} />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('SuccessIcon');
@@ -76,14 +76,14 @@ describe('Toast', () => {
 
   it('renders warning variant icon', () => {
     const { toJSON } = render(
-      <Toast visible message="Careful" variant="warning" onDismiss={jest.fn()} />
+      <Toast visible message="Careful" variant="warning" onDismiss={vi.fn()} />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('WarningIcon');
   });
 
   it('renders info variant icon', () => {
-    const { toJSON } = render(<Toast visible message="FYI" variant="info" onDismiss={jest.fn()} />);
+    const { toJSON } = render(<Toast visible message="FYI" variant="info" onDismiss={vi.fn()} />);
     const json = JSON.stringify(toJSON());
     expect(json).toContain('InfoIcon');
   });

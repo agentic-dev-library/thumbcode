@@ -2,8 +2,7 @@
  * OptimizedList Component Tests
  */
 
-import { render } from '@testing-library/react-native';
-import { Text, View } from 'react-native';
+import { render } from '@testing-library/react';
 import {
   createMemoizedRenderItem,
   defaultListItemPropsAreEqual,
@@ -12,12 +11,12 @@ import {
 } from '../performance';
 
 // Mock logger
-jest.mock('../logger', () => ({
+vi.mock('../logger', () => ({
   logger: {
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
   },
 }));
 
@@ -54,7 +53,7 @@ describe('OptimizedList', () => {
   });
 
   it('should use custom keyExtractor', () => {
-    const customKeyExtractor = jest.fn((item: TestItem) => `custom-${item.id}`);
+    const customKeyExtractor = vi.fn((item: TestItem) => `custom-${item.id}`);
     const renderItem = ({ item }: { item: TestItem }) => (
       <View>
         <Text>{item.name}</Text>
@@ -139,7 +138,7 @@ describe('OptimizedList', () => {
   });
 
   it('should handle onViewableItemsChanged callback', () => {
-    const onViewableItemsChanged = jest.fn();
+    const onViewableItemsChanged = vi.fn();
     const renderItem = ({ item }: { item: TestItem }) => (
       <View>
         <Text>{item.name}</Text>
@@ -169,9 +168,9 @@ describe('createMemoizedRenderItem', () => {
       item: { id: '1', name: 'Test' },
       index: 0,
       separators: {
-        highlight: jest.fn(),
-        unhighlight: jest.fn(),
-        updateProps: jest.fn(),
+        highlight: vi.fn(),
+        unhighlight: vi.fn(),
+        updateProps: vi.fn(),
       },
     };
 
@@ -192,7 +191,7 @@ describe('withListItemMemo', () => {
   });
 
   it('should use custom props comparison', () => {
-    const customCompare = jest.fn(() => true);
+    const customCompare = vi.fn(() => true);
     const MemoizedComponent = withListItemMemo(TestItemComponent, customCompare);
 
     const { rerender, root } = render(

@@ -9,31 +9,31 @@ import git from 'isomorphic-git';
 import { GitCommitService } from '../GitCommitService';
 
 // Mock isomorphic-git
-jest.mock('isomorphic-git', () => ({
+vi.mock('isomorphic-git', () => ({
   __esModule: true,
   default: {
-    commit: jest.fn(),
-    add: jest.fn(),
-    remove: jest.fn(),
-    log: jest.fn(),
+    commit: vi.fn(),
+    add: vi.fn(),
+    remove: vi.fn(),
+    log: vi.fn(),
   },
 }));
 
 // Mock git-fs
-jest.mock('../git-fs', () => ({
+vi.mock('../git-fs', () => ({
   fs: {
     promises: {
-      mkdir: jest.fn().mockResolvedValue(undefined),
+      mkdir: vi.fn().mockResolvedValue(undefined),
     },
   },
   http: {},
 }));
 
-const mockGit = git as jest.Mocked<typeof git>;
+const mockGit = git as Mocked<typeof git>;
 
 describe('GitCommitService', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('commit', () => {

@@ -6,7 +6,6 @@
  */
 
 import type React from 'react';
-import { Pressable, View } from 'react-native';
 import {
   ChevronDownIcon,
   FileCodeIcon,
@@ -123,28 +122,28 @@ function FileTreeNodeRow({
   const textClass = isSelected ? 'text-teal-300' : 'text-neutral-200';
 
   return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={accessibilityLabel}
-      accessibilityHint={accessibilityHint}
+    <button type="button"
+      onClick={onPress}
+      role="button"
+      aria-label={accessibilityLabel}
+      aria-description={accessibilityHint}
       className={`flex-row items-center py-1.5 px-2 ${rowClass}`}
       style={{ paddingLeft: 8 + depth * 16 }}
     >
-      <View className="w-4 mr-1 items-center justify-center">
+      <div className="w-4 mr-1 items-center justify-center">
         {isFolder && hasChildren ? (
-          <View style={{ transform: [{ rotate: isExpanded ? '0deg' : '-90deg' }] }}>
+          <div style={{ transform: `rotate(${isExpanded ? '0deg' : '-90deg'})` }}>
             <ChevronDownIcon size={12} color="warmGray" turbulence={0.12} />
-          </View>
+          </div>
         ) : null}
-      </View>
-      <View className="mr-2">
+      </div>
+      <div className="mr-2">
         <iconInfo.Icon size={16} color={iconInfo.color} turbulence={0.15} />
-      </View>
+      </div>
       <Text className={`font-mono text-sm flex-1 ${textClass} ${statusColor}`} numberOfLines={1}>
         {node.name}
       </Text>
-    </Pressable>
+    </button>
   );
 }
 
@@ -188,9 +187,9 @@ export function TreeNode({
     .join(', ');
 
   return (
-    <View>
-      <View className="flex-row items-center">
-        <View className="flex-1">
+    <div>
+      <div className="flex-row items-center">
+        <div className="flex-1">
           <FileTreeNodeRow
             node={node}
             depth={depth}
@@ -199,18 +198,18 @@ export function TreeNode({
             isFolder={isFolder}
             hasChildren={hasChildren}
             statusColor={statusColor}
-            onPress={handlePress}
-            accessibilityLabel={accessibilityLabel}
-            accessibilityHint={getAccessibilityHint(isFolder, hasChildren, isExpanded)}
+            onClick={handlePress}
+            aria-label={accessibilityLabel}
+            aria-description={getAccessibilityHint(isFolder, hasChildren, isExpanded)}
           />
-        </View>
+        </div>
         {shouldShowStatus && (
           <Text className={`text-xs ${statusColor} mr-2`}>{getStatusLabel(node)}</Text>
         )}
-      </View>
+      </div>
 
       {isFolder && isExpanded && hasChildren && (
-        <View>
+        <div>
           {node.children?.map((child) => (
             <TreeNode
               key={child.path}
@@ -223,8 +222,8 @@ export function TreeNode({
               showStatus={showStatus}
             />
           ))}
-        </View>
+        </div>
       )}
-    </View>
+    </div>
   );
 }

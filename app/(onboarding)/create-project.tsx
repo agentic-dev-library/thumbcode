@@ -11,8 +11,6 @@ import type { Repository } from '@thumbcode/types';
 import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { ScrollView, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StepsProgress } from '@/components/feedback';
 import { Container, VStack } from '@/components/layout';
 import {
@@ -79,7 +77,6 @@ async function cloneRepository(repo: RepoListItem): Promise<{ dir: string }> {
 
 export default function CreateProjectScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const addProject = useProjectStore((s) => s.addProject);
   const setActiveProject = useProjectStore((s) => s.setActiveProject);
   const initWorkspace = useProjectStore((s) => s.initWorkspace);
@@ -193,11 +190,10 @@ export default function CreateProjectScreen() {
   const canCreate = selectedRepo && projectName.trim().length > 0;
 
   return (
-    <View className="flex-1 bg-charcoal" style={{ paddingTop: insets.top }}>
-      <ScrollView
+    <div className="flex-1 bg-charcoal" >
+      <div
         className="flex-1"
-        contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
-        showsVerticalScrollIndicator={false}
+}
         keyboardShouldPersistTaps="handled"
       >
         <Container padding="lg">
@@ -239,15 +235,15 @@ export default function CreateProjectScreen() {
             onCreateNewRepo={handleCreateNewRepo}
           />
         </Container>
-      </ScrollView>
+      </div>
 
       <ProjectFormActions
         canCreate={!!canCreate}
         isLoading={isLoading}
-        bottomInset={insets.bottom}
+        
         onSkip={handleSkip}
         onCreate={handleCreate}
       />
-    </View>
+    </div>
   );
 }

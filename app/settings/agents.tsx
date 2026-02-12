@@ -6,8 +6,6 @@
 
 import { Stack } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, Switch, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge } from '@/components/display';
 import { LightbulbIcon } from '@/components/icons';
 import { Container, Divider, HStack, VStack } from '@/components/layout';
@@ -29,8 +27,8 @@ interface SettingRowProps {
 
 function SettingRow({ title, subtitle, value, badge, onPress, toggle }: Readonly<SettingRowProps>) {
   return (
-    <Pressable
-      onPress={onPress}
+    <button type="button"
+      onClick={onPress}
       disabled={!onPress && !toggle}
       className={`py-4 ${onPress ? 'active:bg-neutral-800' : ''}`}
     >
@@ -39,11 +37,11 @@ function SettingRow({ title, subtitle, value, badge, onPress, toggle }: Readonly
           <HStack align="center">
             <Text className="text-white">{title}</Text>
             {badge && (
-              <View className="ml-2">
+              <div className="ml-2">
                 <Badge variant={badge.variant} size="sm">
                   {badge.label}
                 </Badge>
-              </View>
+              </div>
             )}
           </HStack>
           {subtitle && (
@@ -56,17 +54,17 @@ function SettingRow({ title, subtitle, value, badge, onPress, toggle }: Readonly
         {value && <Text className="text-neutral-400 mr-2">{value}</Text>}
 
         {toggle && (
-          <Switch
-            value={toggle.value}
-            onValueChange={toggle.onValueChange}
-            trackColor={{ false: getColor('neutral', '700'), true: getColor('teal', '600') }}
-            thumbColor={toggle.value ? getColor('neutral', '50') : getColor('neutral', '400')}
+          <input type="checkbox"
+            checked={toggle.value}
+            onChange={toggle.onValueChange}
+            }
+            
           />
         )}
 
         {onPress && !toggle && <Text className="text-neutral-600">›</Text>}
       </HStack>
-    </Pressable>
+    </button>
   );
 }
 
@@ -86,16 +84,16 @@ function ApprovalLevelSelector({
   onSelect,
 }: Readonly<ApprovalLevelSelectorProps>) {
   return (
-    <View className="py-4">
+    <div className="py-4">
       <Text className="text-white mb-1">{title}</Text>
       <Text size="sm" className="text-neutral-500 mb-4">
         {description}
       </Text>
       <VStack spacing="sm">
         {levels.map((level) => (
-          <Pressable
+          <button type="button"
             key={level.id}
-            onPress={() => onSelect(level.id)}
+            onClick={() => onSelect(level.id)}
             className={`p-4 border ${selected === level.id ? 'border-coral-500 bg-coral-500/10' : 'border-neutral-700 bg-charcoal'}`}
             style={organicBorderRadius.button}
           >
@@ -108,21 +106,20 @@ function ApprovalLevelSelector({
                   {level.description}
                 </Text>
               </VStack>
-              <View
+              <div
                 className={`w-5 h-5 rounded-full border-2 items-center justify-center ${selected === level.id ? 'border-coral-500 bg-coral-500' : 'border-neutral-600'}`}
               >
-                {selected === level.id && <View className="w-2 h-2 rounded-full bg-white" />}
-              </View>
+                {selected === level.id && <div className="w-2 h-2 rounded-full bg-white" />}
+              </div>
             </HStack>
-          </Pressable>
+          </button>
         ))}
       </VStack>
-    </View>
+    </div>
   );
 }
 
 export default function AgentSettingsScreen() {
-  const insets = useSafeAreaInsets();
 
   // Settings state
   const [autoReview, setAutoReview] = useState(true);
@@ -156,24 +153,23 @@ export default function AgentSettingsScreen() {
         }}
       />
 
-      <ScrollView
+      <div
         className="flex-1 bg-charcoal"
-        contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
-        showsVerticalScrollIndicator={false}
+}
       >
         <Container padding="lg">
           {/* Automation */}
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
+            style={{ ...organicBorderRadius.card,  overflow: 'hidden'  }}
           >
-            <View className="px-4 py-3 border-b border-neutral-700">
+            <div className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
                 AUTOMATION
               </Text>
-            </View>
-            <View className="px-4">
+            </div>
+            <div className="px-4">
               <SettingRow
                 title="Auto-Review"
                 subtitle="Reviewer automatically checks implementer changes"
@@ -192,21 +188,21 @@ export default function AgentSettingsScreen() {
                 subtitle="Allow multiple agents to work simultaneously"
                 toggle={{ value: parallelAgents, onValueChange: setParallelAgents }}
               />
-            </View>
+            </div>
           </VStack>
 
           {/* Approval Settings */}
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
+            style={{ ...organicBorderRadius.card,  overflow: 'hidden'  }}
           >
-            <View className="px-4 py-3 border-b border-neutral-700">
+            <div className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
                 APPROVAL REQUIREMENTS
               </Text>
-            </View>
-            <View className="px-4">
+            </div>
+            <div className="px-4">
               <ApprovalLevelSelector
                 title="Commits"
                 description="When agents create git commits"
@@ -230,35 +226,35 @@ export default function AgentSettingsScreen() {
                 selected={deployApproval}
                 onSelect={setDeployApproval}
               />
-            </View>
+            </div>
           </VStack>
 
           {/* Advanced */}
           <VStack
             spacing="none"
             className="bg-surface mb-6"
-            style={[organicBorderRadius.card, { overflow: 'hidden' }]}
+            style={{ ...organicBorderRadius.card,  overflow: 'hidden'  }}
           >
-            <View className="px-4 py-3 border-b border-neutral-700">
+            <div className="px-4 py-3 border-b border-neutral-700">
               <Text size="sm" weight="semibold" className="text-neutral-400">
                 ADVANCED
               </Text>
-            </View>
-            <View className="px-4">
+            </div>
+            <div className="px-4">
               <SettingRow
                 title="Verbose Logging"
                 subtitle="Show detailed agent activity in chat"
                 toggle={{ value: verboseLogging, onValueChange: setVerboseLogging }}
               />
-            </View>
+            </div>
           </VStack>
 
           {/* Info Box */}
-          <View className="bg-gold-500/10 p-4" style={organicBorderRadius.card}>
+          <div className="bg-gold-500/10 p-4" style={organicBorderRadius.card}>
             <HStack spacing="sm" align="start">
-              <View className="mt-0.5">
+              <div className="mt-0.5">
                 <LightbulbIcon size={18} color="gold" turbulence={0.2} />
-              </View>
+              </div>
               <VStack spacing="xs" className="flex-1">
                 <Text className="text-gold-400 font-semibold">Tip</Text>
                 <Text size="sm" className="text-gold-400/80">
@@ -267,9 +263,9 @@ export default function AgentSettingsScreen() {
                 </Text>
               </VStack>
             </HStack>
-          </View>
+          </div>
         </Container>
-      </ScrollView>
+      </div>
     </>
   );
 }

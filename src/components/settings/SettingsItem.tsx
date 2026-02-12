@@ -5,7 +5,6 @@
  */
 
 import type React from 'react';
-import { Pressable, Switch, View } from 'react-native';
 import { Badge } from '@/components/display';
 import type { IconColor } from '@/components/icons';
 import { HStack, VStack } from '@/components/layout';
@@ -40,28 +39,28 @@ export function SettingsItem({
   toggle,
 }: Readonly<SettingsItemProps>) {
   return (
-    <Pressable
-      onPress={onPress}
+    <button type="button"
+      onClick={onPress}
       disabled={!onPress && !toggle}
       className={`py-4 ${onPress ? 'active:bg-neutral-800' : ''}`}
     >
       <HStack align="center">
-        <View
+        <div
           className="w-10 h-10 bg-surface-elevated items-center justify-center mr-4"
           style={organicBorderRadius.badge}
         >
           <Icon size={22} color={iconColor} turbulence={0.2} />
-        </View>
+        </div>
 
         <VStack spacing="none" className="flex-1">
           <HStack align="center">
             <Text className="text-white">{title}</Text>
             {badge && (
-              <View className="ml-2">
+              <div className="ml-2">
                 <Badge variant="success" size="sm">
                   {badge}
                 </Badge>
-              </View>
+              </div>
             )}
           </HStack>
           {subtitle && (
@@ -74,16 +73,16 @@ export function SettingsItem({
         {value && <Text className="text-neutral-400 mr-2">{value}</Text>}
 
         {toggle && (
-          <Switch
-            value={toggle.value}
-            onValueChange={toggle.onValueChange}
-            trackColor={{ false: getColor('neutral', '700'), true: getColor('teal', '600') }}
-            thumbColor={toggle.value ? getColor('neutral', '50') : getColor('neutral', '400')}
+          <input type="checkbox"
+            checked={toggle.value}
+            onChange={toggle.onValueChange}
+            }
+            
           />
         )}
 
         {showArrow && !toggle && <Text className="text-neutral-600">›</Text>}
       </HStack>
-    </Pressable>
+    </button>
   );
 }

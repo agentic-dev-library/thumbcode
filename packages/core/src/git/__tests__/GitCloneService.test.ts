@@ -9,42 +9,38 @@ import git from 'isomorphic-git';
 import { GitCloneService } from '../GitCloneService';
 
 // Mock isomorphic-git
-jest.mock('isomorphic-git', () => ({
+vi.mock('isomorphic-git', () => ({
   __esModule: true,
   default: {
-    clone: jest.fn(),
-    fetch: jest.fn(),
-    pull: jest.fn(),
-    push: jest.fn(),
-    listRemotes: jest.fn(),
-    addRemote: jest.fn(),
-    deleteRemote: jest.fn(),
-    init: jest.fn(),
-    resolveRef: jest.fn(),
+    clone: vi.fn(),
+    fetch: vi.fn(),
+    pull: vi.fn(),
+    push: vi.fn(),
+    listRemotes: vi.fn(),
+    addRemote: vi.fn(),
+    deleteRemote: vi.fn(),
+    init: vi.fn(),
+    resolveRef: vi.fn(),
   },
 }));
 
 // Mock git-fs
-jest.mock('../git-fs', () => ({
+vi.mock('../git-fs', () => ({
   fs: {
     promises: {
-      mkdir: jest.fn().mockResolvedValue(undefined),
+      mkdir: vi.fn().mockResolvedValue(undefined),
     },
   },
   http: {},
 }));
 
 // Mock expo-file-system
-jest.mock('expo-file-system', () => ({
-  documentDirectory: '/mock/documents/',
-  deleteAsync: jest.fn().mockResolvedValue(undefined),
-}));
 
-const mockGit = git as jest.Mocked<typeof git>;
+const mockGit = git as Mocked<typeof git>;
 
 describe('GitCloneService', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('getRepoBaseDir', () => {
@@ -135,7 +131,7 @@ describe('GitCloneService', () => {
         }
       });
 
-      const onProgress = jest.fn();
+      const onProgress = vi.fn();
       await GitCloneService.clone({
         url: 'https://github.com/user/repo.git',
         dir: '/mock/repos/repo',

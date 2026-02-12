@@ -1,19 +1,19 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 
 // Provide minimal document stub for react-native-web TextInput
 if (typeof document === 'undefined') {
   (global as Record<string, unknown>).document = {
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    createElement: jest.fn(() => ({ style: {} })),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    createElement: vi.fn(() => ({ style: {} })),
   };
 }
 
 import ProjectsScreen from '../projects';
 
 // Mock @thumbcode/state
-jest.mock('@thumbcode/state', () => ({
-  useProjectStore: jest.fn((selector) =>
+vi.mock('@thumbcode/state', () => ({
+  useProjectStore: vi.fn((selector) =>
     selector({
       projects: [
         {

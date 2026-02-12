@@ -1,8 +1,7 @@
-import { ActivityIndicator, Pressable, type PressableProps } from 'react-native';
 import { Text } from '../primitives/Text';
 import { themeTokens } from '../theme/ThemeProvider';
 
-interface ButtonProps extends PressableProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
@@ -47,8 +46,8 @@ export function Button({
   const textColorClass = variant === 'outline' || variant === 'ghost' ? 'text-neutral-800' : 'text-white';
 
   return (
-    <Pressable
-      accessibilityRole="button"
+    <button type="button"
+      role="button"
       disabled={disabled || loading}
       className={`
         ${variantClasses}
@@ -59,21 +58,15 @@ export function Button({
         ${className}
       `}
       style={{
-        transform: [{ rotate: '-0.2deg' }],
+        transform: 'rotate(-0.2deg)',
       }}
       {...props}
     >
       {loading ? (
-        <ActivityIndicator
-          color={
-            variant === 'outline' || variant === 'ghost'
-              ? themeTokens.colors.neutral[800]
-              : themeTokens.colors.neutral[50]
-          }
-        />
+        <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
       ) : (
         <Text className={`${textColorClass} text-center font-semibold`}>{children}</Text>
       )}
-    </Pressable>
+    </button>
   );
 }

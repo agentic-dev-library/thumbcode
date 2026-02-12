@@ -1,12 +1,7 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import AgentSettingsScreen from '../agents';
 
 // Mock expo-router Stack
-jest.mock('expo-router', () => ({
-  Stack: {
-    Screen: () => null,
-  },
-}));
 
 describe('AgentSettingsScreen', () => {
   it('renders without crashing', () => {

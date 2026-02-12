@@ -6,7 +6,6 @@
  */
 
 import { useMemo } from 'react';
-import { Image, Text, View } from 'react-native';
 
 type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 type AvatarStatus = 'online' | 'offline' | 'busy' | 'away';
@@ -65,13 +64,13 @@ export function Avatar({
   const accessibilityLabel = [name || 'Unknown', status || 'no status'].filter(Boolean).join(', ');
 
   return (
-    <View
+    <div
       className="relative"
       style={{ width: dimension, height: dimension }}
-      accessibilityRole="image"
-      accessibilityLabel={accessibilityLabel}
+      role="image"
+      aria-label={accessibilityLabel}
     >
-      <View
+      <div
         className={`items-center justify-center overflow-hidden ${bgColor} ${
           borderColor ? `border-2 ${borderColor}` : ''
         }`}
@@ -82,21 +81,21 @@ export function Avatar({
         }}
       >
         {src ? (
-          <Image
-            source={{ uri: src }}
+          <img
+            src={src}
             style={{ width: dimension, height: dimension }}
             className="rounded-full"
-            accessibilityIgnoresInvertColors
+            
           />
         ) : (
           <Text className="font-body text-white font-semibold" style={{ fontSize }}>
             {initials}
           </Text>
         )}
-      </View>
+      </div>
 
       {status && (
-        <View
+        <div
           className={`absolute -bottom-0.5 -right-0.5 border-2 border-charcoal ${statusColors[status]}`}
           style={{
             width: statusSize,
@@ -105,7 +104,7 @@ export function Avatar({
           }}
         />
       )}
-    </View>
+    </div>
   );
 }
 
@@ -124,9 +123,9 @@ export function AvatarGroup({ avatars, max = 4, size = 'sm' }: Readonly<AvatarGr
   const remaining = avatars.length - max;
 
   return (
-    <View className="flex-row">
+    <div className="flex-row">
       {visibleAvatars.map((avatar, index) => (
-        <View
+        <div
           key={`${avatar.name || index}`}
           style={{
             marginLeft: index > 0 ? -dimension / 3 : 0,
@@ -134,10 +133,10 @@ export function AvatarGroup({ avatars, max = 4, size = 'sm' }: Readonly<AvatarGr
           }}
         >
           <Avatar src={avatar.src} name={avatar.name} size={size} borderColor="border-charcoal" />
-        </View>
+        </div>
       ))}
       {remaining > 0 && (
-        <View
+        <div
           className="items-center justify-center bg-neutral-600 border-2 border-charcoal"
           style={{
             width: dimension,
@@ -149,8 +148,8 @@ export function AvatarGroup({ avatars, max = 4, size = 'sm' }: Readonly<AvatarGr
           <Text className="font-body text-white" style={{ fontSize: fontSize - 2 }}>
             +{remaining}
           </Text>
-        </View>
+        </div>
       )}
-    </View>
+    </div>
   );
 }

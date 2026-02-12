@@ -1,38 +1,38 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import GitHubAuthScreen from '../github-auth';
 
 // Mock @thumbcode/config/env
-jest.mock('@thumbcode/config/env', () => ({
+vi.mock('@thumbcode/config/env', () => ({
   env: {
     githubClientId: 'test-client-id',
   },
 }));
 
 // Mock @thumbcode/core
-jest.mock('@thumbcode/core', () => ({
+vi.mock('@thumbcode/core', () => ({
   CredentialService: {
-    retrieve: jest.fn(() => Promise.resolve({ secret: null })),
-    validateCredential: jest.fn(() => Promise.resolve({ isValid: false, message: 'Test' })),
+    retrieve: vi.fn(() => Promise.resolve({ secret: null })),
+    validateCredential: vi.fn(() => Promise.resolve({ isValid: false, message: 'Test' })),
   },
   GitHubAuthService: {
-    startDeviceFlow: jest.fn(() => Promise.resolve({ success: false })),
-    pollForToken: jest.fn(() => Promise.resolve({ authorized: false })),
-    getCurrentUser: jest.fn(() => Promise.resolve(null)),
+    startDeviceFlow: vi.fn(() => Promise.resolve({ success: false })),
+    pollForToken: vi.fn(() => Promise.resolve({ authorized: false })),
+    getCurrentUser: vi.fn(() => Promise.resolve(null)),
   },
 }));
 
 // Mock @thumbcode/state
-jest.mock('@thumbcode/state', () => ({
-  useCredentialStore: jest.fn((selector) =>
+vi.mock('@thumbcode/state', () => ({
+  useCredentialStore: vi.fn((selector) =>
     selector({
-      addCredential: jest.fn(() => 'cred-1'),
-      setValidationResult: jest.fn(),
+      addCredential: vi.fn(() => 'cred-1'),
+      setValidationResult: vi.fn(),
     })
   ),
-  useUserStore: jest.fn((selector) =>
+  useUserStore: vi.fn((selector) =>
     selector({
-      setAuthenticated: jest.fn(),
-      setGitHubProfile: jest.fn(),
+      setAuthenticated: vi.fn(),
+      setGitHubProfile: vi.fn(),
     })
   ),
 }));

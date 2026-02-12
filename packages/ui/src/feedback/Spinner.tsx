@@ -1,4 +1,3 @@
-import { ActivityIndicator, View } from 'react-native';
 import { Text } from '../primitives/Text';
 import { themeTokens } from '../theme/ThemeProvider';
 
@@ -21,19 +20,13 @@ export function Spinner({ size = 'large', color = themeTokens.colors.coral[500],
   const accessibilityLabel = label || 'Loading...';
 
   return (
-    <View className="items-center">
-      <ActivityIndicator
-        size={size}
-        color={color}
-        accessibilityRole="progressbar"
-        accessibilityLabel={accessibilityLabel}
-        accessibilityHint="Content is loading"
-      />
+    <div className="items-center">
+      <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
       {label && (
         <Text className="mt-2 text-neutral-400" size="sm" accessibilityElementsHidden>
           {label}
         </Text>
       )}
-    </View>
+    </div>
   );
 }

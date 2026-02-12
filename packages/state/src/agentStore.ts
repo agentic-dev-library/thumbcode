@@ -5,10 +5,9 @@
  * Agents include: Architect, Implementer, Reviewer, Tester
  */
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AGENT_CONFIG } from '@thumbcode/config';
 import { create } from 'zustand';
-import { createJSONStorage, devtools, persist } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 // Agent role types matching ThumbCode's multi-agent system
@@ -220,7 +219,6 @@ export const useAgentStore = create<AgentState>()(
       })),
       {
         name: 'thumbcode-agent-storage',
-        storage: createJSONStorage(() => AsyncStorage),
       }
     ),
     { name: 'AgentStore' }

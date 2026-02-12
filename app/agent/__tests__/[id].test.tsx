@@ -1,22 +1,12 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import { useLocalSearchParams } from 'expo-router';
 import AgentDetailScreen from '../[id]';
 
 // Mock expo-router
-jest.mock('expo-router', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-    back: jest.fn(),
-  }),
-  useLocalSearchParams: jest.fn(),
-  Stack: {
-    Screen: () => null,
-  },
-}));
 
 // Mock @thumbcode/state
-jest.mock('@thumbcode/state', () => ({
-  useAgentStore: jest.fn((selector) =>
+vi.mock('@thumbcode/state', () => ({
+  useAgentStore: vi.fn((selector) =>
     selector({
       agents: [
         {
@@ -43,21 +33,21 @@ jest.mock('@thumbcode/state', () => ({
           createdAt: new Date().toISOString(),
         },
       ],
-      updateAgentStatus: jest.fn(),
+      updateAgentStatus: vi.fn(),
     })
   ),
 }));
 
 describe('AgentDetailScreen', () => {
   it('renders agent not found when id is missing', () => {
-    (useLocalSearchParams as jest.Mock).mockReturnValue({ id: 'nonexistent' });
+    (useLocalSearchParams as Mock).mockReturnValue({ id: 'nonexistent' });
     const { toJSON } = render(<AgentDetailScreen />);
     const tree = JSON.stringify(toJSON());
     expect(tree).toContain('Agent not found');
   });
 
   it('renders agent details when found', () => {
-    (useLocalSearchParams as jest.Mock).mockReturnValue({ id: 'agent-1' });
+    (useLocalSearchParams as Mock).mockReturnValue({ id: 'agent-1' });
     const { toJSON } = render(<AgentDetailScreen />);
     const tree = JSON.stringify(toJSON());
     expect(tree).toContain('Architect');
@@ -67,7 +57,7 @@ describe('AgentDetailScreen', () => {
   });
 
   it('shows overview and history tabs', () => {
-    (useLocalSearchParams as jest.Mock).mockReturnValue({ id: 'agent-1' });
+    (useLocalSearchParams as Mock).mockReturnValue({ id: 'agent-1' });
     const { toJSON } = render(<AgentDetailScreen />);
     const tree = JSON.stringify(toJSON());
     expect(tree).toContain('overview');
@@ -75,7 +65,7 @@ describe('AgentDetailScreen', () => {
   });
 
   it('renders working agent with task info', () => {
-    (useLocalSearchParams as jest.Mock).mockReturnValue({ id: 'agent-2' });
+    (useLocalSearchParams as Mock).mockReturnValue({ id: 'agent-2' });
     const { toJSON } = render(<AgentDetailScreen />);
     const tree = JSON.stringify(toJSON());
     expect(tree).toContain('Implementer');

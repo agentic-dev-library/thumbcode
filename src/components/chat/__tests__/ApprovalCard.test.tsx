@@ -1,8 +1,8 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { fireEvent, render } from '@testing-library/react';
 import type { ApprovalMessage } from '@thumbcode/state';
 import { ApprovalCard } from '../ApprovalCard';
 
-jest.mock('@/components/icons', () => ({
+vi.mock('@/components/icons', () => ({
   BranchIcon: () => 'BranchIcon',
   EditIcon: () => 'EditIcon',
   FileIcon: () => 'FileIcon',
@@ -10,12 +10,12 @@ jest.mock('@/components/icons', () => ({
   LightningIcon: () => 'LightningIcon',
 }));
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { card: {}, badge: {}, button: {} },
 }));
 
-jest.mock('@/utils/design-tokens', () => ({
-  getColor: jest.fn((_color: string, _shade?: string) => '#000000'),
+vi.mock('@/utils/design-tokens', () => ({
+  getColor: vi.fn((_color: string, _shade?: string) => '#000000'),
 }));
 
 const createMessage = (overrides: Partial<ApprovalMessage['metadata']> = {}): ApprovalMessage => ({
@@ -37,7 +37,7 @@ describe('ApprovalCard', () => {
   it('renders pending approval with action label', () => {
     const message = createMessage();
     const { toJSON } = render(
-      <ApprovalCard message={message} onApprove={jest.fn()} onReject={jest.fn()} />
+      <ApprovalCard message={message} onApprove={vi.fn()} onReject={vi.fn()} />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Commit Changes');
@@ -47,7 +47,7 @@ describe('ApprovalCard', () => {
   it('renders approve and reject buttons when pending', () => {
     const message = createMessage();
     const { toJSON } = render(
-      <ApprovalCard message={message} onApprove={jest.fn()} onReject={jest.fn()} />
+      <ApprovalCard message={message} onApprove={vi.fn()} onReject={vi.fn()} />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Approve');
@@ -55,29 +55,29 @@ describe('ApprovalCard', () => {
   });
 
   it('calls onApprove when approve is pressed', () => {
-    const onApprove = jest.fn();
+    const onApprove = vi.fn();
     const message = createMessage();
     const { UNSAFE_getByProps } = render(
-      <ApprovalCard message={message} onApprove={onApprove} onReject={jest.fn()} />
+      <ApprovalCard message={message} onApprove={onApprove} onReject={vi.fn()} />
     );
-    fireEvent.press(UNSAFE_getByProps({ accessibilityLabel: 'Approve' }));
+    fireEvent.click(UNSAFE_getByProps({ accessibilityLabel: 'Approve' }));
     expect(onApprove).toHaveBeenCalled();
   });
 
   it('calls onReject when reject is pressed', () => {
-    const onReject = jest.fn();
+    const onReject = vi.fn();
     const message = createMessage();
     const { UNSAFE_getByProps } = render(
-      <ApprovalCard message={message} onApprove={jest.fn()} onReject={onReject} />
+      <ApprovalCard message={message} onApprove={vi.fn()} onReject={onReject} />
     );
-    fireEvent.press(UNSAFE_getByProps({ accessibilityLabel: 'Reject' }));
+    fireEvent.click(UNSAFE_getByProps({ accessibilityLabel: 'Reject' }));
     expect(onReject).toHaveBeenCalled();
   });
 
   it('shows Approved badge when approved', () => {
     const message = createMessage({ approved: true, respondedAt: '2024-01-01T12:05:00Z' });
     const { toJSON } = render(
-      <ApprovalCard message={message} onApprove={jest.fn()} onReject={jest.fn()} />
+      <ApprovalCard message={message} onApprove={vi.fn()} onReject={vi.fn()} />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Approved');
@@ -88,7 +88,7 @@ describe('ApprovalCard', () => {
   it('shows Rejected badge when rejected', () => {
     const message = createMessage({ approved: false, respondedAt: '2024-01-01T12:05:00Z' });
     const { toJSON } = render(
-      <ApprovalCard message={message} onApprove={jest.fn()} onReject={jest.fn()} />
+      <ApprovalCard message={message} onApprove={vi.fn()} onReject={vi.fn()} />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Rejected');
@@ -97,7 +97,7 @@ describe('ApprovalCard', () => {
   it('renders correct label for push action type', () => {
     const message = createMessage({ actionType: 'push' });
     const { toJSON } = render(
-      <ApprovalCard message={message} onApprove={jest.fn()} onReject={jest.fn()} />
+      <ApprovalCard message={message} onApprove={vi.fn()} onReject={vi.fn()} />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Push to Remote');
@@ -106,7 +106,7 @@ describe('ApprovalCard', () => {
   it('renders correct label for merge action type', () => {
     const message = createMessage({ actionType: 'merge' });
     const { toJSON } = render(
-      <ApprovalCard message={message} onApprove={jest.fn()} onReject={jest.fn()} />
+      <ApprovalCard message={message} onApprove={vi.fn()} onReject={vi.fn()} />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Merge Branch');

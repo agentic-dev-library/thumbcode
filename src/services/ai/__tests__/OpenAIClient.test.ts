@@ -6,12 +6,12 @@ import { OpenAIClient } from '../OpenAIClient';
 import type { AIMessage, AIStreamChunk } from '../types';
 
 // Mock the OpenAI SDK
-const mockCreate = jest.fn();
+const mockCreate = vi.fn();
 
-jest.mock('openai', () => {
+vi.mock('openai', () => {
   return {
     __esModule: true,
-    default: jest.fn().mockImplementation(() => ({
+    default: vi.fn().mockImplementation(() => ({
       chat: {
         completions: {
           create: mockCreate,
@@ -27,7 +27,7 @@ describe('OpenAIClient', () => {
   const testSystemPrompt = 'You are a helpful assistant.';
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     client = new OpenAIClient('test-api-key');
   });
 
@@ -139,7 +139,7 @@ describe('OpenAIClient', () => {
       };
       mockCreate.mockResolvedValue(mockStream);
 
-      await client.streamMessage(testMessages, testSystemPrompt, jest.fn());
+      await client.streamMessage(testMessages, testSystemPrompt, vi.fn());
 
       expect(mockCreate).toHaveBeenCalledWith(
         expect.objectContaining({ stream: true }),
@@ -178,7 +178,7 @@ describe('OpenAIClient', () => {
       mockCreate.mockResolvedValue(mockStream);
 
       const controller = new AbortController();
-      await client.streamMessage(testMessages, testSystemPrompt, jest.fn(), controller.signal);
+      await client.streamMessage(testMessages, testSystemPrompt, vi.fn(), controller.signal);
 
       expect(mockCreate).toHaveBeenCalledWith(
         expect.any(Object),
@@ -189,7 +189,7 @@ describe('OpenAIClient', () => {
 
   describe('constructor', () => {
     it('should use the default model', () => {
-      const OpenAI = jest.requireMock('openai').default;
+      const OpenAI = require('openai').default;
       new OpenAIClient('test-key');
       expect(OpenAI).toHaveBeenCalledWith(
         expect.objectContaining({

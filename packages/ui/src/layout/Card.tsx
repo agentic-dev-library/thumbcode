@@ -1,7 +1,6 @@
-import { View, type ViewProps } from 'react-native';
 import { organicBorderRadius, organicShadow } from '../theme/organicStyles';
 
-interface CardProps extends ViewProps {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'elevated' | 'outlined';
 }
 
@@ -21,20 +20,20 @@ export function Card({ variant = 'default', className = '', children, ...props }
   }[variant];
 
   return (
-    <View
+    <div
       className={`
         ${variantClasses}
         p-4
         ${className}
       `}
-      style={[
-        organicBorderRadius.card,
-        variant === 'elevated' ? organicShadow.elevated : organicShadow.card,
-        { transform: [{ rotate: '-0.3deg' }] },
-      ]}
+      style={{
+        ...organicBorderRadius.card,
+        ...(variant === 'elevated' ? organicShadow.elevated : organicShadow.card),
+        transform: 'rotate(-0.3deg)',
+      }}
       {...props}
     >
       {children}
-    </View>
+    </div>
   );
 }

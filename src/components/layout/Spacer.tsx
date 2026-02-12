@@ -5,8 +5,6 @@
  * or provides fixed spacing between siblings.
  */
 
-import { View, type ViewStyle } from 'react-native';
-
 type SpacerSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
 
 /** Props for the Spacer component */
@@ -37,11 +35,11 @@ export function Spacer({ size, flex = 1, direction = 'vertical' }: Readonly<Spac
     dimension = sizeValues[size];
   }
 
-  const style: ViewStyle = {
+  const style: React.CSSProperties = {
     flex: size ? undefined : flex,
     width: direction === 'horizontal' ? dimension : undefined,
     height: direction === 'vertical' ? dimension : undefined,
   };
 
-  return <View style={style} />;
+  return <div style={style} />;
 }

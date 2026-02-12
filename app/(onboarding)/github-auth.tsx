@@ -10,8 +10,6 @@ import { CredentialService, GitHubAuthService } from '@thumbcode/core';
 import { useCredentialStore, useUserStore } from '@thumbcode/state';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Linking, Pressable, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StepsProgress } from '@/components/feedback';
 import { SuccessIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
@@ -21,7 +19,6 @@ import { organicBorderRadius } from '@/lib/organic-styles';
 
 export default function GitHubAuthScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const addCredential = useCredentialStore((s) => s.addCredential);
   const setValidationResult = useCredentialStore((s) => s.setValidationResult);
   const setAuthenticated = useUserStore((s) => s.setAuthenticated);
@@ -57,7 +54,7 @@ export default function GitHubAuthScreen() {
   };
 
   const openGitHub = async () => {
-    await Linking.openURL(verificationUri);
+    await window.open(verificationUri);
   };
 
   const checkAuth = async () => {
@@ -138,7 +135,7 @@ export default function GitHubAuthScreen() {
   };
 
   return (
-    <View className="flex-1 bg-charcoal" style={{ paddingTop: insets.top }}>
+    <div className="flex-1 bg-charcoal" >
       <Container padding="lg" className="flex-1">
         <StepsProgress
           totalSteps={4}
@@ -170,46 +167,46 @@ export default function GitHubAuthScreen() {
 
         {isConnected && (
           <VStack spacing="lg">
-            <View className="bg-teal-600/20 p-6" style={organicBorderRadius.card}>
-              <View className="items-center mb-4">
+            <div className="bg-teal-600/20 p-6" style={organicBorderRadius.card}>
+              <div className="items-center mb-4">
                 <SuccessIcon size={48} color="teal" turbulence={0.25} />
-              </View>
+              </div>
               <Text weight="semibold" className="text-teal-400 text-center text-lg">
                 GitHub Connected!
               </Text>
               <Text size="sm" className="text-neutral-400 text-center mt-2">
                 You can now access your repositories and push code from ThumbCode.
               </Text>
-            </View>
+            </div>
           </VStack>
         )}
       </Container>
 
       {/* Bottom Buttons */}
-      <View
+      <div
         className="border-t border-neutral-800 px-6 py-4 flex-row gap-4"
-        style={{ paddingBottom: insets.bottom + 16 }}
+        style={{ paddingBottom: 16 }}
       >
-        <Pressable
-          onPress={handleSkip}
+        <button type="button"
+          onClick={handleSkip}
           className="flex-1 bg-neutral-800 py-4 active:bg-neutral-700"
           style={organicBorderRadius.cta}
         >
           <Text className="text-neutral-300 text-center">Skip for Now</Text>
-        </Pressable>
+        </button>
 
         {isConnected && (
-          <Pressable
-            onPress={handleContinue}
+          <button type="button"
+            onClick={handleContinue}
             className="flex-1 bg-coral-500 py-4 active:bg-coral-600"
             style={organicBorderRadius.cta}
           >
             <Text weight="semibold" className="text-white text-center">
               Continue
             </Text>
-          </Pressable>
+          </button>
         )}
-      </View>
-    </View>
+      </div>
+    </div>
   );
 }

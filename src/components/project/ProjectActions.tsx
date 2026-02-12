@@ -5,7 +5,6 @@
  */
 
 import type { Agent, AgentTask } from '@thumbcode/state';
-import { Pressable, View } from 'react-native';
 import { Avatar, Badge, StatusBadge } from '@/components/display';
 import { Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
@@ -28,26 +27,26 @@ export function ProjectCommits({ commits, isLoading }: Readonly<ProjectCommitsPr
     <VStack
       spacing="none"
       className="bg-surface"
-      style={[organicBorderRadius.card, { overflow: 'hidden' }]}
+      style={{ ...organicBorderRadius.card,  overflow: 'hidden'  }}
     >
-      <View className="px-4 py-3 border-b border-neutral-700">
+      <div className="px-4 py-3 border-b border-neutral-700">
         <Text size="sm" weight="semibold" className="text-neutral-400">
           COMMIT HISTORY
         </Text>
-      </View>
-      <View className="px-4">
+      </div>
+      <div className="px-4">
         {isLoading ? (
-          <View className="py-6">
+          <div className="py-6">
             <Text className="text-neutral-500">Loading commits…</Text>
-          </View>
+          </div>
         ) : commits.length === 0 ? (
-          <View className="py-6">
+          <div className="py-6">
             <Text className="text-neutral-500">No commits found.</Text>
-          </View>
+          </div>
         ) : (
           commits.map((c, idx) => (
-            <View key={`${c.sha}-${idx}`}>
-              <View className="py-4">
+            <div key={`${c.sha}-${idx}`}>
+              <div className="py-4">
                 <HStack justify="between" align="center" className="mb-1">
                   <Text className="text-white flex-1" numberOfLines={1}>
                     {c.message}
@@ -65,12 +64,12 @@ export function ProjectCommits({ commits, isLoading }: Readonly<ProjectCommitsPr
                     {c.date}
                   </Text>
                 </HStack>
-              </View>
+              </div>
               {idx < commits.length - 1 && <Divider />}
-            </View>
+            </div>
           ))
         )}
-      </View>
+      </div>
     </VStack>
   );
 }
@@ -88,22 +87,22 @@ export function ProjectTasks({ tasks }: Readonly<ProjectTasksProps>) {
     <VStack
       spacing="none"
       className="bg-surface"
-      style={[organicBorderRadius.card, { overflow: 'hidden' }]}
+      style={{ ...organicBorderRadius.card,  overflow: 'hidden'  }}
     >
-      <View className="px-4 py-3 border-b border-neutral-700">
+      <div className="px-4 py-3 border-b border-neutral-700">
         <Text size="sm" weight="semibold" className="text-neutral-400">
           TASKS
         </Text>
-      </View>
-      <View className="px-4">
+      </div>
+      <div className="px-4">
         {sortedTasks.length === 0 ? (
-          <View className="py-6">
+          <div className="py-6">
             <Text className="text-neutral-500">No tasks yet.</Text>
-          </View>
+          </div>
         ) : (
           sortedTasks.map((t, idx) => (
-            <View key={t.id}>
-              <View className="py-4">
+            <div key={t.id}>
+              <div className="py-4">
                 <HStack justify="between" align="center" className="mb-1">
                   <Text className="text-white flex-1" numberOfLines={1}>
                     {t.description}
@@ -123,12 +122,12 @@ export function ProjectTasks({ tasks }: Readonly<ProjectTasksProps>) {
                 <Text size="xs" className="text-neutral-600">
                   {t.agentId}
                 </Text>
-              </View>
+              </div>
               {idx < sortedTasks.length - 1 && <Divider />}
-            </View>
+            </div>
           ))
         )}
-      </View>
+      </div>
     </VStack>
   );
 }
@@ -142,13 +141,13 @@ export function ProjectAgents({ agents, onAgentPress }: Readonly<ProjectAgentsPr
   return (
     <VStack spacing="md">
       {agents.map((a) => (
-        <Pressable
+        <button type="button"
           key={a.id}
-          onPress={() => onAgentPress(a.id)}
+          onClick={() => onAgentPress(a.id)}
           className="bg-surface p-4 active:bg-neutral-700"
           style={organicBorderRadius.card}
-          accessibilityRole="button"
-          accessibilityLabel={`Open agent ${a.name}`}
+          role="button"
+          aria-label={`Open agent ${a.name}`}
         >
           <HStack justify="between" align="center">
             <HStack spacing="md" align="center">
@@ -167,7 +166,7 @@ export function ProjectAgents({ agents, onAgentPress }: Readonly<ProjectAgentsPr
               label={a.status.replaceAll('_', ' ')}
             />
           </HStack>
-        </Pressable>
+        </button>
       ))}
     </VStack>
   );

@@ -1,8 +1,7 @@
-import { Text } from 'react-native';
-import { act, create } from 'react-test-renderer';
+import { act, create } from '@testing-library/react';
 
 // Mock the entire Modal component to bypass RN Modal rendering issues
-jest.mock('../Modal', () => {
+vi.mock('../Modal', () => {
   const { View, Text, Pressable, ScrollView } = require('react-native');
 
   function Modal({
@@ -91,11 +90,11 @@ jest.mock('../Modal', () => {
   return { Modal, ConfirmDialog };
 });
 
-jest.mock('@/components/icons', () => ({
+vi.mock('@/components/icons', () => ({
   CloseIcon: () => 'CloseIcon',
 }));
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { modal: {}, button: {} },
 }));
 
@@ -104,7 +103,7 @@ const { Modal, ConfirmDialog } = require('../Modal');
 describe('Modal', () => {
   it('renders children when visible', () => {
     const tree = create(
-      <Modal visible onClose={jest.fn()}>
+      <Modal visible onClose={vi.fn()}>
         <Text>Modal content</Text>
       </Modal>
     );
@@ -114,7 +113,7 @@ describe('Modal', () => {
 
   it('renders title when provided', () => {
     const tree = create(
-      <Modal visible onClose={jest.fn()} title="My Modal">
+      <Modal visible onClose={vi.fn()} title="My Modal">
         <Text>Content</Text>
       </Modal>
     );
@@ -124,7 +123,7 @@ describe('Modal', () => {
 
   it('renders footer when provided', () => {
     const tree = create(
-      <Modal visible onClose={jest.fn()} footer={<Text>Footer actions</Text>}>
+      <Modal visible onClose={vi.fn()} footer={<Text>Footer actions</Text>}>
         <Text>Content</Text>
       </Modal>
     );
@@ -134,7 +133,7 @@ describe('Modal', () => {
 
   it('renders close button when title is present', () => {
     const tree = create(
-      <Modal visible onClose={jest.fn()} title="Test">
+      <Modal visible onClose={vi.fn()} title="Test">
         <Text>Content</Text>
       </Modal>
     );
@@ -144,7 +143,7 @@ describe('Modal', () => {
 
   it('does not render when not visible', () => {
     const tree = create(
-      <Modal visible={false} onClose={jest.fn()}>
+      <Modal visible={false} onClose={vi.fn()}>
         <Text>Hidden</Text>
       </Modal>
     );
@@ -157,8 +156,8 @@ describe('ConfirmDialog', () => {
     const tree = create(
       <ConfirmDialog
         visible
-        onClose={jest.fn()}
-        onConfirm={jest.fn()}
+        onClose={vi.fn()}
+        onConfirm={vi.fn()}
         title="Delete project?"
         message="This action cannot be undone."
       />
@@ -172,8 +171,8 @@ describe('ConfirmDialog', () => {
     const tree = create(
       <ConfirmDialog
         visible
-        onClose={jest.fn()}
-        onConfirm={jest.fn()}
+        onClose={vi.fn()}
+        onConfirm={vi.fn()}
         title="Confirm"
         message="Are you sure?"
       />
@@ -187,8 +186,8 @@ describe('ConfirmDialog', () => {
     const tree = create(
       <ConfirmDialog
         visible
-        onClose={jest.fn()}
-        onConfirm={jest.fn()}
+        onClose={vi.fn()}
+        onConfirm={vi.fn()}
         title="Remove"
         message="Remove this item?"
         confirmText="Yes, Remove"
@@ -201,8 +200,8 @@ describe('ConfirmDialog', () => {
   });
 
   it('calls onConfirm when confirm is pressed', () => {
-    const onConfirm = jest.fn();
-    const onClose = jest.fn();
+    const onConfirm = vi.fn();
+    const onClose = vi.fn();
     const tree = create(
       <ConfirmDialog
         visible
@@ -223,12 +222,12 @@ describe('ConfirmDialog', () => {
   });
 
   it('calls onClose when cancel is pressed', () => {
-    const onClose = jest.fn();
+    const onClose = vi.fn();
     const tree = create(
       <ConfirmDialog
         visible
         onClose={onClose}
-        onConfirm={jest.fn()}
+        onConfirm={vi.fn()}
         title="Confirm"
         message="Sure?"
       />

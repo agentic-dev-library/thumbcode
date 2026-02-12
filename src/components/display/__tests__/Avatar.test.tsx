@@ -1,5 +1,4 @@
-import { Text } from 'react-native';
-import { create } from 'react-test-renderer';
+import { create } from '@testing-library/react';
 import { Avatar } from '../Avatar';
 
 describe('Avatar', () => {

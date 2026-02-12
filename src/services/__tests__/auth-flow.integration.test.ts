@@ -14,26 +14,26 @@ const secureStoreMap = new Map<string, string>();
 
 beforeEach(() => {
   secureStoreMap.clear();
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 
   // Wire up SecureStoragePlugin mocks to an in-memory map
-  (SecureStoragePlugin.set as jest.Mock).mockImplementation(async ({ key, value }: { key: string; value: string }) => {
+  (SecureStoragePlugin.set as Mock).mockImplementation(async ({ key, value }: { key: string; value: string }) => {
     secureStoreMap.set(key, value);
   });
-  (SecureStoragePlugin.get as jest.Mock).mockImplementation(
+  (SecureStoragePlugin.get as Mock).mockImplementation(
     async ({ key }: { key: string }) => {
       const value = secureStoreMap.get(key);
       if (value === undefined) throw new Error('Key not found');
       return { value };
     }
   );
-  (SecureStoragePlugin.remove as jest.Mock).mockImplementation(async ({ key }: { key: string }) => {
+  (SecureStoragePlugin.remove as Mock).mockImplementation(async ({ key }: { key: string }) => {
     secureStoreMap.delete(key);
     return { value: true };
   });
 
   // Default biometric mocks
-  (BiometricAuth.checkBiometry as jest.Mock).mockResolvedValue({
+  (BiometricAuth.checkBiometry as Mock).mockResolvedValue({
     isAvailable: true,
     biometryType: 1,
     reason: '',
@@ -41,7 +41,7 @@ beforeEach(() => {
     strongBiometryIsAvailable: true,
     biometryTypes: [1],
   });
-  (BiometricAuth.authenticate as jest.Mock).mockResolvedValue(undefined);
+  (BiometricAuth.authenticate as Mock).mockResolvedValue(undefined);
 });
 
 describe('Auth Flow Integration', () => {
@@ -141,7 +141,7 @@ describe('Auth Flow Integration', () => {
     });
 
     it('reports biometric unavailable when not available', async () => {
-      (BiometricAuth.checkBiometry as jest.Mock).mockResolvedValue({
+      (BiometricAuth.checkBiometry as Mock).mockResolvedValue({
         isAvailable: false,
         biometryType: 0,
         reason: 'No biometry available',
@@ -154,7 +154,7 @@ describe('Auth Flow Integration', () => {
     });
 
     it('blocks storage when biometric auth fails', async () => {
-      (BiometricAuth.authenticate as jest.Mock).mockRejectedValue(
+      (BiometricAuth.authenticate as Mock).mockRejectedValue(
         new Error('user_cancel')
       );
 
@@ -183,7 +183,7 @@ describe('Auth Flow Integration', () => {
       });
 
       // Then attempt retrieval with biometric (but auth fails)
-      (BiometricAuth.authenticate as jest.Mock).mockRejectedValue(
+      (BiometricAuth.authenticate as Mock).mockRejectedValue(
         new Error('user_cancel')
       );
 

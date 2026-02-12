@@ -13,12 +13,12 @@ import { MessageStore } from '../MessageStore';
 import { StreamHandler } from '../StreamHandler';
 
 // Mock AI dependencies
-jest.mock('../../ai/AIClientFactory', () => ({
-  createAIClient: jest.fn(),
+vi.mock('../../ai/AIClientFactory', () => ({
+  createAIClient: vi.fn(),
 }));
 
-jest.mock('../../ai/AgentPrompts', () => ({
-  getAgentSystemPrompt: jest.fn().mockReturnValue('You are a helpful agent'),
+vi.mock('../../ai/AgentPrompts', () => ({
+  getAgentSystemPrompt: vi.fn().mockReturnValue('You are a helpful agent'),
 }));
 
 const { createAIClient } = require('../../ai/AIClientFactory');
@@ -29,7 +29,7 @@ describe('AgentResponseService', () => {
   let messageStore: MessageStore;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Reset stores
     useChatStore.setState({
@@ -49,11 +49,11 @@ describe('AgentResponseService', () => {
     service = new AgentResponseService(streamHandler, messageStore);
 
     // Spy on streamHandler methods
-    jest.spyOn(streamHandler, 'emit');
-    jest.spyOn(streamHandler, 'emitTypingStart');
-    jest.spyOn(streamHandler, 'emitTypingEnd');
-    jest.spyOn(streamHandler, 'registerAbort').mockReturnValue(new AbortController());
-    jest.spyOn(streamHandler, 'cleanupAbort');
+    vi.spyOn(streamHandler, 'emit');
+    vi.spyOn(streamHandler, 'emitTypingStart');
+    vi.spyOn(streamHandler, 'emitTypingEnd');
+    vi.spyOn(streamHandler, 'registerAbort').mockReturnValue(new AbortController());
+    vi.spyOn(streamHandler, 'cleanupAbort');
   });
 
   describe('credential resolution', () => {
@@ -82,10 +82,10 @@ describe('AgentResponseService', () => {
         lastError: null,
       });
 
-      (SecureStoragePlugin.get as jest.Mock).mockResolvedValue({ value: 'sk-ant-test-key' });
+      (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-ant-test-key' });
 
       const mockClient = {
-        streamMessage: jest.fn().mockResolvedValue(undefined),
+        streamMessage: vi.fn().mockResolvedValue(undefined),
       };
       createAIClient.mockReturnValue(mockClient);
 
@@ -117,10 +117,10 @@ describe('AgentResponseService', () => {
         lastError: null,
       });
 
-      (SecureStoragePlugin.get as jest.Mock).mockResolvedValue({ value: 'sk-test-openai-key' });
+      (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-test-openai-key' });
 
       const mockClient = {
-        streamMessage: jest.fn().mockResolvedValue(undefined),
+        streamMessage: vi.fn().mockResolvedValue(undefined),
       };
       createAIClient.mockReturnValue(mockClient);
 
@@ -202,7 +202,7 @@ describe('AgentResponseService', () => {
         isValidating: false,
         lastError: null,
       });
-      (SecureStoragePlugin.get as jest.Mock).mockResolvedValue({ value: 'sk-ant-key' });
+      (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-ant-key' });
     });
 
     it('should stream response and emit events', async () => {
@@ -243,7 +243,7 @@ describe('AgentResponseService', () => {
 
     it('should clean up abort controller after completion', async () => {
       const mockClient = {
-        streamMessage: jest.fn().mockResolvedValue(undefined),
+        streamMessage: vi.fn().mockResolvedValue(undefined),
       };
       createAIClient.mockReturnValue(mockClient);
 
@@ -275,13 +275,13 @@ describe('AgentResponseService', () => {
         isValidating: false,
         lastError: null,
       });
-      (SecureStoragePlugin.get as jest.Mock).mockResolvedValue({ value: 'sk-ant-key' });
+      (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-ant-key' });
     });
 
     it('should not emit error event on AbortError', async () => {
       const abortError = new DOMException('Aborted', 'AbortError');
       const mockClient = {
-        streamMessage: jest.fn().mockRejectedValue(abortError),
+        streamMessage: vi.fn().mockRejectedValue(abortError),
       };
       createAIClient.mockReturnValue(mockClient);
 
@@ -294,7 +294,7 @@ describe('AgentResponseService', () => {
       await service.requestAgentResponse(threadId, 'msg-1', 'architect');
 
       // Should not emit error event for abort
-      const errorCalls = (streamHandler.emit as jest.Mock).mock.calls.filter(
+      const errorCalls = (streamHandler.emit as Mock).mock.calls.filter(
         (call: any) => call[0].type === 'error'
       );
       expect(errorCalls).toHaveLength(0);
@@ -303,7 +303,7 @@ describe('AgentResponseService', () => {
     it('should emit error event for non-abort errors', async () => {
       const error = new Error('API rate limited');
       const mockClient = {
-        streamMessage: jest.fn().mockRejectedValue(error),
+        streamMessage: vi.fn().mockRejectedValue(error),
       };
       createAIClient.mockReturnValue(mockClient);
 
@@ -326,7 +326,7 @@ describe('AgentResponseService', () => {
 
     it('should always clear typing state after error', async () => {
       const mockClient = {
-        streamMessage: jest.fn().mockRejectedValue(new Error('Failure')),
+        streamMessage: vi.fn().mockRejectedValue(new Error('Failure')),
       };
       createAIClient.mockReturnValue(mockClient);
 

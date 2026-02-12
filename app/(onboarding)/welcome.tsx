@@ -6,8 +6,6 @@
  */
 
 import { useRouter } from 'expo-router';
-import { Pressable, ScrollView, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   AgentIcon,
   type IconVariant,
@@ -74,23 +72,21 @@ function FeatureIcon({ variant, color }: { variant: IconVariant; color: Feature[
 
 export default function WelcomeScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
 
   return (
-    <View className="flex-1 bg-charcoal" style={{ paddingTop: insets.top }}>
-      <ScrollView
+    <div className="flex-1 bg-charcoal" >
+      <div
         className="flex-1"
-        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: insets.bottom + 100 }}
-        showsVerticalScrollIndicator={false}
+}
       >
         {/* Hero */}
         <VStack spacing="md" align="center" className="mt-12 mb-10">
-          <View
+          <div
             className="w-24 h-24 bg-coral-500 items-center justify-center"
             style={organicBorderRadius.hero}
           >
             <ThumbIcon size={48} color="charcoal" turbulence={0.2} />
-          </View>
+          </div>
 
           <Text variant="display" size="4xl" weight="bold" className="text-coral-500 text-center">
             ThumbCode
@@ -104,42 +100,42 @@ export default function WelcomeScreen() {
         {/* Features */}
         <VStack spacing="md" className="mb-8">
           {FEATURES.map((feature, _index) => (
-            <View
+            <div
               key={feature.title}
               className="bg-surface p-4 flex-row items-start"
               style={organicBorderRadius.card}
             >
-              <View className="mr-4">
+              <div className="mr-4">
                 <FeatureIcon variant={feature.icon} color={feature.color} />
-              </View>
-              <View className="flex-1">
+              </div>
+              <div className="flex-1">
                 <Text weight="semibold" className="text-white mb-1">
                   {feature.title}
                 </Text>
                 <Text size="sm" className="text-neutral-400">
                   {feature.description}
                 </Text>
-              </View>
-            </View>
+              </div>
+            </div>
           ))}
         </VStack>
-      </ScrollView>
+      </div>
 
       {/* Bottom CTA */}
-      <View
+      <div
         className="absolute bottom-0 left-0 right-0 bg-charcoal border-t border-neutral-800 px-6 py-4"
-        style={{ paddingBottom: insets.bottom + 16 }}
+        style={{ paddingBottom: 16 }}
       >
-        <Pressable
-          onPress={() => router.push('/(onboarding)/github-auth')}
+        <button type="button"
+          onClick={() => router.push('/(onboarding)/github-auth')}
           className="bg-coral-500 py-4 active:bg-coral-600"
           style={organicBorderRadius.cta}
         >
           <Text weight="semibold" className="text-white text-center text-lg">
             Get Started
           </Text>
-        </Pressable>
-      </View>
-    </View>
+        </button>
+      </div>
+    </div>
   );
 }

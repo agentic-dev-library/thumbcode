@@ -1,11 +1,11 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { fireEvent, render } from '@testing-library/react';
 import { DiffViewer } from '../DiffViewer';
 
-jest.mock('@/components/icons', () => ({
+vi.mock('@/components/icons', () => ({
   ChevronDownIcon: () => 'ChevronDownIcon',
 }));
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { card: {} },
 }));
 
@@ -74,7 +74,7 @@ describe('DiffViewer', () => {
     expect(json).toContain('visible content');
 
     // Press header to collapse
-    fireEvent.press(UNSAFE_getByProps({ accessibilityRole: 'button' }));
+    fireEvent.click(UNSAFE_getByProps({ accessibilityRole: 'button' }));
     json = JSON.stringify(toJSON());
     // Content should be hidden after collapse
     expect(json).not.toContain('visible content');

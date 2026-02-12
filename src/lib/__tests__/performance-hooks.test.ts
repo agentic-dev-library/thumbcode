@@ -2,7 +2,7 @@
  * Performance Hooks Tests
  */
 
-import { act, renderHook } from '@testing-library/react-native';
+import { act, renderHook } from '@testing-library/react';
 import {
   useDebouncedCallback,
   useDebouncedValue,
@@ -20,20 +20,20 @@ import {
 } from '../performance';
 
 // Mock the performance monitor
-jest.mock('../performance/monitor', () => ({
+vi.mock('../performance/monitor', () => ({
   perfMonitor: {
-    trackRender: jest.fn(),
-    trackMount: jest.fn(),
+    trackRender: vi.fn(),
+    trackMount: vi.fn(),
   },
 }));
 
 // Mock logger
-jest.mock('../logger', () => ({
+vi.mock('../logger', () => ({
   logger: {
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
   },
 }));
 
@@ -42,12 +42,12 @@ import { perfMonitor } from '../performance/monitor';
 
 describe('Performance Hooks', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers();
+    vi.clearAllMocks();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   describe('useRenderTime', () => {
@@ -118,7 +118,7 @@ describe('Performance Hooks', () => {
 
       // Fast forward timer
       act(() => {
-        jest.advanceTimersByTime(500);
+        vi.advanceTimersByTime(500);
       });
 
       // Now it should be updated
@@ -133,11 +133,11 @@ describe('Performance Hooks', () => {
       // Multiple rapid changes
       rerender({ value: 'change1' });
       act(() => {
-        jest.advanceTimersByTime(200);
+        vi.advanceTimersByTime(200);
       });
       rerender({ value: 'change2' });
       act(() => {
-        jest.advanceTimersByTime(200);
+        vi.advanceTimersByTime(200);
       });
       rerender({ value: 'change3' });
 
@@ -146,7 +146,7 @@ describe('Performance Hooks', () => {
 
       // Wait for debounce
       act(() => {
-        jest.advanceTimersByTime(500);
+        vi.advanceTimersByTime(500);
       });
 
       // Should have final value
@@ -156,7 +156,7 @@ describe('Performance Hooks', () => {
 
   describe('useThrottledCallback', () => {
     it('should execute callback immediately on first call', () => {
-      const callback = jest.fn();
+      const callback = vi.fn();
       const { result } = renderHook(() => useThrottledCallback(callback, 500));
 
       act(() => {
@@ -168,7 +168,7 @@ describe('Performance Hooks', () => {
     });
 
     it('should throttle subsequent calls', () => {
-      const callback = jest.fn();
+      const callback = vi.fn();
       const { result } = renderHook(() => useThrottledCallback(callback, 500));
 
       act(() => {
@@ -183,7 +183,7 @@ describe('Performance Hooks', () => {
 
       // Wait for throttle to allow next call
       act(() => {
-        jest.advanceTimersByTime(500);
+        vi.advanceTimersByTime(500);
       });
 
       // Trailing call should execute
@@ -192,7 +192,7 @@ describe('Performance Hooks', () => {
     });
 
     it('should allow call after delay has passed', () => {
-      const callback = jest.fn();
+      const callback = vi.fn();
       const { result } = renderHook(() => useThrottledCallback(callback, 500));
 
       act(() => {
@@ -202,7 +202,7 @@ describe('Performance Hooks', () => {
       expect(callback).toHaveBeenCalledTimes(1);
 
       act(() => {
-        jest.advanceTimersByTime(600);
+        vi.advanceTimersByTime(600);
       });
 
       act(() => {
@@ -216,7 +216,7 @@ describe('Performance Hooks', () => {
 
   describe('useDebouncedCallback', () => {
     it('should debounce callback execution', () => {
-      const callback = jest.fn();
+      const callback = vi.fn();
       const { result } = renderHook(() => useDebouncedCallback(callback, 500));
 
       act(() => {
@@ -230,7 +230,7 @@ describe('Performance Hooks', () => {
 
       // Wait for debounce
       act(() => {
-        jest.advanceTimersByTime(500);
+        vi.advanceTimersByTime(500);
       });
 
       // Only last call should execute
@@ -239,7 +239,7 @@ describe('Performance Hooks', () => {
     });
 
     it('should reset timer on each call', () => {
-      const callback = jest.fn();
+      const callback = vi.fn();
       const { result } = renderHook(() => useDebouncedCallback(callback, 500));
 
       act(() => {
@@ -247,7 +247,7 @@ describe('Performance Hooks', () => {
       });
 
       act(() => {
-        jest.advanceTimersByTime(300);
+        vi.advanceTimersByTime(300);
       });
 
       act(() => {
@@ -255,14 +255,14 @@ describe('Performance Hooks', () => {
       });
 
       act(() => {
-        jest.advanceTimersByTime(300);
+        vi.advanceTimersByTime(300);
       });
 
       // Still not called
       expect(callback).not.toHaveBeenCalled();
 
       act(() => {
-        jest.advanceTimersByTime(200);
+        vi.advanceTimersByTime(200);
       });
 
       // Now called with last value
@@ -296,8 +296,8 @@ describe('Performance Hooks', () => {
 
   describe('useStableCallback', () => {
     it('should return a stable function reference', () => {
-      const callback1 = jest.fn();
-      const callback2 = jest.fn();
+      const callback1 = vi.fn();
+      const callback2 = vi.fn();
 
       const { result, rerender } = renderHook(({ callback }) => useStableCallback(callback), {
         initialProps: { callback: callback1 },
@@ -324,7 +324,7 @@ describe('Performance Hooks', () => {
 
   describe('useLazyValue', () => {
     it('should call factory only once', () => {
-      const factory = jest.fn(() => 'expensive value');
+      const factory = vi.fn(() => 'expensive value');
 
       const { result, rerender } = renderHook(() => useLazyValue(factory));
 
@@ -419,8 +419,8 @@ describe('Performance Hooks', () => {
   });
 
   describe('useWindowDimensions', () => {
-    let addEventListenerSpy: jest.SpyInstance;
-    let removeEventListenerSpy: jest.SpyInstance;
+    let addEventListenerSpy: MockInstance;
+    let removeEventListenerSpy: MockInstance;
     const originalWindow = global.window;
 
     beforeEach(() => {
@@ -430,13 +430,13 @@ describe('Performance Hooks', () => {
           ...originalWindow,
           innerWidth: 1024,
           innerHeight: 768,
-          addEventListener: jest.fn(),
-          removeEventListener: jest.fn(),
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
         },
         writable: true,
       });
-      addEventListenerSpy = jest.spyOn(global.window, 'addEventListener');
-      removeEventListenerSpy = jest.spyOn(global.window, 'removeEventListener');
+      addEventListenerSpy = vi.spyOn(global.window, 'addEventListener');
+      removeEventListenerSpy = vi.spyOn(global.window, 'removeEventListener');
     });
 
     afterEach(() => {
@@ -473,7 +473,7 @@ describe('Performance Hooks', () => {
     it('should update dimensions on resize', () => {
       // Store the resize handler to call it manually
       let resizeHandler: (() => void) | null = null;
-      jest.spyOn(global.window, 'addEventListener').mockImplementation((event, handler) => {
+      vi.spyOn(global.window, 'addEventListener').mockImplementation((event, handler) => {
         if (event === 'resize') {
           resizeHandler = handler as () => void;
         }
@@ -497,9 +497,9 @@ describe('Performance Hooks', () => {
 
   describe('useIntersectionObserver', () => {
     let mockObserver: {
-      observe: jest.Mock;
-      disconnect: jest.Mock;
-      unobserve: jest.Mock;
+      observe: Mock;
+      disconnect: Mock;
+      unobserve: Mock;
     };
     let observerCallback: (entries: IntersectionObserverEntry[]) => void;
     let mockElement: Element;
@@ -512,12 +512,12 @@ describe('Performance Hooks', () => {
       } as unknown as Element;
 
       mockObserver = {
-        observe: jest.fn(),
-        disconnect: jest.fn(),
-        unobserve: jest.fn(),
+        observe: vi.fn(),
+        disconnect: vi.fn(),
+        unobserve: vi.fn(),
       };
 
-      (global as unknown as { IntersectionObserver: unknown }).IntersectionObserver = jest.fn(
+      (global as unknown as { IntersectionObserver: unknown }).IntersectionObserver = vi.fn(
         (callback) => {
           observerCallback = callback;
           return mockObserver;
@@ -596,7 +596,7 @@ describe('Performance Hooks', () => {
 
   describe('useThrottledCallback cleanup', () => {
     it('should clear pending timeout on unmount', () => {
-      const callback = jest.fn();
+      const callback = vi.fn();
       const { result, unmount } = renderHook(() => useThrottledCallback(callback, 500));
 
       // First call executes immediately
@@ -616,7 +616,7 @@ describe('Performance Hooks', () => {
 
       // Advance time past the delay
       act(() => {
-        jest.advanceTimersByTime(600);
+        vi.advanceTimersByTime(600);
       });
 
       // Callback should still only have been called once (cleanup cleared the timeout)
@@ -624,7 +624,7 @@ describe('Performance Hooks', () => {
     });
 
     it('should clear timeout and execute immediately when delay has fully elapsed', () => {
-      const callback = jest.fn();
+      const callback = vi.fn();
       const { result } = renderHook(() => useThrottledCallback(callback, 500));
 
       // First call - executes immediately
@@ -641,7 +641,7 @@ describe('Performance Hooks', () => {
 
       // Wait for delay to fully elapse plus some extra time
       act(() => {
-        jest.advanceTimersByTime(600);
+        vi.advanceTimersByTime(600);
       });
 
       // Trailing call executed
@@ -650,7 +650,7 @@ describe('Performance Hooks', () => {
 
       // Wait more time so next call is after full delay
       act(() => {
-        jest.advanceTimersByTime(500);
+        vi.advanceTimersByTime(500);
       });
 
       // Now call again - this exercises the remaining <= 0 branch
