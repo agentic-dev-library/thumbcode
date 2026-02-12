@@ -11,19 +11,17 @@ import type { Repository } from '@thumbcode/types';
 import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Switch, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StepsProgress } from '@/components/feedback';
-import { FolderIcon, SecurityIcon, StarIcon, SuccessIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
-import { Input, Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
-import { getColor } from '@/utils/design-tokens';
-
-interface RepoListItem extends Repository {
-  /** Stable key for list rendering */
-  key: string;
-}
+import {
+  ProjectFormActions,
+  ProjectFormHeader,
+  RepoSelector,
+  type RepoListItem,
+} from '@/components/onboarding';
+import { Text } from '@/components/ui';
 
 function bytesToHex(bytes: Uint8Array): string {
   return Array.from(bytes)
@@ -33,7 +31,7 @@ function bytesToHex(bytes: Uint8Array): string {
 
 async function fetchRepoList(): Promise<RepoListItem[]> {
   const list = await GitHubApiService.listRepositories();
-  return list.map((r) => ({
+  return list.map((r: Repository) => ({
     ...r,
     key: r.fullName,
   }));
@@ -79,181 +77,6 @@ async function cloneRepository(repo: RepoListItem): Promise<{ dir: string }> {
   return { dir };
 }
 
-interface RepoListContentProps {
-  isLoadingRepos: boolean;
-  filteredRepos: RepoListItem[];
-  selectedRepo: RepoListItem | null;
-  errorMessage: string | null;
-  onSelectRepo: (repo: RepoListItem) => void;
-}
-
-function RepoListContent({
-  isLoadingRepos,
-  filteredRepos,
-  selectedRepo,
-  errorMessage,
-  onSelectRepo,
-}: Readonly<RepoListContentProps>) {
-  if (isLoadingRepos) {
-    return (
-      <View className="py-8 items-center justify-center">
-        <ActivityIndicator color={getColor('neutral', '50')} />
-        <Text size="sm" className="text-neutral-500 mt-3 text-center">
-          Loading repositories…
-        </Text>
-      </View>
-    );
-  }
-
-  if (filteredRepos.length === 0) {
-    return (
-      <View className="py-8 items-center justify-center">
-        <Text className="text-neutral-400 text-center">No repositories found.</Text>
-        {errorMessage && (
-          <Text size="sm" className="text-coral-400 text-center mt-2">
-            {errorMessage}
-          </Text>
-        )}
-      </View>
-    );
-  }
-
-  return (
-    <>
-      {filteredRepos.map((repo) => (
-        <Pressable
-          key={repo.key}
-          onPress={() => onSelectRepo(repo)}
-          className={`p-4 ${selectedRepo?.key === repo.key ? 'bg-teal-600/20 border-teal-600' : 'bg-surface border-transparent'} border`}
-          style={organicBorderRadius.card}
-        >
-          <View className="flex-row items-center mb-2">
-            <View className="mr-2">
-              {repo.isPrivate ? (
-                <SecurityIcon size={18} color="warmGray" turbulence={0.15} />
-              ) : (
-                <FolderIcon size={18} color="gold" turbulence={0.15} />
-              )}
-            </View>
-            <Text weight="semibold" className="text-white flex-1">
-              {repo.name}
-            </Text>
-            {selectedRepo?.key === repo.key && (
-              <SuccessIcon size={18} color="teal" turbulence={0.15} />
-            )}
-          </View>
-          <Text size="sm" className="text-neutral-400" numberOfLines={1}>
-            {repo.description || 'No description'}
-          </Text>
-          <View className="flex-row items-center mt-1">
-            <Text size="xs" className="text-neutral-500">
-              {repo.fullName}
-            </Text>
-            {(repo.stars || 0) > 0 && (
-              <View className="flex-row items-center ml-2">
-                <StarIcon size={12} color="gold" turbulence={0.15} />
-                <Text size="xs" className="text-neutral-500 ml-1">
-                  {repo.stars}
-                </Text>
-              </View>
-            )}
-          </View>
-        </Pressable>
-      ))}
-    </>
-  );
-}
-
-interface CreateRepoFormProps {
-  newRepoName: string;
-  newRepoDescription: string;
-  newRepoPrivate: boolean;
-  isCreatingRepo: boolean;
-  errorMessage: string | null;
-  onNameChange: (v: string) => void;
-  onDescriptionChange: (v: string) => void;
-  onPrivateChange: (v: boolean) => void;
-  onCancel: () => void;
-  onCreate: () => void;
-}
-
-function CreateRepoForm({
-  newRepoName,
-  newRepoDescription,
-  newRepoPrivate,
-  isCreatingRepo,
-  errorMessage,
-  onNameChange,
-  onDescriptionChange,
-  onPrivateChange,
-  onCancel,
-  onCreate,
-}: Readonly<CreateRepoFormProps>) {
-  return (
-    <VStack
-      spacing="sm"
-      className="mt-4 p-4 bg-surface border border-teal-600/30"
-      style={organicBorderRadius.card}
-    >
-      <View className="flex-row items-center justify-between mb-2">
-        <Text weight="semibold" className="text-white">
-          New Repository
-        </Text>
-        <Pressable onPress={onCancel}>
-          <Text size="sm" className="text-neutral-400">
-            Cancel
-          </Text>
-        </Pressable>
-      </View>
-
-      <Input placeholder="repository-name" value={newRepoName} onChangeText={onNameChange} />
-
-      <Input
-        placeholder="Description (optional)"
-        value={newRepoDescription}
-        onChangeText={onDescriptionChange}
-      />
-
-      <View className="flex-row items-center justify-between py-2">
-        <Text className="text-neutral-300">Private repository</Text>
-        <Switch
-          value={newRepoPrivate}
-          onValueChange={onPrivateChange}
-          trackColor={{
-            false: getColor('neutral', '700'),
-            true: getColor('teal', '600'),
-          }}
-          thumbColor={getColor('neutral', '50')}
-        />
-      </View>
-
-      {errorMessage && (
-        <Text size="sm" className="text-coral-500">
-          {errorMessage}
-        </Text>
-      )}
-
-      <Pressable
-        onPress={onCreate}
-        disabled={!newRepoName.trim() || isCreatingRepo}
-        className={`py-3 ${newRepoName.trim() && !isCreatingRepo ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}
-        style={organicBorderRadius.button}
-      >
-        {isCreatingRepo ? (
-          <ActivityIndicator size="small" color="#ffffff" />
-        ) : (
-          <Text
-            weight="semibold"
-            className={`text-center ${newRepoName.trim() ? 'text-white' : 'text-neutral-500'}`}
-          >
-            Create Repository
-          </Text>
-        )}
-      </Pressable>
-    </VStack>
-  );
-}
-
 export default function CreateProjectScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -269,7 +92,6 @@ export default function CreateProjectScreen() {
   const [repos, setRepos] = useState<RepoListItem[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // New repo creation state
   const [mode, setMode] = useState<'select' | 'create'>('select');
   const [newRepoName, setNewRepoName] = useState('');
   const [newRepoDescription, setNewRepoDescription] = useState('');
@@ -341,7 +163,6 @@ export default function CreateProjectScreen() {
   };
 
   const handleCreate = async () => {
-    // Guard against double-submit
     if (isLoading || !selectedRepo || !projectName) return;
 
     setIsLoading(true);
@@ -350,7 +171,6 @@ export default function CreateProjectScreen() {
       await ensureSigningSecret();
       const { dir } = await cloneRepository(selectedRepo);
 
-      // Create project in shared store
       const projectId = addProject({
         name: projectName.trim(),
         repoUrl: selectedRepo.cloneUrl,
@@ -381,14 +201,12 @@ export default function CreateProjectScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <Container padding="lg">
-          {/* Progress */}
           <StepsProgress
             totalSteps={4}
             currentStep={3}
             labels={['GitHub', 'API Keys', 'Project', 'Done']}
           />
 
-          {/* Header */}
           <VStack spacing="sm" className="mt-8 mb-8">
             <Text variant="display" size="3xl" weight="bold" className="text-white">
               Create Your First Project
@@ -398,100 +216,41 @@ export default function CreateProjectScreen() {
             </Text>
           </VStack>
 
-          {/* Project Name */}
-          <VStack spacing="sm" className="mb-6">
-            <Text weight="semibold" className="text-white">
-              Project Name
-            </Text>
-            <Input
-              placeholder="My Awesome Project"
-              value={projectName}
-              onChangeText={setProjectName}
-            />
-          </VStack>
+          <ProjectFormHeader
+            projectName={projectName}
+            onProjectNameChange={setProjectName}
+          />
 
-          {/* Repository Selection */}
-          <VStack spacing="sm" className="mb-4">
-            <Text weight="semibold" className="text-white">
-              Select Repository
-            </Text>
-            <Input
-              placeholder="Search repositories..."
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-          </VStack>
-
-          {/* Repo List */}
-          <VStack spacing="sm">
-            <RepoListContent
-              isLoadingRepos={isLoadingRepos}
-              filteredRepos={filteredRepos}
-              selectedRepo={selectedRepo}
-              errorMessage={errorMessage}
-              onSelectRepo={setSelectedRepo}
-            />
-          </VStack>
-
-          {/* Create New Repository */}
-          {mode === 'select' ? (
-            <Pressable
-              onPress={() => setMode('create')}
-              className="mt-4 p-4 border border-dashed border-teal-600/50 active:bg-teal-600/10"
-              style={organicBorderRadius.card}
-            >
-              <View className="flex-row items-center justify-center">
-                <Text className="text-teal-400">+ Create new repository</Text>
-              </View>
-            </Pressable>
-          ) : (
-            <CreateRepoForm
-              newRepoName={newRepoName}
-              newRepoDescription={newRepoDescription}
-              newRepoPrivate={newRepoPrivate}
-              isCreatingRepo={isCreatingRepo}
-              errorMessage={errorMessage}
-              onNameChange={setNewRepoName}
-              onDescriptionChange={setNewRepoDescription}
-              onPrivateChange={setNewRepoPrivate}
-              onCancel={() => setMode('select')}
-              onCreate={handleCreateNewRepo}
-            />
-          )}
+          <RepoSelector
+            repos={repos}
+            filteredRepos={filteredRepos}
+            selectedRepo={selectedRepo}
+            searchQuery={searchQuery}
+            isLoadingRepos={isLoadingRepos}
+            errorMessage={errorMessage}
+            onSelectRepo={setSelectedRepo}
+            onSearchChange={setSearchQuery}
+            mode={mode}
+            onModeChange={setMode}
+            newRepoName={newRepoName}
+            newRepoDescription={newRepoDescription}
+            newRepoPrivate={newRepoPrivate}
+            isCreatingRepo={isCreatingRepo}
+            onNewRepoNameChange={setNewRepoName}
+            onNewRepoDescriptionChange={setNewRepoDescription}
+            onNewRepoPrivateChange={setNewRepoPrivate}
+            onCreateNewRepo={handleCreateNewRepo}
+          />
         </Container>
       </ScrollView>
 
-      {/* Bottom Buttons */}
-      <View
-        className="border-t border-neutral-800 px-6 py-4 flex-row gap-4"
-        style={{ paddingBottom: insets.bottom + 16 }}
-      >
-        <Pressable
-          onPress={handleSkip}
-          className="flex-1 bg-neutral-800 py-4 active:bg-neutral-700"
-          style={organicBorderRadius.cta}
-        >
-          <Text className="text-neutral-300 text-center">Skip for Now</Text>
-        </Pressable>
-
-        <Pressable
-          onPress={handleCreate}
-          disabled={!canCreate || isLoading}
-          className={`flex-1 py-4 ${canCreate && !isLoading ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}
-          style={organicBorderRadius.cta}
-        >
-          {isLoading ? (
-            <ActivityIndicator color={getColor('neutral', '50')} />
-          ) : (
-            <Text
-              weight="semibold"
-              className={canCreate ? 'text-white text-center' : 'text-neutral-500 text-center'}
-            >
-              Create Project
-            </Text>
-          )}
-        </Pressable>
-      </View>
+      <ProjectFormActions
+        canCreate={!!canCreate}
+        isLoading={isLoading}
+        bottomInset={insets.bottom}
+        onSkip={handleSkip}
+        onCreate={handleCreate}
+      />
     </View>
   );
 }
