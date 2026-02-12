@@ -30,9 +30,7 @@ jest.mock('@anthropic-ai/sdk', () => {
 
 describe('AnthropicClient', () => {
   let client: AnthropicClient;
-  const testMessages: AIMessage[] = [
-    { role: 'user', content: 'Hello' },
-  ];
+  const testMessages: AIMessage[] = [{ role: 'user', content: 'Hello' }];
   const testSystemPrompt = 'You are a helpful assistant.';
 
   beforeEach(() => {
@@ -149,7 +147,7 @@ describe('AnthropicClient', () => {
 
       // We need to get the stream mock to check its call
       const Anthropic = jest.requireMock('@anthropic-ai/sdk').default;
-      const instance = new Anthropic();
+      const _instance = new Anthropic();
 
       // Create a new client that uses this instance
       const testClient = new AnthropicClient('test-key');

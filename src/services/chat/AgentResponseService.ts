@@ -7,8 +7,8 @@
 import type { Message, MessageSender } from '@thumbcode/state';
 import { useChatStore, useCredentialStore } from '@thumbcode/state';
 import * as SecureStore from 'expo-secure-store';
-import { createAIClient } from '../ai/AIClientFactory';
 import { getAgentSystemPrompt } from '../ai/AgentPrompts';
+import { createAIClient } from '../ai/AIClientFactory';
 import type { AIMessage, AIProvider } from '../ai/types';
 import type { MessageStore } from './MessageStore';
 import type { StreamHandler } from './StreamHandler';
@@ -136,13 +136,15 @@ export class AgentResponseService {
     const metadata = credState.credentials;
 
     // Try Anthropic first, then OpenAI
-    if (metadata.anthropic?.isSet) {
-      const apiKey = await SecureStore.getItemAsync('credential_anthropic');
+    const anthropicCred = metadata.find((c) => c.provider === 'anthropic' && c.status === 'valid');
+    if (anthropicCred) {
+      const apiKey = await SecureStore.getItemAsync(anthropicCred.secureStoreKey);
       if (apiKey) return { provider: 'anthropic', apiKey };
     }
 
-    if (metadata.openai?.isSet) {
-      const apiKey = await SecureStore.getItemAsync('credential_openai');
+    const openaiCred = metadata.find((c) => c.provider === 'openai' && c.status === 'valid');
+    if (openaiCred) {
+      const apiKey = await SecureStore.getItemAsync(openaiCred.secureStoreKey);
       if (apiKey) return { provider: 'openai', apiKey };
     }
 
