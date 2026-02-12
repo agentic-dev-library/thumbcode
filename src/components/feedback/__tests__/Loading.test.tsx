@@ -59,9 +59,7 @@ describe('LoadingOverlay', () => {
   });
 
   it('renders message when provided', () => {
-    const { toJSON } = render(
-      <LoadingOverlay visible message="Processing your request..." />
-    );
+    const { toJSON } = render(<LoadingOverlay visible message="Processing your request..." />);
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Processing your request...');
   });

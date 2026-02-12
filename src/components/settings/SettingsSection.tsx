@@ -15,7 +15,11 @@ interface SettingsSectionProps {
   className?: string;
 }
 
-export function SettingsSection({ title, children, className = 'mb-6' }: Readonly<SettingsSectionProps>) {
+export function SettingsSection({
+  title,
+  children,
+  className = 'mb-6',
+}: Readonly<SettingsSectionProps>) {
   return (
     <VStack
       spacing="none"

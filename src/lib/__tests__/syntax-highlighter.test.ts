@@ -1,10 +1,5 @@
-import { tokenize, TOKEN_COLORS } from '../syntax-highlighter';
 import type { Token, TokenType } from '../syntax-highlighter';
-
-/** Helper to get token types from a tokenized line */
-function getTokenTypes(tokens: Token[]): TokenType[] {
-  return tokens.map((t) => t.type);
-}
+import { TOKEN_COLORS, tokenize } from '../syntax-highlighter';
 
 /** Helper to find first token of a given type */
 function findToken(tokens: Token[], type: TokenType): Token | undefined {

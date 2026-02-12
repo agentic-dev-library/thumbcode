@@ -38,8 +38,7 @@ export function DeviceCodeDisplay({
             Secure Device Flow
           </Text>
           <Text size="sm" className="text-neutral-400 text-center">
-            We use GitHub's Device Flow authentication - your credentials are never shared with
-            us.
+            We use GitHub's Device Flow authentication - your credentials are never shared with us.
           </Text>
         </View>
 

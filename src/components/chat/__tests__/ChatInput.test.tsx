@@ -28,9 +28,7 @@ describe('ChatInput', () => {
   });
 
   it('renders with custom placeholder', () => {
-    const { toJSON } = render(
-      <ChatInput threadId="thread-1" placeholder="Ask the architect..." />
-    );
+    const { toJSON } = render(<ChatInput threadId="thread-1" placeholder="Ask the architect..." />);
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Ask the architect...');
   });

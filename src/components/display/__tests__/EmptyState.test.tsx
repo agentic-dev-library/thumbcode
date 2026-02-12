@@ -1,5 +1,5 @@
-import { act, create } from 'react-test-renderer';
 import { Text } from 'react-native';
+import { act, create } from 'react-test-renderer';
 import { EmptyState, ErrorState, NoResults } from '../EmptyState';
 
 jest.mock('@/components/icons', () => ({
@@ -30,10 +30,7 @@ describe('EmptyState', () => {
   it('renders action button', () => {
     const onPress = jest.fn();
     const tree = create(
-      <EmptyState
-        title="No projects"
-        action={{ label: 'Create Project', onPress }}
-      />
+      <EmptyState title="No projects" action={{ label: 'Create Project', onPress }} />
     );
     const json = JSON.stringify(tree.toJSON());
     expect(json).toContain('Create Project');
@@ -42,10 +39,7 @@ describe('EmptyState', () => {
   it('calls action onPress when pressed', () => {
     const onPress = jest.fn();
     const tree = create(
-      <EmptyState
-        title="No projects"
-        action={{ label: 'Create Project', onPress }}
-      />
+      <EmptyState title="No projects" action={{ label: 'Create Project', onPress }} />
     );
     const buttons = tree.root.findAll(
       (node) =>

@@ -1,5 +1,5 @@
 import { fireEvent, render } from '@testing-library/react-native';
-import { FileTree, type FileNode } from '../FileTree';
+import { type FileNode, FileTree } from '../FileTree';
 
 jest.mock('@/components/icons', () => ({
   ChevronDownIcon: () => 'ChevronDownIcon',
@@ -52,9 +52,7 @@ describe('FileTree', () => {
   });
 
   it('expands folder when pressed using defaultExpanded', () => {
-    const { toJSON } = render(
-      <FileTree data={mockData} defaultExpanded={['src']} />
-    );
+    const { toJSON } = render(<FileTree data={mockData} defaultExpanded={['src']} />);
     const json = JSON.stringify(toJSON());
     // Children should be visible
     expect(json).toContain('App.tsx');
@@ -76,9 +74,8 @@ describe('FileTree', () => {
     // Find the App.tsx file button
     const fileButtons = UNSAFE_getAllByProps({ accessibilityRole: 'button' });
     // Find the one that has App.tsx in its accessibilityLabel
-    const appButton = fileButtons.find(
-      (btn: { props: { accessibilityLabel?: string } }) =>
-        btn.props.accessibilityLabel?.includes('App.tsx')
+    const appButton = fileButtons.find((btn: { props: { accessibilityLabel?: string } }) =>
+      btn.props.accessibilityLabel?.includes('App.tsx')
     );
     if (appButton) {
       fireEvent.press(appButton);
@@ -87,9 +84,7 @@ describe('FileTree', () => {
   });
 
   it('shows status indicator for modified files', () => {
-    const { toJSON } = render(
-      <FileTree data={mockData} defaultExpanded={['src']} showStatus />
-    );
+    const { toJSON } = render(<FileTree data={mockData} defaultExpanded={['src']} showStatus />);
     const json = JSON.stringify(toJSON());
     expect(json).toContain('M');
   });

@@ -1,6 +1,5 @@
-import React from 'react';
+import { Text } from 'react-native';
 import { create } from 'react-test-renderer';
-import { Text, View } from 'react-native';
 
 // Mock the component to bypass RN Modal rendering in jest-expo web
 jest.mock('../BottomSheet', () => {
@@ -72,7 +71,10 @@ jest.mock('../BottomSheet', () => {
         {options.map((option) => (
           <Pressable
             key={option.label}
-            onPress={() => { option.onPress(); onClose(); }}
+            onPress={() => {
+              option.onPress();
+              onClose();
+            }}
             disabled={option.disabled}
             accessibilityRole="button"
             accessibilityLabel={option.label}
@@ -151,9 +153,7 @@ describe('ActionSheet', () => {
   ];
 
   it('renders action options', () => {
-    const tree = create(
-      <ActionSheet visible onClose={jest.fn()} options={mockOptions} />
-    );
+    const tree = create(<ActionSheet visible onClose={jest.fn()} options={mockOptions} />);
     const json = JSON.stringify(tree.toJSON());
     expect(json).toContain('Edit');
     expect(json).toContain('Delete');
@@ -176,21 +176,14 @@ describe('ActionSheet', () => {
   });
 
   it('renders cancel button by default', () => {
-    const tree = create(
-      <ActionSheet visible onClose={jest.fn()} options={mockOptions} />
-    );
+    const tree = create(<ActionSheet visible onClose={jest.fn()} options={mockOptions} />);
     const json = JSON.stringify(tree.toJSON());
     expect(json).toContain('Cancel');
   });
 
   it('uses custom cancel text', () => {
     const tree = create(
-      <ActionSheet
-        visible
-        onClose={jest.fn()}
-        options={mockOptions}
-        cancelText="Dismiss"
-      />
+      <ActionSheet visible onClose={jest.fn()} options={mockOptions} cancelText="Dismiss" />
     );
     const json = JSON.stringify(tree.toJSON());
     expect(json).toContain('Dismiss');
@@ -198,12 +191,7 @@ describe('ActionSheet', () => {
 
   it('hides cancel when showCancel is false', () => {
     const tree = create(
-      <ActionSheet
-        visible
-        onClose={jest.fn()}
-        options={mockOptions}
-        showCancel={false}
-      />
+      <ActionSheet visible onClose={jest.fn()} options={mockOptions} showCancel={false} />
     );
     const json = JSON.stringify(tree.toJSON());
     expect(json).not.toContain('Cancel');

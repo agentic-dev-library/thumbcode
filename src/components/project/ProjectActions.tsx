@@ -163,13 +163,7 @@ export function ProjectAgents({ agents, onAgentPress }: Readonly<ProjectAgentsPr
               </VStack>
             </HStack>
             <StatusBadge
-              status={
-                a.status === 'error'
-                  ? 'error'
-                  : a.status === 'idle'
-                    ? 'inactive'
-                    : 'pending'
-              }
+              status={a.status === 'error' ? 'error' : a.status === 'idle' ? 'inactive' : 'pending'}
               label={a.status.replaceAll('_', ' ')}
             />
           </HStack>

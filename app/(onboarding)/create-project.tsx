@@ -18,8 +18,8 @@ import { Container, VStack } from '@/components/layout';
 import {
   ProjectFormActions,
   ProjectFormHeader,
-  RepoSelector,
   type RepoListItem,
+  RepoSelector,
 } from '@/components/onboarding';
 import { Text } from '@/components/ui';
 
@@ -216,10 +216,7 @@ export default function CreateProjectScreen() {
             </Text>
           </VStack>
 
-          <ProjectFormHeader
-            projectName={projectName}
-            onProjectNameChange={setProjectName}
-          />
+          <ProjectFormHeader projectName={projectName} onProjectNameChange={setProjectName} />
 
           <RepoSelector
             repos={repos}

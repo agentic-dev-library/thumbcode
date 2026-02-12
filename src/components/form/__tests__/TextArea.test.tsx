@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
 import { TextArea } from '../TextArea';
 
 // Add document stub for TextInput
@@ -33,17 +33,13 @@ describe('TextArea', () => {
   });
 
   it('renders error text instead of helper when error is set', () => {
-    const { toJSON } = render(
-      <TextArea helper="Max 500 characters" error="Field is required" />
-    );
+    const { toJSON } = render(<TextArea helper="Max 500 characters" error="Field is required" />);
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Field is required');
   });
 
   it('shows character count when showCount is true', () => {
-    const { toJSON } = render(
-      <TextArea value="Hello" showCount maxLength={100} />
-    );
+    const { toJSON } = render(<TextArea value="Hello" showCount maxLength={100} />);
     const json = JSON.stringify(toJSON());
     // Text might be split into separate children, so check both parts
     expect(json).toContain('5');
@@ -58,9 +54,7 @@ describe('TextArea', () => {
 
   it('calls onChangeText when text changes', () => {
     const onChangeText = jest.fn();
-    const { toJSON } = render(
-      <TextArea value="initial" onChangeText={onChangeText} />
-    );
+    const { toJSON } = render(<TextArea value="initial" onChangeText={onChangeText} />);
     // Verify component renders with value
     const json = JSON.stringify(toJSON());
     expect(json).toContain('initial');

@@ -1,11 +1,9 @@
-import React from 'react';
+import { Text } from 'react-native';
 import { act, create } from 'react-test-renderer';
-import { Text, View } from 'react-native';
 
 // Mock the entire Modal component to bypass RN Modal rendering issues
 jest.mock('../Modal', () => {
   const { View, Text, Pressable, ScrollView } = require('react-native');
-  const { organicBorderRadius } = require('@/lib/organic-styles');
 
   function Modal({
     visible,
@@ -31,11 +29,7 @@ jest.mock('../Modal', () => {
         {title && (
           <View>
             <Text accessibilityRole="header">{title}</Text>
-            <Pressable
-              onPress={onClose}
-              accessibilityRole="button"
-              accessibilityLabel="Close"
-            >
+            <Pressable onPress={onClose} accessibilityRole="button" accessibilityLabel="Close">
               <Text>CloseIcon</Text>
             </Pressable>
           </View>
@@ -54,7 +48,7 @@ jest.mock('../Modal', () => {
     message,
     confirmText = 'Confirm',
     cancelText = 'Cancel',
-    variant = 'default',
+    _variant = 'default',
   }: {
     visible: boolean;
     onClose: () => void;
@@ -73,15 +67,14 @@ jest.mock('../Modal', () => {
         title={title}
         footer={
           <>
-            <Pressable
-              onPress={onClose}
-              accessibilityRole="button"
-              accessibilityLabel={cancelText}
-            >
+            <Pressable onPress={onClose} accessibilityRole="button" accessibilityLabel={cancelText}>
               <Text>{cancelText}</Text>
             </Pressable>
             <Pressable
-              onPress={() => { onConfirm(); onClose(); }}
+              onPress={() => {
+                onConfirm();
+                onClose();
+              }}
               accessibilityRole="button"
               accessibilityLabel={confirmText}
             >
@@ -222,9 +215,7 @@ describe('ConfirmDialog', () => {
     );
     const root = tree.root;
     const confirmButtons = root.findAll(
-      (node) =>
-        node.props.accessibilityLabel === 'Yes' &&
-        node.props.accessibilityRole === 'button'
+      (node) => node.props.accessibilityLabel === 'Yes' && node.props.accessibilityRole === 'button'
     );
     expect(confirmButtons.length).toBeGreaterThan(0);
     act(() => confirmButtons[0].props.onPress());
@@ -245,8 +236,7 @@ describe('ConfirmDialog', () => {
     const root = tree.root;
     const cancelButtons = root.findAll(
       (node) =>
-        node.props.accessibilityLabel === 'Cancel' &&
-        node.props.accessibilityRole === 'button'
+        node.props.accessibilityLabel === 'Cancel' && node.props.accessibilityRole === 'button'
     );
     expect(cancelButtons.length).toBeGreaterThan(0);
     act(() => cancelButtons[0].props.onPress());

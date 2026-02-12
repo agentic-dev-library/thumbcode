@@ -48,12 +48,7 @@ describe('Select', () => {
 
   it('renders label text', () => {
     const { toJSON } = render(
-      <Select
-        value={null}
-        onValueChange={jest.fn()}
-        options={mockOptions}
-        label="Framework"
-      />
+      <Select value={null} onValueChange={jest.fn()} options={mockOptions} label="Framework" />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Framework');
@@ -74,12 +69,7 @@ describe('Select', () => {
 
   it('renders combobox trigger that can be pressed', () => {
     const { UNSAFE_getByProps } = render(
-      <Select
-        value={null}
-        onValueChange={jest.fn()}
-        options={mockOptions}
-        label="Framework"
-      />
+      <Select value={null} onValueChange={jest.fn()} options={mockOptions} label="Framework" />
     );
     const combobox = UNSAFE_getByProps({ accessibilityRole: 'combobox' });
     expect(combobox).toBeTruthy();
@@ -89,12 +79,7 @@ describe('Select', () => {
 
   it('does not open modal when disabled', () => {
     const { toJSON } = render(
-      <Select
-        value={null}
-        onValueChange={jest.fn()}
-        options={mockOptions}
-        disabled
-      />
+      <Select value={null} onValueChange={jest.fn()} options={mockOptions} disabled />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('"aria-disabled":true');

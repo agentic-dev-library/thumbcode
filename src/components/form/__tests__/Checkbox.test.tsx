@@ -11,18 +11,14 @@ jest.mock('@/lib/organic-styles', () => ({
 
 describe('Checkbox', () => {
   it('renders unchecked by default', () => {
-    const { toJSON } = render(
-      <Checkbox checked={false} onCheckedChange={jest.fn()} />
-    );
+    const { toJSON } = render(<Checkbox checked={false} onCheckedChange={jest.fn()} />);
     const json = JSON.stringify(toJSON());
     expect(json).toBeTruthy();
     expect(json).not.toContain('SuccessIcon');
   });
 
   it('renders checked state with check icon', () => {
-    const { toJSON } = render(
-      <Checkbox checked={true} onCheckedChange={jest.fn()} />
-    );
+    const { toJSON } = render(<Checkbox checked={true} onCheckedChange={jest.fn()} />);
     const json = JSON.stringify(toJSON());
     expect(json).toContain('SuccessIcon');
   });
@@ -76,9 +72,7 @@ describe('Checkbox', () => {
   });
 
   it('sets accessibility state correctly', () => {
-    const { toJSON } = render(
-      <Checkbox checked={true} onCheckedChange={jest.fn()} disabled />
-    );
+    const { toJSON } = render(<Checkbox checked={true} onCheckedChange={jest.fn()} disabled />);
     const json = JSON.stringify(toJSON());
     expect(json).toContain('"aria-disabled":true');
     expect(json).toContain('"role":"checkbox"');

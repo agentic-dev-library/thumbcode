@@ -20,12 +20,7 @@ describe('RadioGroup', () => {
 
   it('renders group label', () => {
     const { toJSON } = render(
-      <RadioGroup
-        value={null}
-        onValueChange={jest.fn()}
-        options={mockOptions}
-        label="Pick one"
-      />
+      <RadioGroup value={null} onValueChange={jest.fn()} options={mockOptions} label="Pick one" />
     );
     const json = JSON.stringify(toJSON());
     expect(json).toContain('Pick one');
