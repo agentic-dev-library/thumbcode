@@ -37,6 +37,7 @@ class GitHubAuthServiceClass {
   private pollInterval: number = GITHUB_OAUTH.pollInterval;
   private pollTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private pollAttempt: number = 0;
+  private consecutiveErrors: number = 0;
   private abortController: AbortController | null = null;
   private pollResolve: ((result: PollResult) => void) | null = null;
   private isCancelled = false;
@@ -128,6 +129,7 @@ class GitHubAuthServiceClass {
 
     this.setState('polling', onStateChange);
     this.pollAttempt = 0;
+    this.consecutiveErrors = 0;
     this.isCancelled = false;
 
     return new Promise((resolve) => {
@@ -159,6 +161,9 @@ class GitHubAuthServiceClass {
 
         try {
           const result = await this.checkForToken(clientId);
+
+          // Reset consecutive errors on successful response (even if auth pending)
+          this.consecutiveErrors = 0;
 
           // Check if cancelled after fetch returns to avoid stale results
           if (this.isCancelled) {
@@ -196,6 +201,17 @@ class GitHubAuthServiceClass {
           if (error instanceof Error && error.name === 'AbortError') {
             this.cleanup();
             resolve({ authorized: false, shouldContinue: false, error: 'Polling cancelled' });
+            return;
+          }
+
+          // Handle network errors with retries
+          this.consecutiveErrors++;
+          const maxConsecutiveErrors = 3;
+
+          if (this.consecutiveErrors < maxConsecutiveErrors) {
+            // Log warning but continue polling
+            console.warn(`Poll attempt failed (${this.consecutiveErrors}/${maxConsecutiveErrors}). Retrying...`);
+            this.pollTimeoutId = setTimeout(poll, this.pollInterval);
             return;
           }
 
@@ -317,6 +333,7 @@ class GitHubAuthServiceClass {
     }
     this.deviceCode = null;
     this.pollAttempt = 0;
+    this.consecutiveErrors = 0;
     this.pollResolve = null;
   }
 
