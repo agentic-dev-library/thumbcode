@@ -79,6 +79,185 @@ async function cloneRepository(repo: RepoListItem): Promise<{ dir: string }> {
   return { dir };
 }
 
+interface RepoListContentProps {
+  isLoadingRepos: boolean;
+  filteredRepos: RepoListItem[];
+  selectedRepo: RepoListItem | null;
+  errorMessage: string | null;
+  onSelectRepo: (repo: RepoListItem) => void;
+}
+
+function RepoListContent({
+  isLoadingRepos,
+  filteredRepos,
+  selectedRepo,
+  errorMessage,
+  onSelectRepo,
+}: Readonly<RepoListContentProps>) {
+  if (isLoadingRepos) {
+    return (
+      <View className="py-8 items-center justify-center">
+        <ActivityIndicator color={getColor('neutral', '50')} />
+        <Text size="sm" className="text-neutral-500 mt-3 text-center">
+          Loading repositories…
+        </Text>
+      </View>
+    );
+  }
+
+  if (filteredRepos.length === 0) {
+    return (
+      <View className="py-8 items-center justify-center">
+        <Text className="text-neutral-400 text-center">No repositories found.</Text>
+        {errorMessage && (
+          <Text size="sm" className="text-coral-400 text-center mt-2">
+            {errorMessage}
+          </Text>
+        )}
+      </View>
+    );
+  }
+
+  return (
+    <>
+      {filteredRepos.map((repo) => (
+        <Pressable
+          key={repo.key}
+          onPress={() => onSelectRepo(repo)}
+          className={`p-4 ${selectedRepo?.key === repo.key ? 'bg-teal-600/20 border-teal-600' : 'bg-surface border-transparent'} border`}
+          style={organicBorderRadius.card}
+        >
+          <View className="flex-row items-center mb-2">
+            <View className="mr-2">
+              {repo.isPrivate ? (
+                <SecurityIcon size={18} color="warmGray" turbulence={0.15} />
+              ) : (
+                <FolderIcon size={18} color="gold" turbulence={0.15} />
+              )}
+            </View>
+            <Text weight="semibold" className="text-white flex-1">
+              {repo.name}
+            </Text>
+            {selectedRepo?.key === repo.key && (
+              <SuccessIcon size={18} color="teal" turbulence={0.15} />
+            )}
+          </View>
+          <Text size="sm" className="text-neutral-400" numberOfLines={1}>
+            {repo.description || 'No description'}
+          </Text>
+          <View className="flex-row items-center mt-1">
+            <Text size="xs" className="text-neutral-500">
+              {repo.fullName}
+            </Text>
+            {(repo.stars || 0) > 0 && (
+              <View className="flex-row items-center ml-2">
+                <StarIcon size={12} color="gold" turbulence={0.15} />
+                <Text size="xs" className="text-neutral-500 ml-1">
+                  {repo.stars}
+                </Text>
+              </View>
+            )}
+          </View>
+        </Pressable>
+      ))}
+    </>
+  );
+}
+
+interface CreateRepoFormProps {
+  newRepoName: string;
+  newRepoDescription: string;
+  newRepoPrivate: boolean;
+  isCreatingRepo: boolean;
+  errorMessage: string | null;
+  onNameChange: (v: string) => void;
+  onDescriptionChange: (v: string) => void;
+  onPrivateChange: (v: boolean) => void;
+  onCancel: () => void;
+  onCreate: () => void;
+}
+
+function CreateRepoForm({
+  newRepoName,
+  newRepoDescription,
+  newRepoPrivate,
+  isCreatingRepo,
+  errorMessage,
+  onNameChange,
+  onDescriptionChange,
+  onPrivateChange,
+  onCancel,
+  onCreate,
+}: Readonly<CreateRepoFormProps>) {
+  return (
+    <VStack
+      spacing="sm"
+      className="mt-4 p-4 bg-surface border border-teal-600/30"
+      style={organicBorderRadius.card}
+    >
+      <View className="flex-row items-center justify-between mb-2">
+        <Text weight="semibold" className="text-white">
+          New Repository
+        </Text>
+        <Pressable onPress={onCancel}>
+          <Text size="sm" className="text-neutral-400">
+            Cancel
+          </Text>
+        </Pressable>
+      </View>
+
+      <Input
+        placeholder="repository-name"
+        value={newRepoName}
+        onChangeText={onNameChange}
+      />
+
+      <Input
+        placeholder="Description (optional)"
+        value={newRepoDescription}
+        onChangeText={onDescriptionChange}
+      />
+
+      <View className="flex-row items-center justify-between py-2">
+        <Text className="text-neutral-300">Private repository</Text>
+        <Switch
+          value={newRepoPrivate}
+          onValueChange={onPrivateChange}
+          trackColor={{
+            false: getColor('neutral', '700'),
+            true: getColor('teal', '600'),
+          }}
+          thumbColor={getColor('neutral', '50')}
+        />
+      </View>
+
+      {errorMessage && (
+        <Text size="sm" className="text-coral-500">
+          {errorMessage}
+        </Text>
+      )}
+
+      <Pressable
+        onPress={onCreate}
+        disabled={!newRepoName.trim() || isCreatingRepo}
+        className={`py-3 ${newRepoName.trim() && !isCreatingRepo ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}
+        style={organicBorderRadius.button}
+      >
+        {isCreatingRepo ? (
+          <ActivityIndicator size="small" color="#ffffff" />
+        ) : (
+          <Text
+            weight="semibold"
+            className={`text-center ${newRepoName.trim() ? 'text-white' : 'text-neutral-500'}`}
+          >
+            Create Repository
+          </Text>
+        )}
+      </Pressable>
+    </VStack>
+  );
+}
+
 export default function CreateProjectScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -249,64 +428,13 @@ export default function CreateProjectScreen() {
 
           {/* Repo List */}
           <VStack spacing="sm">
-            {isLoadingRepos ? (
-              <View className="py-8 items-center justify-center">
-                <ActivityIndicator color={getColor('neutral', '50')} />
-                <Text size="sm" className="text-neutral-500 mt-3 text-center">
-                  Loading repositories…
-                </Text>
-              </View>
-            ) : filteredRepos.length === 0 ? (
-              <View className="py-8 items-center justify-center">
-                <Text className="text-neutral-400 text-center">No repositories found.</Text>
-                {errorMessage && (
-                  <Text size="sm" className="text-coral-400 text-center mt-2">
-                    {errorMessage}
-                  </Text>
-                )}
-              </View>
-            ) : (
-              filteredRepos.map((repo) => (
-                <Pressable
-                  key={repo.key}
-                  onPress={() => setSelectedRepo(repo)}
-                  className={`p-4 ${selectedRepo?.key === repo.key ? 'bg-teal-600/20 border-teal-600' : 'bg-surface border-transparent'} border`}
-                  style={organicBorderRadius.card}
-                >
-                  <View className="flex-row items-center mb-2">
-                    <View className="mr-2">
-                      {repo.isPrivate ? (
-                        <SecurityIcon size={18} color="warmGray" turbulence={0.15} />
-                      ) : (
-                        <FolderIcon size={18} color="gold" turbulence={0.15} />
-                      )}
-                    </View>
-                    <Text weight="semibold" className="text-white flex-1">
-                      {repo.name}
-                    </Text>
-                    {selectedRepo?.key === repo.key && (
-                      <SuccessIcon size={18} color="teal" turbulence={0.15} />
-                    )}
-                  </View>
-                  <Text size="sm" className="text-neutral-400" numberOfLines={1}>
-                    {repo.description || 'No description'}
-                  </Text>
-                  <View className="flex-row items-center mt-1">
-                    <Text size="xs" className="text-neutral-500">
-                      {repo.fullName}
-                    </Text>
-                    {(repo.stars || 0) > 0 && (
-                      <View className="flex-row items-center ml-2">
-                        <StarIcon size={12} color="gold" turbulence={0.15} />
-                        <Text size="xs" className="text-neutral-500 ml-1">
-                          {repo.stars}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                </Pressable>
-              ))
-            )}
+            <RepoListContent
+              isLoadingRepos={isLoadingRepos}
+              filteredRepos={filteredRepos}
+              selectedRepo={selectedRepo}
+              errorMessage={errorMessage}
+              onSelectRepo={setSelectedRepo}
+            />
           </VStack>
 
           {/* Create New Repository */}
@@ -321,71 +449,18 @@ export default function CreateProjectScreen() {
               </View>
             </Pressable>
           ) : (
-            <VStack
-              spacing="sm"
-              className="mt-4 p-4 bg-surface border border-teal-600/30"
-              style={organicBorderRadius.card}
-            >
-              <View className="flex-row items-center justify-between mb-2">
-                <Text weight="semibold" className="text-white">
-                  New Repository
-                </Text>
-                <Pressable onPress={() => setMode('select')}>
-                  <Text size="sm" className="text-neutral-400">
-                    Cancel
-                  </Text>
-                </Pressable>
-              </View>
-
-              <Input
-                placeholder="repository-name"
-                value={newRepoName}
-                onChangeText={setNewRepoName}
-              />
-
-              <Input
-                placeholder="Description (optional)"
-                value={newRepoDescription}
-                onChangeText={setNewRepoDescription}
-              />
-
-              <View className="flex-row items-center justify-between py-2">
-                <Text className="text-neutral-300">Private repository</Text>
-                <Switch
-                  value={newRepoPrivate}
-                  onValueChange={setNewRepoPrivate}
-                  trackColor={{
-                    false: getColor('neutral', '700'),
-                    true: getColor('teal', '600'),
-                  }}
-                  thumbColor={getColor('neutral', '50')}
-                />
-              </View>
-
-              {errorMessage && mode === 'create' && (
-                <Text size="sm" className="text-coral-500">
-                  {errorMessage}
-                </Text>
-              )}
-
-              <Pressable
-                onPress={handleCreateNewRepo}
-                disabled={!newRepoName.trim() || isCreatingRepo}
-                className={`py-3 ${newRepoName.trim() && !isCreatingRepo ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}
-                style={organicBorderRadius.button}
-              >
-                {isCreatingRepo ? (
-                  <ActivityIndicator size="small" color="#ffffff" />
-                ) : (
-                  <Text
-                    weight="semibold"
-                    className={`text-center ${newRepoName.trim() ? 'text-white' : 'text-neutral-500'}`}
-                  >
-                    Create Repository
-                  </Text>
-                )}
-              </Pressable>
-            </VStack>
+            <CreateRepoForm
+              newRepoName={newRepoName}
+              newRepoDescription={newRepoDescription}
+              newRepoPrivate={newRepoPrivate}
+              isCreatingRepo={isCreatingRepo}
+              errorMessage={errorMessage}
+              onNameChange={setNewRepoName}
+              onDescriptionChange={setNewRepoDescription}
+              onPrivateChange={setNewRepoPrivate}
+              onCancel={() => setMode('select')}
+              onCreate={handleCreateNewRepo}
+            />
           )}
         </Container>
       </ScrollView>

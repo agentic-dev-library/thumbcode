@@ -243,6 +243,45 @@ export default function CredentialsScreen() {
     );
   };
 
+  const validateAndStore = async (type: 'anthropic' | 'openai', trimmed: string) => {
+    const validation = await CredentialService.validateCredential(type, trimmed);
+    if (!validation.isValid) {
+      throw new Error(validation.message || 'Invalid API key');
+    }
+
+    const storeResult = await CredentialService.store(type, trimmed, { skipValidation: true });
+    if (!storeResult.isValid) {
+      throw new Error(storeResult.message || 'Failed to store credential');
+    }
+
+    return validation;
+  };
+
+  const registerCredential = (
+    type: 'anthropic' | 'openai',
+    trimmed: string,
+    validation: Awaited<ReturnType<typeof CredentialService.validateCredential>>
+  ) => {
+    const expiresAt = validation.expiresAt?.toISOString();
+    const maskedValue = `${trimmed.slice(0, 6)}…${trimmed.slice(-4)}`;
+    const credentialId = addCredential({
+      provider: type,
+      name: type === 'anthropic' ? 'Anthropic' : 'OpenAI',
+      secureStoreKey:
+        type === 'anthropic' ? SECURE_STORE_KEYS.anthropic : SECURE_STORE_KEYS.openai,
+      expiresAt,
+      maskedValue,
+      metadata: validation.metadata,
+    });
+    setValidationResult(credentialId, {
+      isValid: true,
+      message: validation.message,
+      expiresAt,
+      metadata: validation.metadata,
+    });
+    return validation.message;
+  };
+
   const saveApiKey = async (type: 'anthropic' | 'openai', value: string) => {
     const trimmed = value.trim();
     if (!trimmed) return;
@@ -251,43 +290,13 @@ export default function CredentialsScreen() {
     setSaveError(null);
 
     try {
-      // Validate first before storing
-      const validation = await CredentialService.validateCredential(type, trimmed);
-
-      if (!validation.isValid) {
-        setSaveError({ type, message: validation.message || 'Invalid API key' });
-        return;
-      }
-
-      // Only store if validation passed
-      const storeResult = await CredentialService.store(type, trimmed, { skipValidation: true });
-      if (!storeResult.isValid) {
-        setSaveError({ type, message: storeResult.message || 'Failed to store credential' });
-        return;
-      }
-
-      const expiresAt = validation.expiresAt?.toISOString();
-      const maskedValue = `${trimmed.slice(0, 6)}…${trimmed.slice(-4)}`;
-      const credentialId = addCredential({
-        provider: type,
-        name: type === 'anthropic' ? 'Anthropic' : 'OpenAI',
-        secureStoreKey:
-          type === 'anthropic' ? SECURE_STORE_KEYS.anthropic : SECURE_STORE_KEYS.openai,
-        expiresAt,
-        maskedValue,
-        metadata: validation.metadata,
-      });
-      setValidationResult(credentialId, {
-        isValid: true,
-        message: validation.message,
-        expiresAt,
-        metadata: validation.metadata,
-      });
+      const validation = await validateAndStore(type, trimmed);
+      const message = registerCredential(type, trimmed, validation);
 
       if (type === 'anthropic') setAnthropicKey('');
       else setOpenaiKey('');
 
-      Alert.alert('Saved', validation.message || 'Credential stored successfully');
+      Alert.alert('Saved', message || 'Credential stored successfully');
     } catch (error) {
       setSaveError({
         type,

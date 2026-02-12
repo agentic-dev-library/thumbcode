@@ -185,91 +185,77 @@ function isPythonLike(language: string): boolean {
   return lang === 'python' || lang === 'py';
 }
 
+function buildCommentPatterns(isJson: boolean, isBash: boolean, isPython: boolean): string[] {
+  if (isJson) return ['(?:\\/\\/[^\n]*)'];
+  if (isBash || isPython) return ['(?:#[^\n]*)'];
+  return ['(?:\\/\\/[^\n]*)', '(?:\\/\\*[\\s\\S]*?\\*\\/)'];
+}
+
+function buildTokenRegex(isJson: boolean, isBash: boolean, isPython: boolean): RegExp {
+  const patterns: string[] = [
+    ...buildCommentPatterns(isJson, isBash, isPython),
+    '(?:`(?:[^`\\\\]|\\\\.)*`)',
+    '(?:"(?:[^"\\\\]|\\\\.)*")',
+    "(?:'(?:[^'\\\\]|\\\\.)*')",
+    '(?:0[xX][0-9a-fA-F]+|0[bB][01]+|0[oO][0-7]+|\\d+\\.\\d*(?:[eE][+-]?\\d+)?|\\d+(?:[eE][+-]?\\d+)?|\\.\\d+(?:[eE][+-]?\\d+)?)',
+    '(?:[a-zA-Z_$][a-zA-Z0-9_$]*)',
+    '(?:[{}()\\[\\];,.:?!<>=+\\-*/%&|^~@#]+)',
+    '(?:\\s+)',
+    '(?:.)',
+  ];
+  return new RegExp(patterns.join('|'), 'g');
+}
+
+function classifyToken(
+  value: string,
+  keywords: Set<string>,
+  isJson: boolean,
+  hasHashComments: boolean,
+): TokenType {
+  if (/^\s+$/.test(value)) return 'plain';
+
+  if (value.startsWith('//') || value.startsWith('/*')) return 'comment';
+  if (hasHashComments && value.startsWith('#')) return 'comment';
+
+  if (
+    (value.startsWith('"') && value.endsWith('"')) ||
+    (value.startsWith("'") && value.endsWith("'")) ||
+    (value.startsWith('`') && value.endsWith('`'))
+  ) {
+    return 'string';
+  }
+
+  if (/^(?:0[xXbBoO])?[\d]/.test(value) || /^\.\d/.test(value)) return 'number';
+
+  if (/^[a-zA-Z_$]/.test(value)) {
+    return !isJson && keywords.has(value) ? 'keyword' : 'plain';
+  }
+
+  if (/^[{}()[\];,.:?!<>=+\-*/%&|^~@#]+$/.test(value)) return 'punctuation';
+
+  return 'plain';
+}
+
 /**
  * Tokenize a line of code into typed tokens for syntax highlighting.
  */
 function tokenizeLine(line: string, language: string): Token[] {
   if (!line) return [{ type: 'plain', value: '' }];
 
-  const tokens: Token[] = [];
   const keywords = getKeywords(language);
   const isJson = isJsonLike(language);
   const isBash = isBashLike(language);
   const isPython = isPythonLike(language);
+  const hasHashComments = isBash || isPython;
 
-  // Build a combined regex pattern for all token types.
-  // Order matters: comments first, then strings, numbers, identifiers, operators.
-  const patterns: string[] = [];
-
-  // Comments
-  if (isJson) {
-    patterns.push('(?:\\/\\/[^\n]*)');
-  } else if (isBash || isPython) {
-    patterns.push('(?:#[^\n]*)');
-  } else {
-    patterns.push('(?:\\/\\/[^\n]*)');
-    patterns.push('(?:\\/\\*[\\s\\S]*?\\*\\/)');
-  }
-
-  // Strings (template literals, double-quoted, single-quoted)
-  patterns.push('(?:`(?:[^`\\\\]|\\\\.)*`)');
-  patterns.push('(?:"(?:[^"\\\\]|\\\\.)*")');
-  patterns.push("(?:'(?:[^'\\\\]|\\\\.)*')");
-
-  // Numbers (hex, binary, octal, float, int)
-  patterns.push(
-    '(?:0[xX][0-9a-fA-F]+|0[bB][01]+|0[oO][0-7]+|\\d+\\.\\d*(?:[eE][+-]?\\d+)?|\\d+(?:[eE][+-]?\\d+)?|\\.\\d+(?:[eE][+-]?\\d+)?)'
-  );
-
-  // Identifiers
-  patterns.push('(?:[a-zA-Z_$][a-zA-Z0-9_$]*)');
-
-  // Operators and punctuation
-  patterns.push('(?:[{}()\\[\\];,.:?!<>=+\\-*/%&|^~@#]+)');
-
-  // Whitespace
-  patterns.push('(?:\\s+)');
-
-  // Catch-all
-  patterns.push('(?:.)');
-
-  const regex = new RegExp(patterns.join('|'), 'g');
+  const regex = buildTokenRegex(isJson, isBash, isPython);
+  const tokens: Token[] = [];
   let match: RegExpExecArray | null;
 
   // biome-ignore lint/suspicious/noAssignInExpressions: standard regex exec loop
   while ((match = regex.exec(line)) !== null) {
     const value = match[0];
-
-    if (/^\s+$/.test(value)) {
-      tokens.push({ type: 'plain', value });
-      continue;
-    }
-
-    if (
-      value.startsWith('//') ||
-      value.startsWith('/*') ||
-      ((isBash || isPython) && value.startsWith('#'))
-    ) {
-      tokens.push({ type: 'comment', value });
-    } else if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'")) ||
-      (value.startsWith('`') && value.endsWith('`'))
-    ) {
-      tokens.push({ type: 'string', value });
-    } else if (/^(?:0[xXbBoO])?[\d]/.test(value) || /^\.\d/.test(value)) {
-      tokens.push({ type: 'number', value });
-    } else if (/^[a-zA-Z_$]/.test(value)) {
-      if (!isJson && keywords.has(value)) {
-        tokens.push({ type: 'keyword', value });
-      } else {
-        tokens.push({ type: 'plain', value });
-      }
-    } else if (/^[{}()[\];,.:?!<>=+\-*/%&|^~@#]+$/.test(value)) {
-      tokens.push({ type: 'punctuation', value });
-    } else {
-      tokens.push({ type: 'plain', value });
-    }
+    tokens.push({ type: classifyToken(value, keywords, isJson, hasHashComments), value });
   }
 
   return tokens.length > 0 ? tokens : [{ type: 'plain', value: line }];
