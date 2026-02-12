@@ -1,0 +1,45 @@
+# ThumbCode v1.0 Ralph Progress
+# Started: 2026-02-11
+# Branch: ralph/v1.0-full
+
+## Workstream A: Decomposition
+- [ ] US-001: Decompose PaintDaubeIcon into icon registry
+- [ ] US-002: Decompose types/index.ts into domain files
+- [ ] US-003: Decompose GitService.ts into focused services
+- [ ] US-004: Decompose orchestrator.ts into focused modules
+- [ ] US-005: Decompose ChatService.ts into focused modules
+- [ ] US-006: Decompose CredentialService.ts
+- [ ] US-007: Decompose GitHubAuthService.ts
+- [ ] US-008: Decompose base-agent.ts into traits
+- [ ] US-009: Extract components from _layout.tsx
+
+## Workstream B: AI Integration
+- [ ] US-010: Create AI client abstraction layer
+- [ ] US-011: Implement Anthropic streaming client
+- [ ] US-012: Implement OpenAI streaming client
+- [ ] US-013: Replace ChatService mock with real AI
+- [ ] US-014: Implement agent response routing
+
+## Workstream C: Testing
+- [ ] US-015: Screen tests for tab screens
+- [ ] US-016: Screen tests for onboarding screens
+- [ ] US-017: Screen tests for settings/detail screens
+- [ ] US-018: Enable E2E web tests
+- [ ] US-019: Integration tests for auth and chat
+- [ ] US-020: Tests for untested packages
+
+## Workstream D: Documentation
+- [ ] US-021: Package READMEs
+- [ ] US-022: CHANGELOG and test guide
+- [ ] US-023: JSDoc for UI component props
+
+## Workstream E: Quality
+- [ ] US-024: Fix SonarCloud bug + hotspots
+- [ ] US-025: Fix void operators + nested ternaries
+- [ ] US-026: Add Readonly<> to props, readonly class members
+
+## Workstream F: Features
+- [ ] US-027: Credential validation on key entry
+- [ ] US-028: Project creation via GitHub API
+- [ ] US-029: Syntax highlighting in CodeBlock
+- [ ] US-030: Remove dead code (verify.tsx)
