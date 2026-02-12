@@ -6,7 +6,7 @@
  * Uses paint daube icons for brand consistency.
  */
 
-import { Alert, Pressable, View } from 'react-native';
+import { Alert, Linking, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ErrorIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
@@ -37,8 +37,18 @@ export function ErrorFallback({
     if (onReportIssue) {
       onReportIssue();
     } else {
-      // TODO: Implement proper issue reporting (e.g., open GitHub issues URL)
-      Alert.alert('Report Issue', 'Issue reporting will be available in a future update.');
+      const issueTitle = encodeURIComponent(
+        `[Bug] Error Report: ${error?.name || 'Unknown Error'}`
+      );
+      const issueBody = encodeURIComponent(
+        `**Error Details**\nMessage: ${error?.message || 'No message'}\n\n**Component Stack**\n\`\`\`\n${componentStack || 'No stack trace'}\n\`\`\``
+      );
+      const url = `https://github.com/agentic-dev-library/thumbcode/issues/new?title=${issueTitle}&body=${issueBody}`;
+
+      Linking.openURL(url).catch((err) => {
+        console.error('Failed to open issue URL:', err);
+        Alert.alert('Report Issue', 'Could not open GitHub issues page.');
+      });
     }
   };
 
@@ -58,7 +68,13 @@ export function ErrorFallback({
           </View>
 
           {/* Error Title */}
-          <Text size="xl" weight="bold" className="text-white text-center font-display">
+          <Text
+            size="xl"
+            weight="bold"
+            className="text-white text-center font-display"
+            testID="error-title"
+            accessibilityRole="header"
+          >
             {title}
           </Text>
 
@@ -96,7 +112,7 @@ export function ErrorFallback({
           )}
 
           {/* Secondary Action */}
-          <Pressable className="py-2" onPress={handleReportIssue}>
+          <Pressable className="py-2" onPress={handleReportIssue} testID="report-issue-button">
             <Text size="sm" className="text-teal-500">
               Report Issue
             </Text>
