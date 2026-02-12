@@ -1,10 +1,11 @@
 /**
  * KeyStorage Tests
  *
- * Tests for secure credential storage and retrieval using SecureStore.
+ * Tests for secure credential storage and retrieval using Capacitor Secure Storage
+ * and @aparajita/capacitor-biometric-auth.
  */
 
-import * as LocalAuthentication from 'expo-local-authentication';
+import { BiometricAuth } from '@aparajita/capacitor-biometric-auth';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 
 import { KeyStorage } from '../KeyStorage';
@@ -16,7 +17,7 @@ const mockValidator: jest.Mocked<KeyValidator> = {
 } as any;
 
 const mockSecureStorage = SecureStoragePlugin as jest.Mocked<typeof SecureStoragePlugin>;
-const mockLocalAuth = LocalAuthentication as jest.Mocked<typeof LocalAuthentication>;
+const mockBiometricAuth = BiometricAuth as jest.Mocked<typeof BiometricAuth>;
 
 describe('KeyStorage', () => {
   let storage: KeyStorage;
@@ -74,7 +75,8 @@ describe('KeyStorage', () => {
     });
 
     it('should require biometric when specified', async () => {
-      mockLocalAuth.authenticateAsync.mockResolvedValue({ success: true });
+      // BiometricAuth.authenticate resolves on success
+      mockBiometricAuth.authenticate.mockResolvedValue(undefined);
       mockValidator.validateCredential.mockResolvedValue({
         isValid: true,
         message: 'Valid',
@@ -85,14 +87,12 @@ describe('KeyStorage', () => {
       });
 
       expect(result.isValid).toBe(true);
-      expect(mockLocalAuth.authenticateAsync).toHaveBeenCalled();
+      expect(mockBiometricAuth.authenticate).toHaveBeenCalled();
     });
 
     it('should reject when biometric fails', async () => {
-      mockLocalAuth.authenticateAsync.mockResolvedValue({
-        success: false,
-        error: 'user_cancel',
-      });
+      // BiometricAuth.authenticate throws on failure
+      mockBiometricAuth.authenticate.mockRejectedValue(new Error('user_cancel'));
 
       const result = await storage.store('github', 'ghp_' + 'a'.repeat(36), {
         requireBiometric: true,
@@ -140,7 +140,7 @@ describe('KeyStorage', () => {
     });
 
     it('should require biometric when specified', async () => {
-      mockLocalAuth.authenticateAsync.mockResolvedValue({ success: true });
+      mockBiometricAuth.authenticate.mockResolvedValue(undefined);
       mockSecureStorage.get.mockResolvedValue({
         value: JSON.stringify({ secret: 'test', storedAt: 'now', type: 'github' }),
       });
@@ -148,14 +148,11 @@ describe('KeyStorage', () => {
       const result = await storage.retrieve('github', { requireBiometric: true });
 
       expect(result.secret).toBe('test');
-      expect(mockLocalAuth.authenticateAsync).toHaveBeenCalled();
+      expect(mockBiometricAuth.authenticate).toHaveBeenCalled();
     });
 
     it('should return null when biometric fails', async () => {
-      mockLocalAuth.authenticateAsync.mockResolvedValue({
-        success: false,
-        error: 'user_cancel',
-      });
+      mockBiometricAuth.authenticate.mockRejectedValue(new Error('user_cancel'));
 
       const result = await storage.retrieve('github', { requireBiometric: true });
 
@@ -209,18 +206,30 @@ describe('KeyStorage', () => {
   });
 
   describe('isBiometricAvailable', () => {
-    it('should return true when hardware and enrollment are available', async () => {
-      mockLocalAuth.hasHardwareAsync.mockResolvedValue(true);
-      mockLocalAuth.isEnrolledAsync.mockResolvedValue(true);
+    it('should return true when biometry is available', async () => {
+      mockBiometricAuth.checkBiometry.mockResolvedValue({
+        isAvailable: true,
+        biometryType: 1, // face ID
+        reason: '',
+        code: 0,
+        strongBiometryIsAvailable: true,
+        biometryTypes: [1],
+      } as any);
 
       const result = await storage.isBiometricAvailable();
 
       expect(result).toBe(true);
     });
 
-    it('should return false when no hardware', async () => {
-      mockLocalAuth.hasHardwareAsync.mockResolvedValue(false);
-      mockLocalAuth.isEnrolledAsync.mockResolvedValue(true);
+    it('should return false when biometry is not available', async () => {
+      mockBiometricAuth.checkBiometry.mockResolvedValue({
+        isAvailable: false,
+        biometryType: 0,
+        reason: 'No biometry available',
+        code: 0,
+        strongBiometryIsAvailable: false,
+        biometryTypes: [],
+      } as any);
 
       const result = await storage.isBiometricAvailable();
 

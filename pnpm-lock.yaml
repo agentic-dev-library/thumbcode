@@ -15,6 +15,9 @@ importers:
       '@anthropic-ai/sdk':
         specifier: ^0.32.0
         version: 0.32.1
+      '@aparajita/capacitor-biometric-auth':
+        specifier: ^10.0.0
+        version: 10.0.0
       '@capacitor/android':
         specifier: ^8.1.0
         version: 8.1.0(@capacitor/core@8.1.0)
@@ -93,9 +96,6 @@ importers:
       expo-notifications:
         specifier: ~0.29.0
         version: 0.29.14(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1)
-      expo-secure-store:
-        specifier: ~14.0.0
-        version: 14.0.1(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1))
       expo-splash-screen:
         specifier: ~0.29.0
         version: 0.29.24(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1))
@@ -326,6 +326,9 @@ importers:
       '@thumbcode/types':
         specifier: workspace:*
         version: link:../types
+      capacitor-secure-storage-plugin:
+        specifier: ^0.13.0
+        version: 0.13.0(@capacitor/core@8.1.0)
       diff:
         specifier: ^8.0.3
         version: 8.0.3
@@ -335,9 +338,6 @@ importers:
       expo-local-authentication:
         specifier: ~15.0.0
         version: 15.0.2(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1))
-      expo-secure-store:
-        specifier: ~14.0.0
-        version: 14.0.1(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1))
       isomorphic-git:
         specifier: ^1.27.0
         version: 1.36.1
@@ -429,6 +429,10 @@ packages:
 
   '@anthropic-ai/sdk@0.32.1':
     resolution: {integrity: sha512-U9JwTrDvdQ9iWuABVsMLj8nJVwAyQz6QXvgLsVhryhCEPkLsbcP/MXxm+jYcAwLoV8ESbaTTjnD4kuAFa+Hyjg==}
+
+  '@aparajita/capacitor-biometric-auth@10.0.0':
+    resolution: {integrity: sha512-azjWaRucB8x1/gSzSTp/NxelaOZyg+m765gSzjwUkSQgg30RrZPmPq6pyLeeXVSZNDY3Rxf5Hj8obgZaXirCFQ==}
+    engines: {node: '>=20.0.0'}
 
   '@astrojs/compiler@2.13.0':
     resolution: {integrity: sha512-mqVORhUJViA28fwHYaWmsXSzLO9osbdZ5ImUfxBarqsYdMlPbqAqGJCxsNzvppp1BEzc1mJNjOVvQqeDN8Vspw==}
@@ -1251,6 +1255,11 @@ packages:
     resolution: {integrity: sha512-z0acTPxj5DCy/U2FU7w+GA93oC+wdyKnsOcRg5rutDmSYa8Do1tzYqApKgf+hnuTNPbtrCTHp0Zy1cLiK/4MEw==}
     peerDependencies:
       '@capacitor/core': ^8.1.0
+
+  '@capacitor/app@8.0.0':
+    resolution: {integrity: sha512-OwzIkUs4w433Bu9WWAEbEYngXEfJXZ9Wmdb8eoaqzYBgB0W9/3Ed/mh6sAYPNBAZlpyarmewgP7Nb+d3Vrh+xA==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
 
   '@capacitor/cli@8.1.0':
     resolution: {integrity: sha512-JAzA/ckPgTCjZz6YumBLV2dNCFEVXAuR1oOKLD7AJ4LAI5pF5RtRZrf5FoaxvJVb0S4CouZT5cD+7NwsNJX/nw==}
@@ -4576,11 +4585,6 @@ packages:
         optional: true
       react-native-reanimated:
         optional: true
-
-  expo-secure-store@14.0.1:
-    resolution: {integrity: sha512-QUS+j4+UG4jRQalgnpmTvvrFnMVLqPiUZRzYPnG3+JrZ5kwVW2w6YS3WWerPoR7C6g3y/a2htRxRSylsDs+TaQ==}
-    peerDependencies:
-      expo: '*'
 
   expo-splash-screen@0.29.24:
     resolution: {integrity: sha512-k2rdjbb3Qeg4g104Sdz6+qXXYba8QgiuZRSxHX8IpsSYiiTU48BmCCGy12sN+O1B+sD1/+WPL4duCa1Fy6+Y4g==}
@@ -8620,6 +8624,13 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  '@aparajita/capacitor-biometric-auth@10.0.0':
+    dependencies:
+      '@capacitor/android': 8.1.0(@capacitor/core@8.1.0)
+      '@capacitor/app': 8.0.0(@capacitor/core@8.1.0)
+      '@capacitor/core': 8.1.0
+      '@capacitor/ios': 8.1.0(@capacitor/core@8.1.0)
+
   '@astrojs/compiler@2.13.0': {}
 
   '@astrojs/internal-helpers@0.7.5': {}
@@ -9678,6 +9689,10 @@ snapshots:
     optional: true
 
   '@capacitor/android@8.1.0(@capacitor/core@8.1.0)':
+    dependencies:
+      '@capacitor/core': 8.1.0
+
+  '@capacitor/app@8.0.0(@capacitor/core@8.1.0)':
     dependencies:
       '@capacitor/core': 8.1.0
 
@@ -13808,10 +13823,6 @@ snapshots:
       - react-dom
       - react-native
       - supports-color
-
-  expo-secure-store@14.0.1(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1)):
-    dependencies:
-      expo: 52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1)
 
   expo-splash-screen@0.29.24(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1)):
     dependencies:

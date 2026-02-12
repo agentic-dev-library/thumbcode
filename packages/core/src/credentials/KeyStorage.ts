@@ -5,7 +5,7 @@
  * with hardware-backed encryption. Includes biometric authentication support.
  */
 
-import * as LocalAuthentication from 'expo-local-authentication';
+import { BiometricAuth, type BiometryType } from '@aparajita/capacitor-biometric-auth';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import type {
   BiometricResult,
@@ -37,16 +37,17 @@ export class KeyStorage {
    * Check if biometric authentication is available on the device
    */
   async isBiometricAvailable(): Promise<boolean> {
-    const hasHardware = await LocalAuthentication.hasHardwareAsync();
-    const isEnrolled = await LocalAuthentication.isEnrolledAsync();
-    return hasHardware && isEnrolled;
+    const result = await BiometricAuth.checkBiometry();
+    return result.isAvailable;
   }
 
   /**
    * Get the available biometric authentication types
    */
-  async getBiometricTypes(): Promise<LocalAuthentication.AuthenticationType[]> {
-    return LocalAuthentication.supportedAuthenticationTypesAsync();
+  async getBiometricTypes(): Promise<BiometryType[]> {
+    const result = await BiometricAuth.checkBiometry();
+    // Return array with the detected biometry type, or empty if none
+    return result.isAvailable ? [result.biometryType] : [];
   }
 
   /**
@@ -56,20 +57,14 @@ export class KeyStorage {
     promptMessage = 'Authenticate to access your credentials'
   ): Promise<BiometricResult> {
     try {
-      const result = await LocalAuthentication.authenticateAsync({
-        promptMessage,
-        cancelLabel: 'Cancel',
-        disableDeviceFallback: false,
-        fallbackLabel: 'Use passcode',
+      await BiometricAuth.authenticate({
+        reason: promptMessage,
+        cancelTitle: 'Cancel',
+        allowDeviceCredential: true,
       });
 
-      if (result.success) {
-        return { success: true };
-      }
-      return {
-        success: false,
-        error: result.error,
-      };
+      // If authenticate resolves without throwing, auth succeeded
+      return { success: true };
     } catch (error) {
       return {
         success: false,
