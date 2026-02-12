@@ -48,6 +48,9 @@ importers:
       '@thumbcode/ui':
         specifier: workspace:*
         version: link:packages/ui
+      capacitor-secure-storage-plugin:
+        specifier: ^0.13.0
+        version: 0.13.0(@capacitor/core@8.1.0)
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -3536,6 +3539,11 @@ packages:
 
   caniuse-lite@1.0.30001769:
     resolution: {integrity: sha512-BCfFL1sHijQlBGWBMuJyhZUhzo7wer5sVj9hqekB/7xn0Ypy+pER/edCYQm4exbXj4WiySGp40P8UuTh6w1srg==}
+
+  capacitor-secure-storage-plugin@0.13.0:
+    resolution: {integrity: sha512-+rLC/9Z0LTaRRt6L6HjBwcDh5gqgI3NPmDSwo4hk41XQOy3EBrRo81VleIqFsowsMA3oMT+E59Bl8/HiWk0nhQ==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -12570,6 +12578,10 @@ snapshots:
   camelcase@8.0.0: {}
 
   caniuse-lite@1.0.30001769: {}
+
+  capacitor-secure-storage-plugin@0.13.0(@capacitor/core@8.1.0):
+    dependencies:
+      '@capacitor/core': 8.1.0
 
   ccount@2.0.1: {}
 

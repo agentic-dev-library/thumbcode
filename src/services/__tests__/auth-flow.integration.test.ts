@@ -7,24 +7,29 @@
 
 import { CredentialService } from '@thumbcode/core';
 import * as LocalAuthentication from 'expo-local-authentication';
-import * as SecureStore from 'expo-secure-store';
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 
-// In-memory store to simulate SecureStore
+// In-memory store to simulate Capacitor Secure Storage
 const secureStoreMap = new Map<string, string>();
 
 beforeEach(() => {
   secureStoreMap.clear();
   jest.clearAllMocks();
 
-  // Wire up SecureStore mocks to an in-memory map
-  (SecureStore.setItemAsync as jest.Mock).mockImplementation(async (key: string, value: string) => {
+  // Wire up SecureStoragePlugin mocks to an in-memory map
+  (SecureStoragePlugin.set as jest.Mock).mockImplementation(async ({ key, value }: { key: string; value: string }) => {
     secureStoreMap.set(key, value);
   });
-  (SecureStore.getItemAsync as jest.Mock).mockImplementation(
-    async (key: string) => secureStoreMap.get(key) ?? null
+  (SecureStoragePlugin.get as jest.Mock).mockImplementation(
+    async ({ key }: { key: string }) => {
+      const value = secureStoreMap.get(key);
+      if (value === undefined) throw new Error('Key not found');
+      return { value };
+    }
   );
-  (SecureStore.deleteItemAsync as jest.Mock).mockImplementation(async (key: string) => {
+  (SecureStoragePlugin.remove as jest.Mock).mockImplementation(async ({ key }: { key: string }) => {
     secureStoreMap.delete(key);
+    return { value: true };
   });
 
   // Default biometric mocks

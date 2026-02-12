@@ -6,7 +6,7 @@
  */
 
 import { useChatStore, useCredentialStore } from '@thumbcode/state';
-import * as SecureStore from 'expo-secure-store';
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 
 import { AgentResponseService } from '../AgentResponseService';
 import { MessageStore } from '../MessageStore';
@@ -82,7 +82,7 @@ describe('AgentResponseService', () => {
         lastError: null,
       });
 
-      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue('sk-ant-test-key');
+      (SecureStoragePlugin.get as jest.Mock).mockResolvedValue({ value: 'sk-ant-test-key' });
 
       const mockClient = {
         streamMessage: jest.fn().mockResolvedValue(undefined),
@@ -117,7 +117,7 @@ describe('AgentResponseService', () => {
         lastError: null,
       });
 
-      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue('sk-test-openai-key');
+      (SecureStoragePlugin.get as jest.Mock).mockResolvedValue({ value: 'sk-test-openai-key' });
 
       const mockClient = {
         streamMessage: jest.fn().mockResolvedValue(undefined),
@@ -202,7 +202,7 @@ describe('AgentResponseService', () => {
         isValidating: false,
         lastError: null,
       });
-      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue('sk-ant-key');
+      (SecureStoragePlugin.get as jest.Mock).mockResolvedValue({ value: 'sk-ant-key' });
     });
 
     it('should stream response and emit events', async () => {
@@ -275,7 +275,7 @@ describe('AgentResponseService', () => {
         isValidating: false,
         lastError: null,
       });
-      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue('sk-ant-key');
+      (SecureStoragePlugin.get as jest.Mock).mockResolvedValue({ value: 'sk-ant-key' });
     });
 
     it('should not emit error event on AbortError', async () => {

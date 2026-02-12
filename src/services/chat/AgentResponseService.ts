@@ -6,7 +6,7 @@
 
 import type { Message, MessageSender } from '@thumbcode/state';
 import { useChatStore, useCredentialStore } from '@thumbcode/state';
-import * as SecureStore from 'expo-secure-store';
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import { getAgentSystemPrompt } from '../ai/AgentPrompts';
 import { createAIClient } from '../ai/AIClientFactory';
 import type { AIMessage, AIProvider } from '../ai/types';
@@ -138,14 +138,22 @@ export class AgentResponseService {
     // Try Anthropic first, then OpenAI
     const anthropicCred = metadata.find((c) => c.provider === 'anthropic' && c.status === 'valid');
     if (anthropicCred) {
-      const apiKey = await SecureStore.getItemAsync(anthropicCred.secureStoreKey);
-      if (apiKey) return { provider: 'anthropic', apiKey };
+      try {
+        const result = await SecureStoragePlugin.get({ key: anthropicCred.secureStoreKey });
+        if (result.value) return { provider: 'anthropic', apiKey: result.value };
+      } catch {
+        // Key not found
+      }
     }
 
     const openaiCred = metadata.find((c) => c.provider === 'openai' && c.status === 'valid');
     if (openaiCred) {
-      const apiKey = await SecureStore.getItemAsync(openaiCred.secureStoreKey);
-      if (apiKey) return { provider: 'openai', apiKey };
+      try {
+        const result = await SecureStoragePlugin.get({ key: openaiCred.secureStoreKey });
+        if (result.value) return { provider: 'openai', apiKey: result.value };
+      } catch {
+        // Key not found
+      }
     }
 
     return null;
