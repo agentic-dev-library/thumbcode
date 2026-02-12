@@ -29,35 +29,58 @@ import { OnboardingLayout } from '@/layouts/OnboardingLayout';
 import { PlaceholderPage } from '@/pages/placeholder';
 import { NotFoundPage } from '@/pages/NotFound';
 
+// Tab screens (migrated from React Native)
+import HomePage from '@/pages/tabs/home';
+import ProjectsPage from '@/pages/tabs/projects';
+import AgentsPage from '@/pages/tabs/agents';
+import ChatPage from '@/pages/tabs/chat';
+import SettingsPage from '@/pages/tabs/settings';
+
+// Detail screens (migrated from React Native)
+import { AgentDetail } from '@/pages/detail/AgentDetail';
+import { ProjectDetail } from '@/pages/detail/ProjectDetail';
+
+// Settings sub-screens (migrated from React Native)
+import { AgentSettings } from '@/pages/settings/AgentSettings';
+import { CredentialSettings } from '@/pages/settings/CredentialSettings';
+import { EditorSettings } from '@/pages/settings/EditorSettings';
+
+// Onboarding screens (migrated from React Native)
+import WelcomePage from '@/pages/onboarding/welcome';
+import GitHubAuthPage from '@/pages/onboarding/github-auth';
+import ApiKeysPage from '@/pages/onboarding/api-keys';
+import CreateProjectPage from '@/pages/onboarding/create-project';
+import CompletePage from '@/pages/onboarding/complete';
+
 export function AppRoutes() {
   return (
     <Routes>
       <Route element={<RootLayout />}>
         {/* Main app with tab navigation */}
         <Route element={<TabLayout />}>
-          <Route index element={<PlaceholderPage title="Home" />} />
-          <Route path="projects" element={<PlaceholderPage title="Projects" />} />
-          <Route path="agents" element={<PlaceholderPage title="Agents" />} />
-          <Route path="chat" element={<PlaceholderPage title="Chat" />} />
-          <Route path="settings" element={<PlaceholderPage title="Settings" />} />
+          <Route index element={<HomePage />} />
+          <Route path="projects" element={<ProjectsPage />} />
+          <Route path="agents" element={<AgentsPage />} />
+          <Route path="chat" element={<ChatPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
 
         {/* Settings sub-routes (outside tabs, own header) */}
-        <Route path="settings/agents" element={<PlaceholderPage title="Agent Settings" />} />
-        <Route path="settings/credentials" element={<PlaceholderPage title="Credentials" />} />
-        <Route path="settings/editor" element={<PlaceholderPage title="Editor Settings" />} />
+        <Route path="settings/agents" element={<AgentSettings />} />
+        <Route path="settings/credentials" element={<CredentialSettings />} />
+        <Route path="settings/editor" element={<EditorSettings />} />
 
         {/* Detail pages (outside tabs, own header) */}
-        <Route path="project/:id" element={<PlaceholderPage title="Project Detail" />} />
-        <Route path="agent/:id" element={<PlaceholderPage title="Agent Detail" />} />
+        <Route path="project/:id" element={<ProjectDetail />} />
+        <Route path="agent/:id" element={<AgentDetail />} />
 
         {/* Onboarding flow */}
         <Route path="onboarding" element={<OnboardingLayout />}>
-          <Route path="welcome" element={<PlaceholderPage title="Welcome" />} />
-          <Route path="github-auth" element={<PlaceholderPage title="GitHub Auth" />} />
-          <Route path="api-keys" element={<PlaceholderPage title="API Keys" />} />
-          <Route path="create-project" element={<PlaceholderPage title="Create Project" />} />
-          <Route path="complete" element={<PlaceholderPage title="Setup Complete" />} />
+          <Route path="welcome" element={<WelcomePage />} />
+          <Route path="github-auth" element={<GitHubAuthPage />} />
+          <Route path="api-keys" element={<ApiKeysPage />} />
+          <Route path="create-project" element={<CreateProjectPage />} />
+          <Route path="complete" element={<CompletePage />} />
         </Route>
 
         {/* 404 catch-all */}

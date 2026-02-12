@@ -3,26 +3,38 @@
  *
  * Bottom tab navigation for the main app screens.
  * Replaces app/(tabs)/_layout.tsx from expo-router.
+ *
+ * Uses lucide-react icons and the P3 "Warm Technical" brand palette.
  */
 
+import { Home, Users, FolderGit2, Settings, MessageSquare } from 'lucide-react';
 import { NavLink, Outlet } from 'react-router-dom';
 
 interface TabItemProps {
   to: string;
   label: string;
+  icon: React.ReactNode;
+  activeIcon: React.ReactNode;
 }
 
-function TabItem({ to, label }: TabItemProps) {
+function TabItem({ to, label, icon, activeIcon }: TabItemProps) {
   return (
     <NavLink
       to={to}
+      end={to === '/'}
       className={({ isActive }) =>
-        `flex flex-col items-center justify-center py-2 px-3 text-xs font-body ${
-          isActive ? 'text-coral-500 font-semibold opacity-100' : 'text-neutral-400 opacity-50'
+        `flex flex-col items-center justify-center py-2 px-3 text-xs font-body transition-colors ${
+          isActive ? 'text-coral-500 font-semibold opacity-100' : 'text-neutral-400 opacity-60 hover:opacity-80'
         }`
       }
+      aria-label={label}
     >
-      {label}
+      {({ isActive }) => (
+        <>
+          <span className="mb-1">{isActive ? activeIcon : icon}</span>
+          <span>{label}</span>
+        </>
+      )}
     </NavLink>
   );
 }
@@ -33,12 +45,41 @@ export function TabLayout() {
       <main className="flex-1 overflow-auto">
         <Outlet />
       </main>
-      <nav className="flex items-center justify-around border-t border-neutral-700 bg-neutral-800 py-2">
-        <TabItem to="/" label="Home" />
-        <TabItem to="/projects" label="Projects" />
-        <TabItem to="/agents" label="Agents" />
-        <TabItem to="/chat" label="Chat" />
-        <TabItem to="/settings" label="Settings" />
+      <nav
+        className="flex items-center justify-around border-t border-neutral-700 bg-neutral-800 py-2"
+        role="tablist"
+        aria-label="Main navigation"
+      >
+        <TabItem
+          to="/"
+          label="Home"
+          icon={<Home size={22} strokeWidth={1.5} />}
+          activeIcon={<Home size={22} strokeWidth={2.5} />}
+        />
+        <TabItem
+          to="/agents"
+          label="Agents"
+          icon={<Users size={22} strokeWidth={1.5} />}
+          activeIcon={<Users size={22} strokeWidth={2.5} />}
+        />
+        <TabItem
+          to="/projects"
+          label="Projects"
+          icon={<FolderGit2 size={22} strokeWidth={1.5} />}
+          activeIcon={<FolderGit2 size={22} strokeWidth={2.5} />}
+        />
+        <TabItem
+          to="/chat"
+          label="Chat"
+          icon={<MessageSquare size={22} strokeWidth={1.5} />}
+          activeIcon={<MessageSquare size={22} strokeWidth={2.5} />}
+        />
+        <TabItem
+          to="/settings"
+          label="Settings"
+          icon={<Settings size={22} strokeWidth={1.5} />}
+          activeIcon={<Settings size={22} strokeWidth={2.5} />}
+        />
       </nav>
     </div>
   );
