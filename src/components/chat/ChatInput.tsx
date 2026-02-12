@@ -25,7 +25,7 @@ export function ChatInput({
   targetAgent,
   placeholder = 'Type a message...',
   disabled = false,
-}: ChatInputProps) {
+}: Readonly<ChatInputProps>) {
   const [text, setText] = useState('');
   const [isSending, setIsSending] = useState(false);
 

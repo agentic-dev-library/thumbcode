@@ -39,7 +39,7 @@ export function Button({
   style,
   children,
   ...props
-}: ButtonProps) {
+}: Readonly<ButtonProps>) {
   const variantClasses = {
     primary: 'bg-coral-500 active:bg-coral-700',
     secondary: 'bg-teal-600 active:bg-teal-800',

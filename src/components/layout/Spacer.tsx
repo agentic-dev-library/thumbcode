@@ -26,7 +26,7 @@ const sizeValues: Record<Exclude<SpacerSize, number>, number> = {
   xl: 32,
 };
 
-export function Spacer({ size, flex = 1, direction = 'vertical' }: SpacerProps) {
+export function Spacer({ size, flex = 1, direction = 'vertical' }: Readonly<SpacerProps>) {
   let dimension: number | undefined;
   if (!size) {
     dimension = undefined;

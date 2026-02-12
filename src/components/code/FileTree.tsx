@@ -193,7 +193,7 @@ function FileTreeNode({
   expandedPaths,
   toggleExpanded,
   showStatus,
-}: FileTreeNodeProps) {
+}: Readonly<FileTreeNodeProps>) {
   const isExpanded = expandedPaths.has(node.path);
   const isSelected = selectedPath === node.path;
   const isFolder = node.type === 'folder';
@@ -263,7 +263,7 @@ export function FileTree({
   selectedPath,
   defaultExpanded = [],
   showStatus = true,
-}: FileTreeProps) {
+}: Readonly<FileTreeProps>) {
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set(defaultExpanded));
 
   const toggleExpanded = (path: string) => {

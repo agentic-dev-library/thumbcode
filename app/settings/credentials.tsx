@@ -41,7 +41,7 @@ function CredentialItem({
   lastUsed,
   onConnect,
   onDisconnect,
-}: CredentialItemProps) {
+}: Readonly<CredentialItemProps>) {
   return (
     <View className="py-4">
       <HStack align="start">
@@ -96,7 +96,7 @@ interface ApiKeyInputProps {
   isSet: boolean;
 }
 
-function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: ApiKeyInputProps) {
+function ApiKeyInput({ label, placeholder, value, onChange, onSave, isSet }: Readonly<ApiKeyInputProps>) {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleSave = () => {

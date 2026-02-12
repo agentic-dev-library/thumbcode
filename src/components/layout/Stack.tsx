@@ -61,7 +61,7 @@ export function Stack({
   flex,
   className = '',
   style,
-}: StackProps) {
+}: Readonly<StackProps>) {
   const gap = typeof spacing === 'number' ? spacing : spacingValues[spacing];
 
   const baseStyle: ViewStyle = {

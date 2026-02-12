@@ -29,7 +29,7 @@ export function ErrorFallback({
   onReportIssue,
   title = 'Something went wrong',
   message = "We're sorry, but something unexpected happened. Please try again.",
-}: ErrorFallbackProps) {
+}: Readonly<ErrorFallbackProps>) {
   const insets = useSafeAreaInsets();
   const isDev = __DEV__;
 
@@ -134,7 +134,7 @@ interface CompactErrorFallbackProps {
 export function CompactErrorFallback({
   message = 'Failed to load',
   onRetry,
-}: CompactErrorFallbackProps) {
+}: Readonly<CompactErrorFallbackProps>) {
   return (
     <View className="bg-surface/50 p-4" style={organicBorderRadius.card}>
       <VStack spacing="sm" align="center">

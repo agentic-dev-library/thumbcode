@@ -47,7 +47,7 @@ export function ProgressBar({
   showLabel = false,
   label,
   animated = true,
-}: ProgressBarProps) {
+}: Readonly<ProgressBarProps>) {
   const clampedValue = Math.min(100, Math.max(0, value));
   const widthAnim = useRef(new Animated.Value(clampedValue)).current;
 
@@ -120,7 +120,7 @@ export function ProgressCircle({
   strokeWidth = 4,
   color = 'primary',
   showLabel = true,
-}: ProgressCircleProps) {
+}: Readonly<ProgressCircleProps>) {
   const clampedValue = Math.min(100, Math.max(0, value));
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
@@ -186,7 +186,7 @@ interface StepsProgressProps {
   labels?: string[];
 }
 
-export function StepsProgress({ totalSteps, currentStep, labels }: StepsProgressProps) {
+export function StepsProgress({ totalSteps, currentStep, labels }: Readonly<StepsProgressProps>) {
   return (
     <View className="w-full">
       <View className="flex-row items-center">

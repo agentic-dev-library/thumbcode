@@ -18,7 +18,7 @@ export function Card({
   children,
   style,
   ...props
-}: CardProps) {
+}: Readonly<CardProps>) {
   const variantClasses = {
     default: 'bg-surface',
     elevated: 'bg-surface-elevated',

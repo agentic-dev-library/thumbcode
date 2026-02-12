@@ -36,7 +36,7 @@ export function Switch({
   description,
   disabled = false,
   size = 'md',
-}: SwitchProps) {
+}: Readonly<SwitchProps>) {
   const styles = sizeStyles[size];
   const translateX = useRef(
     new Animated.Value(value ? styles.width - styles.thumb - styles.offset * 2 : 0)

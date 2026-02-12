@@ -26,7 +26,7 @@ interface InputProps extends RNTextInputProps {
 /** Placeholder color from design tokens - neutral-400 */
 const PLACEHOLDER_COLOR = getColor('neutral', '400');
 
-export function Input({ label, error, className = '', style, ...props }: InputProps) {
+export function Input({ label, error, className = '', style, ...props }: Readonly<InputProps>) {
   return (
     <View className="w-full">
       {label && <Text className="mb-2 text-neutral-700 font-medium">{label}</Text>}

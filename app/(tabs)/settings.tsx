@@ -62,7 +62,7 @@ function SettingsItem({
   showArrow = true,
   onPress,
   toggle,
-}: SettingsItemProps) {
+}: Readonly<SettingsItemProps>) {
   return (
     <Pressable
       onPress={onPress}

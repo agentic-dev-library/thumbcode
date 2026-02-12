@@ -48,7 +48,7 @@ export function BottomSheet({
   height = 'auto',
   scrollable = false,
   showHandle = true,
-}: BottomSheetProps) {
+}: Readonly<BottomSheetProps>) {
   const insets = useSafeAreaInsets();
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 
@@ -186,7 +186,7 @@ export function ActionSheet({
   options,
   showCancel = true,
   cancelText = 'Cancel',
-}: ActionSheetProps) {
+}: Readonly<ActionSheetProps>) {
   return (
     <BottomSheet visible={visible} onClose={onClose} height="auto" showHandle={false}>
       {(title || message) && (

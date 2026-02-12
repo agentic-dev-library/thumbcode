@@ -96,7 +96,7 @@ interface RoleFilterButtonProps {
   onPress: (role: string) => void;
 }
 
-const RoleFilterButton = memo(({ role, isSelected, onPress }: RoleFilterButtonProps) => (
+const RoleFilterButton = memo(({ role, isSelected, onPress }: Readonly<RoleFilterButtonProps>) => (
   <Pressable
     testID={`role-filter-${role}`}
     onPress={() => onPress(role)}

@@ -92,7 +92,7 @@ export function DiffViewer({
   filename,
   viewMode: _viewMode = 'unified',
   showLineNumbers = true,
-}: DiffViewerProps) {
+}: Readonly<DiffViewerProps>) {
   const [collapsed, setCollapsed] = useState(false);
 
   const lines = diff || (oldContent && newContent ? parseDiff(oldContent, newContent) : []);

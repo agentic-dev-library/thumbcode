@@ -41,7 +41,7 @@ function formatTime(timestamp: string): string {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-export function ChatMessage({ message, onApprovalResponse }: ChatMessageProps) {
+export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessageProps>) {
   const isUser = message.sender === 'user';
   const senderInfo = getSenderInfo(message.sender);
 

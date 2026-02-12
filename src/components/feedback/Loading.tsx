@@ -38,7 +38,7 @@ const spinnerColorTokens: Record<
   white: { color: 'neutral', shade: '50' },
 };
 
-export function Spinner({ size = 'md', color = 'primary', label }: SpinnerProps) {
+export function Spinner({ size = 'md', color = 'primary', label }: Readonly<SpinnerProps>) {
   const spinValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -97,7 +97,7 @@ export function Skeleton({
   height = 16,
   borderRadius = 4,
   circle = false,
-}: SkeletonProps) {
+}: Readonly<SkeletonProps>) {
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
@@ -139,7 +139,7 @@ interface LoadingOverlayProps {
   message?: string;
 }
 
-export function LoadingOverlay({ visible, message }: LoadingOverlayProps) {
+export function LoadingOverlay({ visible, message }: Readonly<LoadingOverlayProps>) {
   if (!visible) return null;
 
   return (

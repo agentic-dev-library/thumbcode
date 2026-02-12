@@ -27,7 +27,7 @@ interface SettingRowProps {
   };
 }
 
-function SettingRow({ title, subtitle, value, badge, onPress, toggle }: SettingRowProps) {
+function SettingRow({ title, subtitle, value, badge, onPress, toggle }: Readonly<SettingRowProps>) {
   return (
     <Pressable
       onPress={onPress}
@@ -84,7 +84,7 @@ function ApprovalLevelSelector({
   levels,
   selected,
   onSelect,
-}: ApprovalLevelSelectorProps) {
+}: Readonly<ApprovalLevelSelectorProps>) {
   return (
     <View className="py-4">
       <Text className="text-white mb-1">{title}</Text>

@@ -23,7 +23,7 @@ export function Text({
   className = '',
   children,
   ...props
-}: TextProps) {
+}: Readonly<TextProps>) {
   const variantClass = {
     display: 'font-display',
     body: 'font-body',

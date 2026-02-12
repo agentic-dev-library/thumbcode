@@ -45,7 +45,7 @@ function TypingIndicator({ senders }: { senders: string[] }) {
   );
 }
 
-export function ChatThread({ threadId }: ChatThreadProps) {
+export function ChatThread({ threadId }: Readonly<ChatThreadProps>) {
   const flatListRef = useRef<FlatList>(null);
 
   // Subscribe to messages and typing indicators

@@ -55,7 +55,7 @@ export function EmptyState({
   secondaryAction,
   children,
   size = 'md',
-}: EmptyStateProps) {
+}: Readonly<EmptyStateProps>) {
   const styles = sizeStyles[size];
 
   return (
@@ -123,7 +123,7 @@ export function ErrorState({
   message = 'Something went wrong. Please try again.',
   onRetry,
   title = 'Oops!',
-}: ErrorStateProps) {
+}: Readonly<ErrorStateProps>) {
   return (
     <EmptyState
       Icon={ErrorIcon}
@@ -144,7 +144,7 @@ interface NoResultsProps {
   onClear?: () => void;
 }
 
-export function NoResults({ query, message, onClear }: NoResultsProps) {
+export function NoResults({ query, message, onClear }: Readonly<NoResultsProps>) {
   const description = message || (query ? `No results found for "${query}"` : 'No results found');
 
   return (

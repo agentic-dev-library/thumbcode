@@ -45,7 +45,7 @@ export function RadioGroup({
   label,
   error,
   size = 'md',
-}: RadioGroupProps) {
+}: Readonly<RadioGroupProps>) {
   const styles = sizeStyles[size];
 
   return (

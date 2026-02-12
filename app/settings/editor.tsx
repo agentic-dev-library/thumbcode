@@ -24,7 +24,7 @@ interface SettingRowProps {
   };
 }
 
-function SettingRow({ title, subtitle, value, onPress, toggle }: SettingRowProps) {
+function SettingRow({ title, subtitle, value, onPress, toggle }: Readonly<SettingRowProps>) {
   return (
     <Pressable
       onPress={onPress}
@@ -65,7 +65,7 @@ interface OptionSelectorProps {
   onSelect: (value: string) => void;
 }
 
-function OptionSelector({ title, options, selected, onSelect }: OptionSelectorProps) {
+function OptionSelector({ title, options, selected, onSelect }: Readonly<OptionSelectorProps>) {
   return (
     <View className="py-4">
       <Text className="text-white mb-3">{title}</Text>

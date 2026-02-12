@@ -46,7 +46,7 @@ export function Modal({
   closeOnBackdrop = true,
   footer,
   scrollable = false,
-}: ModalProps) {
+}: Readonly<ModalProps>) {
   const insets = useSafeAreaInsets();
   const maxWidth = modalSizes[size];
   const isFull = size === 'full';
@@ -141,7 +141,7 @@ export function ConfirmDialog({
   confirmText = 'Confirm',
   cancelText = 'Cancel',
   variant = 'default',
-}: ConfirmDialogProps) {
+}: Readonly<ConfirmDialogProps>) {
   const confirmColor = variant === 'destructive' ? 'bg-coral-500' : 'bg-teal-600';
 
   return (
