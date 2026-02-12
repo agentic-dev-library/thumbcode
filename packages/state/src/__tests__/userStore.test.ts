@@ -2,7 +2,7 @@
  * User Store Tests
  */
 
-import { act, renderHook } from '@testing-library/react-native';
+import { act, renderHook } from '@testing-library/react';
 import {
   selectAgentPreferences,
   selectEditorPreferences,

@@ -4,7 +4,6 @@
  * Displays task completion metrics for an agent.
  */
 
-import { View } from 'react-native';
 import { HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
@@ -17,7 +16,7 @@ interface AgentMetricsProps {
 
 export function AgentMetrics({ completed, failed, successRate }: Readonly<AgentMetricsProps>) {
   return (
-    <View className="bg-surface p-4" style={organicBorderRadius.card}>
+    <div className="bg-surface p-4" style={organicBorderRadius.card}>
       <Text weight="semibold" className="text-white mb-3">
         Metrics
       </Text>
@@ -47,6 +46,6 @@ export function AgentMetrics({ completed, failed, successRate }: Readonly<AgentM
           </Text>
         </VStack>
       </HStack>
-    </View>
+    </div>
   );
 }

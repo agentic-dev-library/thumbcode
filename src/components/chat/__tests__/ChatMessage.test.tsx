@@ -1,16 +1,22 @@
-import { render } from '@testing-library/react-native';
+import { render, screen } from '@testing-library/react';
 import type { Message } from '@thumbcode/state';
 import { ChatMessage } from '../ChatMessage';
 
-jest.mock('@/components/icons', () => ({
-  BranchIcon: () => 'BranchIcon',
-  EditIcon: () => 'EditIcon',
-  FileIcon: () => 'FileIcon',
-  GitIcon: () => 'GitIcon',
-  LightningIcon: () => 'LightningIcon',
+vi.mock('@/components/icons', () => ({
+  BranchIcon: () => <span>BranchIcon</span>,
+  EditIcon: () => <span>EditIcon</span>,
+  FileIcon: () => <span>FileIcon</span>,
+  GitIcon: () => <span>GitIcon</span>,
+  LightningIcon: () => <span>LightningIcon</span>,
 }));
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/components/ui', () => ({
+  Text: ({ children, ...props }: { children?: React.ReactNode; className?: string }) => (
+    <span {...props}>{children}</span>
+  ),
+}));
+
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: {
     pill: {},
     chatBubbleUser: {},
@@ -22,13 +28,13 @@ jest.mock('@/lib/organic-styles', () => ({
   },
 }));
 
-jest.mock('@/utils/design-tokens', () => ({
-  getColor: jest.fn(() => '#000000'),
+vi.mock('@/utils/design-tokens', () => ({
+  getColor: vi.fn(() => '#000000'),
 }));
 
 // Mock CodeBlock since it has complex dependencies
-jest.mock('../CodeBlock', () => ({
-  CodeBlock: ({ code }: { code: string }) => code,
+vi.mock('../CodeBlock', () => ({
+  CodeBlock: ({ code }: { code: string }) => <span>{code}</span>,
 }));
 
 const createMessage = (overrides: Partial<Message> = {}): Message => ({
@@ -45,47 +51,41 @@ const createMessage = (overrides: Partial<Message> = {}): Message => ({
 describe('ChatMessage', () => {
   it('renders text message content', () => {
     const message = createMessage();
-    const { toJSON } = render(<ChatMessage message={message} />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Hello from the architect');
+    render(<ChatMessage message={message} />);
+    expect(screen.getByText('Hello from the architect')).toBeTruthy();
   });
 
   it('renders sender name for agent messages', () => {
     const message = createMessage({ sender: 'implementer' });
-    const { toJSON } = render(<ChatMessage message={message} />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Implementer');
+    render(<ChatMessage message={message} />);
+    expect(screen.getByText('Implementer')).toBeTruthy();
   });
 
   it('does not show sender label for user messages', () => {
     const message = createMessage({ sender: 'user', content: 'My message' });
-    const { toJSON } = render(<ChatMessage message={message} />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('My message');
+    render(<ChatMessage message={message} />);
+    expect(screen.getByText('My message')).toBeTruthy();
     // User messages don't show sender name badge
-    expect(json).not.toContain('"You"');
+    expect(screen.queryByText('You')).toBeNull();
   });
 
   it('shows sending status', () => {
     const message = createMessage({ status: 'sending' });
-    const { toJSON } = render(<ChatMessage message={message} />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Sending...');
+    const { container } = render(<ChatMessage message={message} />);
+    expect(container.innerHTML).toContain('Sending...');
   });
 
   it('shows failed status', () => {
     const message = createMessage({ status: 'failed' });
-    const { toJSON } = render(<ChatMessage message={message} />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Failed');
+    const { container } = render(<ChatMessage message={message} />);
+    expect(container.innerHTML).toContain('Failed');
   });
 
   it('renders timestamp', () => {
     const message = createMessage();
-    const { toJSON } = render(<ChatMessage message={message} />);
-    const json = JSON.stringify(toJSON());
+    const { container } = render(<ChatMessage message={message} />);
     // Should contain formatted time
-    expect(json).toBeTruthy();
+    expect(container.innerHTML).toBeTruthy();
   });
 
   it('renders code message with code block', () => {
@@ -94,15 +94,13 @@ describe('ChatMessage', () => {
       content: 'const x = 1;',
       metadata: { language: 'typescript' },
     });
-    const { toJSON } = render(<ChatMessage message={message} />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('const x = 1;');
+    render(<ChatMessage message={message} />);
+    expect(screen.getByText('const x = 1;')).toBeTruthy();
   });
 
   it('renders different sender colors', () => {
     const reviewerMsg = createMessage({ sender: 'reviewer' });
-    const { toJSON } = render(<ChatMessage message={reviewerMsg} />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Reviewer');
+    render(<ChatMessage message={reviewerMsg} />);
+    expect(screen.getByText('Reviewer')).toBeTruthy();
   });
 });

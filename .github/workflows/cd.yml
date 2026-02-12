@@ -5,37 +5,23 @@ on:
     branches: [main]
     paths:
       - 'src/**'
-      - 'app.json'
-      - 'eas.json'
+      - 'capacitor.config.ts'
       - 'package.json'
   pull_request:
     branches: [main]
     paths:
       - 'src/**'
-      - 'app.json'
-      - 'eas.json'
+      - 'capacitor.config.ts'
       - 'package.json'
   workflow_dispatch:
     inputs:
       platform:
         description: 'Platform to build'
         required: true
-        default: 'all'
+        default: 'web'
         type: choice
         options:
-          - all
-          - android
-          - ios
           - web
-      profile:
-        description: 'Build profile'
-        required: true
-        default: 'preview'
-        type: choice
-        options:
-          - development
-          - preview
-          - production
 
 # Prevent concurrent deployments
 concurrency:
@@ -48,138 +34,44 @@ permissions:
 
 jobs:
   # ============================================
-  # EAS Update for PRs (OTA Updates)
+  # Build Web + Capacitor Sync
   # ============================================
-  eas-update:
-    name: EAS Update (PR Preview)
-    if: github.event_name == 'pull_request'
+  build-and-sync:
+    name: Build Web + Capacitor Sync
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    permissions:
-      contents: read
-      pull-requests: write
 
     steps:
-      - name: Check for EXPO_TOKEN
-        id: check-token
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          if [ -z "$EXPO_TOKEN" ]; then
-            echo "::warning::EXPO_TOKEN secret is not configured. Skipping EAS update."
-            echo "Learn more: https://docs.expo.dev/eas-update/github-actions"
-            echo "has_token=false" >> $GITHUB_OUTPUT
-          else
-            echo "has_token=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Checkout code
-        if: steps.check-token.outputs.has_token == 'true'
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Setup ThumbCode environment
-        if: steps.check-token.outputs.has_token == 'true'
-        uses: ./.github/actions/setup-thumbcode
-
-      - name: Setup Expo and EAS
-        if: steps.check-token.outputs.has_token == 'true'
-        uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-
-      - name: Create preview update
-        if: steps.check-token.outputs.has_token == 'true'
-        uses: expo/expo-github-action/preview@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
-        with:
-          command: eas update --auto
-        env:
-          # Use production slug to match EAS project configuration
-          EXPO_PUBLIC_APP_ENV: production
-
-  # ============================================
-  # EAS Build - Android
-  # ============================================
-  build-android:
-    name: Build Android
-    if: |
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'workflow_dispatch' && (github.event.inputs.platform == 'all' || github.event.inputs.platform == 'android'))
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-
-    steps:
-      - name: Check for EXPO_TOKEN
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          if [ -z "$EXPO_TOKEN" ]; then
-            echo "::error::EXPO_TOKEN secret is required for EAS builds"
-            exit 1
-          fi
-
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup ThumbCode environment
         uses: ./.github/actions/setup-thumbcode
 
-      - name: Setup Expo and EAS
-        uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-
-      - name: Build Android
-        run: |
-          PROFILE="${{ github.event.inputs.profile || 'preview' }}"
-          eas build --platform android --profile $PROFILE --non-interactive --no-wait
-
-  # ============================================
-  # EAS Build - iOS
-  # ============================================
-  build-ios:
-    name: Build iOS
-    if: |
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'workflow_dispatch' && (github.event.inputs.platform == 'all' || github.event.inputs.platform == 'ios'))
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-
-    steps:
-      - name: Check for EXPO_TOKEN
+      - name: Build web
+        run: pnpm build
         env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          if [ -z "$EXPO_TOKEN" ]; then
-            echo "::error::EXPO_TOKEN secret is required for EAS builds"
-            exit 1
-          fi
+          CI: true
 
-      - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Capacitor sync
+        run: npx cap sync
 
-      - name: Setup ThumbCode environment
-        uses: ./.github/actions/setup-thumbcode
-
-      - name: Setup Expo and EAS
-        uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: success()
         with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-
-      - name: Build iOS
-        run: |
-          PROFILE="${{ github.event.inputs.profile || 'preview' }}"
-          eas build --platform ios --profile $PROFILE --non-interactive --no-wait
+          name: web-build
+          path: dist/
+          retention-days: 7
 
   # ============================================
-  # NOTE: App Store Submissions
+  # NOTE: Native App Submissions
   # ============================================
   # Production submission jobs are not yet configured.
   # See issue #66 for required credentials and setup.
   #
   # Current release strategy:
   # - Web staging: Automatic via Render.com (render.yaml)
-  # - Mobile builds: Download from expo.dev after EAS build completes
-  # - Debug APK: Can be downloaded from expo.dev build artifacts
+  # - Native builds: Use Capacitor CLI locally
+  #   - iOS:     npx cap open ios
+  #   - Android: npx cap open android

@@ -2,13 +2,15 @@
  * App Providers
  *
  * Wraps the app with all required providers:
- * error boundary, onboarding context, gesture handler, and safe area.
+ * error boundary and onboarding context.
+ *
+ * Note: GestureHandlerRootView and SafeAreaProvider (React Native)
+ * have been removed during the Capacitor migration. Web equivalents
+ * are not needed — safe area is handled via CSS env() and gestures
+ * via standard DOM events.
  */
 
-import { StatusBar } from 'expo-status-bar';
 import type { ReactNode } from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ErrorBoundary } from '@/components/error';
 import { OnboardingProvider } from '@/contexts/onboarding';
 
@@ -19,14 +21,7 @@ interface AppProvidersProps {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <ErrorBoundary>
-      <OnboardingProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <SafeAreaProvider>
-            <StatusBar style="light" />
-            {children}
-          </SafeAreaProvider>
-        </GestureHandlerRootView>
-      </OnboardingProvider>
+      <OnboardingProvider>{children}</OnboardingProvider>
     </ErrorBoundary>
   );
 }

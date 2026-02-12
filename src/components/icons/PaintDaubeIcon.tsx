@@ -1,138 +1,170 @@
 /**
- * PaintDaubeIcon - Procedural Organic SVG Icon System
+ * PaintDaubeIcon - Lucide-based Icon System (Web Migration)
  *
- * ThumbCode's brand identity uses organic "paint daube" shapes instead of
- * traditional geometric icons. This component generates procedural SVG
- * icons with feTurbulence filters for authentic paint texture.
+ * During the Expo->Capacitor/web migration, the procedural SVG icon system
+ * has been replaced with Lucide icons. This module preserves the public API
+ * (BRAND_COLORS, types, PaintDaubeIcon) for backward compatibility.
  *
- * Brand Guidelines:
- * - Organic, imperfect shapes (NOT circles/squares)
- * - feTurbulence filters for paint texture
- * - Brand colors only (coral, teal, gold)
- * - Outline style with rounded caps
- * - Asymmetric border paths
- *
- * @see docs/brand/BRAND-GUIDELINES.md
+ * Components that previously used react-native-svg now render Lucide icons
+ * with brand colors applied via the color prop.
  */
 
-import { View } from 'react-native';
-import Svg, { G, Path } from 'react-native-svg';
-
-import { ICON_PATHS } from './icon-paths';
-import { PaintDaubeFilter } from './paint-daube-filter';
+import * as LucideIcons from 'lucide-react';
 
 // Brand color hex values aligned with CLAUDE.md P3 "Warm Technical" palette
 export const BRAND_COLORS = {
-  coral: '#FF7059', // Primary - Thumb Coral
-  coralDark: '#E85A4F', // Light mode variant
-  teal: '#0D9488', // Secondary - Digital Teal
-  tealDark: '#0F766E', // Light mode variant
-  gold: '#F5D563', // Accent - Soft Gold
-  goldDark: '#D4A84B', // Light mode variant
-  charcoal: '#151820', // Base Dark - Charcoal Navy
+  coral: '#FF7059',
+  coralDark: '#E85A4F',
+  teal: '#0D9488',
+  tealDark: '#0F766E',
+  gold: '#F5D563',
+  goldDark: '#D4A84B',
+  charcoal: '#151820',
   warmGray: '#696259',
 } as const;
 
 export type IconColor = keyof typeof BRAND_COLORS;
 
 export type IconVariant =
-  | 'agent' // Robot/AI
-  | 'mobile' // Phone/device
-  | 'security' // Lock/shield
-  | 'lightning' // Speed/power
-  | 'success' // Checkmark
-  | 'celebrate' // Party/celebration
-  | 'git' // Version control
-  | 'settings' // Gear/cog
-  | 'chat' // Message bubble
-  | 'code' // Brackets
-  | 'folder' // Directory
-  | 'folderOpen' // Open directory
-  | 'star' // Favorite
-  | 'key' // API key
-  | 'github' // GitHub logo
-  | 'thumb' // ThumbCode logo - thumbs up
-  | 'home' // Dashboard/home
-  | 'tasks' // Clipboard/tasks
-  | 'search' // Magnifying glass
-  | 'bell' // Notifications
-  | 'link' // Chain link
-  | 'brain' // AI/thinking
-  | 'palette' // Appearance/theme
-  | 'vibrate' // Haptic feedback
-  | 'keyboard' // Editor/input
-  | 'branch' // Git branch
-  | 'book' // Documentation
-  | 'support' // Help/support
-  | 'legal' // Terms/scales
-  | 'info' // Information
-  | 'user' // User/profile
-  | 'edit' // Pencil/edit
-  | 'review' // Review/magnifier
-  | 'inbox' // Empty inbox
-  | 'error' // Error/warning
-  | 'test' // Test/beaker
-  | 'file' // Generic file
-  | 'fileCode' // Code file (ts/js)
-  | 'fileData' // Data file (json)
-  | 'fileDoc' // Document (md)
-  | 'fileStyle' // Style file (css)
-  | 'fileWeb' // Web file (html)
-  | 'fileMedia' // Media file (image)
-  | 'fileConfig' // Config file (env, lock)
-  | 'close' // X mark / close
-  | 'lightbulb' // Tip/idea
-  | 'warning' // Warning symbol
-  | 'chevronDown'; // Dropdown arrow
+  | 'agent'
+  | 'mobile'
+  | 'security'
+  | 'lightning'
+  | 'success'
+  | 'celebrate'
+  | 'git'
+  | 'settings'
+  | 'chat'
+  | 'code'
+  | 'folder'
+  | 'folderOpen'
+  | 'star'
+  | 'key'
+  | 'github'
+  | 'thumb'
+  | 'home'
+  | 'tasks'
+  | 'search'
+  | 'bell'
+  | 'link'
+  | 'brain'
+  | 'palette'
+  | 'vibrate'
+  | 'keyboard'
+  | 'branch'
+  | 'book'
+  | 'support'
+  | 'legal'
+  | 'info'
+  | 'user'
+  | 'edit'
+  | 'review'
+  | 'inbox'
+  | 'error'
+  | 'test'
+  | 'file'
+  | 'fileCode'
+  | 'fileData'
+  | 'fileDoc'
+  | 'fileStyle'
+  | 'fileWeb'
+  | 'fileMedia'
+  | 'fileConfig'
+  | 'close'
+  | 'lightbulb'
+  | 'warning'
+  | 'chevronDown';
+
+/**
+ * Maps icon variants to the closest Lucide icon component.
+ */
+const variantToLucide: Record<IconVariant, React.ComponentType<any>> = {
+  agent: LucideIcons.Bot,
+  mobile: LucideIcons.Smartphone,
+  security: LucideIcons.ShieldCheck,
+  lightning: LucideIcons.Zap,
+  success: LucideIcons.CircleCheck,
+  celebrate: LucideIcons.PartyPopper,
+  git: LucideIcons.GitCommitHorizontal,
+  settings: LucideIcons.Settings,
+  chat: LucideIcons.MessageCircle,
+  code: LucideIcons.Code2,
+  folder: LucideIcons.Folder,
+  folderOpen: LucideIcons.FolderOpen,
+  star: LucideIcons.Star,
+  key: LucideIcons.KeyRound,
+  github: LucideIcons.Github,
+  thumb: LucideIcons.ThumbsUp,
+  home: LucideIcons.Home,
+  tasks: LucideIcons.ClipboardList,
+  search: LucideIcons.Search,
+  bell: LucideIcons.Bell,
+  link: LucideIcons.Link,
+  brain: LucideIcons.Brain,
+  palette: LucideIcons.Palette,
+  vibrate: LucideIcons.Vibrate,
+  keyboard: LucideIcons.Keyboard,
+  branch: LucideIcons.GitBranch,
+  book: LucideIcons.BookOpen,
+  support: LucideIcons.HelpCircle,
+  legal: LucideIcons.Scale,
+  info: LucideIcons.Info,
+  user: LucideIcons.User,
+  edit: LucideIcons.Pencil,
+  review: LucideIcons.ScanSearch,
+  inbox: LucideIcons.Inbox,
+  error: LucideIcons.CircleAlert,
+  test: LucideIcons.TestTube2,
+  file: LucideIcons.File,
+  fileCode: LucideIcons.FileCode2,
+  fileData: LucideIcons.FileJson,
+  fileDoc: LucideIcons.FileText,
+  fileStyle: LucideIcons.FileType,
+  fileWeb: LucideIcons.Globe,
+  fileMedia: LucideIcons.FileImage,
+  fileConfig: LucideIcons.FileCog,
+  close: LucideIcons.X,
+  lightbulb: LucideIcons.Lightbulb,
+  warning: LucideIcons.TriangleAlert,
+  chevronDown: LucideIcons.ChevronDown,
+};
 
 /** Props for the PaintDaubeIcon component */
 export interface PaintDaubeIconProps {
-  /** The icon variant to render (e.g. 'agent', 'mobile', 'code') */
+  /** The icon variant to render */
   variant: IconVariant;
-  /** Brand color for the icon stroke */
+  /** Brand color for the icon */
   color?: IconColor;
-  /** Icon size in pixels (width and height) */
+  /** Icon size in pixels */
   size?: number;
-  /** Intensity of the turbulence effect (0-1) */
+  /** Turbulence intensity (preserved for API compat, not used in web version) */
   turbulence?: number;
-  /** Unique seed for procedural variation */
+  /** Seed for variation (preserved for API compat, not used in web version) */
   seed?: number;
+  /** Additional CSS class names */
+  className?: string;
 }
 
 /**
- * PaintDaubeIcon - Procedural organic SVG icon component
+ * PaintDaubeIcon - Web-native icon component using Lucide icons.
  *
- * Generates unique, brand-consistent icons with organic paint daube aesthetic.
- * Each icon has slight variations based on the seed value, making them feel
- * hand-crafted rather than machine-perfect.
+ * Preserves the same public API as the original react-native-svg implementation
+ * but renders Lucide icons with brand colors. The turbulence and seed props are
+ * accepted but not applied (they were specific to the SVG filter approach).
  */
 export function PaintDaubeIcon({
   variant,
   color = 'coral',
   size = 24,
-  turbulence = 0.3,
-  seed = 42,
+  className,
 }: Readonly<PaintDaubeIconProps>) {
-  const filterId = `paint-daube-${variant}-${seed}`;
+  const LucideIcon = variantToLucide[variant];
   const strokeColor = BRAND_COLORS[color];
-  const pathData = ICON_PATHS[variant](seed);
 
   return (
-    <View style={{ width: size, height: size }}>
-      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-        <PaintDaubeFilter id={filterId} turbulence={turbulence} />
-        <G filter={`url(#${filterId})`}>
-          <Path
-            d={pathData}
-            stroke={strokeColor}
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-        </G>
-      </Svg>
-    </View>
+    <span style={{ display: 'inline-flex', width: size, height: size }}>
+      <LucideIcon size={size} color={strokeColor} className={className} />
+    </span>
   );
 }
 

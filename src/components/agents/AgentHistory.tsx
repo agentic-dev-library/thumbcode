@@ -5,7 +5,6 @@
  */
 
 import type { AgentTask } from '@thumbcode/state';
-import { View } from 'react-native';
 import { Badge } from '@/components/display';
 import { Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
@@ -35,22 +34,22 @@ export function AgentHistory({ tasks }: Readonly<AgentHistoryProps>) {
     <VStack
       spacing="none"
       className="bg-surface"
-      style={[organicBorderRadius.card, { overflow: 'hidden' }]}
+      style={{ ...organicBorderRadius.card, overflow: 'hidden' }}
     >
-      <View className="px-4 py-3 border-b border-neutral-700">
+      <div className="px-4 py-3 border-b border-neutral-700">
         <Text size="sm" weight="semibold" className="text-neutral-400">
           TASK HISTORY
         </Text>
-      </View>
-      <View className="px-4">
+      </div>
+      <div className="px-4">
         {sortedTasks.length === 0 ? (
-          <View className="py-6">
+          <div className="py-6">
             <Text className="text-neutral-500">No tasks yet.</Text>
-          </View>
+          </div>
         ) : (
           sortedTasks.map((t, idx) => (
-            <View key={t.id}>
-              <View className="py-4">
+            <div key={t.id}>
+              <div className="py-4">
                 <HStack justify="between" align="center" className="mb-1">
                   <Text className="text-white flex-1" numberOfLines={1}>
                     {t.description}
@@ -71,12 +70,12 @@ export function AgentHistory({ tasks }: Readonly<AgentHistoryProps>) {
                   {formatDateTime(t.createdAt)}
                   {t.completedAt ? ` → ${formatDateTime(t.completedAt)}` : ''}
                 </Text>
-              </View>
+              </div>
               {idx < sortedTasks.length - 1 && <Divider />}
-            </View>
+            </div>
           ))
         )}
-      </View>
+      </div>
     </VStack>
   );
 }

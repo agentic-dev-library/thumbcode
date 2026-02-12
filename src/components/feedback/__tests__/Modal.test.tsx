@@ -1,209 +1,118 @@
-import { Text } from 'react-native';
-import { act, create } from 'react-test-renderer';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { ConfirmDialog, Modal } from '../Modal';
 
-// Mock the entire Modal component to bypass RN Modal rendering issues
-jest.mock('../Modal', () => {
-  const { View, Text, Pressable, ScrollView } = require('react-native');
+vi.mock('lucide-react', () => ({
+  X: () => <span data-testid="x-icon">X</span>,
+}));
 
-  function Modal({
-    visible,
-    onClose,
-    title,
-    children,
-    footer,
-    scrollable = false,
-  }: {
-    visible: boolean;
-    onClose: () => void;
-    title?: string;
-    children: React.ReactNode;
-    size?: string;
-    closeOnBackdrop?: boolean;
-    footer?: React.ReactNode;
-    scrollable?: boolean;
-  }) {
-    if (!visible) return null;
-    const ContentWrapper = scrollable ? ScrollView : View;
-    return (
-      <View testID="modal-wrapper">
-        {title && (
-          <View>
-            <Text accessibilityRole="header">{title}</Text>
-            <Pressable onPress={onClose} accessibilityRole="button" accessibilityLabel="Close">
-              <Text>CloseIcon</Text>
-            </Pressable>
-          </View>
-        )}
-        <ContentWrapper>{children}</ContentWrapper>
-        {footer && <View>{footer}</View>}
-      </View>
-    );
-  }
-
-  function ConfirmDialog({
-    visible,
-    onClose,
-    onConfirm,
-    title,
-    message,
-    confirmText = 'Confirm',
-    cancelText = 'Cancel',
-    variant: _variant = 'default',
-  }: {
-    visible: boolean;
-    onClose: () => void;
-    onConfirm: () => void;
-    title: string;
-    message: string;
-    confirmText?: string;
-    cancelText?: string;
-    variant?: string;
-  }) {
-    if (!visible) return null;
-    return (
-      <Modal
-        visible={visible}
-        onClose={onClose}
-        title={title}
-        footer={
-          <>
-            <Pressable onPress={onClose} accessibilityRole="button" accessibilityLabel={cancelText}>
-              <Text>{cancelText}</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => {
-                onConfirm();
-                onClose();
-              }}
-              accessibilityRole="button"
-              accessibilityLabel={confirmText}
-            >
-              <Text>{confirmText}</Text>
-            </Pressable>
-          </>
-        }
-      >
-        <Text>{message}</Text>
-      </Modal>
-    );
-  }
-
-  return { Modal, ConfirmDialog };
+// Mock HTMLDialogElement methods since jsdom doesn't fully support <dialog>
+beforeAll(() => {
+  HTMLDialogElement.prototype.showModal = vi.fn(function (this: HTMLDialogElement) {
+    this.setAttribute('open', '');
+  });
+  HTMLDialogElement.prototype.close = vi.fn(function (this: HTMLDialogElement) {
+    this.removeAttribute('open');
+  });
 });
-
-jest.mock('@/components/icons', () => ({
-  CloseIcon: () => 'CloseIcon',
-}));
-
-jest.mock('@/lib/organic-styles', () => ({
-  organicBorderRadius: { modal: {}, button: {} },
-}));
-
-const { Modal, ConfirmDialog } = require('../Modal');
 
 describe('Modal', () => {
   it('renders children when visible', () => {
-    const tree = create(
-      <Modal visible onClose={jest.fn()}>
-        <Text>Modal content</Text>
+    render(
+      <Modal visible onClose={vi.fn()}>
+        <span>Modal content</span>
       </Modal>
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Modal content');
+    expect(screen.getByText('Modal content')).toBeTruthy();
   });
 
   it('renders title when provided', () => {
-    const tree = create(
-      <Modal visible onClose={jest.fn()} title="My Modal">
-        <Text>Content</Text>
+    render(
+      <Modal visible onClose={vi.fn()} title="My Modal">
+        <span>Content</span>
       </Modal>
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('My Modal');
+    expect(screen.getByText('My Modal')).toBeTruthy();
   });
 
   it('renders footer when provided', () => {
-    const tree = create(
-      <Modal visible onClose={jest.fn()} footer={<Text>Footer actions</Text>}>
-        <Text>Content</Text>
+    render(
+      <Modal visible onClose={vi.fn()} footer={<span>Footer actions</span>}>
+        <span>Content</span>
       </Modal>
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Footer actions');
+    expect(screen.getByText('Footer actions')).toBeTruthy();
   });
 
   it('renders close button when title is present', () => {
-    const tree = create(
-      <Modal visible onClose={jest.fn()} title="Test">
-        <Text>Content</Text>
+    render(
+      <Modal visible onClose={vi.fn()} title="Test">
+        <span>Content</span>
       </Modal>
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('CloseIcon');
+    expect(screen.getByLabelText('Close')).toBeTruthy();
   });
 
   it('does not render when not visible', () => {
-    const tree = create(
-      <Modal visible={false} onClose={jest.fn()}>
-        <Text>Hidden</Text>
+    render(
+      <Modal visible={false} onClose={vi.fn()}>
+        <span>Hidden</span>
       </Modal>
     );
-    expect(tree.toJSON()).toBeNull();
+    // The dialog element is in DOM but not open
+    const dialog = document.querySelector('dialog');
+    expect(dialog?.hasAttribute('open')).toBeFalsy();
   });
 });
 
 describe('ConfirmDialog', () => {
   it('renders title and message', () => {
-    const tree = create(
+    render(
       <ConfirmDialog
         visible
-        onClose={jest.fn()}
-        onConfirm={jest.fn()}
+        onClose={vi.fn()}
+        onConfirm={vi.fn()}
         title="Delete project?"
         message="This action cannot be undone."
       />
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Delete project?');
-    expect(json).toContain('This action cannot be undone.');
+    expect(screen.getByText('Delete project?')).toBeTruthy();
+    expect(screen.getByText('This action cannot be undone.')).toBeTruthy();
   });
 
   it('renders confirm and cancel buttons', () => {
-    const tree = create(
+    render(
       <ConfirmDialog
         visible
-        onClose={jest.fn()}
-        onConfirm={jest.fn()}
+        onClose={vi.fn()}
+        onConfirm={vi.fn()}
         title="Confirm"
         message="Are you sure?"
       />
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Confirm');
-    expect(json).toContain('Cancel');
+    expect(screen.getByLabelText('Confirm')).toBeTruthy();
+    expect(screen.getByLabelText('Cancel')).toBeTruthy();
   });
 
   it('renders custom button text', () => {
-    const tree = create(
+    render(
       <ConfirmDialog
         visible
-        onClose={jest.fn()}
-        onConfirm={jest.fn()}
+        onClose={vi.fn()}
+        onConfirm={vi.fn()}
         title="Remove"
         message="Remove this item?"
         confirmText="Yes, Remove"
         cancelText="No, Keep"
       />
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Yes, Remove');
-    expect(json).toContain('No, Keep');
+    expect(screen.getByText('Yes, Remove')).toBeTruthy();
+    expect(screen.getByText('No, Keep')).toBeTruthy();
   });
 
   it('calls onConfirm when confirm is pressed', () => {
-    const onConfirm = jest.fn();
-    const onClose = jest.fn();
-    const tree = create(
+    const onConfirm = vi.fn();
+    const onClose = vi.fn();
+    render(
       <ConfirmDialog
         visible
         onClose={onClose}
@@ -213,33 +122,22 @@ describe('ConfirmDialog', () => {
         confirmText="Yes"
       />
     );
-    const root = tree.root;
-    const confirmButtons = root.findAll(
-      (node) => node.props.accessibilityLabel === 'Yes' && node.props.accessibilityRole === 'button'
-    );
-    expect(confirmButtons.length).toBeGreaterThan(0);
-    act(() => confirmButtons[0].props.onPress());
+    fireEvent.click(screen.getByLabelText('Yes'));
     expect(onConfirm).toHaveBeenCalled();
   });
 
   it('calls onClose when cancel is pressed', () => {
-    const onClose = jest.fn();
-    const tree = create(
+    const onClose = vi.fn();
+    render(
       <ConfirmDialog
         visible
         onClose={onClose}
-        onConfirm={jest.fn()}
+        onConfirm={vi.fn()}
         title="Confirm"
         message="Sure?"
       />
     );
-    const root = tree.root;
-    const cancelButtons = root.findAll(
-      (node) =>
-        node.props.accessibilityLabel === 'Cancel' && node.props.accessibilityRole === 'button'
-    );
-    expect(cancelButtons.length).toBeGreaterThan(0);
-    act(() => cancelButtons[0].props.onPress());
+    fireEvent.click(screen.getByLabelText('Cancel'));
     expect(onClose).toHaveBeenCalled();
   });
 });

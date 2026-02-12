@@ -6,8 +6,8 @@
  */
 
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
 import { ChevronDownIcon } from '@/components/icons';
+import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface DiffLine {
@@ -133,47 +133,47 @@ export function DiffViewer({
   };
 
   return (
-    <View className="bg-charcoal overflow-hidden" style={organicBorderRadius.card}>
+    <div className="bg-charcoal overflow-hidden" style={organicBorderRadius.card}>
       {/* Header */}
-      <Pressable
-        onPress={() => setCollapsed(!collapsed)}
+      <button
+        type="button"
+        onClick={() => setCollapsed(!collapsed)}
         className="flex-row items-center justify-between px-3 py-2 bg-neutral-800 border-b border-neutral-700"
-        accessibilityRole="button"
-        accessibilityLabel={`${filename || 'file'}, ${additions} additions, ${deletions} deletions`}
-        accessibilityHint={collapsed ? 'Expand the diff' : 'Collapse the diff'}
-        accessibilityState={{ expanded: !collapsed }}
+        aria-label={`${filename || 'file'}, ${additions} additions, ${deletions} deletions`}
+        aria-description={collapsed ? 'Expand the diff' : 'Collapse the diff'}
+        aria-expanded={!collapsed}
       >
-        <View className="flex-row items-center flex-1">
-          <View className="mr-2" style={{ transform: [{ rotate: collapsed ? '-90deg' : '0deg' }] }}>
+        <div className="flex-row items-center flex-1">
+          <div className="mr-2" style={{ transform: `rotate(${collapsed ? '-90deg' : '0deg'})` }}>
             <ChevronDownIcon size={14} color="warmGray" turbulence={0.12} />
-          </View>
+          </div>
           {filename && (
             <Text className="font-mono text-sm text-neutral-200" numberOfLines={1}>
               {filename}
             </Text>
           )}
-        </View>
-        <View className="flex-row items-center gap-2">
+        </div>
+        <div className="flex-row items-center gap-2">
           {additions > 0 && <Text className="font-mono text-xs text-teal-400">+{additions}</Text>}
           {deletions > 0 && <Text className="font-mono text-xs text-coral-400">-{deletions}</Text>}
-        </View>
-      </Pressable>
+        </div>
+      </button>
 
       {/* Content */}
       {!collapsed && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View className="min-w-full">
+        <div>
+          <div className="min-w-full">
             {lines.map((line, index) => (
-              <View key={`${line.type}-${index}`} className={`flex-row ${getLineStyle(line.type)}`}>
+              <div key={`${line.type}-${index}`} className={`flex-row ${getLineStyle(line.type)}`}>
                 {showLineNumbers && (
-                  <View className="flex-row">
+                  <div className="flex-row">
                     <Text className="font-mono text-xs text-neutral-600 w-10 text-right px-2 py-1 bg-neutral-900/50">
                       {line.oldLineNumber || ''}
                     </Text>
                     <Text className="font-mono text-xs text-neutral-600 w-10 text-right px-2 py-1 bg-neutral-900/50">
                       {line.newLineNumber || ''}
                     </Text>
-                  </View>
+                  </div>
                 )}
                 <Text className={`font-mono text-sm w-4 py-1 ${getPrefixColor(line.type)}`}>
                   {getLinePrefix(line.type)}
@@ -184,11 +184,11 @@ export function DiffViewer({
                 >
                   {line.content}
                 </Text>
-              </View>
+              </div>
             ))}
-          </View>
-        </ScrollView>
+          </div>
+        </div>
       )}
-    </View>
+    </div>
   );
 }

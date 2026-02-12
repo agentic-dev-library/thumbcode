@@ -9,7 +9,6 @@
 import type { ApprovalMessage } from '@thumbcode/state';
 import type React from 'react';
 import { useMemo } from 'react';
-import { Pressable, View } from 'react-native';
 import {
   BranchIcon,
   EditIcon,
@@ -80,26 +79,26 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
   );
 
   return (
-    <View className="bg-surface-elevated p-4 max-w-[90%]" style={cardStyle}>
+    <div className="bg-surface-elevated p-4 max-w-[90%]" style={cardStyle}>
       {/* Header */}
-      <View className="flex-row items-center mb-2">
-        <View className="mr-2">
+      <div className="flex-row items-center mb-2">
+        <div className="mr-2">
           <actionInfo.Icon size={20} color={actionInfo.iconColor} turbulence={0.2} />
-        </View>
+        </div>
         <Text variant="display" className="text-base text-white flex-1">
           {actionInfo.label}
         </Text>
         {!isPending && (
-          <View
+          <div
             className={`px-2 py-0.5 ${wasApproved ? 'bg-teal-600' : 'bg-coral-500'}`}
             style={organicBorderRadius.badge}
           >
             <Text className="text-xs font-body text-white">
               {wasApproved ? 'Approved' : 'Rejected'}
             </Text>
-          </View>
+          </div>
         )}
-      </View>
+      </div>
 
       {/* Description */}
       <Text className="font-body text-sm text-neutral-300 mb-3">
@@ -108,28 +107,28 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
 
       {/* Action buttons - only shown when pending */}
       {isPending && (
-        <View className="flex-row justify-end space-x-2 pt-2 border-t border-neutral-700">
-          <Pressable
-            onPress={onReject}
+        <div className="flex-row justify-end space-x-2 pt-2 border-t border-neutral-700">
+          <button
+            type="button"
+            onClick={onReject}
             className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
             style={organicBorderRadius.button}
-            accessibilityRole="button"
-            accessibilityLabel="Reject"
-            accessibilityHint="Reject this action"
+            aria-label="Reject"
+            aria-description="Reject this action"
           >
             <Text className="font-body text-sm text-neutral-200">Reject</Text>
-          </Pressable>
-          <Pressable
-            onPress={onApprove}
+          </button>
+          <button
+            type="button"
+            onClick={onApprove}
             className="px-4 py-2 bg-teal-600 active:bg-teal-700 ml-2"
             style={organicBorderRadius.button}
-            accessibilityRole="button"
-            accessibilityLabel="Approve"
-            accessibilityHint="Approve this action"
+            aria-label="Approve"
+            aria-description="Approve this action"
           >
             <Text className="font-body text-sm text-white font-semibold">Approve</Text>
-          </Pressable>
-        </View>
+          </button>
+        </div>
       )}
 
       {/* Response timestamp */}
@@ -142,6 +141,6 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
           })}
         </Text>
       )}
-    </View>
+    </div>
   );
 }

@@ -1,12 +1,7 @@
-import {
-  TextInput as RNTextInput,
-  type TextInputProps as RNTextInputProps,
-  View,
-} from 'react-native';
 import { Text } from '../primitives/Text';
 import { themeTokens } from '../theme/ThemeProvider';
 
-interface InputProps extends RNTextInputProps {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   variant?: 'default' | 'filled';
@@ -29,11 +24,11 @@ export function Input({ label, error, variant = 'default', className = '', ...pr
   }[variant];
 
   return (
-    <View className="w-full">
+    <div className="w-full">
       {label && <Text className="mb-2 text-neutral-700 font-medium">{label}</Text>}
-      <RNTextInput
-        accessibilityLabel={label}
-        accessibilityHint={error}
+      <input
+        aria-label={label}
+        aria-description={error}
         className={`
           ${variantClasses}
           border-2
@@ -43,10 +38,9 @@ export function Input({ label, error, variant = 'default', className = '', ...pr
           font-body text-base
           ${className}
         `}
-        placeholderTextColor={themeTokens.colors.neutral[400]}
         {...props}
       />
       {error && <Text className="mt-1 text-sm text-coral-500">{error}</Text>}
-    </View>
+    </div>
   );
 }

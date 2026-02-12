@@ -2,30 +2,23 @@ import { expect, test } from '@playwright/test';
 import { disableAnimations } from './utils/visual';
 
 /**
- * Helper to click a tab in the bottom tab bar by its accessible name.
- * Uses getByRole('tab') to target the actual tab element, then
- * page.mouse.click() to trigger a real pointer event for RN Web's responder.
+ * Helper to click a tab in the bottom tab bar by its aria-label.
  */
 async function clickTab(page: import('@playwright/test').Page, name: string) {
-  const tab = page.getByRole('tab', { name: new RegExp(name, 'i') });
-  await tab.waitFor({ state: 'attached', timeout: 10_000 });
-  const box = await tab.boundingBox();
-  if (box) {
-    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-  }
+  const tab = page.getByRole('link', { name: new RegExp(name, 'i') });
+  await tab.click();
 }
 
 /**
  * Helper to complete onboarding and get to dashboard.
- * Sets the AsyncStorage key directly (AsyncStorage uses localStorage on web)
- * to skip onboarding, then navigates to the tabs home page.
+ * Sets localStorage key to skip onboarding, then navigates to home.
  */
 async function completeOnboarding(page: import('@playwright/test').Page) {
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('thumbcode_onboarding_complete', 'true');
   });
-  await page.goto('/(tabs)');
+  await page.goto('/');
   await page.waitForTimeout(1000);
 }
 

@@ -13,13 +13,13 @@ import {
 } from '../error-handler';
 
 // Mock the logger to prevent console output during tests
-jest.mock('../logger', () => ({
+vi.mock('../logger', () => ({
   logger: {
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    fatal: jest.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    fatal: vi.fn(),
   },
 }));
 
@@ -167,7 +167,7 @@ describe('Error Handler', () => {
 
   describe('onError callback', () => {
     it('should register and call error callbacks', () => {
-      const callback = jest.fn();
+      const callback = vi.fn();
       const unsubscribe = onError(callback);
 
       handleError(new Error('Test error'));
@@ -177,7 +177,7 @@ describe('Error Handler', () => {
     });
 
     it('should unsubscribe callback', () => {
-      const callback = jest.fn();
+      const callback = vi.fn();
       const unsubscribe = onError(callback);
 
       handleError(new Error('First error'));

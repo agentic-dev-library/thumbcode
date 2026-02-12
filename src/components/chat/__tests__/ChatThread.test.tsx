@@ -1,15 +1,16 @@
-import { render } from '@testing-library/react-native';
+import { render, screen } from '@testing-library/react';
+import type { Message } from '@thumbcode/state';
 import { ChatThread } from '../ChatThread';
 
-jest.mock('@/components/icons', () => ({
-  BranchIcon: () => 'BranchIcon',
-  EditIcon: () => 'EditIcon',
-  FileIcon: () => 'FileIcon',
-  GitIcon: () => 'GitIcon',
-  LightningIcon: () => 'LightningIcon',
+vi.mock('@/components/icons', () => ({
+  BranchIcon: () => <span>BranchIcon</span>,
+  EditIcon: () => <span>EditIcon</span>,
+  FileIcon: () => <span>FileIcon</span>,
+  GitIcon: () => <span>GitIcon</span>,
+  LightningIcon: () => <span>LightningIcon</span>,
 }));
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: {
     pill: {},
     chatBubbleUser: {},
@@ -21,21 +22,21 @@ jest.mock('@/lib/organic-styles', () => ({
   },
 }));
 
-jest.mock('@/utils/design-tokens', () => ({
-  getColor: jest.fn(() => '#000000'),
+vi.mock('@/utils/design-tokens', () => ({
+  getColor: vi.fn(() => '#000000'),
 }));
 
-jest.mock('../CodeBlock', () => ({
-  CodeBlock: ({ code }: { code: string }) => code,
+vi.mock('../CodeBlock', () => ({
+  CodeBlock: ({ code }: { code: string }) => <span>{code}</span>,
 }));
 
-jest.mock('@/services/chat', () => ({
+vi.mock('@/services/chat', () => ({
   ChatService: {
-    respondToApproval: jest.fn(),
+    respondToApproval: vi.fn(),
   },
 }));
 
-const mockMessages = [
+const mockMessages: Message[] = [
   {
     id: 'msg-1',
     threadId: 'thread-1',
@@ -56,8 +57,8 @@ const mockMessages = [
   },
 ];
 
-jest.mock('@thumbcode/state', () => ({
-  useChatStore: jest.fn((selector: (state: unknown) => unknown) =>
+vi.mock('@thumbcode/state', () => ({
+  useChatStore: vi.fn((selector: any) =>
     selector({
       threads: {
         'thread-1': {
@@ -68,24 +69,23 @@ jest.mock('@thumbcode/state', () => ({
       },
     })
   ),
-  selectThreadMessages: jest.fn(() => () => mockMessages),
-  selectTypingIndicators: jest.fn(() => () => []),
+  selectThreadMessages: vi.fn(() => () => mockMessages),
+  selectTypingIndicators: vi.fn(() => () => []),
 }));
+
+import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@thumbcode/state';
 
 describe('ChatThread', () => {
   it('renders messages from thread', () => {
-    const { toJSON } = render(<ChatThread threadId="thread-1" />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Build a login page');
-    expect(json).toContain('I will design the login page with OAuth support.');
+    render(<ChatThread threadId="thread-1" />);
+    expect(screen.getByText('Build a login page')).toBeTruthy();
+    expect(screen.getByText('I will design the login page with OAuth support.')).toBeTruthy();
   });
 
   it('shows empty state when no messages', () => {
-    const { useChatStore, selectThreadMessages, selectTypingIndicators } =
-      require('@thumbcode/state');
-    selectThreadMessages.mockReturnValue(() => []);
-    selectTypingIndicators.mockReturnValue(() => []);
-    useChatStore.mockImplementation((selector: (state: unknown) => unknown) =>
+    vi.mocked(selectThreadMessages).mockReturnValue(() => []);
+    vi.mocked(selectTypingIndicators).mockReturnValue(() => []);
+    vi.mocked(useChatStore).mockImplementation((selector: any) =>
       selector({
         threads: {
           'thread-empty': { id: 'thread-empty', messages: [], typingIndicators: {} },
@@ -93,18 +93,15 @@ describe('ChatThread', () => {
       })
     );
 
-    const { toJSON } = render(<ChatThread threadId="thread-empty" />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Start the conversation');
-    expect(json).toContain('Send a message to begin collaborating with AI agents');
+    render(<ChatThread threadId="thread-empty" />);
+    expect(screen.getByText('Start the conversation')).toBeTruthy();
+    expect(screen.getByText('Send a message to begin collaborating with AI agents')).toBeTruthy();
   });
 
   it('shows typing indicator when agents are typing', () => {
-    const { useChatStore, selectThreadMessages, selectTypingIndicators } =
-      require('@thumbcode/state');
-    selectThreadMessages.mockReturnValue(() => mockMessages);
-    selectTypingIndicators.mockReturnValue(() => ['architect']);
-    useChatStore.mockImplementation((selector: (state: unknown) => unknown) =>
+    vi.mocked(selectThreadMessages).mockReturnValue(() => mockMessages);
+    vi.mocked(selectTypingIndicators).mockReturnValue(() => ['architect']);
+    vi.mocked(useChatStore).mockImplementation((selector: any) =>
       selector({
         threads: {
           'thread-1': {
@@ -116,8 +113,7 @@ describe('ChatThread', () => {
       })
     );
 
-    const { toJSON } = render(<ChatThread threadId="thread-1" />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Architect is typing');
+    render(<ChatThread threadId="thread-1" />);
+    expect(screen.getByText('Architect is typing...')).toBeTruthy();
   });
 });

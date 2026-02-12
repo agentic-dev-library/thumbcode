@@ -2,23 +2,24 @@
  * OpenAI Client Tests
  */
 
+import OpenAISdk from 'openai';
 import { OpenAIClient } from '../OpenAIClient';
 import type { AIMessage, AIStreamChunk } from '../types';
 
 // Mock the OpenAI SDK
-const mockCreate = jest.fn();
+const mockCreate = vi.fn();
 
-jest.mock('openai', () => {
-  return {
-    __esModule: true,
-    default: jest.fn().mockImplementation(() => ({
-      chat: {
-        completions: {
-          create: mockCreate,
-        },
-      },
-    })),
-  };
+vi.mock('openai', () => {
+  class MockOpenAI {
+    chat = { completions: { create: mockCreate } };
+    constructor(...args: unknown[]) {
+      MockOpenAI._lastArgs = args;
+      MockOpenAI._instances.push(this);
+    }
+    static _lastArgs: unknown[] = [];
+    static _instances: MockOpenAI[] = [];
+  }
+  return { __esModule: true, default: MockOpenAI };
 });
 
 describe('OpenAIClient', () => {
@@ -27,7 +28,7 @@ describe('OpenAIClient', () => {
   const testSystemPrompt = 'You are a helpful assistant.';
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     client = new OpenAIClient('test-api-key');
   });
 
@@ -139,7 +140,7 @@ describe('OpenAIClient', () => {
       };
       mockCreate.mockResolvedValue(mockStream);
 
-      await client.streamMessage(testMessages, testSystemPrompt, jest.fn());
+      await client.streamMessage(testMessages, testSystemPrompt, vi.fn());
 
       expect(mockCreate).toHaveBeenCalledWith(
         expect.objectContaining({ stream: true }),
@@ -178,7 +179,7 @@ describe('OpenAIClient', () => {
       mockCreate.mockResolvedValue(mockStream);
 
       const controller = new AbortController();
-      await client.streamMessage(testMessages, testSystemPrompt, jest.fn(), controller.signal);
+      await client.streamMessage(testMessages, testSystemPrompt, vi.fn(), controller.signal);
 
       expect(mockCreate).toHaveBeenCalledWith(
         expect.any(Object),
@@ -189,14 +190,14 @@ describe('OpenAIClient', () => {
 
   describe('constructor', () => {
     it('should use the default model', () => {
-      const OpenAI = jest.requireMock('openai').default;
+      const OpenAI = OpenAISdk as any;
+      OpenAI._instances = [];
+      OpenAI._lastArgs = [];
       new OpenAIClient('test-key');
-      expect(OpenAI).toHaveBeenCalledWith(
-        expect.objectContaining({
-          apiKey: 'test-key',
-          dangerouslyAllowBrowser: true,
-        })
-      );
+      expect(OpenAI._lastArgs[0]).toMatchObject({
+        apiKey: 'test-key',
+        dangerouslyAllowBrowser: true,
+      });
     });
 
     it('should accept a custom model', async () => {

@@ -1,34 +1,34 @@
 import { CredentialService } from '../credentials/CredentialService';
-import * as SecureStore from 'expo-secure-store';
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import { secureFetch } from '../api/api';
 
 // Mock secureFetch
-jest.mock('../api/api', () => ({
-  secureFetch: jest.fn(),
+vi.mock('../api/api', () => ({
+  secureFetch: vi.fn(),
 }));
 
 describe('CredentialService Performance', () => {
   const mockDelay = 100;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    // Mock SecureStore to return items for specific keys
-    (SecureStore.getItemAsync as jest.Mock).mockImplementation(async (key: string) => {
+    // Mock SecureStoragePlugin to return items for specific keys
+    (SecureStoragePlugin.get as Mock).mockImplementation(async ({ key }: { key: string }) => {
       if (key.includes('github')) {
-        return JSON.stringify({ secret: 'ghp_000000000000000000000000000000000000', storedAt: '2023-01-01', type: 'github' });
+        return { value: JSON.stringify({ secret: 'ghp_000000000000000000000000000000000000', storedAt: '2023-01-01', type: 'github' }) };
       }
       if (key.includes('anthropic')) {
-        return JSON.stringify({ secret: 'sk-ant-test', storedAt: '2023-01-01', type: 'anthropic' });
+        return { value: JSON.stringify({ secret: 'sk-ant-test', storedAt: '2023-01-01', type: 'anthropic' }) };
       }
       if (key.includes('openai')) {
-        return JSON.stringify({ secret: 'sk-test', storedAt: '2023-01-01', type: 'openai' });
+        return { value: JSON.stringify({ secret: 'sk-test', storedAt: '2023-01-01', type: 'openai' }) };
       }
-      return null;
+      throw new Error('Key not found');
     });
 
     // Mock secureFetch to simulate network delay
-    (secureFetch as jest.Mock).mockImplementation(async () => {
+    (secureFetch as Mock).mockImplementation(async () => {
       await new Promise((resolve) => setTimeout(resolve, mockDelay));
       return {
         ok: true,

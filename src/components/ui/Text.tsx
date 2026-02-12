@@ -1,25 +1,33 @@
-import { Text as RNText, type TextProps as RNTextProps } from 'react-native';
-
 /** Props for the Text component */
-interface TextProps extends RNTextProps {
+interface TextProps extends React.HTMLAttributes<HTMLSpanElement> {
   /** Font family variant (display, body, or monospace) */
   variant?: 'display' | 'body' | 'mono';
   /** Text size preset */
   size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
   /** Font weight */
   weight?: 'normal' | 'medium' | 'semibold' | 'bold';
-  /** Additional NativeWind class names */
+  /** Additional Tailwind class names */
   className?: string;
+  /** Truncation - max number of lines (maps to CSS line-clamp) */
+  numberOfLines?: number;
+  /** Test ID */
+  testID?: string;
+  /** Accessibility role */
+  accessibilityRole?: string;
+  /** Accessibility label */
+  accessibilityLabel?: string;
+  /** Accessibility elements hidden */
+  accessibilityElementsHidden?: boolean;
 }
 
 /**
  * A Text component that standardizes typography by applying font variant, size, and weight classes.
  *
  * @param variant - Font variant to use; one of `"display"`, `"body"`, or `"mono"`. Defaults to `"body"`.
- * @param size - Text size to apply; one of `"xs"`, `"sm"`, `"base"`, `"lg"`, `"xl"`, `"2xl"`, `"3xl"`, `"4xl"`, or `"5xl"`. Defaults to `"base"`.
- * @param weight - Font weight to apply; one of `"normal"`, `"medium"`, `"semibold"`, or `"bold"`. Defaults to `"normal"`.
+ * @param size - Text size to apply. Defaults to `"base"`.
+ * @param weight - Font weight to apply. Defaults to `"normal"`.
  * @param className - Additional class names to append to the computed classes.
- * @returns A React Native `Text` element with class names composed from `variant`, `size`, `weight`, and `className`.
+ * @returns A span element with class names composed from `variant`, `size`, `weight`, and `className`.
  */
 export function Text({
   variant = 'body',
@@ -27,6 +35,12 @@ export function Text({
   weight = 'normal',
   className = '',
   children,
+  numberOfLines,
+  testID,
+  accessibilityRole,
+  accessibilityLabel,
+  accessibilityElementsHidden,
+  style,
   ...props
 }: Readonly<TextProps>) {
   const variantClass = {
@@ -54,9 +68,35 @@ export function Text({
     bold: 'font-bold',
   }[weight];
 
+  const lineClampStyle: React.CSSProperties | undefined = numberOfLines
+    ? {
+        overflow: 'hidden',
+        display: '-webkit-box',
+        WebkitLineClamp: numberOfLines,
+        WebkitBoxOrient: 'vertical',
+      }
+    : undefined;
+
+  const ariaProps: Record<string, unknown> = {};
+  if (accessibilityRole) {
+    ariaProps.role = accessibilityRole as React.AriaRole;
+    if (accessibilityLabel) {
+      ariaProps['aria-label'] = accessibilityLabel;
+    }
+  }
+  if (accessibilityElementsHidden !== undefined) {
+    ariaProps['aria-hidden'] = accessibilityElementsHidden;
+  }
+
   return (
-    <RNText className={`${variantClass} ${sizeClass} ${weightClass} ${className}`} {...props}>
+    <span
+      className={`${variantClass} ${sizeClass} ${weightClass} ${className}`}
+      style={{ ...lineClampStyle, ...style }}
+      data-testid={testID}
+      {...ariaProps}
+      {...props}
+    >
       {children}
-    </RNText>
+    </span>
   );
 }

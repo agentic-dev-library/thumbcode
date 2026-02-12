@@ -10,8 +10,8 @@ import { TaskAssigner } from '../TaskAssigner';
 import type { OrchestratorConfig } from '../types';
 
 // Mock AI SDKs to prevent import errors
-jest.mock('@anthropic-ai/sdk', () => jest.fn());
-jest.mock('openai', () => jest.fn());
+vi.mock('@anthropic-ai/sdk', () => vi.fn());
+vi.mock('openai', () => vi.fn());
 
 const mockConfig: OrchestratorConfig = {
   provider: 'anthropic',

@@ -2,7 +2,7 @@
  * Credential Store Tests
  */
 
-import { act, renderHook } from '@testing-library/react-native';
+import { act, renderHook } from '@testing-library/react';
 import {
   selectCredentialByProvider,
   selectCredentials,

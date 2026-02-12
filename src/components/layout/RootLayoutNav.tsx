@@ -1,79 +1,41 @@
 /**
- * Root Layout Navigation
+ * Root Layout Navigation (Legacy)
  *
- * Navigation stack with onboarding redirect logic.
- * Handles routing between onboarding flow and main app tabs.
+ * This component has been superseded by src/layouts/RootLayout.tsx
+ * which uses react-router-dom instead of expo-router.
+ *
+ * Kept as a thin wrapper for backward compatibility during migration.
+ * Routes are now defined in src/router.tsx.
  */
 
-import { Stack, useRouter, useSegments } from 'expo-router';
 import { useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useOnboarding } from '@/contexts/onboarding';
-import { getColor } from '@/utils/design-tokens';
 
 export function RootLayoutNav() {
   const { isLoading, hasCompletedOnboarding } = useOnboarding();
-  const segments = useSegments();
-  const router = useRouter();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoading) return;
 
-    const inOnboarding = segments[0] === '(onboarding)';
+    const inOnboarding = location.pathname.startsWith('/onboarding');
 
     if (!hasCompletedOnboarding && !inOnboarding) {
-      router.replace('/(onboarding)/welcome');
+      navigate('/onboarding/welcome', { replace: true });
     } else if (hasCompletedOnboarding && inOnboarding) {
-      router.replace('/(tabs)');
+      navigate('/', { replace: true });
     }
-  }, [isLoading, hasCompletedOnboarding, segments, router]);
+  }, [isLoading, hasCompletedOnboarding, location, navigate]);
 
   if (isLoading) {
     return (
-      <View className="flex-1 bg-charcoal items-center justify-center">
-        <ActivityIndicator size="large" color={getColor('coral', '500')} />
-      </View>
+      <div className="flex-1 bg-charcoal flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
+      </div>
     );
   }
 
-  return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: getColor('charcoal') },
-        animation: 'slide_from_right',
-      }}
-    >
-      <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="project/[id]"
-        options={{
-          headerShown: true,
-          headerTitle: 'Project',
-          headerStyle: { backgroundColor: getColor('charcoal') },
-          headerTintColor: getColor('neutral', '50'),
-        }}
-      />
-      <Stack.Screen
-        name="agent/[id]"
-        options={{
-          headerShown: true,
-          headerTitle: 'Agent',
-          headerStyle: { backgroundColor: getColor('charcoal') },
-          headerTintColor: getColor('neutral', '50'),
-        }}
-      />
-      <Stack.Screen
-        name="settings"
-        options={{
-          headerShown: true,
-          headerTitle: 'Settings',
-          headerStyle: { backgroundColor: getColor('charcoal') },
-          headerTintColor: getColor('neutral', '50'),
-          presentation: 'modal',
-        }}
-      />
-    </Stack>
-  );
+  return <Outlet />;
 }

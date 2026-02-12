@@ -7,13 +7,11 @@
 
 import type React from 'react';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, TextInput, View } from 'react-native';
 import { Badge } from '@/components/display';
 import type { IconColor } from '@/components/icons';
 import { HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
-import { getColor } from '@/utils/design-tokens';
 
 type CredentialIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 
@@ -39,24 +37,24 @@ export function CredentialItem({
   onDisconnect,
 }: Readonly<CredentialItemProps>) {
   return (
-    <View className="py-4">
+    <div className="py-4">
       <HStack align="start">
-        <View
+        <div
           className="w-12 h-12 bg-surface-elevated items-center justify-center mr-4"
           style={organicBorderRadius.badge}
         >
           <Icon size={24} color={iconColor} turbulence={0.2} />
-        </View>
+        </div>
 
         <VStack spacing="xs" className="flex-1">
           <HStack align="center">
             <Text className="text-white font-semibold">{title}</Text>
             {isConnected && (
-              <View className="ml-2">
+              <div className="ml-2">
                 <Badge variant="success" size="sm">
                   Connected
                 </Badge>
-              </View>
+              </div>
             )}
           </HStack>
           <Text size="sm" className="text-neutral-500">
@@ -69,17 +67,18 @@ export function CredentialItem({
           )}
         </VStack>
 
-        <Pressable
-          onPress={isConnected ? onDisconnect : onConnect}
+        <button
+          type="button"
+          onClick={isConnected ? onDisconnect : onConnect}
           className={`px-4 py-2 ${isConnected ? 'bg-coral-500/20' : 'bg-teal-500/20'}`}
           style={organicBorderRadius.button}
         >
           <Text className={isConnected ? 'text-coral-500' : 'text-teal-500'}>
             {isConnected ? 'Remove' : 'Connect'}
           </Text>
-        </Pressable>
+        </button>
       </HStack>
-    </View>
+    </div>
   );
 }
 
@@ -115,7 +114,7 @@ export function ApiKeyInput({
   const canSave = value.trim().length > 0 && !isSaving;
 
   return (
-    <View className="py-4">
+    <div className="py-4">
       <HStack justify="between" align="center" className="mb-2">
         <Text className="text-white">{label}</Text>
         {isSet && !isEditing && (
@@ -127,36 +126,34 @@ export function ApiKeyInput({
 
       {isEditing || !isSet ? (
         <VStack spacing="sm">
-          <View
+          <div
             className={`bg-charcoal border px-4 py-3 ${error ? 'border-coral-500' : 'border-neutral-700'}`}
             style={organicBorderRadius.input}
           >
-            <TextInput
+            <input
               placeholder={placeholder}
-              placeholderTextColor={getColor('neutral', '400')}
               value={value}
-              onChangeText={onChange}
-              secureTextEntry
-              autoCapitalize="none"
-              autoCorrect={false}
-              editable={!isSaving}
+              onChange={(e) => onChange(e.target.value)}
+              type="password"
+              disabled={isSaving}
               className="text-white font-mono text-sm"
             />
-          </View>
+          </div>
           {error && (
             <Text size="sm" className="text-coral-500">
               {error}
             </Text>
           )}
           <HStack spacing="sm">
-            <Pressable
-              onPress={handleSave}
+            <button
+              type="button"
+              onClick={handleSave}
               disabled={!canSave}
               className={`flex-1 py-3 ${canSave ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}
               style={organicBorderRadius.button}
             >
               {isSaving ? (
-                <ActivityIndicator size="small" color="#ffffff" />
+                <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
               ) : (
                 <Text
                   className={`text-center font-semibold ${canSave ? 'text-white' : 'text-neutral-500'}`}
@@ -164,10 +161,11 @@ export function ApiKeyInput({
                   Save
                 </Text>
               )}
-            </Pressable>
+            </button>
             {isSet && (
-              <Pressable
-                onPress={() => {
+              <button
+                type="button"
+                onClick={() => {
                   setIsEditing(false);
                   onChange('');
                 }}
@@ -176,19 +174,20 @@ export function ApiKeyInput({
                 style={organicBorderRadius.button}
               >
                 <Text className="text-center text-white">Cancel</Text>
-              </Pressable>
+              </button>
             )}
           </HStack>
         </VStack>
       ) : (
-        <Pressable
-          onPress={() => setIsEditing(true)}
+        <button
+          type="button"
+          onClick={() => setIsEditing(true)}
           className="bg-charcoal border border-neutral-700 px-4 py-3"
           style={organicBorderRadius.input}
         >
           <Text className="text-neutral-500">••••••••••••••••</Text>
-        </Pressable>
+        </button>
       )}
-    </View>
+    </div>
   );
 }

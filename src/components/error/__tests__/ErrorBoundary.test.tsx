@@ -1,29 +1,25 @@
-import { Text } from 'react-native';
-import { create } from 'react-test-renderer';
+import { render, screen } from '@testing-library/react';
 import { ErrorBoundary, withErrorBoundary } from '../ErrorBoundary';
 
-jest.mock('@/lib/logger', () => ({
+vi.mock('@/lib/logger', () => ({
   logger: {
-    error: jest.fn(),
-    warn: jest.fn(),
-    info: jest.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
   },
 }));
 
-jest.mock('../ErrorFallback', () => ({
-  ErrorFallback: ({ error, onRetry }: { error: Error | null; onRetry?: () => void }) => {
-    const { Text, View, Pressable } = require('react-native');
-    return (
-      <View testID="error-fallback">
-        <Text>{error?.message || 'Unknown error'}</Text>
-        {onRetry && (
-          <Pressable onPress={onRetry} testID="retry-button">
-            <Text>Retry</Text>
-          </Pressable>
-        )}
-      </View>
-    );
-  },
+vi.mock('../ErrorFallback', () => ({
+  ErrorFallback: ({ error, onRetry }: { error: Error | null; onRetry?: () => void }) => (
+    <div data-testid="error-fallback">
+      <span>{error?.message || 'Unknown error'}</span>
+      {onRetry && (
+        <button data-testid="retry-button" onClick={onRetry} type="button">
+          Retry
+        </button>
+      )}
+    </div>
+  ),
 }));
 
 // Component that always throws
@@ -31,7 +27,7 @@ function ThrowingComponent({ shouldThrow = true }: { shouldThrow?: boolean }) {
   if (shouldThrow) {
     throw new Error('Test error');
   }
-  return <Text>No error</Text>;
+  return <span>No error</span>;
 }
 
 // Suppress console.error for expected error boundary calls
@@ -49,38 +45,35 @@ afterAll(() => {
 
 describe('ErrorBoundary', () => {
   it('renders children when no error', () => {
-    const tree = create(
+    render(
       <ErrorBoundary>
-        <Text>Safe content</Text>
+        <span>Safe content</span>
       </ErrorBoundary>
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Safe content');
+    expect(screen.getByText('Safe content')).toBeTruthy();
   });
 
   it('renders error fallback when child throws', () => {
-    const tree = create(
+    render(
       <ErrorBoundary>
         <ThrowingComponent />
       </ErrorBoundary>
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Test error');
+    expect(screen.getByText('Test error')).toBeTruthy();
   });
 
   it('renders custom fallback when provided', () => {
-    const tree = create(
-      <ErrorBoundary fallback={<Text>Custom error UI</Text>}>
+    render(
+      <ErrorBoundary fallback={<span>Custom error UI</span>}>
         <ThrowingComponent />
       </ErrorBoundary>
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Custom error UI');
+    expect(screen.getByText('Custom error UI')).toBeTruthy();
   });
 
   it('calls onError callback when error is caught', () => {
-    const onError = jest.fn();
-    create(
+    const onError = vi.fn();
+    render(
       <ErrorBoundary onError={onError}>
         <ThrowingComponent />
       </ErrorBoundary>
@@ -92,50 +85,43 @@ describe('ErrorBoundary', () => {
   });
 
   it('resets when resetKeys change', () => {
-    let resetKey = 'a';
-    const tree = create(
-      <ErrorBoundary resetKeys={[resetKey]}>
+    const { rerender } = render(
+      <ErrorBoundary resetKeys={['a']}>
         <ThrowingComponent shouldThrow={true} />
       </ErrorBoundary>
     );
     // Error was caught
-    let json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Test error');
+    expect(screen.getByText('Test error')).toBeTruthy();
 
     // Update with new resetKey and non-throwing child
-    resetKey = 'b';
-    tree.update(
-      <ErrorBoundary resetKeys={[resetKey]}>
+    rerender(
+      <ErrorBoundary resetKeys={['b']}>
         <ThrowingComponent shouldThrow={false} />
       </ErrorBoundary>
     );
-    json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('No error');
+    expect(screen.getByText('No error')).toBeTruthy();
   });
 });
 
 describe('withErrorBoundary', () => {
   it('wraps component in error boundary', () => {
     function SafeComponent() {
-      return <Text>Wrapped content</Text>;
+      return <span>Wrapped content</span>;
     }
     const WrappedComponent = withErrorBoundary(SafeComponent);
-    const tree = create(<WrappedComponent />);
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Wrapped content');
+    render(<WrappedComponent />);
+    expect(screen.getByText('Wrapped content')).toBeTruthy();
   });
 
   it('catches errors from wrapped component', () => {
     const WrappedThrowing = withErrorBoundary(ThrowingComponent);
-    const tree = create(<WrappedThrowing />);
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Test error');
+    render(<WrappedThrowing />);
+    expect(screen.getByText('Test error')).toBeTruthy();
   });
 
   it('uses custom fallback when provided', () => {
-    const WrappedThrowing = withErrorBoundary(ThrowingComponent, <Text>Custom fallback</Text>);
-    const tree = create(<WrappedThrowing />);
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Custom fallback');
+    const WrappedThrowing = withErrorBoundary(ThrowingComponent, <span>Custom fallback</span>);
+    render(<WrappedThrowing />);
+    expect(screen.getByText('Custom fallback')).toBeTruthy();
   });
 });

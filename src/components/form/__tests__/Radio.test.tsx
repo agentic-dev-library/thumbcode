@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { RadioGroup } from '../Radio';
 
 const mockOptions = [
@@ -9,69 +9,54 @@ const mockOptions = [
 
 describe('RadioGroup', () => {
   it('renders all options', () => {
-    const { toJSON } = render(
-      <RadioGroup value={null} onValueChange={jest.fn()} options={mockOptions} />
-    );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Option A');
-    expect(json).toContain('Option B');
-    expect(json).toContain('Option C');
+    render(<RadioGroup value={null} onValueChange={vi.fn()} options={mockOptions} />);
+    expect(screen.getByText('Option A')).toBeTruthy();
+    expect(screen.getByText('Option B')).toBeTruthy();
+    expect(screen.getByText('Option C')).toBeTruthy();
   });
 
   it('renders group label', () => {
-    const { toJSON } = render(
-      <RadioGroup value={null} onValueChange={jest.fn()} options={mockOptions} label="Pick one" />
+    render(
+      <RadioGroup value={null} onValueChange={vi.fn()} options={mockOptions} label="Pick one" />
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Pick one');
+    expect(screen.getByText('Pick one')).toBeTruthy();
   });
 
   it('renders option description', () => {
-    const { toJSON } = render(
-      <RadioGroup value={null} onValueChange={jest.fn()} options={mockOptions} />
-    );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Description B');
+    render(<RadioGroup value={null} onValueChange={vi.fn()} options={mockOptions} />);
+    expect(screen.getByText('Description B')).toBeTruthy();
   });
 
   it('renders error message', () => {
-    const { toJSON } = render(
+    render(
       <RadioGroup
         value={null}
-        onValueChange={jest.fn()}
+        onValueChange={vi.fn()}
         options={mockOptions}
         error="Please select an option"
       />
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Please select an option');
+    expect(screen.getByText('Please select an option')).toBeTruthy();
   });
 
   it('calls onValueChange when an option is pressed', () => {
-    const onValueChange = jest.fn();
-    const { UNSAFE_getAllByProps } = render(
-      <RadioGroup value={null} onValueChange={onValueChange} options={mockOptions} />
-    );
-    const radios = UNSAFE_getAllByProps({ accessibilityRole: 'radio' });
-    fireEvent.press(radios[0]);
+    const onValueChange = vi.fn();
+    render(<RadioGroup value={null} onValueChange={onValueChange} options={mockOptions} />);
+    const radios = screen.getAllByRole('radio');
+    fireEvent.click(radios[0]);
     expect(onValueChange).toHaveBeenCalledWith('a');
   });
 
-  it('renders disabled option with aria-disabled attribute', () => {
-    const { toJSON } = render(
-      <RadioGroup value={null} onValueChange={jest.fn()} options={mockOptions} />
-    );
-    const json = JSON.stringify(toJSON());
-    // Option C is disabled, should have aria-disabled
-    expect(json).toContain('"aria-disabled":true');
+  it('renders disabled option correctly', () => {
+    render(<RadioGroup value={null} onValueChange={vi.fn()} options={mockOptions} />);
+    const radios = screen.getAllByRole('radio');
+    // Option C (index 2) is disabled
+    expect(radios[2]).toBeDisabled();
   });
 
-  it('shows selected state in rendered output', () => {
-    const { toJSON } = render(
-      <RadioGroup value="b" onValueChange={jest.fn()} options={mockOptions} />
-    );
-    const json = JSON.stringify(toJSON());
-    // Selected option should have teal border
-    expect(json).toContain('Option B');
+  it('shows selected state', () => {
+    render(<RadioGroup value="b" onValueChange={vi.fn()} options={mockOptions} />);
+    const radios = screen.getAllByRole('radio');
+    expect(radios[1]).toBeChecked();
   });
 });

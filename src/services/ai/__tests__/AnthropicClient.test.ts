@@ -2,30 +2,35 @@
  * Anthropic Client Tests
  */
 
+import AnthropicSdk from '@anthropic-ai/sdk';
 import { AnthropicClient } from '../AnthropicClient';
 import type { AIMessage, AIStreamChunk } from '../types';
 
 // Mock the Anthropic SDK
-const mockCreate = jest.fn();
-const mockStreamOn = jest.fn();
-const mockStreamFinalMessage = jest.fn();
+const mockCreate = vi.fn();
+const mockStreamOn = vi.fn();
+const mockStreamFinalMessage = vi.fn();
 
-jest.mock('@anthropic-ai/sdk', () => {
-  return {
-    __esModule: true,
-    default: jest.fn().mockImplementation(() => ({
-      messages: {
-        create: mockCreate,
-        stream: jest.fn().mockImplementation(() => {
-          const stream = {
-            on: mockStreamOn.mockReturnThis(),
-            finalMessage: mockStreamFinalMessage,
-          };
-          return stream;
-        }),
-      },
-    })),
-  };
+vi.mock('@anthropic-ai/sdk', () => {
+  class MockAnthropic {
+    messages = {
+      create: mockCreate,
+      stream: vi.fn().mockImplementation(() => {
+        const stream = {
+          on: mockStreamOn.mockReturnThis(),
+          finalMessage: mockStreamFinalMessage,
+        };
+        return stream;
+      }),
+    };
+    constructor(...args: unknown[]) {
+      MockAnthropic._lastArgs = args;
+      MockAnthropic._instances.push(this);
+    }
+    static _lastArgs: unknown[] = [];
+    static _instances: MockAnthropic[] = [];
+  }
+  return { __esModule: true, default: MockAnthropic };
 });
 
 describe('AnthropicClient', () => {
@@ -34,7 +39,7 @@ describe('AnthropicClient', () => {
   const testSystemPrompt = 'You are a helpful assistant.';
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     client = new AnthropicClient('test-api-key');
   });
 
@@ -137,7 +142,7 @@ describe('AnthropicClient', () => {
     });
 
     it('should pass the abort signal to the stream', async () => {
-      const onChunk = jest.fn();
+      const onChunk = vi.fn();
       const controller = new AbortController();
 
       mockStreamOn.mockReturnThis();
@@ -146,7 +151,7 @@ describe('AnthropicClient', () => {
       });
 
       // We need to get the stream mock to check its call
-      const Anthropic = jest.requireMock('@anthropic-ai/sdk').default;
+      const Anthropic = AnthropicSdk as any;
       const _instance = new Anthropic();
 
       // Create a new client that uses this instance
@@ -160,14 +165,14 @@ describe('AnthropicClient', () => {
 
   describe('constructor', () => {
     it('should use the default model', () => {
-      const Anthropic = jest.requireMock('@anthropic-ai/sdk').default;
+      const Anthropic = AnthropicSdk as any;
+      Anthropic._instances = [];
+      Anthropic._lastArgs = [];
       new AnthropicClient('test-key');
-      expect(Anthropic).toHaveBeenCalledWith(
-        expect.objectContaining({
-          apiKey: 'test-key',
-          dangerouslyAllowBrowser: true,
-        })
-      );
+      expect(Anthropic._lastArgs[0]).toMatchObject({
+        apiKey: 'test-key',
+        dangerouslyAllowBrowser: true,
+      });
     });
 
     it('should accept a custom model', async () => {

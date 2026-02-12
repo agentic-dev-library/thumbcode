@@ -1,100 +1,96 @@
-import fs from 'fs';
+import fsNode from 'fs';
 import path from 'path';
 import os from 'os';
-// Mock expo-crypto before importing Git services
-jest.mock('expo-crypto', () => ({
-  digestStringAsync: jest.fn(async () => 'mock-hash'),
-  CryptoDigestAlgorithm: { SHA256: 'SHA-256' },
-}));
 
-import { GitCloneService } from '../git/GitCloneService';
-import { GitCommitService } from '../git/GitCommitService';
-import { GitDiffService } from '../git/GitDiffService';
-import * as FileSystem from 'expo-file-system';
-
-// Mock expo-file-system
-const tempDir = path.join(os.tmpdir(), 'git-service-perf-test-' + Date.now());
-if (!fs.existsSync(tempDir)) {
-  fs.mkdirSync(tempDir, { recursive: true });
+// Mock @capacitor/filesystem before importing Git services
+const MOCK_DOC_DIR = path.join(os.tmpdir(), 'git-service-perf-root');
+if (!fsNode.existsSync(MOCK_DOC_DIR)) {
+  fsNode.mkdirSync(MOCK_DOC_DIR, { recursive: true });
 }
 
-// We need to mock documentDirectory to point to our tempDir
-// and mock the async methods to use fs.promises
-jest.mock('expo-file-system', () => {
+vi.mock('@capacitor/filesystem', () => {
   const fs = require('fs');
   const path = require('path');
   const os = require('os');
-  // We can't access closure variables in jest.mock factory unless we use doMock or specific setup
-  // but we can define the temp dir logic inside or rely on a known path if needed.
-  // For simplicity, we'll assume a path relative to the test or use a global.
-  // Actually, let's use a fixed path structure for the mock or communicate via a module.
-  // But jest.mock is hoisted.
-
-  // To avoid complexity, we'll make the mock robust enough to handle absolute paths
-  // and we'll set documentDirectory to a known temp path in the test setup if possible,
-  // but documentDirectory is a constant. We can mock it to a fixed value.
 
   const MOCK_DOC_DIR = path.join(os.tmpdir(), 'git-service-perf-root');
   if (!fs.existsSync(MOCK_DOC_DIR)) {
-      fs.mkdirSync(MOCK_DOC_DIR, { recursive: true });
+    fs.mkdirSync(MOCK_DOC_DIR, { recursive: true });
   }
 
   return {
-    documentDirectory: MOCK_DOC_DIR + '/', // expo expects trailing slash usually
-    readAsStringAsync: jest.fn(async (filepath, options) => {
-      const encoding = options?.encoding === 'utf8' ? 'utf8' : 'base64';
-      return fs.promises.readFile(filepath, { encoding });
-    }),
-    writeAsStringAsync: jest.fn(async (filepath, content, options) => {
-      const encoding = options?.encoding === 'utf8' ? 'utf8' : 'base64';
-      // If base64, buffer it
-      const data = encoding === 'base64' ? Buffer.from(content, 'base64') : content;
-      await fs.promises.mkdir(path.dirname(filepath), { recursive: true });
-      return fs.promises.writeFile(filepath, data);
-    }),
-    deleteAsync: jest.fn(async (filepath) => {
-      if (fs.existsSync(filepath)) {
-        await fs.promises.rm(filepath, { recursive: true, force: true });
-      }
-    }),
-    readDirectoryAsync: jest.fn(async (dirpath) => {
-      return fs.promises.readdir(dirpath);
-    }),
-    makeDirectoryAsync: jest.fn(async (dirpath, options) => {
-      return fs.promises.mkdir(dirpath, { recursive: options?.intermediates });
-    }),
-    getInfoAsync: jest.fn(async (filepath) => {
-      try {
-        const stats = await fs.promises.stat(filepath);
-        return {
-          exists: true,
-          isDirectory: stats.isDirectory(),
-          size: stats.size,
-          modificationTime: stats.mtimeMs / 1000,
-        };
-      } catch (e) {
-        return { exists: false, isDirectory: false };
-      }
-    }),
-    EncodingType: {
-      UTF8: 'utf8',
-      Base64: 'base64',
+    Directory: { Documents: 'DOCUMENTS' },
+    Encoding: { UTF8: 'utf8' },
+    Filesystem: {
+      readFile: vi.fn(async ({ path: filepath, encoding }) => {
+        const resolvedPath = filepath;
+        const enc = encoding === 'utf8' ? 'utf8' : 'base64';
+        const data = await fs.promises.readFile(resolvedPath, { encoding: enc });
+        return { data };
+      }),
+      writeFile: vi.fn(async ({ path: filepath, data, encoding, recursive }) => {
+        const resolvedPath = filepath;
+        if (recursive) {
+          await fs.promises.mkdir(path.dirname(resolvedPath), { recursive: true });
+        }
+        const content = encoding === 'utf8' ? data : Buffer.from(data, 'base64');
+        return fs.promises.writeFile(resolvedPath, content);
+      }),
+      deleteFile: vi.fn(async ({ path: filepath }) => {
+        if (fs.existsSync(filepath)) {
+          await fs.promises.unlink(filepath);
+        }
+      }),
+      rmdir: vi.fn(async ({ path: filepath, recursive }) => {
+        if (fs.existsSync(filepath)) {
+          await fs.promises.rm(filepath, { recursive: recursive ?? false, force: true });
+        }
+      }),
+      readdir: vi.fn(async ({ path: dirpath }) => {
+        const entries = await fs.promises.readdir(dirpath);
+        return { files: entries.map((name) => ({ name })) };
+      }),
+      mkdir: vi.fn(async ({ path: dirpath, recursive }) => {
+        return fs.promises.mkdir(dirpath, { recursive });
+      }),
+      stat: vi.fn(async ({ path: filepath }) => {
+        try {
+          const stats = await fs.promises.stat(filepath);
+          return {
+            type: stats.isDirectory() ? 'directory' : 'file',
+            size: stats.size,
+            mtime: stats.mtimeMs,
+            ctime: stats.ctimeMs,
+          };
+        } catch {
+          throw new Error(`File not found: ${filepath}`);
+        }
+      }),
     },
   };
 });
 
+import { GitCloneService } from '../git/GitCloneService';
+import { GitCommitService } from '../git/GitCommitService';
+import { GitDiffService } from '../git/GitDiffService';
+import { Filesystem, Encoding } from '@capacitor/filesystem';
+
 describe('Git Services Performance', () => {
   const repoName = 'perf-repo-' + Date.now();
-  const repoDir = path.join(FileSystem.documentDirectory as string, 'repos', repoName);
+  const repoDir = path.join(MOCK_DOC_DIR, 'repos', repoName);
 
   beforeAll(async () => {
-      // Clean up before starting
-      await FileSystem.deleteAsync(repoDir);
+    // Clean up before starting
+    if (fsNode.existsSync(repoDir)) {
+      await fsNode.promises.rm(repoDir, { recursive: true, force: true });
+    }
   });
 
   afterAll(async () => {
     // Clean up after finishing
-    await FileSystem.deleteAsync(repoDir);
+    if (fsNode.existsSync(repoDir)) {
+      await fsNode.promises.rm(repoDir, { recursive: true, force: true });
+    }
   });
 
   it('measures diff performance with many files', async () => {
@@ -110,11 +106,12 @@ describe('Git Services Performance', () => {
     const files = [];
     for (let i = 0; i < fileCount; i++) {
       files.push(`file-${i}.txt`);
-      await FileSystem.writeAsStringAsync(
-        path.join(repoDir, `file-${i}.txt`),
-        `Initial content for file ${i}\nLine 2\nLine 3`,
-        { encoding: FileSystem.EncodingType.UTF8 }
-      );
+      await Filesystem.writeFile({
+        path: path.join(repoDir, `file-${i}.txt`),
+        data: `Initial content for file ${i}\nLine 2\nLine 3`,
+        encoding: Encoding.UTF8,
+        recursive: true,
+      });
     }
 
     // 3. Stage and commit
@@ -129,11 +126,12 @@ describe('Git Services Performance', () => {
 
     // 4. Modify all files
     for (let i = 0; i < fileCount; i++) {
-      await FileSystem.writeAsStringAsync(
-        path.join(repoDir, `file-${i}.txt`),
-        `Initial content for file ${i}\nLine 2 MODIFIED\nLine 3\nLine 4 ADDED`,
-        { encoding: FileSystem.EncodingType.UTF8 }
-      );
+      await Filesystem.writeFile({
+        path: path.join(repoDir, `file-${i}.txt`),
+        data: `Initial content for file ${i}\nLine 2 MODIFIED\nLine 3\nLine 4 ADDED`,
+        encoding: Encoding.UTF8,
+        recursive: true,
+      });
     }
 
     // 5. Stage and commit

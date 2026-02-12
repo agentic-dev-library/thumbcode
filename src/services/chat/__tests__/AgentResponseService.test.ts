@@ -6,22 +6,25 @@
  */
 
 import { useChatStore, useCredentialStore } from '@thumbcode/state';
-import * as SecureStore from 'expo-secure-store';
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+import type { Mock } from 'vitest';
 
 import { AgentResponseService } from '../AgentResponseService';
 import { MessageStore } from '../MessageStore';
 import { StreamHandler } from '../StreamHandler';
 
 // Mock AI dependencies
-jest.mock('../../ai/AIClientFactory', () => ({
-  createAIClient: jest.fn(),
+vi.mock('../../ai/AIClientFactory', () => ({
+  createAIClient: vi.fn(),
 }));
 
-jest.mock('../../ai/AgentPrompts', () => ({
-  getAgentSystemPrompt: jest.fn().mockReturnValue('You are a helpful agent'),
+vi.mock('../../ai/AgentPrompts', () => ({
+  getAgentSystemPrompt: vi.fn().mockReturnValue('You are a helpful agent'),
 }));
 
-const { createAIClient } = require('../../ai/AIClientFactory');
+import { createAIClient } from '../../ai/AIClientFactory';
+
+const mockCreateAIClient = createAIClient as Mock;
 
 describe('AgentResponseService', () => {
   let service: AgentResponseService;
@@ -29,7 +32,7 @@ describe('AgentResponseService', () => {
   let messageStore: MessageStore;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Reset stores
     useChatStore.setState({
@@ -49,11 +52,11 @@ describe('AgentResponseService', () => {
     service = new AgentResponseService(streamHandler, messageStore);
 
     // Spy on streamHandler methods
-    jest.spyOn(streamHandler, 'emit');
-    jest.spyOn(streamHandler, 'emitTypingStart');
-    jest.spyOn(streamHandler, 'emitTypingEnd');
-    jest.spyOn(streamHandler, 'registerAbort').mockReturnValue(new AbortController());
-    jest.spyOn(streamHandler, 'cleanupAbort');
+    vi.spyOn(streamHandler, 'emit');
+    vi.spyOn(streamHandler, 'emitTypingStart');
+    vi.spyOn(streamHandler, 'emitTypingEnd');
+    vi.spyOn(streamHandler, 'registerAbort').mockReturnValue(new AbortController());
+    vi.spyOn(streamHandler, 'cleanupAbort');
   });
 
   describe('credential resolution', () => {
@@ -82,12 +85,12 @@ describe('AgentResponseService', () => {
         lastError: null,
       });
 
-      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue('sk-ant-test-key');
+      (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-ant-test-key' });
 
       const mockClient = {
-        streamMessage: jest.fn().mockResolvedValue(undefined),
+        streamMessage: vi.fn().mockResolvedValue(undefined),
       };
-      createAIClient.mockReturnValue(mockClient);
+      mockCreateAIClient.mockReturnValue(mockClient);
 
       // Create thread and message
       const threadId = useChatStore.getState().createThread({
@@ -98,7 +101,7 @@ describe('AgentResponseService', () => {
 
       await service.requestAgentResponse(threadId, 'msg-1', 'architect');
 
-      expect(createAIClient).toHaveBeenCalledWith('anthropic', 'sk-ant-test-key');
+      expect(mockCreateAIClient).toHaveBeenCalledWith('anthropic', 'sk-ant-test-key');
     });
 
     it('should fallback to OpenAI when Anthropic is unavailable', async () => {
@@ -117,12 +120,12 @@ describe('AgentResponseService', () => {
         lastError: null,
       });
 
-      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue('sk-test-openai-key');
+      (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-test-openai-key' });
 
       const mockClient = {
-        streamMessage: jest.fn().mockResolvedValue(undefined),
+        streamMessage: vi.fn().mockResolvedValue(undefined),
       };
-      createAIClient.mockReturnValue(mockClient);
+      mockCreateAIClient.mockReturnValue(mockClient);
 
       const threadId = useChatStore.getState().createThread({
         title: 'Test Thread',
@@ -132,7 +135,7 @@ describe('AgentResponseService', () => {
 
       await service.requestAgentResponse(threadId, 'msg-1', 'implementer');
 
-      expect(createAIClient).toHaveBeenCalledWith('openai', 'sk-test-openai-key');
+      expect(mockCreateAIClient).toHaveBeenCalledWith('openai', 'sk-test-openai-key');
     });
 
     it('should add error message when no AI key is configured', async () => {
@@ -154,7 +157,7 @@ describe('AgentResponseService', () => {
       expect(messages).toHaveLength(1);
       expect(messages[0].content).toContain('No AI API key configured');
       expect(messages[0].sender).toBe('architect');
-      expect(createAIClient).not.toHaveBeenCalled();
+      expect(mockCreateAIClient).not.toHaveBeenCalled();
     });
 
     it('should skip credentials with invalid status', async () => {
@@ -202,19 +205,19 @@ describe('AgentResponseService', () => {
         isValidating: false,
         lastError: null,
       });
-      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue('sk-ant-key');
+      (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-ant-key' });
     });
 
     it('should stream response and emit events', async () => {
       const mockClient = {
-        streamMessage: jest
+        streamMessage: vi
           .fn()
           .mockImplementation(async (_msgs: any, _prompt: any, onChunk: any) => {
             onChunk({ text: 'Hello', done: false });
             onChunk({ text: ' world', done: true });
           }),
       };
-      createAIClient.mockReturnValue(mockClient);
+      mockCreateAIClient.mockReturnValue(mockClient);
 
       const threadId = useChatStore.getState().createThread({
         title: 'Test',
@@ -243,9 +246,9 @@ describe('AgentResponseService', () => {
 
     it('should clean up abort controller after completion', async () => {
       const mockClient = {
-        streamMessage: jest.fn().mockResolvedValue(undefined),
+        streamMessage: vi.fn().mockResolvedValue(undefined),
       };
-      createAIClient.mockReturnValue(mockClient);
+      mockCreateAIClient.mockReturnValue(mockClient);
 
       const threadId = useChatStore.getState().createThread({
         title: 'Test',
@@ -275,15 +278,15 @@ describe('AgentResponseService', () => {
         isValidating: false,
         lastError: null,
       });
-      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue('sk-ant-key');
+      (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-ant-key' });
     });
 
     it('should not emit error event on AbortError', async () => {
       const abortError = new DOMException('Aborted', 'AbortError');
       const mockClient = {
-        streamMessage: jest.fn().mockRejectedValue(abortError),
+        streamMessage: vi.fn().mockRejectedValue(abortError),
       };
-      createAIClient.mockReturnValue(mockClient);
+      mockCreateAIClient.mockReturnValue(mockClient);
 
       const threadId = useChatStore.getState().createThread({
         title: 'Test',
@@ -294,7 +297,7 @@ describe('AgentResponseService', () => {
       await service.requestAgentResponse(threadId, 'msg-1', 'architect');
 
       // Should not emit error event for abort
-      const errorCalls = (streamHandler.emit as jest.Mock).mock.calls.filter(
+      const errorCalls = (streamHandler.emit as Mock).mock.calls.filter(
         (call: any) => call[0].type === 'error'
       );
       expect(errorCalls).toHaveLength(0);
@@ -303,9 +306,9 @@ describe('AgentResponseService', () => {
     it('should emit error event for non-abort errors', async () => {
       const error = new Error('API rate limited');
       const mockClient = {
-        streamMessage: jest.fn().mockRejectedValue(error),
+        streamMessage: vi.fn().mockRejectedValue(error),
       };
-      createAIClient.mockReturnValue(mockClient);
+      mockCreateAIClient.mockReturnValue(mockClient);
 
       const threadId = useChatStore.getState().createThread({
         title: 'Test',
@@ -326,9 +329,9 @@ describe('AgentResponseService', () => {
 
     it('should always clear typing state after error', async () => {
       const mockClient = {
-        streamMessage: jest.fn().mockRejectedValue(new Error('Failure')),
+        streamMessage: vi.fn().mockRejectedValue(new Error('Failure')),
       };
-      createAIClient.mockReturnValue(mockClient);
+      mockCreateAIClient.mockReturnValue(mockClient);
 
       const threadId = useChatStore.getState().createThread({
         title: 'Test',
@@ -363,9 +366,9 @@ describe('AgentResponseService', () => {
       const messages = useChatStore.getState().messages[threadId] || [];
       const approvalMsg = messages.find((m) => m.id === messageId);
       expect(approvalMsg).toBeDefined();
-      expect(approvalMsg!.contentType).toBe('approval_request');
-      expect(approvalMsg!.content).toContain('Commit changes to main branch');
-      expect(approvalMsg!.sender).toBe('implementer');
+      expect(approvalMsg?.contentType).toBe('approval_request');
+      expect(approvalMsg?.content).toContain('Commit changes to main branch');
+      expect(approvalMsg?.sender).toBe('implementer');
     });
 
     it('should emit approval_request event', () => {

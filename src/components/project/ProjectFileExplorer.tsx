@@ -4,7 +4,6 @@
  * Displays a file tree for the project's local working directory.
  */
 
-import { View } from 'react-native';
 import { FileTree, type FileNode as FileTreeNode } from '@/components/code';
 import { Badge } from '@/components/display';
 import { HStack, VStack } from '@/components/layout';
@@ -26,7 +25,7 @@ export function ProjectFileExplorer({
 }: Readonly<ProjectFileExplorerProps>) {
   return (
     <VStack spacing="md">
-      <View className="bg-surface p-4" style={organicBorderRadius.card}>
+      <div className="bg-surface p-4" style={organicBorderRadius.card}>
         <HStack justify="between" align="center" className="mb-3">
           <Text weight="semibold" className="text-white">
             Files
@@ -44,7 +43,7 @@ export function ProjectFileExplorer({
             showStatus={false}
           />
         )}
-      </View>
+      </div>
     </VStack>
   );
 }

@@ -3,6 +3,7 @@
  *
  * Pre-configured icon components for common use cases,
  * each wrapping PaintDaubeIcon with a specific variant and optional default color.
+ * Now backed by Lucide icons instead of react-native-svg.
  */
 
 import { PaintDaubeIcon, type PaintDaubeIconProps } from './PaintDaubeIcon';

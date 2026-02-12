@@ -4,7 +4,7 @@
  * Tests for project CRUD, workspace management, and state transitions.
  */
 
-import { act, renderHook } from '@testing-library/react-native';
+import { act, renderHook } from '@testing-library/react';
 import {
   selectActiveFile,
   selectActiveProject,

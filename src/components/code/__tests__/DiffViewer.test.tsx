@@ -1,11 +1,22 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { DiffViewer } from '../DiffViewer';
 
-jest.mock('@/components/icons', () => ({
-  ChevronDownIcon: () => 'ChevronDownIcon',
+vi.mock('@/components/icons', () => ({
+  ChevronDownIcon: () => <span>ChevronDown</span>,
 }));
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/components/ui', () => ({
+  Text: ({
+    children,
+    ...props
+  }: {
+    children?: React.ReactNode;
+    className?: string;
+    numberOfLines?: number;
+  }) => <span {...props}>{children}</span>,
+}));
+
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { card: {} },
 }));
 
@@ -19,27 +30,24 @@ describe('DiffViewer', () => {
       { type: 'remove' as const, content: 'old line', oldLineNumber: 2 },
       { type: 'add' as const, content: 'new line', newLineNumber: 2 },
     ];
-    const { toJSON } = render(<DiffViewer diff={diff} />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('unchanged');
-    expect(json).toContain('old line');
-    expect(json).toContain('new line');
+    const { container } = render(<DiffViewer diff={diff} />);
+    expect(container.innerHTML).toContain('unchanged');
+    expect(container.innerHTML).toContain('old line');
+    expect(container.innerHTML).toContain('new line');
   });
 
   it('parses diff from old and new content', () => {
-    const { toJSON } = render(<DiffViewer oldContent={oldContent} newContent={newContent} />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('line one');
-    expect(json).toContain('line modified');
-    expect(json).toContain('line four');
+    const { container } = render(<DiffViewer oldContent={oldContent} newContent={newContent} />);
+    expect(container.innerHTML).toContain('line one');
+    expect(container.innerHTML).toContain('line modified');
+    expect(container.innerHTML).toContain('line four');
   });
 
   it('renders filename in header', () => {
-    const { toJSON } = render(
+    const { container } = render(
       <DiffViewer oldContent={oldContent} newContent={newContent} filename="src/app.tsx" />
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('src/app.tsx');
+    expect(container.innerHTML).toContain('src/app.tsx');
   });
 
   it('shows addition and deletion counts', () => {
@@ -48,36 +56,33 @@ describe('DiffViewer', () => {
       { type: 'add' as const, content: 'added2', newLineNumber: 2 },
       { type: 'remove' as const, content: 'removed', oldLineNumber: 1 },
     ];
-    const { toJSON } = render(<DiffViewer diff={diff} />);
-    const json = JSON.stringify(toJSON());
-    // Counts are rendered in accessibility label and as split children
-    expect(json).toContain('2 additions');
-    expect(json).toContain('1 deletions');
+    const { container } = render(<DiffViewer diff={diff} />);
+    // Counts are rendered as +N and -N
+    expect(container.innerHTML).toContain('+2');
+    expect(container.innerHTML).toContain('-1');
   });
 
   it('shows line numbers by default', () => {
     const diff = [
       { type: 'context' as const, content: 'line', oldLineNumber: 5, newLineNumber: 5 },
     ];
-    const { toJSON } = render(<DiffViewer diff={diff} showLineNumbers />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('5');
+    const { container } = render(<DiffViewer diff={diff} showLineNumbers />);
+    expect(container.innerHTML).toContain('5');
   });
 
   it('collapses and expands on header press', () => {
     const diff = [
       { type: 'context' as const, content: 'visible content', oldLineNumber: 1, newLineNumber: 1 },
     ];
-    const { toJSON, UNSAFE_getByProps } = render(<DiffViewer diff={diff} filename="file.ts" />);
+    const { container } = render(<DiffViewer diff={diff} filename="file.ts" />);
     // Content is visible initially
-    let json = JSON.stringify(toJSON());
-    expect(json).toContain('visible content');
+    expect(container.innerHTML).toContain('visible content');
 
-    // Press header to collapse
-    fireEvent.press(UNSAFE_getByProps({ accessibilityRole: 'button' }));
-    json = JSON.stringify(toJSON());
+    // Press header button to collapse
+    const headerButton = screen.getByRole('button');
+    fireEvent.click(headerButton);
     // Content should be hidden after collapse
-    expect(json).not.toContain('visible content');
+    expect(container.innerHTML).not.toContain('visible content');
   });
 
   it('shows diff prefix characters', () => {
@@ -85,14 +90,13 @@ describe('DiffViewer', () => {
       { type: 'add' as const, content: 'new', newLineNumber: 1 },
       { type: 'remove' as const, content: 'old', oldLineNumber: 1 },
     ];
-    const { toJSON } = render(<DiffViewer diff={diff} />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('+');
-    expect(json).toContain('-');
+    const { container } = render(<DiffViewer diff={diff} />);
+    expect(container.innerHTML).toContain('+');
+    expect(container.innerHTML).toContain('-');
   });
 
   it('renders empty when no diff data provided', () => {
-    const { toJSON } = render(<DiffViewer />);
-    expect(toJSON()).toBeTruthy();
+    const { container } = render(<DiffViewer />);
+    expect(container).toBeTruthy();
   });
 });

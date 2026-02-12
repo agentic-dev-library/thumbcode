@@ -3,9 +3,9 @@
  *
  * Provides functionality to sign outgoing API requests with an HMAC signature
  * to ensure authenticity and prevent tampering.
+ * Uses the Web Crypto API (available in modern browsers and Capacitor).
  */
 import { CredentialService } from '../credentials/CredentialService';
-import * as Crypto from 'expo-crypto';
 
 class RequestSigningService {
   /**
@@ -28,18 +28,21 @@ class RequestSigningService {
     }
 
     const timestamp = new Date().toISOString();
-    const nonce = Crypto.randomUUID();
+    const nonce = crypto.randomUUID();
     // Security note: This uses a hash(secret + data) construction rather than proper HMAC.
-    // expo-crypto does not expose HMAC. The nonce and timestamp prevent replay attacks,
+    // The Web Crypto API supports HMAC but for consistency with the original implementation,
+    // we keep the hash(secret + data) approach. The nonce and timestamp prevent replay attacks,
     // and the inclusion of the full secret as a prefix is acceptable for this use case
     // since the signed data is not user-controlled and the signature is not exposed to clients.
     const dataToSign = `${secretResult.secret}${timestamp}${method.toUpperCase()}${new URL(url).pathname}${body || ''}${nonce}`;
 
-    const signature = await Crypto.digestStringAsync(
-      Crypto.CryptoDigestAlgorithm.SHA256,
-      dataToSign,
-      { encoding: Crypto.CryptoEncoding.HEX }
-    );
+    const encoder = new TextEncoder();
+    const dataBuffer = encoder.encode(dataToSign);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
+
+    // Convert to hex string
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const signature = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 
     return {
       'X-Request-Timestamp': timestamp,

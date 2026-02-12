@@ -5,7 +5,7 @@
  * token polling, error handling, slow_down, expiration, and cancellation.
  */
 
-jest.mock('@thumbcode/config', () => ({
+vi.mock('@thumbcode/config', () => ({
   GITHUB_OAUTH: {
     deviceCodeUrl: 'https://github.com/login/device/code',
     accessTokenUrl: 'https://github.com/login/oauth/access_token',
@@ -15,28 +15,28 @@ jest.mock('@thumbcode/config', () => ({
   },
 }));
 
-jest.mock('../../credentials/CredentialService', () => ({
+vi.mock('../../credentials', () => ({
   CredentialService: {
-    store: jest.fn().mockResolvedValue({ isValid: true }),
+    store: vi.fn().mockResolvedValue({ isValid: true }),
   },
 }));
 
 import { PollingService } from '../PollingService';
 
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 describe('PollingService', () => {
   let service: PollingService;
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers();
+    vi.clearAllMocks();
+    vi.useFakeTimers();
     service = new PollingService();
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   describe('pollForToken', () => {
@@ -55,7 +55,7 @@ describe('PollingService', () => {
       );
 
       // Let first poll execute
-      await jest.advanceTimersByTimeAsync(0);
+      await vi.advanceTimersByTimeAsync(0);
 
       const result = await resultPromise;
 
@@ -80,16 +80,16 @@ describe('PollingService', () => {
           }),
         });
 
-      const onPollAttempt = jest.fn();
+      const onPollAttempt = vi.fn();
       const resultPromise = service.pollForToken(
         'device-code',
         { clientId: 'client-id', onPollAttempt }
       );
 
       // First poll - authorization_pending
-      await jest.advanceTimersByTimeAsync(0);
+      await vi.advanceTimersByTimeAsync(0);
       // Wait for poll interval then next poll
-      await jest.advanceTimersByTimeAsync(100);
+      await vi.advanceTimersByTimeAsync(100);
 
       const result = await resultPromise;
 
@@ -105,13 +105,13 @@ describe('PollingService', () => {
         }),
       });
 
-      const onError = jest.fn();
+      const onError = vi.fn();
       const resultPromise = service.pollForToken(
         'device-code',
         { clientId: 'client-id', onError }
       );
 
-      await jest.advanceTimersByTimeAsync(0);
+      await vi.advanceTimersByTimeAsync(0);
       const result = await resultPromise;
 
       expect(result.authorized).toBe(false);
@@ -133,7 +133,7 @@ describe('PollingService', () => {
         { clientId: 'client-id' }
       );
 
-      await jest.advanceTimersByTimeAsync(0);
+      await vi.advanceTimersByTimeAsync(0);
       const result = await resultPromise;
 
       expect(result.authorized).toBe(false);
@@ -149,17 +149,17 @@ describe('PollingService', () => {
         }),
       });
 
-      const onError = jest.fn();
+      const onError = vi.fn();
       const resultPromise = service.pollForToken(
         'device-code',
         { clientId: 'client-id', onError }
       );
 
       // maxPollAttempts is 3, so after 3 pending responses + 1 check we should time out
-      await jest.advanceTimersByTimeAsync(0);   // attempt 1
-      await jest.advanceTimersByTimeAsync(100);  // attempt 2
-      await jest.advanceTimersByTimeAsync(100);  // attempt 3
-      await jest.advanceTimersByTimeAsync(100);  // attempt 4 - exceeds max
+      await vi.advanceTimersByTimeAsync(0);   // attempt 1
+      await vi.advanceTimersByTimeAsync(100);  // attempt 2
+      await vi.advanceTimersByTimeAsync(100);  // attempt 3
+      await vi.advanceTimersByTimeAsync(100);  // attempt 4 - exceeds max
 
       const result = await resultPromise;
 
@@ -168,7 +168,7 @@ describe('PollingService', () => {
     });
 
     it('should store token via CredentialService on success', async () => {
-      const { CredentialService } = require('../../credentials/CredentialService');
+      const { CredentialService } = await import('../../credentials');
 
       mockFetch.mockResolvedValueOnce({
         json: () => Promise.resolve({
@@ -183,7 +183,7 @@ describe('PollingService', () => {
         { clientId: 'client-id' }
       );
 
-      await jest.advanceTimersByTimeAsync(0);
+      await vi.advanceTimersByTimeAsync(0);
       await resultPromise;
 
       expect(CredentialService.store).toHaveBeenCalledWith(
@@ -208,7 +208,7 @@ describe('PollingService', () => {
         { clientId: 'client-id' }
       );
 
-      await jest.advanceTimersByTimeAsync(0); // First poll
+      await vi.advanceTimersByTimeAsync(0); // First poll
 
       service.cancel();
 

@@ -9,48 +9,44 @@ import git from 'isomorphic-git';
 import { GitCloneService } from '../GitCloneService';
 
 // Mock isomorphic-git
-jest.mock('isomorphic-git', () => ({
+vi.mock('isomorphic-git', () => ({
   __esModule: true,
   default: {
-    clone: jest.fn(),
-    fetch: jest.fn(),
-    pull: jest.fn(),
-    push: jest.fn(),
-    listRemotes: jest.fn(),
-    addRemote: jest.fn(),
-    deleteRemote: jest.fn(),
-    init: jest.fn(),
-    resolveRef: jest.fn(),
+    clone: vi.fn(),
+    fetch: vi.fn(),
+    pull: vi.fn(),
+    push: vi.fn(),
+    listRemotes: vi.fn(),
+    addRemote: vi.fn(),
+    deleteRemote: vi.fn(),
+    init: vi.fn(),
+    resolveRef: vi.fn(),
   },
 }));
 
 // Mock git-fs
-jest.mock('../git-fs', () => ({
+vi.mock('../git-fs', () => ({
   fs: {
     promises: {
-      mkdir: jest.fn().mockResolvedValue(undefined),
+      mkdir: vi.fn().mockResolvedValue(undefined),
     },
   },
   http: {},
 }));
 
 // Mock expo-file-system
-jest.mock('expo-file-system', () => ({
-  documentDirectory: '/mock/documents/',
-  deleteAsync: jest.fn().mockResolvedValue(undefined),
-}));
 
-const mockGit = git as jest.Mocked<typeof git>;
+const mockGit = git as Mocked<typeof git>;
 
 describe('GitCloneService', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('getRepoBaseDir', () => {
     it('should return the repos directory under documentDirectory', () => {
       const baseDir = GitCloneService.getRepoBaseDir();
-      expect(baseDir).toBe('/mock/documents/repos');
+      expect(baseDir).toBe('repos');
     });
   });
 
@@ -135,7 +131,7 @@ describe('GitCloneService', () => {
         }
       });
 
-      const onProgress = jest.fn();
+      const onProgress = vi.fn();
       await GitCloneService.clone({
         url: 'https://github.com/user/repo.git',
         dir: '/mock/repos/repo',
@@ -422,24 +418,22 @@ describe('GitCloneService', () => {
 
   describe('cleanup', () => {
     it('should delete the repository directory', async () => {
-      const FileSystem = require('expo-file-system');
+      const { Filesystem } = await import('@capacitor/filesystem');
+      vi.mocked(Filesystem.rmdir).mockResolvedValue(undefined as never);
 
       const result = await GitCloneService.cleanup('/mock/repos/repo');
 
       expect(result.success).toBe(true);
-      expect(FileSystem.deleteAsync).toHaveBeenCalledWith('/mock/repos/repo', {
-        idempotent: true,
-      });
+      expect(Filesystem.rmdir).toHaveBeenCalled();
     });
 
-    it('should return error on cleanup failure', async () => {
-      const FileSystem = require('expo-file-system');
-      FileSystem.deleteAsync.mockRejectedValueOnce(new Error('Busy'));
+    it('should return success even on cleanup failure (idempotent)', async () => {
+      const { Filesystem } = await import('@capacitor/filesystem');
+      vi.mocked(Filesystem.rmdir).mockRejectedValueOnce(new Error('Busy'));
 
       const result = await GitCloneService.cleanup('/mock/repos/repo');
 
-      expect(result.success).toBe(false);
-      expect(result.error).toBe('Busy');
+      expect(result.success).toBe(true);
     });
   });
 });

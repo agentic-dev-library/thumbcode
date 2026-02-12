@@ -6,7 +6,6 @@
  */
 
 import type React from 'react';
-import { View } from 'react-native';
 import { CloseIcon, type IconColor, InfoIcon, SuccessIcon, WarningIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
@@ -67,7 +66,7 @@ export function Badge({
 
   if (dot) {
     return (
-      <View
+      <div
         className={colors.bg.replace('/20', '')}
         style={{
           width: sizing.dot,
@@ -79,20 +78,20 @@ export function Badge({
   }
 
   return (
-    <View
+    <div
       className={`flex-row items-center ${colors.bg} ${sizing.px} ${sizing.py}`}
       style={organicBorderRadius.badge}
     >
       {Icon && (
-        <View className="mr-1">
+        <div className="mr-1">
           <Icon size={iconSize} color={iconColor || 'warmGray'} turbulence={0.15} />
-        </View>
+        </div>
       )}
       {textIcon && !Icon && (
         <Text className={`mr-1 ${colors.text} ${sizing.text}`}>{textIcon}</Text>
       )}
       <Text className={`font-body font-medium ${colors.text} ${sizing.text}`}>{children}</Text>
-    </View>
+    </div>
   );
 }
 

@@ -7,7 +7,6 @@
  */
 
 import type { ReactNode } from 'react';
-import { Pressable, View } from 'react-native';
 import { ErrorIcon, type IconColor, InboxIcon, SearchIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
@@ -59,10 +58,10 @@ export function EmptyState({
   const styles = sizeStyles[size];
 
   return (
-    <View className={`items-center justify-center ${styles.padding}`}>
-      <View className="mb-4">
+    <div className={`items-center justify-center ${styles.padding}`}>
+      <div className="mb-4">
         <Icon size={styles.iconSize} color={iconColor} turbulence={0.25} />
-      </View>
+      </div>
 
       <Text variant="display" className={`${styles.title} text-white text-center mb-2`}>
         {title}
@@ -79,34 +78,34 @@ export function EmptyState({
       {children}
 
       {(action || secondaryAction) && (
-        <View className="flex-row items-center gap-3 mt-4">
+        <div className="flex-row items-center gap-3 mt-4">
           {secondaryAction && (
-            <Pressable
-              onPress={secondaryAction.onPress}
+            <button
+              type="button"
+              onClick={secondaryAction.onPress}
               className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
               style={organicBorderRadius.button}
-              accessibilityRole="button"
-              accessibilityLabel={secondaryAction.label}
-              accessibilityHint={`Perform the action: ${secondaryAction.label}`}
+              aria-label={secondaryAction.label}
+              aria-description={`Perform the action: ${secondaryAction.label}`}
             >
               <Text className="font-body text-neutral-200">{secondaryAction.label}</Text>
-            </Pressable>
+            </button>
           )}
           {action && (
-            <Pressable
-              onPress={action.onPress}
+            <button
+              type="button"
+              onClick={action.onPress}
               className="px-4 py-2 bg-coral-500 active:bg-coral-600"
               style={organicBorderRadius.button}
-              accessibilityRole="button"
-              accessibilityLabel={action.label}
-              accessibilityHint={`Perform the action: ${action.label}`}
+              aria-label={action.label}
+              aria-description={`Perform the action: ${action.label}`}
             >
               <Text className="font-body text-white font-semibold">{action.label}</Text>
-            </Pressable>
+            </button>
           )}
-        </View>
+        </div>
       )}
-    </View>
+    </div>
   );
 }
 

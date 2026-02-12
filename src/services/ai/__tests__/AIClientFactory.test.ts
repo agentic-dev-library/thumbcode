@@ -7,19 +7,19 @@ import { AnthropicClient } from '../AnthropicClient';
 import { OpenAIClient } from '../OpenAIClient';
 
 // Mock the client implementations
-jest.mock('@anthropic-ai/sdk', () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    messages: { create: jest.fn(), stream: jest.fn() },
-  })),
-}));
+vi.mock('@anthropic-ai/sdk', () => {
+  class MockAnthropic {
+    messages = { create: vi.fn(), stream: vi.fn() };
+  }
+  return { __esModule: true, default: MockAnthropic };
+});
 
-jest.mock('openai', () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    chat: { completions: { create: jest.fn() } },
-  })),
-}));
+vi.mock('openai', () => {
+  class MockOpenAI {
+    chat = { completions: { create: vi.fn() } };
+  }
+  return { __esModule: true, default: MockOpenAI };
+});
 
 describe('createAIClient', () => {
   it('should create an AnthropicClient for anthropic provider', () => {

@@ -6,30 +6,30 @@
  */
 
 // Mock @thumbcode/config
-jest.mock('@thumbcode/config', () => ({
+vi.mock('@thumbcode/config', () => ({
   API_URLS: {
     github: 'https://api.github.com',
   },
 }));
 
 // Mock CredentialService
-jest.mock('../credentials', () => ({
+vi.mock('../credentials', () => ({
   CredentialService: {
-    retrieve: jest.fn(),
+    retrieve: vi.fn(),
   },
 }));
 
 import { GitHubApiService } from '../github/GitHubApiService';
 import { CredentialService } from '../credentials';
 
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
-const mockCredentialService = CredentialService as jest.Mocked<typeof CredentialService>;
+const mockCredentialService = CredentialService as Mocked<typeof CredentialService>;
 
 describe('GitHubApiService', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockCredentialService.retrieve.mockResolvedValue({ secret: 'ghp_testtoken123' });
   });
 

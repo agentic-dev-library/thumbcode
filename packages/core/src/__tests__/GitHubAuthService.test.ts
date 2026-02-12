@@ -5,26 +5,15 @@
  */
 
 // Mock expo-constants before any imports
-jest.mock('expo-constants', () => ({
-  __esModule: true,
-  default: {
-    expoConfig: {
-      extra: {
-        eas: { projectId: 'test-project-id' },
-      },
-    },
-    appOwnership: null,
-  },
-}));
 
 import { GitHubAuthService } from '../auth/GitHubAuthService';
 
 // Mock fetch globally
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 // Mock config to speed up tests
-jest.mock('@thumbcode/config', () => ({
+vi.mock('@thumbcode/config', () => ({
   GITHUB_OAUTH: {
     deviceCodeUrl: 'https://github.com/login/device/code',
     accessTokenUrl: 'https://github.com/login/oauth/access_token',
@@ -36,12 +25,12 @@ jest.mock('@thumbcode/config', () => ({
 }));
 
 // Mock CredentialService
-jest.mock('../credentials/CredentialService', () => ({
+vi.mock('../credentials', () => ({
   CredentialService: {
-    store: jest.fn().mockResolvedValue({ isValid: true }),
-    retrieve: jest.fn().mockResolvedValue({ secret: null }),
-    validateCredential: jest.fn().mockResolvedValue({ isValid: false }),
-    delete: jest.fn().mockResolvedValue(true),
+    store: vi.fn().mockResolvedValue({ isValid: true }),
+    retrieve: vi.fn().mockResolvedValue({ secret: null }),
+    validateCredential: vi.fn().mockResolvedValue({ isValid: false }),
+    delete: vi.fn().mockResolvedValue(true),
   },
 }));
 
@@ -86,7 +75,7 @@ describe('GitHubAuthService', () => {
         json: () => Promise.resolve(mockResponse),
       });
 
-      const onUserCode = jest.fn();
+      const onUserCode = vi.fn();
       const result = await GitHubAuthService.startDeviceFlow({
         clientId: 'test-client-id',
         onUserCode,
@@ -105,7 +94,7 @@ describe('GitHubAuthService', () => {
         text: () => Promise.resolve('Unauthorized'),
       });
 
-      const onError = jest.fn();
+      const onError = vi.fn();
       const result = await GitHubAuthService.startDeviceFlow({
         clientId: 'test-client-id',
         onError,
@@ -131,7 +120,7 @@ describe('GitHubAuthService', () => {
         json: () => Promise.resolve(mockResponse),
       });
 
-      const onStateChange = jest.fn();
+      const onStateChange = vi.fn();
       await GitHubAuthService.startDeviceFlow({
         clientId: 'test-client-id',
         onStateChange,
@@ -171,7 +160,7 @@ describe('GitHubAuthService', () => {
 
   describe('pollForToken', () => {
     it('should fail without device code', async () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
       const result = await GitHubAuthService.pollForToken({
         clientId: 'test-client-id',
         onError,
@@ -222,7 +211,7 @@ describe('GitHubAuthService', () => {
             }),
         });
 
-      const onPollAttempt = jest.fn();
+      const onPollAttempt = vi.fn();
       const result = await GitHubAuthService.pollForToken({
         clientId: 'test-client-id',
         onPollAttempt,
@@ -303,7 +292,7 @@ describe('GitHubAuthService', () => {
             }),
         });
 
-      const onPollAttempt = jest.fn();
+      const onPollAttempt = vi.fn();
       const result = await GitHubAuthService.pollForToken({
         clientId: 'test-client-id',
         onPollAttempt,
@@ -324,7 +313,7 @@ describe('GitHubAuthService', () => {
 
   describe('signOut', () => {
     it('should call CredentialService.delete', async () => {
-      const { CredentialService } = jest.requireMock('../credentials/CredentialService');
+      const { CredentialService } = await import('../credentials');
 
       await GitHubAuthService.signOut();
 

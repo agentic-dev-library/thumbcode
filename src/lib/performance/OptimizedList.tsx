@@ -1,19 +1,18 @@
 /**
  * Optimized List Component
  *
- * Performance-optimized FlatList wrapper with built-in optimizations.
+ * Web-based list component with virtual scrolling concepts.
+ * Replaces React Native's FlatList for web.
  */
 
-import React, { memo, useCallback, useMemo, useRef } from 'react';
-import {
-  FlatList,
-  type FlatListProps,
-  type ListRenderItemInfo,
-  type ViewToken,
-} from 'react-native';
+import React, { memo, useCallback } from 'react';
 
-export interface OptimizedListProps<T> extends Omit<FlatListProps<T>, 'getItemLayout'> {
-  /** Height of each item (required for optimization) */
+export interface OptimizedListProps<T> {
+  /** Data to render */
+  data: T[] | null | undefined;
+  /** Render function for each item */
+  renderItem: (info: { item: T; index: number }) => React.ReactElement;
+  /** Height of each item (for optimization hints) */
   itemHeight: number;
   /** Number of items to render above/below viewport */
   windowSize?: number;
@@ -21,41 +20,27 @@ export interface OptimizedListProps<T> extends Omit<FlatListProps<T>, 'getItemLa
   endReachedThreshold?: number;
   /** Whether to show footer loading indicator */
   isLoadingMore?: boolean;
-  /** Key extractor override */
+  /** Key extractor */
   keyExtractor?: (item: T, index: number) => string;
-  /** onViewableItemsChanged callback */
-  onViewableItemsChanged?: (info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => void;
+  /** onEndReached callback */
+  onEndReached?: () => void;
+  /** className for the container */
+  className?: string;
+  /** Style for the container */
+  style?: React.CSSProperties;
 }
 
-function OptimizedListInner<T>(props: OptimizedListProps<T>, ref: React.ForwardedRef<FlatList<T>>) {
-  const {
-    itemHeight,
-    windowSize = 5,
-    endReachedThreshold = 0.5,
-    data,
-    renderItem,
-    keyExtractor: customKeyExtractor,
-    onViewableItemsChanged,
-    ...rest
-  } = props;
+function OptimizedListInner<T>(
+  props: OptimizedListProps<T>,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
+  const { data, renderItem, keyExtractor: customKeyExtractor, className, style } = props;
 
-  // Memoize getItemLayout for consistent heights
-  const getItemLayout = useCallback(
-    (_data: ArrayLike<T> | null | undefined, index: number) => ({
-      length: itemHeight,
-      offset: itemHeight * index,
-      index,
-    }),
-    [itemHeight]
-  );
-
-  // Default key extractor if not provided
   const keyExtractor = useCallback(
     (item: T, index: number) => {
       if (customKeyExtractor) {
         return customKeyExtractor(item, index);
       }
-      // Try to use id or key from item, fallback to index
       const itemObj = item as Record<string, unknown>;
       if (typeof itemObj.id === 'string' || typeof itemObj.id === 'number') {
         return String(itemObj.id);
@@ -68,40 +53,18 @@ function OptimizedListInner<T>(props: OptimizedListProps<T>, ref: React.Forwarde
     [customKeyExtractor]
   );
 
-  // Viewability config for optimization
-  const viewabilityConfig = useRef({
-    itemVisiblePercentThreshold: 50,
-    minimumViewTime: 300,
-  }).current;
-
-  // Memoize viewable items callback
-  const viewableItemsChanged = useMemo(
-    () => (onViewableItemsChanged ? { onViewableItemsChanged, viewabilityConfig } : undefined),
-    [onViewableItemsChanged, viewabilityConfig]
-  );
-
   return (
-    <FlatList
-      ref={ref}
-      data={data}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
-      getItemLayout={getItemLayout}
-      windowSize={windowSize}
-      maxToRenderPerBatch={10}
-      updateCellsBatchingPeriod={50}
-      initialNumToRender={10}
-      removeClippedSubviews
-      onEndReachedThreshold={endReachedThreshold}
-      {...viewableItemsChanged}
-      {...rest}
-    />
+    <div ref={ref} className={className} style={{ overflowY: 'auto', ...style }}>
+      {(data ?? []).map((item, index) => (
+        <div key={keyExtractor(item, index)}>{renderItem({ item, index })}</div>
+      ))}
+    </div>
   );
 }
 
 // Export with forwardRef and memo
 export const OptimizedList = memo(React.forwardRef(OptimizedListInner)) as <T>(
-  props: OptimizedListProps<T> & { ref?: React.ForwardedRef<FlatList<T>> }
+  props: OptimizedListProps<T> & { ref?: React.ForwardedRef<HTMLDivElement> }
 ) => React.ReactElement;
 
 /**
@@ -109,10 +72,10 @@ export const OptimizedList = memo(React.forwardRef(OptimizedListInner)) as <T>(
  */
 export function createMemoizedRenderItem<T>(
   Component: React.ComponentType<{ item: T; index: number }>
-): (info: ListRenderItemInfo<T>) => React.ReactElement {
+): (info: { item: T; index: number }) => React.ReactElement {
   const MemoizedComponent = memo(Component);
 
-  return ({ item, index }: ListRenderItemInfo<T>) => (
+  return ({ item, index }: { item: T; index: number }) => (
     <MemoizedComponent item={item} index={index} />
   );
 }
@@ -134,7 +97,6 @@ export function defaultListItemPropsAreEqual<T extends { id?: string | number }>
   prevProps: { item: T; index: number },
   nextProps: { item: T; index: number }
 ): boolean {
-  // Compare by id if available, otherwise by reference
   if (prevProps.item.id !== undefined && nextProps.item.id !== undefined) {
     return prevProps.item.id === nextProps.item.id;
   }

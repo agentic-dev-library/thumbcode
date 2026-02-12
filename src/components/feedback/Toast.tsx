@@ -2,18 +2,12 @@
  * Toast Component
  *
  * Temporary notification messages with auto-dismiss.
+ * Web-native implementation using CSS transitions.
  * Supports different variants for success, error, warning, and info.
- * Uses paint daube icons for brand consistency.
  */
 
-import type React from 'react';
-import { useEffect, useRef } from 'react';
-import { Animated, Pressable, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CloseIcon, type IconColor, InfoIcon, SuccessIcon, WarningIcon } from '@/components/icons';
-import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
-import { getColor } from '@/utils/design-tokens';
+import { CircleAlert, CircleCheck, Info, TriangleAlert, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 type ToastVariant = 'success' | 'error' | 'warning' | 'info';
 type ToastPosition = 'top' | 'bottom';
@@ -40,40 +34,37 @@ interface ToastProps {
   };
 }
 
-/** Toast icon component type */
-type ToastIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
-
 interface VariantStyle {
   bg: string;
-  border: string;
-  Icon: ToastIconComponent;
-  iconColor: IconColor;
+  borderColor: string;
+  Icon: React.ComponentType<any>;
+  iconClass: string;
 }
 
 const variantStyles: Record<ToastVariant, VariantStyle> = {
   success: {
     bg: 'bg-teal-600/20',
-    border: getColor('teal', '500'),
-    Icon: SuccessIcon,
-    iconColor: 'teal',
+    borderColor: '#14B8A6',
+    Icon: CircleCheck,
+    iconClass: 'text-teal-500',
   },
   error: {
     bg: 'bg-coral-500/20',
-    border: getColor('coral', '500'),
-    Icon: CloseIcon,
-    iconColor: 'coral',
+    borderColor: '#FF7059',
+    Icon: CircleAlert,
+    iconClass: 'text-coral-500',
   },
   warning: {
     bg: 'bg-gold-500/20',
-    border: getColor('gold', '400'),
-    Icon: WarningIcon,
-    iconColor: 'gold',
+    borderColor: '#F5D563',
+    Icon: TriangleAlert,
+    iconClass: 'text-gold-400',
   },
   info: {
     bg: 'bg-neutral-600/20',
-    border: getColor('neutral', '500'),
-    Icon: InfoIcon,
-    iconColor: 'warmGray',
+    borderColor: '#64748B',
+    Icon: Info,
+    iconClass: 'text-neutral-400',
   },
 };
 
@@ -87,93 +78,77 @@ export function Toast({
   onDismiss,
   action,
 }: Readonly<ToastProps>) {
-  const insets = useSafeAreaInsets();
-  const translateY = useRef(new Animated.Value(100)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
-
-  const styles = variantStyles[variant];
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
     if (visible) {
-      Animated.parallel([
-        Animated.spring(translateY, {
-          toValue: 0,
-          useNativeDriver: true,
-          tension: 50,
-          friction: 10,
-        }),
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      requestAnimationFrame(() => setIsAnimating(true));
 
       if (duration > 0) {
         const timer = setTimeout(onDismiss, duration);
         return () => clearTimeout(timer);
       }
     } else {
-      Animated.parallel([
-        Animated.timing(translateY, {
-          toValue: position === 'top' ? -100 : 100,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      setIsAnimating(false);
     }
-  }, [visible, duration, onDismiss, translateY, opacity, position]);
+  }, [visible, duration, onDismiss]);
 
-  if (!visible) return null;
+  if (!visible && !isAnimating) return null;
 
-  const positionStyle =
-    position === 'top' ? { top: insets.top + 16 } : { bottom: insets.bottom + 16 };
+  const styles = variantStyles[variant];
+  const positionClass = position === 'top' ? 'top-4' : 'bottom-4';
+  const translateClass = isAnimating
+    ? 'translate-y-0 opacity-100'
+    : position === 'top'
+      ? '-translate-y-4 opacity-0'
+      : 'translate-y-4 opacity-0';
 
   return (
-    <Animated.View
-      className="absolute left-4 right-4 z-50"
-      style={{
-        ...positionStyle,
-        transform: [
-          { translateY: position === 'top' ? Animated.multiply(translateY, -1) : translateY },
-        ],
-        opacity,
+    <div
+      className={`fixed left-4 right-4 z-50 ${positionClass} transition-all duration-300 ease-out ${translateClass}`}
+      role="alert"
+      aria-live="polite"
+      onTransitionEnd={() => {
+        if (!visible) setIsAnimating(false);
       }}
     >
-      <View
-        className={`flex-row items-start p-4 ${styles.bg}`}
-        style={[organicBorderRadius.toast, { borderLeftWidth: 4, borderLeftColor: styles.border }]}
+      <div
+        className={`flex items-start p-4 ${styles.bg}`}
+        style={{
+          borderRadius: '14px 12px 16px 10px',
+          borderLeftWidth: 4,
+          borderLeftColor: styles.borderColor,
+        }}
       >
-        <View className="mr-3">
-          <styles.Icon size={20} color={styles.iconColor} turbulence={0.2} />
-        </View>
+        <span className="mr-3 shrink-0">
+          <styles.Icon size={20} className={styles.iconClass} />
+        </span>
 
-        <View className="flex-1">
-          {title && <Text className="font-display text-base text-white mb-1">{title}</Text>}
-          <Text className="font-body text-sm text-neutral-200">{message}</Text>
-        </View>
+        <div className="flex-1 min-w-0">
+          {title && <span className="block font-display text-base text-white mb-1">{title}</span>}
+          <span className="block font-body text-sm text-neutral-200">{message}</span>
+        </div>
 
-        <View className="flex-row items-center ml-2">
+        <div className="flex items-center ml-2 shrink-0">
           {action && (
-            <Pressable onPress={action.onPress} className="mr-3">
-              <Text className="font-body text-sm text-teal-400 font-semibold">{action.label}</Text>
-            </Pressable>
+            <button
+              onClick={action.onPress}
+              className="mr-3 font-body text-sm text-teal-400 font-semibold hover:text-teal-300 transition-colors"
+              type="button"
+            >
+              {action.label}
+            </button>
           )}
-          <Pressable
-            onPress={onDismiss}
-            className="p-1"
-            accessibilityRole="button"
-            accessibilityLabel="Dismiss notification"
+          <button
+            onClick={onDismiss}
+            className="p-1 text-neutral-400 hover:text-white transition-colors"
+            aria-label="Dismiss notification"
+            type="button"
           >
-            <CloseIcon size={16} color="warmGray" turbulence={0.15} />
-          </Pressable>
-        </View>
-      </View>
-    </Animated.View>
+            <X size={16} />
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -3,7 +3,7 @@ import { disableAnimations } from './utils/visual';
 
 test.describe('Welcome Page Visual Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/welcome');
+    await page.goto('/onboarding/welcome');
     await disableAnimations(page);
   });
 

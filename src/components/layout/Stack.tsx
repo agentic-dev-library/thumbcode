@@ -6,7 +6,6 @@
  */
 
 import type { ReactNode } from 'react';
-import { type StyleProp, StyleSheet, View, type ViewStyle } from 'react-native';
 
 type StackDirection = 'row' | 'column';
 type StackAlign = 'start' | 'center' | 'end' | 'stretch' | 'baseline';
@@ -29,10 +28,10 @@ interface StackProps {
   wrap?: boolean;
   /** Flex factor for the stack container */
   flex?: number;
-  /** Additional NativeWind class names */
+  /** Additional Tailwind class names */
   className?: string;
   /** Additional inline styles */
-  style?: StyleProp<ViewStyle>;
+  style?: React.CSSProperties | React.CSSProperties[];
 }
 
 const spacingValues: Record<Exclude<StackSpacing, number>, number> = {
@@ -44,7 +43,7 @@ const spacingValues: Record<Exclude<StackSpacing, number>, number> = {
   xl: 32,
 };
 
-const alignMap: Record<StackAlign, ViewStyle['alignItems']> = {
+const alignMap: Record<StackAlign, React.CSSProperties['alignItems']> = {
   start: 'flex-start',
   center: 'center',
   end: 'flex-end',
@@ -52,7 +51,7 @@ const alignMap: Record<StackAlign, ViewStyle['alignItems']> = {
   baseline: 'baseline',
 };
 
-const justifyMap: Record<StackJustify, ViewStyle['justifyContent']> = {
+const justifyMap: Record<StackJustify, React.CSSProperties['justifyContent']> = {
   start: 'flex-start',
   center: 'center',
   end: 'flex-end',
@@ -60,6 +59,16 @@ const justifyMap: Record<StackJustify, ViewStyle['justifyContent']> = {
   around: 'space-around',
   evenly: 'space-evenly',
 };
+
+function flattenStyle(
+  style?: React.CSSProperties | React.CSSProperties[]
+): React.CSSProperties | undefined {
+  if (!style) return undefined;
+  if (Array.isArray(style)) {
+    return Object.assign({}, ...style.filter(Boolean));
+  }
+  return style;
+}
 
 export function Stack({
   children,
@@ -74,7 +83,8 @@ export function Stack({
 }: Readonly<StackProps>) {
   const gap = typeof spacing === 'number' ? spacing : spacingValues[spacing];
 
-  const baseStyle: ViewStyle = {
+  const baseStyle: React.CSSProperties = {
+    display: 'flex',
     flexDirection: direction,
     gap,
     alignItems: alignMap[align],
@@ -83,14 +93,15 @@ export function Stack({
     flex,
   };
 
-  // Flatten the style prop to merge with base styles
-  const flattenedStyle = style ? StyleSheet.flatten(style) : undefined;
-  const stackStyle: ViewStyle = flattenedStyle ? { ...baseStyle, ...flattenedStyle } : baseStyle;
+  const flattenedStyle = flattenStyle(style);
+  const stackStyle: React.CSSProperties = flattenedStyle
+    ? { ...baseStyle, ...flattenedStyle }
+    : baseStyle;
 
   return (
-    <View style={stackStyle} className={className}>
+    <div style={stackStyle} className={className}>
       {children}
-    </View>
+    </div>
   );
 }
 

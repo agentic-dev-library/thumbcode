@@ -154,3 +154,11 @@ docs-site/.astro/
 .expo/
 expo-env.d.ts
 # @end expo-cli
+
+# Capacitor native build artifacts
+ios/App/Pods/
+ios/DerivedData/
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties

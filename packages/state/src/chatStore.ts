@@ -5,9 +5,8 @@
  * Supports multiple conversation threads with different agents.
  */
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { createJSONStorage, devtools, persist } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 // Message sender types
@@ -83,6 +82,7 @@ interface ChatState {
 
   // Message actions
   addMessage: (message: Omit<Message, 'id' | 'timestamp' | 'status'>) => string;
+  updateMessageContent: (messageId: string, threadId: string, content: string) => void;
   updateMessageStatus: (messageId: string, threadId: string, status: MessageStatus) => void;
   deleteMessage: (messageId: string, threadId: string) => void;
 
@@ -196,6 +196,17 @@ export const useChatStore = create<ChatState>()(
           return messageId;
         },
 
+        updateMessageContent: (messageId, threadId, content) =>
+          set((state) => {
+            const threadMessages = state.messages[threadId];
+            if (threadMessages) {
+              const message = threadMessages.find((m) => m.id === messageId);
+              if (message) {
+                message.content = content;
+              }
+            }
+          }),
+
         updateMessageStatus: (messageId, threadId, status) =>
           set((state) => {
             const threadMessages = state.messages[threadId];
@@ -255,7 +266,6 @@ export const useChatStore = create<ChatState>()(
       })),
       {
         name: 'thumbcode-chat-storage',
-        storage: createJSONStorage(() => AsyncStorage),
         // Limit persisted messages to prevent storage bloat
         partialize: (state) => ({
           threads: state.threads,

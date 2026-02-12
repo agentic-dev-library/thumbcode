@@ -5,9 +5,8 @@
  * Does NOT store sensitive credentials - those go in CredentialStore.
  */
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { createJSONStorage, devtools, persist } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 // Theme preference
@@ -191,7 +190,6 @@ export const useUserStore = create<UserState>()(
       })),
       {
         name: 'thumbcode-user-storage',
-        storage: createJSONStorage(() => AsyncStorage),
       }
     ),
     { name: 'UserStore' }

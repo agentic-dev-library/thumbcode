@@ -1,20 +1,16 @@
-import type { ComponentProps } from 'react';
-import type { Ionicons } from '@expo/vector-icons';
-
-export type IoniconName = ComponentProps<typeof Ionicons>['name'];
-
 /**
- * Semantic icon names for the UI package.
+ * Icon Map
  *
+ * Maps semantic icon names to Lucide icon component names.
  * This keeps the rest of the UI kit independent of a specific icon library.
  */
+
 export type IconName = 'back' | 'alertSuccess' | 'alertError' | 'alertWarning' | 'alertInfo';
 
-export const iconMap: Record<IconName, IoniconName> = {
-  back: 'arrow-back',
-  alertSuccess: 'checkmark-circle',
-  alertError: 'alert-circle',
-  alertWarning: 'warning',
-  alertInfo: 'information-circle',
+export const iconMap: Record<IconName, string> = {
+  back: 'ArrowLeft',
+  alertSuccess: 'CircleCheck',
+  alertError: 'CircleAlert',
+  alertWarning: 'TriangleAlert',
+  alertInfo: 'Info',
 };
-

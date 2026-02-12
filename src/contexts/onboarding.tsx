@@ -4,7 +4,6 @@
  * Provides onboarding state management across the app.
  */
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 const ONBOARDING_COMPLETE_KEY = 'thumbcode_onboarding_complete';
@@ -34,25 +33,20 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
 
   useEffect(() => {
-    const checkOnboarding = async () => {
-      try {
-        const value = await AsyncStorage.getItem(ONBOARDING_COMPLETE_KEY);
-        setHasCompletedOnboarding(value === 'true');
-      } catch {
-        // If storage fails, default to not completed
-        setHasCompletedOnboarding(false);
-      }
-      setIsLoading(false);
-    };
-    checkOnboarding();
+    try {
+      const value = localStorage.getItem(ONBOARDING_COMPLETE_KEY);
+      setHasCompletedOnboarding(value === 'true');
+    } catch {
+      setHasCompletedOnboarding(false);
+    }
+    setIsLoading(false);
   }, []);
 
   const completeOnboarding = useCallback(async () => {
     try {
-      await AsyncStorage.setItem(ONBOARDING_COMPLETE_KEY, 'true');
+      localStorage.setItem(ONBOARDING_COMPLETE_KEY, 'true');
       setHasCompletedOnboarding(true);
     } catch {
-      // Still update state even if storage fails
       setHasCompletedOnboarding(true);
     }
   }, []);

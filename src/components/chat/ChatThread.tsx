@@ -7,7 +7,7 @@
 
 import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@thumbcode/state';
 import { useCallback, useEffect, useRef } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { Text } from '@/components/ui';
 import { ChatService } from '@/services/chat';
 import { ChatMessage } from './ChatMessage';
 
@@ -36,19 +36,19 @@ function TypingIndicator({ senders }: { senders: string[] }) {
   const label = names.length === 1 ? `${names[0]} is typing` : `${names.join(', ')} are typing`;
 
   return (
-    <View className="flex-row items-center px-4 py-2">
-      <View className="flex-row mr-2">
-        <View className="w-2 h-2 bg-neutral-400 rounded-full mr-1" />
-        <View className="w-2 h-2 bg-neutral-500 rounded-full mr-1" />
-        <View className="w-2 h-2 bg-neutral-600 rounded-full" />
-      </View>
+    <div className="flex-row items-center px-4 py-2">
+      <div className="flex-row mr-2">
+        <div className="w-2 h-2 bg-neutral-400 rounded-full mr-1" />
+        <div className="w-2 h-2 bg-neutral-500 rounded-full mr-1" />
+        <div className="w-2 h-2 bg-neutral-600 rounded-full" />
+      </div>
       <Text className="text-xs text-neutral-400 font-body italic">{label}...</Text>
-    </View>
+    </div>
   );
 }
 
 export function ChatThread({ threadId }: Readonly<ChatThreadProps>) {
-  const flatListRef = useRef<FlatList>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Subscribe to messages and typing indicators
   const messages = useChatStore(selectThreadMessages(threadId));
@@ -64,42 +64,34 @@ export function ChatThread({ threadId }: Readonly<ChatThreadProps>) {
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
-    if (messages.length > 0) {
+    if (messages.length > 0 && scrollRef.current) {
       setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
+        scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
       }, 100);
     }
   }, [messages.length]);
 
   if (messages.length === 0) {
     return (
-      <View className="flex-1 items-center justify-center p-4">
+      <div className="flex-1 items-center justify-center p-4">
         <Text className="font-display text-lg text-neutral-400 text-center mb-2">
           Start the conversation
         </Text>
         <Text className="font-body text-sm text-neutral-500 text-center">
           Send a message to begin collaborating with AI agents
         </Text>
-      </View>
+      </div>
     );
   }
 
   return (
-    <View className="flex-1">
-      <FlatList
-        ref={flatListRef}
-        data={messages}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <ChatMessage message={item} onApprovalResponse={handleApprovalResponse} />
-        )}
-        contentContainerStyle={{ paddingHorizontal: 12, paddingVertical: 8 }}
-        showsVerticalScrollIndicator={false}
-        onContentSizeChange={() => {
-          flatListRef.current?.scrollToEnd({ animated: false });
-        }}
-      />
+    <div className="flex-1">
+      <div ref={scrollRef} style={{ overflowY: 'auto', flex: 1 }}>
+        {messages.map((item) => (
+          <ChatMessage key={item.id} message={item} onApprovalResponse={handleApprovalResponse} />
+        ))}
+      </div>
       <TypingIndicator senders={typingSenders} />
-    </View>
+    </div>
   );
 }

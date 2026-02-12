@@ -22,17 +22,17 @@ function mockCreateAsyncIterator(items: unknown[]) {
 }
 
 // Mock the AI SDKs
-jest.mock('@anthropic-ai/sdk', () => {
-  return jest.fn().mockImplementation(() => ({
-    messages: {
-      create: jest.fn().mockResolvedValue({
+vi.mock('@anthropic-ai/sdk', () => {
+  class MockAnthropic {
+    messages = {
+      create: vi.fn().mockResolvedValue({
         id: 'msg_123',
         content: [{ type: 'text', text: 'Task completed successfully.' }],
         model: 'claude-3-5-sonnet-20241022',
         stop_reason: 'end_turn',
         usage: { input_tokens: 100, output_tokens: 50 },
       }),
-      stream: jest.fn().mockImplementation(() => {
+      stream: vi.fn().mockImplementation(() => {
         const events = [
           { type: 'message_start' },
           { type: 'content_block_start', index: 0, content_block: { type: 'text' } },
@@ -42,7 +42,7 @@ jest.mock('@anthropic-ai/sdk', () => {
         ];
         return {
           ...mockCreateAsyncIterator(events),
-          finalMessage: jest.fn().mockResolvedValue({
+          finalMessage: vi.fn().mockResolvedValue({
             id: 'msg_123',
             content: [{ type: 'text', text: 'Done' }],
             model: 'claude-3-5-sonnet-20241022',
@@ -51,14 +51,16 @@ jest.mock('@anthropic-ai/sdk', () => {
           }),
         };
       }),
-    },
-  }));
+    };
+  }
+  return { __esModule: true, default: MockAnthropic };
 });
 
-jest.mock('openai', () => {
-  return jest.fn().mockImplementation(() => ({
-    chat: { completions: { create: jest.fn() } },
-  }));
+vi.mock('openai', () => {
+  class MockOpenAI {
+    chat = { completions: { create: vi.fn() } };
+  }
+  return { __esModule: true, default: MockOpenAI };
 });
 
 describe('AgentOrchestrator', () => {

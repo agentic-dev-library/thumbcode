@@ -1,18 +1,13 @@
-import { View, type ViewProps } from 'react-native';
 import { organicBorderRadius, organicShadow } from '@/lib/organic-styles';
 
 /** Props for the Card component */
-interface CardProps extends ViewProps {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Visual variant controlling background and shadow style */
   variant?: 'default' | 'elevated';
 }
 
 /**
- * Render a styled container View that applies variant-driven background, shadow, border, padding, and rounded corners to present content as a card.
- *
- * @param variant - Visual variant of the card: `"default"` uses a white background; `"elevated"` adds a neutral background and shadow.
- * @param className - Additional Tailwind-style class names to append to the card's classes.
- * @returns A React Native `View` element styled as a card containing the provided children.
+ * Render a styled container that applies variant-driven background, shadow, border, padding, and rounded corners.
  */
 export function Card({
   variant = 'default',
@@ -27,21 +22,21 @@ export function Card({
   }[variant];
 
   return (
-    <View
+    <div
       className={`
         ${variantClasses}
         p-4
         border border-neutral-700
         ${className}
       `}
-      style={[
-        organicBorderRadius.card,
-        variant === 'elevated' ? organicShadow.elevated : organicShadow.card,
-        style,
-      ]}
+      style={{
+        ...organicBorderRadius.card,
+        ...(variant === 'elevated' ? organicShadow.elevated : organicShadow.card),
+        ...style,
+      }}
       {...props}
     >
       {children}
-    </View>
+    </div>
   );
 }

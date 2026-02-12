@@ -4,11 +4,9 @@
  * Project name input and bottom action buttons for the create project flow.
  */
 
-import { ActivityIndicator, Pressable, View } from 'react-native';
 import { VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
-import { getColor } from '@/utils/design-tokens';
 
 interface ProjectFormHeaderProps {
   projectName: string;
@@ -49,26 +47,28 @@ export function ProjectFormActions({
   onCreate,
 }: Readonly<ProjectFormActionsProps>) {
   return (
-    <View
+    <div
       className="border-t border-neutral-800 px-6 py-4 flex-row gap-4"
       style={{ paddingBottom: bottomInset + 16 }}
     >
-      <Pressable
-        onPress={onSkip}
+      <button
+        type="button"
+        onClick={onSkip}
         className="flex-1 bg-neutral-800 py-4 active:bg-neutral-700"
         style={organicBorderRadius.cta}
       >
         <Text className="text-neutral-300 text-center">Skip for Now</Text>
-      </Pressable>
+      </button>
 
-      <Pressable
-        onPress={onCreate}
+      <button
+        type="button"
+        onClick={onCreate}
         disabled={!canCreate || isLoading}
         className={`flex-1 py-4 ${canCreate && !isLoading ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}
         style={organicBorderRadius.cta}
       >
         {isLoading ? (
-          <ActivityIndicator color={getColor('neutral', '50')} />
+          <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
         ) : (
           <Text
             weight="semibold"
@@ -77,7 +77,7 @@ export function ProjectFormActions({
             Create Project
           </Text>
         )}
-      </Pressable>
-    </View>
+      </button>
+    </div>
   );
 }

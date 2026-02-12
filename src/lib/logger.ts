@@ -54,10 +54,10 @@ class Logger {
 
   constructor(config: Partial<LoggerConfig> = {}) {
     this.config = {
-      minLevel: __DEV__ ? 'debug' : 'info',
+      minLevel: import.meta.env.DEV ? 'debug' : 'info',
       enableConsole: true,
       enableRemote: false,
-      environment: __DEV__ ? 'development' : 'production',
+      environment: import.meta.env.DEV ? 'development' : 'production',
       ...config,
     };
   }

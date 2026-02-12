@@ -1,16 +1,9 @@
 /**
  * Select Component
  *
- * A dropdown select input with organic styling.
- * Displays options in a modal on mobile.
- * Uses paint daube icons for brand consistency.
+ * A web-native <select>/<option> dropdown with organic styling.
+ * Replaces the React Native Modal-based select.
  */
-
-import { useState } from 'react';
-import { FlatList, Modal, Pressable, View } from 'react-native';
-import { ChevronDownIcon, SuccessIcon } from '@/components/icons';
-import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface SelectOption {
   value: string;
@@ -33,6 +26,10 @@ interface SelectProps {
   error?: string;
   /** Whether the select is disabled */
   disabled?: boolean;
+  /** Additional CSS class names */
+  className?: string;
+  /** Test identifier */
+  testID?: string;
 }
 
 export function Select({
@@ -43,102 +40,60 @@ export function Select({
   label,
   error,
   disabled = false,
+  className = '',
+  testID,
 }: Readonly<SelectProps>) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const selectedOption = options.find((opt) => opt.value === value);
   const hasError = Boolean(error);
 
-  const handleSelect = (optionValue: string) => {
-    onValueChange(optionValue);
-    setIsOpen(false);
-  };
+  const borderClass = hasError ? 'border-coral-500' : 'border-neutral-600';
 
   return (
-    <View className="w-full">
-      {label && <Text className="font-body text-sm text-neutral-300 mb-1.5">{label}</Text>}
-
-      <Pressable
-        onPress={() => !disabled && setIsOpen(true)}
-        disabled={disabled}
-        className={`flex-row items-center justify-between bg-neutral-800 px-4 py-3 border ${
-          hasError ? 'border-coral-500' : 'border-neutral-600'
-        } ${disabled ? 'opacity-50' : ''}`}
-        style={organicBorderRadius.input}
-        accessibilityRole="combobox"
-        accessibilityLabel={label || placeholder}
-        accessibilityState={{ expanded: isOpen, disabled }}
-        accessibilityHint="Double tap to open options"
-      >
-        <Text
-          className={`font-body flex-1 ${selectedOption ? 'text-white' : 'text-neutral-500'}`}
-          numberOfLines={1}
+    <div className="w-full">
+      {label && (
+        <label
+          htmlFor={testID || `select-${label}`}
+          className="block font-body text-sm text-neutral-300 mb-1.5"
         >
-          {selectedOption?.label || placeholder}
-        </Text>
-        <View className="ml-2">
-          <ChevronDownIcon size={16} color="warmGray" turbulence={0.15} />
-        </View>
-      </Pressable>
+          {label}
+        </label>
+      )}
 
-      {error && <Text className="font-body text-xs text-coral-400 mt-1">{error}</Text>}
+      <div className="relative">
+        <select
+          id={testID || (label ? `select-${label}` : undefined)}
+          value={value ?? ''}
+          onChange={(e) => onValueChange(e.target.value)}
+          disabled={disabled}
+          className={`w-full appearance-none bg-neutral-800 text-white font-body px-4 py-3 pr-10 border rounded-organic-input transition-colors disabled:opacity-50 focus:border-teal-500 focus:outline-none ${borderClass} ${!value ? 'text-neutral-500' : ''} ${className}`}
+          data-testid={testID}
+          aria-label={label || placeholder}
+          aria-invalid={hasError || undefined}
+        >
+          <option value="" disabled>
+            {placeholder}
+          </option>
+          {options.map((option) => (
+            <option key={option.value} value={option.value} disabled={option.disabled}>
+              {option.label}
+            </option>
+          ))}
+        </select>
 
-      <Modal
-        visible={isOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setIsOpen(false)}
-      >
-        <Pressable className="flex-1 justify-end bg-black/50" onPress={() => setIsOpen(false)}>
-          <Pressable onPress={(e) => e.stopPropagation()}>
-            <View
-              className="bg-surface m-4 max-h-80 overflow-hidden"
-              style={organicBorderRadius.modal}
-            >
-              <View className="p-4 border-b border-neutral-700">
-                <Text className="font-display text-lg text-white text-center">
-                  {label || 'Select Option'}
-                </Text>
-              </View>
+        {/* Custom chevron icon */}
+        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <svg
+            className="w-4 h-4 text-neutral-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </div>
 
-              <FlatList
-                data={options}
-                keyExtractor={(item) => item.value}
-                renderItem={({ item }) => (
-                  <Pressable
-                    onPress={() => !item.disabled && handleSelect(item.value)}
-                    disabled={item.disabled}
-                    className={`px-4 py-3 border-b border-neutral-800 ${
-                      item.value === value ? 'bg-teal-600/20' : ''
-                    } ${item.disabled ? 'opacity-50' : 'active:bg-neutral-700'}`}
-                  >
-                    <View className="flex-row items-center justify-between">
-                      <Text
-                        className={`font-body ${
-                          item.value === value ? 'text-teal-400' : 'text-white'
-                        }`}
-                      >
-                        {item.label}
-                      </Text>
-                      {item.value === value && (
-                        <SuccessIcon size={16} color="teal" turbulence={0.15} />
-                      )}
-                    </View>
-                  </Pressable>
-                )}
-                showsVerticalScrollIndicator={false}
-              />
-
-              <Pressable
-                onPress={() => setIsOpen(false)}
-                className="p-4 border-t border-neutral-700 bg-neutral-800/50"
-              >
-                <Text className="font-body text-neutral-400 text-center">Cancel</Text>
-              </Pressable>
-            </View>
-          </Pressable>
-        </Pressable>
-      </Modal>
-    </View>
+      {error && <p className="font-body text-xs text-coral-400 mt-1">{error}</p>}
+    </div>
   );
 }

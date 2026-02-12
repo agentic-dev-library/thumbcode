@@ -2,10 +2,8 @@
  * Radio Component
  *
  * A radio button group for single-select options.
- * Supports horizontal and vertical layouts with organic styling.
+ * Web-native replacement using standard radio inputs with custom styling.
  */
-
-import { Pressable, Text, View } from 'react-native';
 
 interface RadioOption {
   value: string;
@@ -29,12 +27,14 @@ interface RadioGroupProps {
   error?: string;
   /** Size variant */
   size?: 'sm' | 'md' | 'lg';
+  /** Group name for the radio inputs */
+  name?: string;
 }
 
 const sizeStyles = {
-  sm: { outer: 16, inner: 8, label: 'text-sm' },
-  md: { outer: 20, inner: 10, label: 'text-base' },
-  lg: { outer: 24, inner: 12, label: 'text-lg' },
+  sm: { outer: 'w-4 h-4', inner: 'w-2 h-2', labelClass: 'text-sm' },
+  md: { outer: 'w-5 h-5', inner: 'w-2.5 h-2.5', labelClass: 'text-base' },
+  lg: { outer: 'w-6 h-6', inner: 'w-3 h-3', labelClass: 'text-lg' },
 };
 
 export function RadioGroup({
@@ -45,62 +45,57 @@ export function RadioGroup({
   label,
   error,
   size = 'md',
+  name,
 }: Readonly<RadioGroupProps>) {
   const styles = sizeStyles[size];
+  const groupName = name || `radio-group-${label || 'default'}`;
 
   return (
-    <View className="w-full">
-      {label && <Text className="font-body text-sm text-neutral-300 mb-2">{label}</Text>}
+    <fieldset className="w-full border-none p-0 m-0" aria-label={label}>
+      {label && <legend className="font-body text-sm text-neutral-300 mb-2">{label}</legend>}
 
-      <View className={direction === 'horizontal' ? 'flex-row flex-wrap gap-4' : 'gap-3'}>
+      <div className={direction === 'horizontal' ? 'flex flex-wrap gap-4' : 'flex flex-col gap-3'}>
         {options.map((option) => {
           const isSelected = value === option.value;
           const isDisabled = option.disabled;
 
           return (
-            <Pressable
+            <label
               key={option.value}
-              onPress={() => !isDisabled && onValueChange(option.value)}
-              disabled={isDisabled}
-              className={`flex-row items-start ${isDisabled ? 'opacity-50' : ''}`}
-              accessibilityRole="radio"
-              accessibilityState={{ selected: isSelected, disabled: isDisabled }}
+              className={`inline-flex items-start cursor-pointer ${isDisabled ? 'opacity-50 pointer-events-none' : ''}`}
             >
-              <View
-                className={`items-center justify-center border-2 ${
+              <input
+                type="radio"
+                name={groupName}
+                value={option.value}
+                checked={isSelected}
+                onChange={() => onValueChange(option.value)}
+                disabled={isDisabled}
+                className="sr-only"
+              />
+              <span
+                className={`flex items-center justify-center border-2 rounded-full shrink-0 transition-colors ${styles.outer} ${
                   isSelected ? 'border-teal-500' : 'border-neutral-500'
                 }`}
-                style={{
-                  width: styles.outer,
-                  height: styles.outer,
-                  borderRadius: styles.outer / 2,
-                }}
               >
-                {isSelected && (
-                  <View
-                    className="bg-teal-500"
-                    style={{
-                      width: styles.inner,
-                      height: styles.inner,
-                      borderRadius: styles.inner / 2,
-                    }}
-                  />
-                )}
-              </View>
-              <View className="ml-3 flex-1">
-                <Text className={`font-body text-white ${styles.label}`}>{option.label}</Text>
+                {isSelected && <span className={`bg-teal-500 rounded-full ${styles.inner}`} />}
+              </span>
+              <div className="ml-3 flex-1">
+                <span className={`block font-body text-white ${styles.labelClass}`}>
+                  {option.label}
+                </span>
                 {option.description && (
-                  <Text className="font-body text-sm text-neutral-400 mt-0.5">
+                  <span className="block font-body text-sm text-neutral-400 mt-0.5">
                     {option.description}
-                  </Text>
+                  </span>
                 )}
-              </View>
-            </Pressable>
+              </div>
+            </label>
           );
         })}
-      </View>
+      </div>
 
-      {error && <Text className="font-body text-xs text-coral-400 mt-2">{error}</Text>}
-    </View>
+      {error && <p className="font-body text-xs text-coral-400 mt-2">{error}</p>}
+    </fieldset>
   );
 }

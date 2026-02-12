@@ -1,199 +1,88 @@
-import { Text } from 'react-native';
-import { create } from 'react-test-renderer';
+import { render, screen } from '@testing-library/react';
+import { ActionSheet, BottomSheet } from '../BottomSheet';
 
-// Mock the component to bypass RN Modal rendering in jest-expo web
-jest.mock('../BottomSheet', () => {
-  const { View, Text, Pressable } = require('react-native');
-
-  function BottomSheet({
-    visible,
-    onClose,
-    title,
-    children,
-    showHandle = true,
-  }: {
-    visible: boolean;
-    onClose: () => void;
-    title?: string;
-    children: React.ReactNode;
-    height?: string | number;
-    scrollable?: boolean;
-    showHandle?: boolean;
-  }) {
-    if (!visible) return null;
-    return (
-      <View testID="bottom-sheet">
-        {showHandle && <View testID="drag-handle" />}
-        {title && (
-          <View>
-            <Text>{title}</Text>
-            <Pressable onPress={onClose} accessibilityRole="button" accessibilityLabel="Close">
-              <Text>CloseIcon</Text>
-            </Pressable>
-          </View>
-        )}
-        <View>{children}</View>
-      </View>
-    );
-  }
-
-  function ActionSheet({
-    visible,
-    onClose,
-    title,
-    message,
-    options,
-    showCancel = true,
-    cancelText = 'Cancel',
-  }: {
-    visible: boolean;
-    onClose: () => void;
-    title?: string;
-    message?: string;
-    options: Array<{
-      label: string;
-      onPress: () => void;
-      destructive?: boolean;
-      disabled?: boolean;
-    }>;
-    showCancel?: boolean;
-    cancelText?: string;
-  }) {
-    if (!visible) return null;
-    return (
-      <View testID="action-sheet">
-        {(title || message) && (
-          <View>
-            {title && <Text accessibilityRole="header">{title}</Text>}
-            {message && <Text>{message}</Text>}
-          </View>
-        )}
-        {options.map((option) => (
-          <Pressable
-            key={option.label}
-            onPress={() => {
-              option.onPress();
-              onClose();
-            }}
-            disabled={option.disabled}
-            accessibilityRole="button"
-            accessibilityLabel={option.label}
-          >
-            <Text>{option.label}</Text>
-          </Pressable>
-        ))}
-        {showCancel && (
-          <Pressable onPress={onClose} accessibilityRole="button" accessibilityLabel={cancelText}>
-            <Text>{cancelText}</Text>
-          </Pressable>
-        )}
-      </View>
-    );
-  }
-
-  return { BottomSheet, ActionSheet };
-});
-
-jest.mock('@/components/icons', () => ({
-  CloseIcon: () => 'CloseIcon',
+vi.mock('lucide-react', () => ({
+  X: () => <span data-testid="x-icon">X</span>,
 }));
-
-jest.mock('@/lib/organic-styles', () => ({
-  organicBorderRadius: { modal: {}, button: {} },
-}));
-
-const { BottomSheet, ActionSheet } = require('../BottomSheet');
 
 describe('BottomSheet', () => {
   it('renders children when visible', () => {
-    const tree = create(
-      <BottomSheet visible onClose={jest.fn()}>
-        <Text>Sheet content</Text>
+    render(
+      <BottomSheet visible onClose={vi.fn()}>
+        <span>Sheet content</span>
       </BottomSheet>
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Sheet content');
+    expect(screen.getByText('Sheet content')).toBeTruthy();
   });
 
   it('renders title when provided', () => {
-    const tree = create(
-      <BottomSheet visible onClose={jest.fn()} title="Settings">
-        <Text>Content</Text>
+    render(
+      <BottomSheet visible onClose={vi.fn()} title="Settings">
+        <span>Content</span>
       </BottomSheet>
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Settings');
+    expect(screen.getByText('Settings')).toBeTruthy();
   });
 
-  it('renders close icon when title is present', () => {
-    const tree = create(
-      <BottomSheet visible onClose={jest.fn()} title="Settings">
-        <Text>Content</Text>
+  it('renders close button when title is present', () => {
+    render(
+      <BottomSheet visible onClose={vi.fn()} title="Settings">
+        <span>Content</span>
       </BottomSheet>
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('CloseIcon');
+    expect(screen.getByLabelText('Close')).toBeTruthy();
   });
 
   it('does not render when not visible', () => {
-    const tree = create(
-      <BottomSheet visible={false} onClose={jest.fn()}>
-        <Text>Hidden</Text>
+    render(
+      <BottomSheet visible={false} onClose={vi.fn()}>
+        <span>Hidden</span>
       </BottomSheet>
     );
-    expect(tree.toJSON()).toBeNull();
+    expect(screen.queryByText('Hidden')).toBeNull();
   });
 });
 
 describe('ActionSheet', () => {
   const mockOptions = [
-    { label: 'Edit', onPress: jest.fn() },
-    { label: 'Delete', onPress: jest.fn(), destructive: true },
-    { label: 'Archive', onPress: jest.fn(), disabled: true },
+    { label: 'Edit', onPress: vi.fn() },
+    { label: 'Delete', onPress: vi.fn(), destructive: true },
+    { label: 'Archive', onPress: vi.fn(), disabled: true },
   ];
 
   it('renders action options', () => {
-    const tree = create(<ActionSheet visible onClose={jest.fn()} options={mockOptions} />);
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Edit');
-    expect(json).toContain('Delete');
-    expect(json).toContain('Archive');
+    render(<ActionSheet visible onClose={vi.fn()} options={mockOptions} />);
+    expect(screen.getByText('Edit')).toBeTruthy();
+    expect(screen.getByText('Delete')).toBeTruthy();
+    expect(screen.getByText('Archive')).toBeTruthy();
   });
 
   it('renders title and message', () => {
-    const tree = create(
+    render(
       <ActionSheet
         visible
-        onClose={jest.fn()}
+        onClose={vi.fn()}
         options={mockOptions}
         title="Choose action"
         message="What would you like to do?"
       />
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Choose action');
-    expect(json).toContain('What would you like to do?');
+    expect(screen.getByText('Choose action')).toBeTruthy();
+    expect(screen.getByText('What would you like to do?')).toBeTruthy();
   });
 
   it('renders cancel button by default', () => {
-    const tree = create(<ActionSheet visible onClose={jest.fn()} options={mockOptions} />);
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Cancel');
+    render(<ActionSheet visible onClose={vi.fn()} options={mockOptions} />);
+    expect(screen.getByText('Cancel')).toBeTruthy();
   });
 
   it('uses custom cancel text', () => {
-    const tree = create(
-      <ActionSheet visible onClose={jest.fn()} options={mockOptions} cancelText="Dismiss" />
-    );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Dismiss');
+    render(<ActionSheet visible onClose={vi.fn()} options={mockOptions} cancelText="Dismiss" />);
+    expect(screen.getByText('Dismiss')).toBeTruthy();
   });
 
   it('hides cancel when showCancel is false', () => {
-    const tree = create(
-      <ActionSheet visible onClose={jest.fn()} options={mockOptions} showCancel={false} />
-    );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).not.toContain('Cancel');
+    render(<ActionSheet visible onClose={vi.fn()} options={mockOptions} showCancel={false} />);
+    expect(screen.queryByText('Cancel')).toBeNull();
   });
 });

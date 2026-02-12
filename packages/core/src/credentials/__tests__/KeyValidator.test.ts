@@ -4,20 +4,20 @@
  * Tests for API credential validation against provider endpoints.
  */
 
-jest.mock('../../api/api', () => ({
-  secureFetch: jest.fn(),
+vi.mock('../../api/api', () => ({
+  secureFetch: vi.fn(),
 }));
 
 import { KeyValidator } from '../KeyValidator';
 import { secureFetch } from '../../api/api';
 
-const mockSecureFetch = secureFetch as jest.MockedFunction<typeof secureFetch>;
+const mockSecureFetch = secureFetch as Mock;
 
 describe('KeyValidator', () => {
   let validator: KeyValidator;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     validator = new KeyValidator();
   });
 

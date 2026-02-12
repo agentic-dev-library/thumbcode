@@ -6,7 +6,7 @@
  * - KeyStorage: secure storage, retrieval, biometric auth
  */
 
-import type * as LocalAuthentication from 'expo-local-authentication';
+import type { BiometryType } from '@aparajita/capacitor-biometric-auth';
 import { KeyStorage } from './KeyStorage';
 import { KeyValidator } from './KeyValidator';
 import type {
@@ -32,7 +32,7 @@ class CredentialServiceClass {
     return this.storage.isBiometricAvailable();
   }
 
-  async getBiometricTypes(): Promise<LocalAuthentication.AuthenticationType[]> {
+  async getBiometricTypes(): Promise<BiometryType[]> {
     return this.storage.getBiometricTypes();
   }
 

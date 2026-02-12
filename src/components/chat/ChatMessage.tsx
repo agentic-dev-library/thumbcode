@@ -6,7 +6,6 @@
  */
 
 import type { ApprovalMessage, Message } from '@thumbcode/state';
-import { View } from 'react-native';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 import { ApprovalCard } from './ApprovalCard';
@@ -52,60 +51,60 @@ export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessag
   if (message.contentType === 'approval_request') {
     const approvalMessage = message as ApprovalMessage;
     return (
-      <View className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
+      <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
         <ApprovalCard
           message={approvalMessage}
           onApprove={() => onApprovalResponse?.(message.id, true)}
           onReject={() => onApprovalResponse?.(message.id, false)}
         />
         <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
-      </View>
+      </div>
     );
   }
 
   // Render code message
   if (message.contentType === 'code') {
     return (
-      <View className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
-        <View className="max-w-[90%]">
-          <View className="flex-row items-center mb-1">
-            <View className={`px-2 py-0.5 ${senderInfo.bgColor}`} style={organicBorderRadius.pill}>
+      <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
+        <div className="max-w-[90%]">
+          <div className="flex-row items-center mb-1">
+            <div className={`px-2 py-0.5 ${senderInfo.bgColor}`} style={organicBorderRadius.pill}>
               <Text size="xs" className={senderInfo.textColor}>
                 {senderInfo.name}
               </Text>
-            </View>
-          </View>
+            </div>
+          </div>
           <CodeBlock
             code={message.content}
             language={(message.metadata?.language as string) || 'text'}
             filename={message.metadata?.filename as string | undefined}
           />
           <Text className="text-xs text-neutral-500 mt-1">{formatTime(message.timestamp)}</Text>
-        </View>
-      </View>
+        </div>
+      </div>
     );
   }
 
   // Render text message
   return (
-    <View className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
-      <View className="max-w-[80%]">
+    <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
+      <div className="max-w-[80%]">
         {!isUser && (
-          <View className="flex-row items-center mb-1">
-            <View className={`px-2 py-0.5 ${senderInfo.bgColor}`} style={organicBorderRadius.pill}>
+          <div className="flex-row items-center mb-1">
+            <div className={`px-2 py-0.5 ${senderInfo.bgColor}`} style={organicBorderRadius.pill}>
               <Text size="xs" className={senderInfo.textColor}>
                 {senderInfo.name}
               </Text>
-            </View>
-          </View>
+            </div>
+          </div>
         )}
-        <View
+        <div
           className={`p-3 ${isUser ? 'bg-teal-600' : 'bg-surface-elevated'}`}
           style={isUser ? organicBorderRadius.chatBubbleUser : organicBorderRadius.chatBubbleAgent}
         >
           <Text className={isUser ? 'text-white' : 'text-neutral-200'}>{message.content}</Text>
-        </View>
-        <View className={`flex-row items-center mt-1 ${isUser ? 'justify-end' : ''}`}>
+        </div>
+        <div className={`flex-row items-center mt-1 ${isUser ? 'justify-end' : ''}`}>
           <Text className="text-xs text-neutral-500">{formatTime(message.timestamp)}</Text>
           {message.status === 'sending' && (
             <Text className="text-xs text-neutral-500 ml-1">• Sending...</Text>
@@ -113,8 +112,8 @@ export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessag
           {message.status === 'failed' && (
             <Text className="text-xs text-coral-400 ml-1">• Failed</Text>
           )}
-        </View>
-      </View>
-    </View>
+        </div>
+      </div>
+    </div>
   );
 }

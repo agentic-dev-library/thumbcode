@@ -1,14 +1,5 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { Select } from '../Select';
-
-jest.mock('@/components/icons', () => ({
-  ChevronDownIcon: () => 'ChevronDownIcon',
-  SuccessIcon: () => 'SuccessIcon',
-}));
-
-jest.mock('@/lib/organic-styles', () => ({
-  organicBorderRadius: { input: {}, modal: {}, badge: {} },
-}));
 
 const mockOptions = [
   { value: 'react', label: 'React' },
@@ -18,71 +9,56 @@ const mockOptions = [
 
 describe('Select', () => {
   it('renders with placeholder when no value is selected', () => {
-    const { toJSON } = render(
-      <Select value={null} onValueChange={jest.fn()} options={mockOptions} />
-    );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Select an option');
+    render(<Select value={null} onValueChange={vi.fn()} options={mockOptions} />);
+    expect(screen.getByText('Select an option')).toBeTruthy();
   });
 
   it('renders with custom placeholder', () => {
-    const { toJSON } = render(
+    render(
       <Select
         value={null}
-        onValueChange={jest.fn()}
+        onValueChange={vi.fn()}
         options={mockOptions}
         placeholder="Choose framework"
       />
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Choose framework');
+    expect(screen.getByText('Choose framework')).toBeTruthy();
   });
 
-  it('displays selected value label', () => {
-    const { toJSON } = render(
-      <Select value="react" onValueChange={jest.fn()} options={mockOptions} />
-    );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('React');
+  it('displays all options', () => {
+    render(<Select value="react" onValueChange={vi.fn()} options={mockOptions} />);
+    expect(screen.getByText('React')).toBeTruthy();
+    expect(screen.getByText('Vue')).toBeTruthy();
+    expect(screen.getByText('Angular')).toBeTruthy();
   });
 
   it('renders label text', () => {
-    const { toJSON } = render(
-      <Select value={null} onValueChange={jest.fn()} options={mockOptions} label="Framework" />
-    );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Framework');
+    render(<Select value={null} onValueChange={vi.fn()} options={mockOptions} label="Framework" />);
+    expect(screen.getByText('Framework')).toBeTruthy();
   });
 
   it('renders error message', () => {
-    const { toJSON } = render(
+    render(
       <Select
         value={null}
-        onValueChange={jest.fn()}
+        onValueChange={vi.fn()}
         options={mockOptions}
         error="Selection required"
       />
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Selection required');
+    expect(screen.getByText('Selection required')).toBeTruthy();
   });
 
-  it('renders combobox trigger that can be pressed', () => {
-    const { UNSAFE_getByProps } = render(
-      <Select value={null} onValueChange={jest.fn()} options={mockOptions} label="Framework" />
-    );
-    const combobox = UNSAFE_getByProps({ accessibilityRole: 'combobox' });
-    expect(combobox).toBeTruthy();
-    // Press should not throw
-    fireEvent.press(combobox);
+  it('calls onValueChange when option is selected', () => {
+    const onValueChange = vi.fn();
+    render(<Select value={null} onValueChange={onValueChange} options={mockOptions} />);
+    const select = screen.getByRole('combobox');
+    fireEvent.change(select, { target: { value: 'vue' } });
+    expect(onValueChange).toHaveBeenCalledWith('vue');
   });
 
-  it('does not open modal when disabled', () => {
-    const { toJSON } = render(
-      <Select value={null} onValueChange={jest.fn()} options={mockOptions} disabled />
-    );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('"aria-disabled":true');
-    expect(json).toContain('"role":"combobox"');
+  it('renders disabled state correctly', () => {
+    render(<Select value={null} onValueChange={vi.fn()} options={mockOptions} disabled />);
+    expect(screen.getByRole('combobox')).toBeDisabled();
   });
 });

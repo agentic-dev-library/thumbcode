@@ -7,7 +7,6 @@
  */
 
 import { useMemo, useState } from 'react';
-import { View } from 'react-native';
 import { organicBorderRadius } from '@/lib/organic-styles';
 import { TreeNode } from './TreeNode';
 
@@ -74,10 +73,9 @@ export function FileTree({
   }, [data]);
 
   return (
-    <View
-      accessibilityRole="list"
-      accessibilityLabel="File tree"
-      className="bg-surface overflow-hidden"
+    <ul
+      aria-label="File tree"
+      className="bg-surface overflow-hidden list-none p-0 m-0"
       style={organicBorderRadius.card}
     >
       {sortedData.map((node) => (
@@ -92,6 +90,6 @@ export function FileTree({
           showStatus={showStatus}
         />
       ))}
-    </View>
+    </ul>
   );
 }

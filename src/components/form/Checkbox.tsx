@@ -2,14 +2,8 @@
  * Checkbox Component
  *
  * A checkbox input with label support and organic styling.
- * Follows accessibility best practices.
- * Uses paint daube icons for brand consistency.
+ * Web-native replacement using a hidden checkbox input with custom visuals.
  */
-
-import { Pressable, View } from 'react-native';
-import { SuccessIcon } from '@/components/icons';
-import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface CheckboxProps {
   /** Whether the checkbox is checked */
@@ -27,9 +21,9 @@ interface CheckboxProps {
 }
 
 const sizeStyles = {
-  sm: { box: 16, icon: 10, label: 'text-sm' },
-  md: { box: 20, icon: 12, label: 'text-base' },
-  lg: { box: 24, icon: 14, label: 'text-lg' },
+  sm: { box: 'w-4 h-4', icon: 'w-2.5 h-2.5', labelClass: 'text-sm' },
+  md: { box: 'w-5 h-5', icon: 'w-3 h-3', labelClass: 'text-base' },
+  lg: { box: 'w-6 h-6', icon: 'w-3.5 h-3.5', labelClass: 'text-lg' },
 };
 
 export function Checkbox({
@@ -43,29 +37,44 @@ export function Checkbox({
   const styles = sizeStyles[size];
 
   return (
-    <Pressable
-      onPress={() => !disabled && onCheckedChange(!checked)}
-      disabled={disabled}
-      className={`flex-row items-start ${disabled ? 'opacity-50' : ''}`}
-      accessibilityRole="checkbox"
-      accessibilityState={{ checked, disabled }}
+    <label
+      className={`inline-flex items-start cursor-pointer ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
     >
-      <View
-        className={`items-center justify-center border-2 ${
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={() => onCheckedChange(!checked)}
+        disabled={disabled}
+        className="sr-only"
+        aria-checked={checked}
+      />
+      <span
+        className={`flex items-center justify-center border-2 rounded-organic-badge shrink-0 transition-colors ${styles.box} ${
           checked ? 'bg-teal-600 border-teal-600' : 'bg-transparent border-neutral-500'
         }`}
-        style={[organicBorderRadius.badge, { width: styles.box, height: styles.box }]}
       >
-        {checked && <SuccessIcon size={styles.icon} color="warmGray" turbulence={0.15} />}
-      </View>
+        {checked && (
+          <svg
+            className={`text-white ${styles.icon}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+          </svg>
+        )}
+      </span>
       {(label || description) && (
-        <View className="ml-3 flex-1">
-          {label && <Text className={`font-body text-white ${styles.label}`}>{label}</Text>}
-          {description && (
-            <Text className="font-body text-sm text-neutral-400 mt-0.5">{description}</Text>
+        <div className="ml-3 flex-1">
+          {label && (
+            <span className={`block font-body text-white ${styles.labelClass}`}>{label}</span>
           )}
-        </View>
+          {description && (
+            <span className="block font-body text-sm text-neutral-400 mt-0.5">{description}</span>
+          )}
+        </div>
       )}
-    </Pressable>
+    </label>
   );
 }

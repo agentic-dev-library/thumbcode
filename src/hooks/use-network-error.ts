@@ -2,9 +2,9 @@
  * Network Error Hook
  *
  * Provides network status monitoring and error handling for components.
+ * Uses navigator.onLine and online/offline events for web.
  */
 
-import NetInfo, { type NetInfoState } from '@react-native-community/netinfo';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { type AppError, createAppError, ErrorCodes, handleError } from '@/lib/error-handler';
 import { logger } from '@/lib/logger';
@@ -30,47 +30,47 @@ export interface NetworkErrorState {
  */
 export function useNetworkError(): NetworkErrorState {
   const [network, setNetwork] = useState<NetworkState>({
-    isConnected: true,
-    isInternetReachable: true,
+    isConnected: typeof navigator !== 'undefined' ? navigator.onLine : true,
+    isInternetReachable: typeof navigator !== 'undefined' ? navigator.onLine : true,
     type: null,
   });
   const [error, setErrorState] = useState<AppError | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Use a ref to track previous connection state to avoid stale closure issues
   const prevIsConnectedRef = useRef<boolean | null>(true);
 
-  // Subscribe to network state changes
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state: NetInfoState) => {
-      // Log network state changes using ref (not state) to avoid stale closure
-      if (state.isConnected === false && prevIsConnectedRef.current !== false) {
-        logger.warn('Device went offline', { type: state.type });
-      } else if (state.isConnected === true && prevIsConnectedRef.current === false) {
-        logger.info('Device came back online', { type: state.type });
+    const handleOnline = () => {
+      if (prevIsConnectedRef.current === false) {
+        logger.info('Device came back online');
       }
-
-      // Update the ref with current connection state
-      prevIsConnectedRef.current = state.isConnected;
-
+      prevIsConnectedRef.current = true;
       setNetwork({
-        isConnected: state.isConnected,
-        isInternetReachable: state.isInternetReachable,
-        type: state.type,
+        isConnected: true,
+        isInternetReachable: true,
+        type: 'unknown',
       });
-    });
+    };
 
-    // Get initial state
-    NetInfo.fetch().then((state) => {
-      prevIsConnectedRef.current = state.isConnected;
+    const handleOffline = () => {
+      if (prevIsConnectedRef.current !== false) {
+        logger.warn('Device went offline');
+      }
+      prevIsConnectedRef.current = false;
       setNetwork({
-        isConnected: state.isConnected,
-        isInternetReachable: state.isInternetReachable,
-        type: state.type,
+        isConnected: false,
+        isInternetReachable: false,
+        type: 'none',
       });
-    });
+    };
 
-    return unsubscribe;
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
   const isOffline = network.isConnected === false || network.isInternetReachable === false;
@@ -89,7 +89,6 @@ export function useNetworkError(): NetworkErrorState {
    */
   const retryIfOnline = useCallback(
     async <T>(fn: () => Promise<T>): Promise<T | null> => {
-      // Check if offline
       if (isOffline) {
         const offlineError = createAppError('Device is offline', {
           code: ErrorCodes.NETWORK_OFFLINE,
@@ -131,18 +130,21 @@ export function useNetworkError(): NetworkErrorState {
  * Simple hook to just check if device is online
  */
 export function useIsOnline(): boolean {
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline, setIsOnline] = useState(
+    typeof navigator !== 'undefined' ? navigator.onLine : true
+  );
 
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      setIsOnline(state.isConnected === true && state.isInternetReachable !== false);
-    });
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
 
-    NetInfo.fetch().then((state) => {
-      setIsOnline(state.isConnected === true && state.isInternetReachable !== false);
-    });
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
 
-    return unsubscribe;
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
   return isOnline;

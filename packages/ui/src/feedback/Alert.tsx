@@ -1,4 +1,3 @@
-import { View } from 'react-native';
 import { Icon } from '../icons/Icon';
 import { Text } from '../primitives/Text';
 
@@ -30,20 +29,20 @@ export function Alert({ message, type, title }: AlertProps) {
   const accessibilityLabel = title ? `${title}, ${message}` : message;
 
   return (
-    <View
-      accessibilityRole="alert"
-      accessibilityLabel={accessibilityLabel}
+    <div
+      role="alert"
+      aria-label={accessibilityLabel}
       className={`${config.bg} p-4 flex-row items-center rounded-[0.6rem_0.8rem_0.7rem_0.9rem]`}
     >
       <Icon name={config.icon} size={24} color="white" />
-      <View className="ml-3 flex-1">
+      <div className="ml-3 flex-1">
         {title && (
           <Text weight="semibold" className="text-white mb-1">
             {title}
           </Text>
         )}
         <Text className="text-white">{message}</Text>
-      </View>
-    </View>
+      </div>
+    </div>
   );
 }

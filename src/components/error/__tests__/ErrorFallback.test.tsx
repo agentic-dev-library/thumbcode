@@ -1,10 +1,7 @@
-import { render } from '@testing-library/react-native';
+import { render } from '@testing-library/react';
 import { ErrorFallback } from '../ErrorFallback';
 
 // Mock Linking
-jest.mock('react-native/Libraries/Linking/Linking', () => ({
-  openURL: jest.fn(),
-}));
 
 describe('ErrorFallback', () => {
   it('renders without crashing', () => {

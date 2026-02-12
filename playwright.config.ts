@@ -36,7 +36,7 @@ export default defineConfig({
   },
 
   webServer: {
-    command: `python3 scripts/fix-web-export.py dist && pnpm exec serve dist --listen ${port}`,
+    command: `pnpm preview --port ${port}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 180 * 1000,

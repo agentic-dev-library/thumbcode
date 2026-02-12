@@ -6,8 +6,6 @@
  * Uses paint daube icons for brand consistency.
  */
 
-import { Alert, Linking, Pressable, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ErrorIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
@@ -37,8 +35,7 @@ export function ErrorFallback({
   title = 'Something went wrong',
   message = "We're sorry, but something unexpected happened. Please try again.",
 }: Readonly<ErrorFallbackProps>) {
-  const insets = useSafeAreaInsets();
-  const isDev = __DEV__;
+  const isDev = import.meta.env.DEV;
 
   const handleReportIssue = () => {
     if (onReportIssue) {
@@ -52,35 +49,28 @@ export function ErrorFallback({
       );
       const url = `https://github.com/agentic-dev-library/thumbcode/issues/new?title=${issueTitle}&body=${issueBody}`;
 
-      Linking.openURL(url).catch((err) => {
-        console.error('Failed to open issue URL:', err);
-        Alert.alert('Report Issue', 'Could not open GitHub issues page.');
-      });
+      window.open(url, '_blank');
     }
   };
 
   return (
-    <View
-      className="flex-1 bg-charcoal"
-      style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
-    >
+    <div className="flex-1 bg-charcoal">
       <Container padding="lg" className="flex-1 justify-center">
         <VStack spacing="lg" align="center">
           {/* Error Icon */}
-          <View
+          <div
             className="w-20 h-20 bg-coral-500/20 items-center justify-center"
             style={organicBorderRadius.hero}
           >
             <ErrorIcon size={40} color="coral" turbulence={0.25} />
-          </View>
+          </div>
 
           {/* Error Title */}
           <Text
             size="xl"
             weight="bold"
             className="text-white text-center font-display"
-            testID="error-title"
-            accessibilityRole="header"
+            data-testid="error-title"
           >
             {title}
           </Text>
@@ -90,7 +80,7 @@ export function ErrorFallback({
 
           {/* Dev-only Error Details */}
           {isDev && error && (
-            <View className="bg-surface p-4 w-full max-w-sm" style={organicBorderRadius.card}>
+            <div className="bg-surface p-4 w-full max-w-sm" style={organicBorderRadius.card}>
               <Text size="sm" weight="semibold" className="text-coral-500 mb-2">
                 Debug Info
               </Text>
@@ -102,31 +92,37 @@ export function ErrorFallback({
                   {componentStack}
                 </Text>
               )}
-            </View>
+            </div>
           )}
 
           {/* Retry Button */}
           {onRetry && (
-            <Pressable
-              onPress={onRetry}
+            <button
+              type="button"
+              onClick={onRetry}
               className="bg-coral-500 px-8 py-3 active:bg-coral-600"
               style={organicBorderRadius.cta}
             >
               <Text weight="semibold" className="text-white">
                 Try Again
               </Text>
-            </Pressable>
+            </button>
           )}
 
           {/* Secondary Action */}
-          <Pressable className="py-2" onPress={handleReportIssue} testID="report-issue-button">
+          <button
+            type="button"
+            className="py-2"
+            onClick={handleReportIssue}
+            data-testid="report-issue-button"
+          >
             <Text size="sm" className="text-teal-500">
               Report Issue
             </Text>
-          </Pressable>
+          </button>
         </VStack>
       </Container>
-    </View>
+    </div>
   );
 }
 
@@ -143,19 +139,19 @@ export function CompactErrorFallback({
   onRetry,
 }: Readonly<CompactErrorFallbackProps>) {
   return (
-    <View className="bg-surface/50 p-4" style={organicBorderRadius.card}>
+    <div className="bg-surface/50 p-4" style={organicBorderRadius.card}>
       <VStack spacing="sm" align="center">
         <Text size="sm" className="text-neutral-400">
           {message}
         </Text>
         {onRetry && (
-          <Pressable onPress={onRetry}>
+          <button type="button" onClick={onRetry}>
             <Text size="sm" className="text-teal-500">
               Tap to retry
             </Text>
-          </Pressable>
+          </button>
         )}
       </VStack>
-    </View>
+    </div>
   );
 }

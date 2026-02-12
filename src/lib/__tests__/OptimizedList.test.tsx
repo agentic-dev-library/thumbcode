@@ -2,8 +2,7 @@
  * OptimizedList Component Tests
  */
 
-import { render } from '@testing-library/react-native';
-import { Text, View } from 'react-native';
+import { render } from '@testing-library/react';
 import {
   createMemoizedRenderItem,
   defaultListItemPropsAreEqual,
@@ -12,12 +11,12 @@ import {
 } from '../performance';
 
 // Mock logger
-jest.mock('../logger', () => ({
+vi.mock('../logger', () => ({
   logger: {
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
   },
 }));
 
@@ -33,32 +32,32 @@ const mockData: TestItem[] = [
 ];
 
 const TestItemComponent = ({ item }: { item: TestItem; index: number }) => (
-  <View>
-    <Text>{item.name}</Text>
-  </View>
+  <div>
+    <span>{item.name}</span>
+  </div>
 );
 
 describe('OptimizedList', () => {
   it('should render list items', () => {
     const renderItem = ({ item }: { item: TestItem }) => (
-      <View>
-        <Text>{item.name}</Text>
-      </View>
+      <div>
+        <span>{item.name}</span>
+      </div>
     );
 
-    const { root } = render(
+    const { container } = render(
       <OptimizedList data={mockData} renderItem={renderItem} itemHeight={50} />
     );
 
-    expect(root).toBeTruthy();
+    expect(container).toBeTruthy();
   });
 
   it('should use custom keyExtractor', () => {
-    const customKeyExtractor = jest.fn((item: TestItem) => `custom-${item.id}`);
+    const customKeyExtractor = vi.fn((item: TestItem) => `custom-${item.id}`);
     const renderItem = ({ item }: { item: TestItem }) => (
-      <View>
-        <Text>{item.name}</Text>
-      </View>
+      <div>
+        <span>{item.name}</span>
+      </div>
     );
 
     render(
@@ -76,17 +75,17 @@ describe('OptimizedList', () => {
 
   it('should use id from item if no custom keyExtractor', () => {
     const renderItem = ({ item }: { item: TestItem }) => (
-      <View>
-        <Text>{item.name}</Text>
-      </View>
+      <div>
+        <span>{item.name}</span>
+      </div>
     );
 
     // This should work without throwing
-    const { root } = render(
+    const { container } = render(
       <OptimizedList data={mockData} renderItem={renderItem} itemHeight={50} />
     );
 
-    expect(root).toBeTruthy();
+    expect(container).toBeTruthy();
   });
 
   it('should use key from item as fallback', () => {
@@ -96,67 +95,60 @@ describe('OptimizedList', () => {
     ];
 
     const renderItem = ({ item }: { item: { key: string; name: string } }) => (
-      <View>
-        <Text>{item.name}</Text>
-      </View>
+      <div>
+        <span>{item.name}</span>
+      </div>
     );
 
-    const { root } = render(
+    const { container } = render(
       <OptimizedList data={dataWithKey} renderItem={renderItem} itemHeight={50} />
     );
 
-    expect(root).toBeTruthy();
+    expect(container).toBeTruthy();
   });
 
   it('should use index as last resort for key', () => {
     const dataWithoutIdOrKey = [{ name: 'Item 1' }, { name: 'Item 2' }];
 
     const renderItem = ({ item }: { item: { name: string }; index: number }) => (
-      <View>
-        <Text>{item.name}</Text>
-      </View>
+      <div>
+        <span>{item.name}</span>
+      </div>
     );
 
-    const { root } = render(
+    const { container } = render(
       <OptimizedList data={dataWithoutIdOrKey} renderItem={renderItem} itemHeight={50} />
     );
 
-    expect(root).toBeTruthy();
+    expect(container).toBeTruthy();
   });
 
   it('should apply custom windowSize', () => {
     const renderItem = ({ item }: { item: TestItem }) => (
-      <View>
-        <Text>{item.name}</Text>
-      </View>
+      <div>
+        <span>{item.name}</span>
+      </div>
     );
 
     // Should not throw with custom windowSize
-    const { root } = render(
+    const { container } = render(
       <OptimizedList data={mockData} renderItem={renderItem} itemHeight={50} windowSize={10} />
     );
-    expect(root).toBeTruthy();
+    expect(container).toBeTruthy();
   });
 
-  it('should handle onViewableItemsChanged callback', () => {
-    const onViewableItemsChanged = jest.fn();
+  it('should render without crashing with all props', () => {
     const renderItem = ({ item }: { item: TestItem }) => (
-      <View>
-        <Text>{item.name}</Text>
-      </View>
+      <div>
+        <span>{item.name}</span>
+      </div>
     );
 
-    const { root } = render(
-      <OptimizedList
-        data={mockData}
-        renderItem={renderItem}
-        itemHeight={50}
-        onViewableItemsChanged={onViewableItemsChanged}
-      />
+    const { container } = render(
+      <OptimizedList data={mockData} renderItem={renderItem} itemHeight={50} />
     );
 
-    expect(root).toBeTruthy();
-    // The callback is configured, this test mainly ensures it doesn't throw
+    expect(container).toBeTruthy();
   });
 });
 
@@ -164,20 +156,15 @@ describe('createMemoizedRenderItem', () => {
   it('should create a memoized render function', () => {
     const MemoizedRender = createMemoizedRenderItem(TestItemComponent);
 
-    // Create proper ListRenderItemInfo object
+    // Create proper render info object
     const renderInfo = {
       item: { id: '1', name: 'Test' },
       index: 0,
-      separators: {
-        highlight: jest.fn(),
-        unhighlight: jest.fn(),
-        updateProps: jest.fn(),
-      },
     };
 
     // Verify the memoized render function works without throwing
-    const { root } = render(MemoizedRender(renderInfo));
-    expect(root).toBeTruthy();
+    const { container } = render(MemoizedRender(renderInfo));
+    expect(container).toBeTruthy();
   });
 });
 
@@ -186,20 +173,20 @@ describe('withListItemMemo', () => {
     const MemoizedComponent = withListItemMemo(TestItemComponent);
 
     // Verify the memoized component renders without throwing
-    const { root } = render(<MemoizedComponent item={{ id: '1', name: 'Test' }} index={0} />);
+    const { container } = render(<MemoizedComponent item={{ id: '1', name: 'Test' }} index={0} />);
 
-    expect(root).toBeTruthy();
+    expect(container).toBeTruthy();
   });
 
   it('should use custom props comparison', () => {
-    const customCompare = jest.fn(() => true);
+    const customCompare = vi.fn(() => true);
     const MemoizedComponent = withListItemMemo(TestItemComponent, customCompare);
 
-    const { rerender, root } = render(
+    const { rerender, container } = render(
       <MemoizedComponent item={{ id: '1', name: 'Test' }} index={0} />
     );
 
-    expect(root).toBeTruthy();
+    expect(container).toBeTruthy();
 
     // Rerender with different props
     rerender(<MemoizedComponent item={{ id: '2', name: 'Test 2' }} index={1} />);

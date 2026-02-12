@@ -5,27 +5,27 @@
  * user info retrieval, and sign out.
  */
 
-jest.mock('../../credentials/CredentialService', () => ({
+vi.mock('../../credentials/CredentialService', () => ({
   CredentialService: {
-    retrieve: jest.fn(),
-    validateCredential: jest.fn(),
-    delete: jest.fn(),
+    retrieve: vi.fn(),
+    validateCredential: vi.fn(),
+    delete: vi.fn(),
   },
 }));
 
 import { TokenManager } from '../TokenManager';
 import { CredentialService } from '../../credentials/CredentialService';
 
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
-const mockCredentialService = CredentialService as jest.Mocked<typeof CredentialService>;
+const mockCredentialService = CredentialService as Mocked<typeof CredentialService>;
 
 describe('TokenManager', () => {
   let manager: TokenManager;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     manager = new TokenManager();
   });
 

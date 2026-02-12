@@ -2,24 +2,21 @@
  * Organic Style Constants
  *
  * Centralized style values for the P3 "Warm Technical" design system.
- * NativeWind doesn't support shorthand border-radius, so we define
- * individual corner values here for consistency across components.
- *
- * These values match the organic asymmetric aesthetic defined in CLAUDE.md
+ * These values define the organic asymmetric aesthetic from CLAUDE.md
+ * using standard CSS properties for web.
  */
 
-import type { TextStyle, ViewStyle } from 'react-native';
-import { getColor } from '@/utils/design-tokens';
+import type React from 'react';
 
 /**
  * Shared input border radius values
- * Used by both View containers and TextInput components
+ * Used by both containers and text input components
  */
-const inputBorderRadiusValues = {
-  borderTopLeftRadius: 8, // 0.5rem
-  borderTopRightRadius: 10, // 0.625rem
-  borderBottomRightRadius: 8, // 0.5rem
-  borderBottomLeftRadius: 12, // 0.75rem
+const inputBorderRadiusValues: React.CSSProperties = {
+  borderTopLeftRadius: 8,
+  borderTopRightRadius: 10,
+  borderBottomRightRadius: 8,
+  borderBottomLeftRadius: 12,
 };
 
 /**
@@ -29,36 +26,36 @@ const inputBorderRadiusValues = {
 export const organicBorderRadius = {
   /** Cards, containers, elevated surfaces */
   card: {
-    borderTopLeftRadius: 16, // 1rem
-    borderTopRightRadius: 12, // 0.75rem
-    borderBottomRightRadius: 20, // 1.25rem
-    borderBottomLeftRadius: 8, // 0.5rem
-  } as ViewStyle,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 8,
+  } as React.CSSProperties,
 
   /** Primary and secondary buttons */
   button: {
-    borderTopLeftRadius: 8, // 0.5rem
-    borderTopRightRadius: 12, // 0.75rem
-    borderBottomRightRadius: 10, // 0.625rem
-    borderBottomLeftRadius: 14, // 0.875rem
-  } as ViewStyle,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 10,
+    borderBottomLeftRadius: 14,
+  } as React.CSSProperties,
 
   /** Small badges, tags, chips */
   badge: {
-    borderTopLeftRadius: 6, // 0.375rem
-    borderTopRightRadius: 8, // 0.5rem
-    borderBottomRightRadius: 10, // 0.625rem
-    borderBottomLeftRadius: 4, // 0.25rem
-  } as ViewStyle,
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 10,
+    borderBottomLeftRadius: 4,
+  } as React.CSSProperties,
 
   /** Small pills (sender tags, compact chips) */
-  pill: inputBorderRadiusValues as ViewStyle,
+  pill: inputBorderRadiusValues,
 
-  /** Text inputs, form fields (for View containers) */
-  input: inputBorderRadiusValues as ViewStyle,
+  /** Text inputs, form fields */
+  input: inputBorderRadiusValues,
 
-  /** Text inputs (for TextInput components - typed as TextStyle for compatibility) */
-  textInput: inputBorderRadiusValues as TextStyle,
+  /** Text inputs (alias for consistency) */
+  textInput: inputBorderRadiusValues,
 
   /** Chat bubbles (text messages) */
   chatBubbleUser: {
@@ -66,13 +63,13 @@ export const organicBorderRadius = {
     borderTopRightRadius: 6,
     borderBottomRightRadius: 16,
     borderBottomLeftRadius: 14,
-  } as ViewStyle,
+  } as React.CSSProperties,
   chatBubbleAgent: {
     borderTopLeftRadius: 6,
     borderTopRightRadius: 16,
     borderBottomRightRadius: 16,
     borderBottomLeftRadius: 14,
-  } as ViewStyle,
+  } as React.CSSProperties,
 
   /** Code blocks and monospace containers */
   codeBlock: {
@@ -80,7 +77,7 @@ export const organicBorderRadius = {
     borderTopRightRadius: 10,
     borderBottomRightRadius: 12,
     borderBottomLeftRadius: 8,
-  } as ViewStyle,
+  } as React.CSSProperties,
 
   /** Hero elements, large icons, feature images */
   hero: {
@@ -88,7 +85,7 @@ export const organicBorderRadius = {
     borderTopRightRadius: 24,
     borderBottomRightRadius: 32,
     borderBottomLeftRadius: 20,
-  } as ViewStyle,
+  } as React.CSSProperties,
 
   /** Large CTA buttons */
   cta: {
@@ -96,7 +93,7 @@ export const organicBorderRadius = {
     borderTopRightRadius: 16,
     borderBottomRightRadius: 12,
     borderBottomLeftRadius: 18,
-  } as ViewStyle,
+  } as React.CSSProperties,
 
   /** Modal containers */
   modal: {
@@ -104,7 +101,7 @@ export const organicBorderRadius = {
     borderTopRightRadius: 16,
     borderBottomRightRadius: 20,
     borderBottomLeftRadius: 14,
-  } as ViewStyle,
+  } as React.CSSProperties,
 
   /** Toast notifications */
   toast: {
@@ -112,38 +109,26 @@ export const organicBorderRadius = {
     borderTopRightRadius: 12,
     borderBottomRightRadius: 16,
     borderBottomLeftRadius: 10,
-  } as ViewStyle,
+  } as React.CSSProperties,
 } as const;
 
 /**
  * Organic shadow configurations for dark mode surfaces
- * Uses subtle asymmetric shadows with brand color tints
+ * Uses subtle asymmetric shadows with brand color tints (CSS box-shadow)
  */
 export const organicShadow = {
   /** Standard card shadow */
   card: {
-    shadowColor: getColor('charcoal'),
-    shadowOffset: { width: 2, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
-  } as ViewStyle,
+    boxShadow: `2px 4px 8px rgba(21, 24, 32, 0.08)`,
+  } as React.CSSProperties,
 
   /** Elevated surfaces, modals */
   elevated: {
-    shadowColor: getColor('charcoal'),
-    shadowOffset: { width: 4, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    elevation: 6,
-  } as ViewStyle,
+    boxShadow: `4px 8px 16px rgba(21, 24, 32, 0.12)`,
+  } as React.CSSProperties,
 
   /** Floating elements, FABs */
   float: {
-    shadowColor: getColor('charcoal'),
-    shadowOffset: { width: 8, height: 16 },
-    shadowOpacity: 0.16,
-    shadowRadius: 32,
-    elevation: 12,
-  } as ViewStyle,
+    boxShadow: `8px 16px 32px rgba(21, 24, 32, 0.16)`,
+  } as React.CSSProperties,
 } as const;

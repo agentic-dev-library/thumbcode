@@ -5,37 +5,44 @@
  * and session management using mocked SecureStore and fetch.
  */
 
+import { BiometricAuth } from '@aparajita/capacitor-biometric-auth';
 import { CredentialService } from '@thumbcode/core';
-import * as LocalAuthentication from 'expo-local-authentication';
-import * as SecureStore from 'expo-secure-store';
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+import type { Mock } from 'vitest';
 
-// In-memory store to simulate SecureStore
+// In-memory store to simulate Capacitor Secure Storage
 const secureStoreMap = new Map<string, string>();
 
 beforeEach(() => {
   secureStoreMap.clear();
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 
-  // Wire up SecureStore mocks to an in-memory map
-  (SecureStore.setItemAsync as jest.Mock).mockImplementation(async (key: string, value: string) => {
-    secureStoreMap.set(key, value);
-  });
-  (SecureStore.getItemAsync as jest.Mock).mockImplementation(
-    async (key: string) => secureStoreMap.get(key) ?? null
+  // Wire up SecureStoragePlugin mocks to an in-memory map
+  (SecureStoragePlugin.set as Mock).mockImplementation(
+    async ({ key, value }: { key: string; value: string }) => {
+      secureStoreMap.set(key, value);
+    }
   );
-  (SecureStore.deleteItemAsync as jest.Mock).mockImplementation(async (key: string) => {
+  (SecureStoragePlugin.get as Mock).mockImplementation(async ({ key }: { key: string }) => {
+    const value = secureStoreMap.get(key);
+    if (value === undefined) throw new Error('Key not found');
+    return { value };
+  });
+  (SecureStoragePlugin.remove as Mock).mockImplementation(async ({ key }: { key: string }) => {
     secureStoreMap.delete(key);
+    return { value: true };
   });
 
   // Default biometric mocks
-  (LocalAuthentication.hasHardwareAsync as jest.Mock).mockResolvedValue(true);
-  (LocalAuthentication.isEnrolledAsync as jest.Mock).mockResolvedValue(true);
-  (LocalAuthentication.authenticateAsync as jest.Mock).mockResolvedValue({
-    success: true,
+  (BiometricAuth.checkBiometry as Mock).mockResolvedValue({
+    isAvailable: true,
+    biometryType: 1,
+    reason: '',
+    code: 0,
+    strongBiometryIsAvailable: true,
+    biometryTypes: [1],
   });
-  (LocalAuthentication.supportedAuthenticationTypesAsync as jest.Mock).mockResolvedValue([
-    LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION,
-  ]);
+  (BiometricAuth.authenticate as Mock).mockResolvedValue(undefined);
 });
 
 describe('Auth Flow Integration', () => {
@@ -134,23 +141,21 @@ describe('Auth Flow Integration', () => {
       expect(available).toBe(true);
     });
 
-    it('reports biometric unavailable when no hardware', async () => {
-      (LocalAuthentication.hasHardwareAsync as jest.Mock).mockResolvedValue(false);
-      const available = await CredentialService.isBiometricAvailable();
-      expect(available).toBe(false);
-    });
-
-    it('reports biometric unavailable when not enrolled', async () => {
-      (LocalAuthentication.isEnrolledAsync as jest.Mock).mockResolvedValue(false);
+    it('reports biometric unavailable when not available', async () => {
+      (BiometricAuth.checkBiometry as Mock).mockResolvedValue({
+        isAvailable: false,
+        biometryType: 0,
+        reason: 'No biometry available',
+        code: 0,
+        strongBiometryIsAvailable: false,
+        biometryTypes: [],
+      });
       const available = await CredentialService.isBiometricAvailable();
       expect(available).toBe(false);
     });
 
     it('blocks storage when biometric auth fails', async () => {
-      (LocalAuthentication.authenticateAsync as jest.Mock).mockResolvedValue({
-        success: false,
-        error: 'user_cancel',
-      });
+      (BiometricAuth.authenticate as Mock).mockRejectedValue(new Error('user_cancel'));
 
       const result = await CredentialService.store('anthropic', 'sk-ant-test-key-bio', {
         requireBiometric: true,
@@ -177,10 +182,7 @@ describe('Auth Flow Integration', () => {
       });
 
       // Then attempt retrieval with biometric (but auth fails)
-      (LocalAuthentication.authenticateAsync as jest.Mock).mockResolvedValue({
-        success: false,
-        error: 'user_cancel',
-      });
+      (BiometricAuth.authenticate as Mock).mockRejectedValue(new Error('user_cancel'));
 
       const retrieved = await CredentialService.retrieve('anthropic', {
         requireBiometric: true,

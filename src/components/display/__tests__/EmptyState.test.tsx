@@ -1,129 +1,103 @@
-import { Text } from 'react-native';
-import { act, create } from 'react-test-renderer';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { EmptyState, ErrorState, NoResults } from '../EmptyState';
 
-jest.mock('@/components/icons', () => ({
-  InboxIcon: () => 'InboxIcon',
-  ErrorIcon: () => 'ErrorIcon',
-  SearchIcon: () => 'SearchIcon',
+vi.mock('@/components/icons', () => ({
+  InboxIcon: () => <span data-testid="inbox-icon">InboxIcon</span>,
+  ErrorIcon: () => <span data-testid="error-icon">ErrorIcon</span>,
+  SearchIcon: () => <span data-testid="search-icon">SearchIcon</span>,
 }));
 
-jest.mock('@/lib/organic-styles', () => ({
+vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { button: {} },
 }));
 
 describe('EmptyState', () => {
   it('renders title', () => {
-    const tree = create(<EmptyState title="No projects yet" />);
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('No projects yet');
+    render(<EmptyState title="No projects yet" />);
+    expect(screen.getByText('No projects yet')).toBeTruthy();
   });
 
   it('renders description', () => {
-    const tree = create(
-      <EmptyState title="No data" description="Create a project to get started" />
-    );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Create a project to get started');
+    render(<EmptyState title="No data" description="Create a project to get started" />);
+    expect(screen.getByText('Create a project to get started')).toBeTruthy();
   });
 
   it('renders action button', () => {
-    const onPress = jest.fn();
-    const tree = create(
-      <EmptyState title="No projects" action={{ label: 'Create Project', onPress }} />
-    );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Create Project');
+    const onPress = vi.fn();
+    render(<EmptyState title="No projects" action={{ label: 'Create Project', onPress }} />);
+    expect(screen.getByText('Create Project')).toBeTruthy();
   });
 
   it('calls action onPress when pressed', () => {
-    const onPress = jest.fn();
-    const tree = create(
-      <EmptyState title="No projects" action={{ label: 'Create Project', onPress }} />
-    );
-    const buttons = tree.root.findAll(
-      (node) =>
-        node.props.accessibilityLabel === 'Create Project' &&
-        node.props.accessibilityRole === 'button'
-    );
-    expect(buttons.length).toBeGreaterThan(0);
-    act(() => buttons[0].props.onPress());
+    const onPress = vi.fn();
+    render(<EmptyState title="No projects" action={{ label: 'Create Project', onPress }} />);
+    fireEvent.click(screen.getByLabelText('Create Project'));
     expect(onPress).toHaveBeenCalled();
   });
 
   it('renders secondary action', () => {
-    const tree = create(
-      <EmptyState
-        title="No results"
-        secondaryAction={{ label: 'Learn More', onPress: jest.fn() }}
-      />
+    render(
+      <EmptyState title="No results" secondaryAction={{ label: 'Learn More', onPress: vi.fn() }} />
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Learn More');
+    expect(screen.getByText('Learn More')).toBeTruthy();
   });
 
   it('renders children', () => {
-    const tree = create(
+    render(
       <EmptyState title="Custom content">
-        <Text>Extra content</Text>
+        <span>Extra content</span>
       </EmptyState>
     );
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Extra content');
+    expect(screen.getByText('Extra content')).toBeTruthy();
   });
 
   it('renders with different sizes', () => {
-    const sm = create(<EmptyState title="Small" size="sm" />);
-    const lg = create(<EmptyState title="Large" size="lg" />);
-    expect(sm.toJSON()).toBeTruthy();
-    expect(lg.toJSON()).toBeTruthy();
+    const { unmount } = render(<EmptyState title="Small" size="sm" />);
+    expect(screen.getByText('Small')).toBeTruthy();
+    unmount();
+
+    render(<EmptyState title="Large" size="lg" />);
+    expect(screen.getByText('Large')).toBeTruthy();
   });
 });
 
 describe('ErrorState', () => {
   it('renders default title and message', () => {
-    const tree = create(<ErrorState />);
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Oops!');
-    expect(json).toContain('Something went wrong');
+    render(<ErrorState />);
+    expect(screen.getByText('Oops!')).toBeTruthy();
+    expect(screen.getByText('Something went wrong. Please try again.')).toBeTruthy();
   });
 
   it('renders custom message', () => {
-    const tree = create(<ErrorState message="Network error" />);
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Network error');
+    render(<ErrorState message="Network error" />);
+    expect(screen.getByText('Network error')).toBeTruthy();
   });
 
   it('renders retry button when onRetry is provided', () => {
-    const onRetry = jest.fn();
-    const tree = create(<ErrorState onRetry={onRetry} />);
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Try Again');
+    const onRetry = vi.fn();
+    render(<ErrorState onRetry={onRetry} />);
+    expect(screen.getByText('Try Again')).toBeTruthy();
   });
 });
 
 describe('NoResults', () => {
   it('renders default title', () => {
-    const tree = create(<NoResults />);
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('No Results');
+    render(<NoResults />);
+    expect(screen.getByText('No Results')).toBeTruthy();
   });
 
   it('renders query in description', () => {
-    const tree = create(<NoResults query="react native" />);
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('react native');
+    render(<NoResults query="react native" />);
+    expect(screen.getByText(/react native/)).toBeTruthy();
   });
 
   it('renders clear action when onClear is provided', () => {
-    const tree = create(<NoResults onClear={jest.fn()} />);
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Clear Search');
+    render(<NoResults onClear={vi.fn()} />);
+    expect(screen.getByText('Clear Search')).toBeTruthy();
   });
 
   it('renders custom message', () => {
-    const tree = create(<NoResults message="Nothing here" />);
-    const json = JSON.stringify(tree.toJSON());
-    expect(json).toContain('Nothing here');
+    render(<NoResults message="Nothing here" />);
+    expect(screen.getByText('Nothing here')).toBeTruthy();
   });
 });
