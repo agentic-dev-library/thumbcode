@@ -44,14 +44,15 @@ function formatRelativeTime(timestamp: string): string {
 }
 
 function getSenderInfo(sender: Message['sender']) {
-  const senderMap: Record<Message['sender'], { name: string; bgColor: string; textColor: string }> = {
-    user: { name: 'You', bgColor: 'bg-teal-600', textColor: 'text-white' },
-    architect: { name: 'Architect', bgColor: 'bg-coral-500', textColor: 'text-white' },
-    implementer: { name: 'Implementer', bgColor: 'bg-gold-500', textColor: 'text-charcoal' },
-    reviewer: { name: 'Reviewer', bgColor: 'bg-teal-500', textColor: 'text-white' },
-    tester: { name: 'Tester', bgColor: 'bg-neutral-600', textColor: 'text-white' },
-    system: { name: 'System', bgColor: 'bg-neutral-700', textColor: 'text-neutral-300' },
-  };
+  const senderMap: Record<Message['sender'], { name: string; bgColor: string; textColor: string }> =
+    {
+      user: { name: 'You', bgColor: 'bg-teal-600', textColor: 'text-white' },
+      architect: { name: 'Architect', bgColor: 'bg-coral-500', textColor: 'text-white' },
+      implementer: { name: 'Implementer', bgColor: 'bg-gold-500', textColor: 'text-charcoal' },
+      reviewer: { name: 'Reviewer', bgColor: 'bg-teal-500', textColor: 'text-white' },
+      tester: { name: 'Tester', bgColor: 'bg-neutral-600', textColor: 'text-white' },
+      system: { name: 'System', bgColor: 'bg-neutral-700', textColor: 'text-neutral-300' },
+    };
   return senderMap[sender] || senderMap.system;
 }
 
@@ -303,15 +304,15 @@ function ChatMessageView({ message, onApprovalResponse }: Readonly<ChatMessageVi
             </span>
           </div>
         )}
-        <div
-          className={`p-3 ${isUser ? 'bg-teal-600' : 'bg-surface-elevated'} ${bubbleRadius}`}
-        >
+        <div className={`p-3 ${isUser ? 'bg-teal-600' : 'bg-surface-elevated'} ${bubbleRadius}`}>
           <p className={`font-body ${isUser ? 'text-white' : 'text-neutral-200'}`}>
             {message.content}
           </p>
         </div>
         <div className={`flex items-center mt-1 ${isUser ? 'justify-end' : ''}`}>
-          <span className="text-xs font-body text-neutral-500">{formatTime(message.timestamp)}</span>
+          <span className="text-xs font-body text-neutral-500">
+            {formatTime(message.timestamp)}
+          </span>
           {message.status === 'sending' && (
             <span className="text-xs font-body text-neutral-500 ml-1">&bull; Sending...</span>
           )}
@@ -391,9 +392,7 @@ function ChatInputBar({ threadId }: Readonly<ChatInputBarProps>) {
         aria-label="Send"
       >
         <Send size={16} />
-        <span className="font-body font-semibold text-sm">
-          {isSending ? '...' : 'Send'}
-        </span>
+        <span className="font-body font-semibold text-sm">{isSending ? '...' : 'Send'}</span>
       </button>
     </div>
   );

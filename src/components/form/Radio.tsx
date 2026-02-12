@@ -52,15 +52,9 @@ export function RadioGroup({
 
   return (
     <fieldset className="w-full border-none p-0 m-0" role="radiogroup" aria-label={label}>
-      {label && (
-        <legend className="font-body text-sm text-neutral-300 mb-2">{label}</legend>
-      )}
+      {label && <legend className="font-body text-sm text-neutral-300 mb-2">{label}</legend>}
 
-      <div
-        className={
-          direction === 'horizontal' ? 'flex flex-wrap gap-4' : 'flex flex-col gap-3'
-        }
-      >
+      <div className={direction === 'horizontal' ? 'flex flex-wrap gap-4' : 'flex flex-col gap-3'}>
         {options.map((option) => {
           const isSelected = value === option.value;
           const isDisabled = option.disabled;
@@ -84,9 +78,7 @@ export function RadioGroup({
                   isSelected ? 'border-teal-500' : 'border-neutral-500'
                 }`}
               >
-                {isSelected && (
-                  <span className={`bg-teal-500 rounded-full ${styles.inner}`} />
-                )}
+                {isSelected && <span className={`bg-teal-500 rounded-full ${styles.inner}`} />}
               </span>
               <div className="ml-3 flex-1">
                 <span className={`block font-body text-white ${styles.labelClass}`}>
@@ -103,9 +95,7 @@ export function RadioGroup({
         })}
       </div>
 
-      {error && (
-        <p className="font-body text-xs text-coral-400 mt-2">{error}</p>
-      )}
+      {error && <p className="font-body text-xs text-coral-400 mt-2">{error}</p>}
     </fieldset>
   );
 }

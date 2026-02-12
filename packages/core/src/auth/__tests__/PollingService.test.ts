@@ -15,7 +15,7 @@ vi.mock('@thumbcode/config', () => ({
   },
 }));
 
-vi.mock('../../credentials/CredentialService', () => ({
+vi.mock('../../credentials', () => ({
   CredentialService: {
     store: vi.fn().mockResolvedValue({ isValid: true }),
   },
@@ -168,7 +168,7 @@ describe('PollingService', () => {
     });
 
     it('should store token via CredentialService on success', async () => {
-      const { CredentialService } = require('../../credentials/CredentialService');
+      const { CredentialService } = await import('../../credentials');
 
       mockFetch.mockResolvedValueOnce({
         json: () => Promise.resolve({

@@ -7,6 +7,7 @@
 
 import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@thumbcode/state';
 import { useCallback, useEffect, useRef } from 'react';
+import { Text } from '@/components/ui';
 import { ChatService } from '@/services/chat';
 import { ChatMessage } from './ChatMessage';
 

@@ -108,7 +108,8 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
       {/* Action buttons - only shown when pending */}
       {isPending && (
         <div className="flex-row justify-end space-x-2 pt-2 border-t border-neutral-700">
-          <button type="button"
+          <button
+            type="button"
             onClick={onReject}
             className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
             style={organicBorderRadius.button}
@@ -118,7 +119,8 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
           >
             <Text className="font-body text-sm text-neutral-200">Reject</Text>
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={onApprove}
             className="px-4 py-2 bg-teal-600 active:bg-teal-700 ml-2"
             style={organicBorderRadius.button}

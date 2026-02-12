@@ -1,10 +1,11 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { ChatInput } from '../ChatInput';
 
-// Add document stub for TextInput
-if (typeof document === 'undefined') {
-  (global as Record<string, unknown>).document = { createElement: () => ({}) };
-}
+vi.mock('@/components/ui', () => ({
+  Text: ({ children, ...props }: { children?: React.ReactNode; className?: string }) => (
+    <span {...props}>{children}</span>
+  ),
+}));
 
 vi.mock('@/lib/organic-styles', () => ({
   organicBorderRadius: { textInput: {}, button: {} },
@@ -22,32 +23,27 @@ vi.mock('@/services/chat', () => ({
 
 describe('ChatInput', () => {
   it('renders with default placeholder', () => {
-    const { toJSON } = render(<ChatInput threadId="thread-1" />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Type a message...');
+    render(<ChatInput threadId="thread-1" />);
+    expect(screen.getByPlaceholderText('Type a message...')).toBeTruthy();
   });
 
   it('renders with custom placeholder', () => {
-    const { toJSON } = render(<ChatInput threadId="thread-1" placeholder="Ask the architect..." />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Ask the architect...');
+    render(<ChatInput threadId="thread-1" placeholder="Ask the architect..." />);
+    expect(screen.getByPlaceholderText('Ask the architect...')).toBeTruthy();
   });
 
   it('renders send button', () => {
-    const { toJSON } = render(<ChatInput threadId="thread-1" />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Send');
+    render(<ChatInput threadId="thread-1" />);
+    expect(screen.getByText('Send')).toBeTruthy();
   });
 
   it('renders message input with accessibility label', () => {
-    const { toJSON } = render(<ChatInput threadId="thread-1" />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Message input');
+    render(<ChatInput threadId="thread-1" />);
+    expect(screen.getByLabelText('Message input')).toBeTruthy();
   });
 
   it('renders send button with accessibility attributes', () => {
-    const { toJSON } = render(<ChatInput threadId="thread-1" />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('"aria-label":"Send"');
+    render(<ChatInput threadId="thread-1" />);
+    expect(screen.getByLabelText('Send')).toBeTruthy();
   });
 });

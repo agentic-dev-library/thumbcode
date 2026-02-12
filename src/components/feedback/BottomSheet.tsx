@@ -5,9 +5,9 @@
  * Web-native implementation using CSS transforms and transitions.
  */
 
+import { X } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
-import { X } from 'lucide-react';
 
 interface BottomSheetProps {
   /** Whether the sheet is visible */
@@ -157,9 +157,7 @@ export function ActionSheet({
               {title}
             </h3>
           )}
-          {message && (
-            <p className="font-body text-sm text-neutral-400 text-center">{message}</p>
-          )}
+          {message && <p className="font-body text-sm text-neutral-400 text-center">{message}</p>}
         </div>
       )}
 

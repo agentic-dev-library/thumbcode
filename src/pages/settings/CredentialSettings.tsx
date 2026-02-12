@@ -10,19 +10,8 @@
  * in a future update.
  */
 
-import {
-  selectCredentialByProvider,
-  useCredentialStore,
-  useUserStore,
-} from '@thumbcode/state';
-import {
-  ArrowLeft,
-  Link as LinkIcon,
-  Shield,
-  Check,
-  X,
-  Loader2,
-} from 'lucide-react';
+import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@thumbcode/state';
+import { ArrowLeft, Check, Link as LinkIcon, Loader2, Shield, X } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -77,11 +66,7 @@ function ApiKeyInput({
           }`}
           data-testid={`save-${label.toLowerCase().replace(/\s+/g, '-')}`}
         >
-          {isSaving ? (
-            <Loader2 size={16} className="animate-spin" />
-          ) : (
-            'Save'
-          )}
+          {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Save'}
         </button>
       </div>
       {error && (
@@ -119,11 +104,7 @@ export function CredentialSettings() {
   };
 
   const handleGitHubDisconnect = () => {
-    if (
-      window.confirm(
-        'Disconnect GitHub? You will need to reconnect to use ThumbCode.',
-      )
-    ) {
+    if (window.confirm('Disconnect GitHub? You will need to reconnect to use ThumbCode.')) {
       if (githubCredential) {
         removeCredential(githubCredential.id);
         setGitHubProfile(null);
@@ -142,7 +123,9 @@ export function CredentialSettings() {
     try {
       // TODO: Wire to web-compatible credential validation and storage
       // For now, just show feedback that saving is not yet supported on web.
-      throw new Error('Credential storage is not yet available on web. This will be enabled in a future update.');
+      throw new Error(
+        'Credential storage is not yet available on web. This will be enabled in a future update.'
+      );
     } catch (error) {
       setSaveError({
         type,

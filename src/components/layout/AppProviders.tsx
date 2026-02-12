@@ -21,9 +21,7 @@ interface AppProvidersProps {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <ErrorBoundary>
-      <OnboardingProvider>
-        {children}
-      </OnboardingProvider>
+      <OnboardingProvider>{children}</OnboardingProvider>
     </ErrorBoundary>
   );
 }

@@ -6,9 +6,9 @@
  * Supports different sizes and footer actions.
  */
 
+import { X } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useEffect, useRef } from 'react';
-import { X } from 'lucide-react';
 
 interface ModalProps {
   /** Whether the modal is visible */
@@ -146,7 +146,8 @@ export function ConfirmDialog({
   cancelText = 'Cancel',
   variant = 'default',
 }: Readonly<ConfirmDialogProps>) {
-  const confirmColor = variant === 'destructive' ? 'bg-coral-500 hover:bg-coral-600' : 'bg-teal-600 hover:bg-teal-700';
+  const confirmColor =
+    variant === 'destructive' ? 'bg-coral-500 hover:bg-coral-600' : 'bg-teal-600 hover:bg-teal-700';
 
   return (
     <Modal

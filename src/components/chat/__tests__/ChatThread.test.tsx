@@ -1,12 +1,13 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import type { Message } from '@thumbcode/state';
 import { ChatThread } from '../ChatThread';
 
 vi.mock('@/components/icons', () => ({
-  BranchIcon: () => 'BranchIcon',
-  EditIcon: () => 'EditIcon',
-  FileIcon: () => 'FileIcon',
-  GitIcon: () => 'GitIcon',
-  LightningIcon: () => 'LightningIcon',
+  BranchIcon: () => <span>BranchIcon</span>,
+  EditIcon: () => <span>EditIcon</span>,
+  FileIcon: () => <span>FileIcon</span>,
+  GitIcon: () => <span>GitIcon</span>,
+  LightningIcon: () => <span>LightningIcon</span>,
 }));
 
 vi.mock('@/lib/organic-styles', () => ({
@@ -26,7 +27,7 @@ vi.mock('@/utils/design-tokens', () => ({
 }));
 
 vi.mock('../CodeBlock', () => ({
-  CodeBlock: ({ code }: { code: string }) => code,
+  CodeBlock: ({ code }: { code: string }) => <span>{code}</span>,
 }));
 
 vi.mock('@/services/chat', () => ({
@@ -35,7 +36,7 @@ vi.mock('@/services/chat', () => ({
   },
 }));
 
-const mockMessages = [
+const mockMessages: Message[] = [
   {
     id: 'msg-1',
     threadId: 'thread-1',
@@ -57,7 +58,7 @@ const mockMessages = [
 ];
 
 vi.mock('@thumbcode/state', () => ({
-  useChatStore: vi.fn((selector: (state: unknown) => unknown) =>
+  useChatStore: vi.fn((selector: any) =>
     selector({
       threads: {
         'thread-1': {
@@ -72,20 +73,19 @@ vi.mock('@thumbcode/state', () => ({
   selectTypingIndicators: vi.fn(() => () => []),
 }));
 
+import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@thumbcode/state';
+
 describe('ChatThread', () => {
   it('renders messages from thread', () => {
-    const { toJSON } = render(<ChatThread threadId="thread-1" />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Build a login page');
-    expect(json).toContain('I will design the login page with OAuth support.');
+    render(<ChatThread threadId="thread-1" />);
+    expect(screen.getByText('Build a login page')).toBeTruthy();
+    expect(screen.getByText('I will design the login page with OAuth support.')).toBeTruthy();
   });
 
   it('shows empty state when no messages', () => {
-    const { useChatStore, selectThreadMessages, selectTypingIndicators } =
-      require('@thumbcode/state');
-    selectThreadMessages.mockReturnValue(() => []);
-    selectTypingIndicators.mockReturnValue(() => []);
-    useChatStore.mockImplementation((selector: (state: unknown) => unknown) =>
+    vi.mocked(selectThreadMessages).mockReturnValue(() => []);
+    vi.mocked(selectTypingIndicators).mockReturnValue(() => []);
+    vi.mocked(useChatStore).mockImplementation((selector: any) =>
       selector({
         threads: {
           'thread-empty': { id: 'thread-empty', messages: [], typingIndicators: {} },
@@ -93,18 +93,15 @@ describe('ChatThread', () => {
       })
     );
 
-    const { toJSON } = render(<ChatThread threadId="thread-empty" />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Start the conversation');
-    expect(json).toContain('Send a message to begin collaborating with AI agents');
+    render(<ChatThread threadId="thread-empty" />);
+    expect(screen.getByText('Start the conversation')).toBeTruthy();
+    expect(screen.getByText('Send a message to begin collaborating with AI agents')).toBeTruthy();
   });
 
   it('shows typing indicator when agents are typing', () => {
-    const { useChatStore, selectThreadMessages, selectTypingIndicators } =
-      require('@thumbcode/state');
-    selectThreadMessages.mockReturnValue(() => mockMessages);
-    selectTypingIndicators.mockReturnValue(() => ['architect']);
-    useChatStore.mockImplementation((selector: (state: unknown) => unknown) =>
+    vi.mocked(selectThreadMessages).mockReturnValue(() => mockMessages);
+    vi.mocked(selectTypingIndicators).mockReturnValue(() => ['architect']);
+    vi.mocked(useChatStore).mockImplementation((selector: any) =>
       selector({
         threads: {
           'thread-1': {
@@ -116,8 +113,7 @@ describe('ChatThread', () => {
       })
     );
 
-    const { toJSON } = render(<ChatThread threadId="thread-1" />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Architect is typing');
+    render(<ChatThread threadId="thread-1" />);
+    expect(screen.getByText('Architect is typing...')).toBeTruthy();
   });
 });

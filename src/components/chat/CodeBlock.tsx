@@ -51,7 +51,8 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
             </>
           )}
         </div>
-        <button type="button"
+        <button
+          type="button"
           onClick={handleCopy}
           className="px-2 py-1 active:bg-neutral-700"
           style={organicBorderRadius.badge}
@@ -66,9 +67,7 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
       </div>
 
       {/* Code content with syntax highlighting */}
-      <div
-
->
+      <div>
         <div className="p-3">
           {tokenizedLines.map((lineTokens, lineIndex) => (
             <Text

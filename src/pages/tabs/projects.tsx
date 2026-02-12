@@ -6,15 +6,7 @@
  */
 
 import { selectProjects, useProjectStore } from '@thumbcode/state';
-import {
-  ClipboardList,
-  FolderOpen,
-  GitBranch,
-  Github,
-  Plus,
-  Search,
-  Users,
-} from 'lucide-react';
+import { ClipboardList, FolderOpen, GitBranch, Github, Plus, Search, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

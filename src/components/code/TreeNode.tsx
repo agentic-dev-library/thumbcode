@@ -122,7 +122,8 @@ function FileTreeNodeRow({
   const textClass = isSelected ? 'text-teal-300' : 'text-neutral-200';
 
   return (
-    <button type="button"
+    <button
+      type="button"
       onClick={onPress}
       role="button"
       aria-label={accessibilityLabel}
@@ -198,9 +199,9 @@ export function TreeNode({
             isFolder={isFolder}
             hasChildren={hasChildren}
             statusColor={statusColor}
-            onClick={handlePress}
-            aria-label={accessibilityLabel}
-            aria-description={getAccessibilityHint(isFolder, hasChildren, isExpanded)}
+            onPress={handlePress}
+            accessibilityLabel={accessibilityLabel}
+            accessibilityHint={getAccessibilityHint(isFolder, hasChildren, isExpanded)}
           />
         </div>
         {shouldShowStatus && (

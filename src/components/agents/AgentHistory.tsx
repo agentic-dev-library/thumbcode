@@ -34,7 +34,7 @@ export function AgentHistory({ tasks }: Readonly<AgentHistoryProps>) {
     <VStack
       spacing="none"
       className="bg-surface"
-      style={{ ...organicBorderRadius.card,  overflow: 'hidden'  }}
+      style={{ ...organicBorderRadius.card, overflow: 'hidden' }}
     >
       <div className="px-4 py-3 border-b border-neutral-700">
         <Text size="sm" weight="semibold" className="text-neutral-400">

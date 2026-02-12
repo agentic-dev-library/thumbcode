@@ -39,7 +39,8 @@ export function SettingsItem({
   toggle,
 }: Readonly<SettingsItemProps>) {
   return (
-    <button type="button"
+    <button
+      type="button"
       onClick={onPress}
       disabled={!onPress && !toggle}
       className={`py-4 ${onPress ? 'active:bg-neutral-800' : ''}`}
@@ -73,11 +74,10 @@ export function SettingsItem({
         {value && <Text className="text-neutral-400 mr-2">{value}</Text>}
 
         {toggle && (
-          <input type="checkbox"
+          <input
+            type="checkbox"
             checked={toggle.value}
-            onChange={toggle.onValueChange}
-            }
-            
+            onChange={(e) => toggle.onValueChange(e.target.checked)}
           />
         )}
 

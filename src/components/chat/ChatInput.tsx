@@ -10,7 +10,6 @@ import { useCallback, useState } from 'react';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 import { ChatService } from '@/services/chat';
-import { getColor } from '@/utils/design-tokens';
 
 /** Props for the ChatInput component */
 interface ChatInputProps {
@@ -64,11 +63,12 @@ export function ChatInput({
         className="flex-1 bg-neutral-800 text-white font-body px-4 py-3 mr-2"
         style={{ ...organicBorderRadius.textInput, minHeight: 44, maxHeight: 120 }}
         value={text}
-        onChangeText={setText}
+        onChange={(e) => setText(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
       />
-      <button type="button"
+      <button
+        type="button"
         onClick={handleSend}
         disabled={!canSend}
         className={`px-4 py-3 ${canSend ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}

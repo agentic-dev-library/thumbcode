@@ -12,6 +12,7 @@ import {
   useCredentialStore,
   useUserStore,
 } from '@thumbcode/state';
+import type { LucideIcon } from 'lucide-react';
 import {
   Bell,
   Book,
@@ -28,7 +29,6 @@ import {
   Users,
   Vibrate,
 } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 /** Reusable settings row */
@@ -80,9 +80,7 @@ function SettingsItemRow({
             </span>
           )}
         </div>
-        {subtitle && (
-          <span className="text-sm font-body text-neutral-500">{subtitle}</span>
-        )}
+        {subtitle && <span className="text-sm font-body text-neutral-500">{subtitle}</span>}
       </div>
 
       {value && <span className="font-body text-neutral-400 mr-2">{value}</span>}
@@ -99,9 +97,7 @@ function SettingsItemRow({
         </label>
       )}
 
-      {showArrow && !toggle && (
-        <ChevronRight size={16} className="text-neutral-600" />
-      )}
+      {showArrow && !toggle && <ChevronRight size={16} className="text-neutral-600" />}
     </Tag>
   );
 }
@@ -169,9 +165,7 @@ export default function SettingsPage() {
             </span>
           </div>
           <div className="ml-4 flex-1">
-            <span className="block font-body font-semibold text-white text-lg">
-              {displayName}
-            </span>
+            <span className="block font-body font-semibold text-white text-lg">{displayName}</span>
             <span className="text-sm font-body text-neutral-400">
               {profile?.login ? `github.com/${profile.login}` : 'Connect GitHub to enable sync'}
             </span>
@@ -300,12 +294,7 @@ export default function SettingsPage() {
             onClick={() => window.open('https://thumbcode.dev/legal', '_blank')}
           />
           <HorizontalDivider />
-          <SettingsItemRow
-            Icon={Info}
-            title="Version"
-            value="1.0.0"
-            showArrow={false}
-          />
+          <SettingsItemRow Icon={Info} title="Version" value="1.0.0" showArrow={false} />
         </SettingsSectionGroup>
 
         {/* Danger Zone */}

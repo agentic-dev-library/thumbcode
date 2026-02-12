@@ -268,7 +268,7 @@ describe('GitDiffService', () => {
 
   describe('diffWorkingDir', () => {
     it('should compute diff for working directory changes', async () => {
-      const FileSystem = require('expo-file-system');
+      const { Filesystem } = await import('@capacitor/filesystem');
 
       mockGit.statusMatrix.mockResolvedValue([
         ['modified.ts', 1, 2, 1],  // modified
@@ -284,10 +284,10 @@ describe('GitDiffService', () => {
         blob: new TextEncoder().encode('old modified content'),
       });
 
-      // FileSystem reads for new content
-      FileSystem.readAsStringAsync
-        .mockResolvedValueOnce('new modified content')
-        .mockResolvedValueOnce('brand new content');
+      // Filesystem.readFile returns { data: string }
+      vi.mocked(Filesystem.readFile)
+        .mockResolvedValueOnce({ data: 'new modified content' } as never)
+        .mockResolvedValueOnce({ data: 'brand new content' } as never);
 
       const result = await GitDiffService.diffWorkingDir('/mock/repos/repo');
 

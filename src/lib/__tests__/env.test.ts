@@ -20,12 +20,12 @@ describe('env module', () => {
       expect(env.enableDevTools).toBe(true);
     });
 
-    it('should have githubClientId from constants', () => {
-      expect(env.githubClientId).toBe('test-client-id');
+    it('should have githubClientId from env', () => {
+      expect(env.githubClientId).toBe('');
     });
 
-    it('should have easProjectId from constants', () => {
-      expect(env.easProjectId).toBe('test-project-id');
+    it('should have easProjectId from env', () => {
+      expect(env.easProjectId).toBe('');
     });
   });
 

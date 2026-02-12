@@ -6,6 +6,7 @@
  */
 
 import { useMemo } from 'react';
+import { Text } from '@/components/ui';
 
 type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 type AvatarStatus = 'online' | 'offline' | 'busy' | 'away';
@@ -81,12 +82,7 @@ export function Avatar({
         }}
       >
         {src ? (
-          <img
-            src={src}
-            style={{ width: dimension, height: dimension }}
-            className="rounded-full"
-            
-          />
+          <img src={src} style={{ width: dimension, height: dimension }} className="rounded-full" />
         ) : (
           <Text className="font-body text-white font-semibold" style={{ fontSize }}>
             {initials}

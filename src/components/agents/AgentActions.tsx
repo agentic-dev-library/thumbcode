@@ -21,7 +21,8 @@ export function AgentActions({ agentId, onSetIdle, onSetWorking }: Readonly<Agen
         Controls
       </Text>
       <HStack spacing="sm">
-        <button type="button"
+        <button
+          type="button"
           onClick={() => onSetIdle(agentId)}
           className="flex-1 bg-surface-elevated py-3 active:bg-neutral-700"
           style={organicBorderRadius.button}
@@ -30,7 +31,8 @@ export function AgentActions({ agentId, onSetIdle, onSetWorking }: Readonly<Agen
         >
           <Text className="text-center text-neutral-200">Idle</Text>
         </button>
-        <button type="button"
+        <button
+          type="button"
           onClick={() => onSetWorking(agentId)}
           className="flex-1 bg-teal-600 py-3 active:bg-teal-700"
           style={organicBorderRadius.button}

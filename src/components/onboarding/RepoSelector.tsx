@@ -91,7 +91,8 @@ export function RepoSelector({
           </div>
         ) : (
           filteredRepos.map((repo) => (
-            <button type="button"
+            <button
+              type="button"
               key={repo.key}
               onClick={() => onSelectRepo(repo)}
               className={`p-4 ${selectedRepo?.key === repo.key ? 'bg-teal-600/20 border-teal-600' : 'bg-surface border-transparent'} border`}
@@ -135,7 +136,8 @@ export function RepoSelector({
 
       {/* Create New Repository */}
       {mode === 'select' ? (
-        <button type="button"
+        <button
+          type="button"
           onClick={() => onModeChange('create')}
           className="mt-4 p-4 border border-dashed border-teal-600/50 active:bg-teal-600/10"
           style={organicBorderRadius.card}
@@ -175,11 +177,10 @@ export function RepoSelector({
 
           <div className="flex-row items-center justify-between py-2">
             <Text className="text-neutral-300">Private repository</Text>
-            <input type="checkbox"
+            <input
+              type="checkbox"
               checked={newRepoPrivate}
-              onChange={onNewRepoPrivateChange}
-              }
-              
+              onChange={(e) => onNewRepoPrivateChange(e.target.checked)}
             />
           </div>
 
@@ -189,7 +190,8 @@ export function RepoSelector({
             </Text>
           )}
 
-          <button type="button"
+          <button
+            type="button"
             onClick={onCreateNewRepo}
             disabled={!newRepoName.trim() || isCreatingRepo}
             className={`py-3 ${newRepoName.trim() && !isCreatingRepo ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}

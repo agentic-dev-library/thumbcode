@@ -119,18 +119,12 @@ export default function CompletePage() {
               key={cap.title}
               className="bg-surface p-4 flex flex-row items-center rounded-organic-button"
             >
-              <div
-                className="w-12 h-12 bg-charcoal flex items-center justify-center mr-4 rounded-organic-card"
-              >
+              <div className="w-12 h-12 bg-charcoal flex items-center justify-center mr-4 rounded-organic-card">
                 <cap.Icon size={24} color={cap.iconColor} turbulence={0.2} />
               </div>
               <div className="flex-1">
-                <span className="font-body font-semibold text-white block">
-                  {cap.title}
-                </span>
-                <span className="font-body text-sm text-neutral-400">
-                  {cap.description}
-                </span>
+                <span className="font-body font-semibold text-white block">{cap.title}</span>
+                <span className="font-body text-sm text-neutral-400">{cap.description}</span>
               </div>
               <SuccessIcon size={20} color="teal" turbulence={0.2} />
             </div>

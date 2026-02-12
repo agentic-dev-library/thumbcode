@@ -34,14 +34,7 @@ function OptimizedListInner<T>(
   props: OptimizedListProps<T>,
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
-  const {
-    data,
-    renderItem,
-    keyExtractor: customKeyExtractor,
-    className,
-    style,
-    ...rest
-  } = props;
+  const { data, renderItem, keyExtractor: customKeyExtractor, className, style, ...rest } = props;
 
   const keyExtractor = useCallback(
     (item: T, index: number) => {
@@ -63,9 +56,7 @@ function OptimizedListInner<T>(
   return (
     <div ref={ref} className={className} style={{ overflowY: 'auto', ...style }}>
       {(data ?? []).map((item, index) => (
-        <div key={keyExtractor(item, index)}>
-          {renderItem({ item, index })}
-        </div>
+        <div key={keyExtractor(item, index)}>{renderItem({ item, index })}</div>
       ))}
     </div>
   );

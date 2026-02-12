@@ -7,6 +7,7 @@
 
 import { useState } from 'react';
 import { ChevronDownIcon } from '@/components/icons';
+import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface DiffLine {
@@ -134,13 +135,14 @@ export function DiffViewer({
   return (
     <div className="bg-charcoal overflow-hidden" style={organicBorderRadius.card}>
       {/* Header */}
-      <button type="button"
+      <button
+        type="button"
         onClick={() => setCollapsed(!collapsed)}
         className="flex-row items-center justify-between px-3 py-2 bg-neutral-800 border-b border-neutral-700"
         role="button"
         aria-label={`${filename || 'file'}, ${additions} additions, ${deletions} deletions`}
         aria-description={collapsed ? 'Expand the diff' : 'Collapse the diff'}
-        aria-expanded={{ expanded: !collapsed }}
+        aria-expanded={!collapsed}
       >
         <div className="flex-row items-center flex-1">
           <div className="mr-2" style={{ transform: `rotate(${collapsed ? '-90deg' : '0deg'})` }}>
@@ -160,9 +162,7 @@ export function DiffViewer({
 
       {/* Content */}
       {!collapsed && (
-        <div
-
->
+        <div>
           <div className="min-w-full">
             {lines.map((line, index) => (
               <div key={`${line.type}-${index}`} className={`flex-row ${getLineStyle(line.type)}`}>

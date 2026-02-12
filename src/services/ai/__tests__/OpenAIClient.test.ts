@@ -2,6 +2,7 @@
  * OpenAI Client Tests
  */
 
+import OpenAISdk from 'openai';
 import { OpenAIClient } from '../OpenAIClient';
 import type { AIMessage, AIStreamChunk } from '../types';
 
@@ -9,16 +10,16 @@ import type { AIMessage, AIStreamChunk } from '../types';
 const mockCreate = vi.fn();
 
 vi.mock('openai', () => {
-  return {
-    __esModule: true,
-    default: vi.fn().mockImplementation(() => ({
-      chat: {
-        completions: {
-          create: mockCreate,
-        },
-      },
-    })),
-  };
+  class MockOpenAI {
+    chat = { completions: { create: mockCreate } };
+    constructor(...args: unknown[]) {
+      MockOpenAI._lastArgs = args;
+      MockOpenAI._instances.push(this);
+    }
+    static _lastArgs: unknown[] = [];
+    static _instances: MockOpenAI[] = [];
+  }
+  return { __esModule: true, default: MockOpenAI };
 });
 
 describe('OpenAIClient', () => {
@@ -189,14 +190,14 @@ describe('OpenAIClient', () => {
 
   describe('constructor', () => {
     it('should use the default model', () => {
-      const OpenAI = require('openai').default;
+      const OpenAI = OpenAISdk as any;
+      OpenAI._instances = [];
+      OpenAI._lastArgs = [];
       new OpenAIClient('test-key');
-      expect(OpenAI).toHaveBeenCalledWith(
-        expect.objectContaining({
-          apiKey: 'test-key',
-          dangerouslyAllowBrowser: true,
-        })
-      );
+      expect(OpenAI._lastArgs[0]).toMatchObject({
+        apiKey: 'test-key',
+        dangerouslyAllowBrowser: true,
+      });
     });
 
     it('should accept a custom model', async () => {

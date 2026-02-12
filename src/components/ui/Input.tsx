@@ -18,7 +18,15 @@ const PLACEHOLDER_COLOR = getColor('neutral', '400');
 /**
  * Renders a text input with an optional label and error message.
  */
-export function Input({ label, error, className = '', style, onChangeText, onChange, ...props }: Readonly<InputProps>) {
+export function Input({
+  label,
+  error,
+  className = '',
+  style,
+  onChangeText,
+  onChange,
+  ...props
+}: Readonly<InputProps>) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChangeText?.(e.target.value);
     onChange?.(e);

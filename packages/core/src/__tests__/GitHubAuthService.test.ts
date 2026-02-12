@@ -25,7 +25,7 @@ vi.mock('@thumbcode/config', () => ({
 }));
 
 // Mock CredentialService
-vi.mock('../credentials/CredentialService', () => ({
+vi.mock('../credentials', () => ({
   CredentialService: {
     store: vi.fn().mockResolvedValue({ isValid: true }),
     retrieve: vi.fn().mockResolvedValue({ secret: null }),
@@ -313,7 +313,7 @@ describe('GitHubAuthService', () => {
 
   describe('signOut', () => {
     it('should call CredentialService.delete', async () => {
-      const { CredentialService } = require('../credentials/CredentialService');
+      const { CredentialService } = await import('../credentials');
 
       await GitHubAuthService.signOut();
 

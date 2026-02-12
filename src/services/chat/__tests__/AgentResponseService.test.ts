@@ -7,6 +7,7 @@
 
 import { useChatStore, useCredentialStore } from '@thumbcode/state';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+import type { Mock } from 'vitest';
 
 import { AgentResponseService } from '../AgentResponseService';
 import { MessageStore } from '../MessageStore';
@@ -21,7 +22,9 @@ vi.mock('../../ai/AgentPrompts', () => ({
   getAgentSystemPrompt: vi.fn().mockReturnValue('You are a helpful agent'),
 }));
 
-const { createAIClient } = require('../../ai/AIClientFactory');
+import { createAIClient } from '../../ai/AIClientFactory';
+
+const mockCreateAIClient = createAIClient as Mock;
 
 describe('AgentResponseService', () => {
   let service: AgentResponseService;
@@ -87,7 +90,7 @@ describe('AgentResponseService', () => {
       const mockClient = {
         streamMessage: vi.fn().mockResolvedValue(undefined),
       };
-      createAIClient.mockReturnValue(mockClient);
+      mockCreateAIClient.mockReturnValue(mockClient);
 
       // Create thread and message
       const threadId = useChatStore.getState().createThread({
@@ -98,7 +101,7 @@ describe('AgentResponseService', () => {
 
       await service.requestAgentResponse(threadId, 'msg-1', 'architect');
 
-      expect(createAIClient).toHaveBeenCalledWith('anthropic', 'sk-ant-test-key');
+      expect(mockCreateAIClient).toHaveBeenCalledWith('anthropic', 'sk-ant-test-key');
     });
 
     it('should fallback to OpenAI when Anthropic is unavailable', async () => {
@@ -122,7 +125,7 @@ describe('AgentResponseService', () => {
       const mockClient = {
         streamMessage: vi.fn().mockResolvedValue(undefined),
       };
-      createAIClient.mockReturnValue(mockClient);
+      mockCreateAIClient.mockReturnValue(mockClient);
 
       const threadId = useChatStore.getState().createThread({
         title: 'Test Thread',
@@ -132,7 +135,7 @@ describe('AgentResponseService', () => {
 
       await service.requestAgentResponse(threadId, 'msg-1', 'implementer');
 
-      expect(createAIClient).toHaveBeenCalledWith('openai', 'sk-test-openai-key');
+      expect(mockCreateAIClient).toHaveBeenCalledWith('openai', 'sk-test-openai-key');
     });
 
     it('should add error message when no AI key is configured', async () => {
@@ -154,7 +157,7 @@ describe('AgentResponseService', () => {
       expect(messages).toHaveLength(1);
       expect(messages[0].content).toContain('No AI API key configured');
       expect(messages[0].sender).toBe('architect');
-      expect(createAIClient).not.toHaveBeenCalled();
+      expect(mockCreateAIClient).not.toHaveBeenCalled();
     });
 
     it('should skip credentials with invalid status', async () => {
@@ -207,14 +210,14 @@ describe('AgentResponseService', () => {
 
     it('should stream response and emit events', async () => {
       const mockClient = {
-        streamMessage: jest
+        streamMessage: vi
           .fn()
           .mockImplementation(async (_msgs: any, _prompt: any, onChunk: any) => {
             onChunk({ text: 'Hello', done: false });
             onChunk({ text: ' world', done: true });
           }),
       };
-      createAIClient.mockReturnValue(mockClient);
+      mockCreateAIClient.mockReturnValue(mockClient);
 
       const threadId = useChatStore.getState().createThread({
         title: 'Test',
@@ -245,7 +248,7 @@ describe('AgentResponseService', () => {
       const mockClient = {
         streamMessage: vi.fn().mockResolvedValue(undefined),
       };
-      createAIClient.mockReturnValue(mockClient);
+      mockCreateAIClient.mockReturnValue(mockClient);
 
       const threadId = useChatStore.getState().createThread({
         title: 'Test',
@@ -283,7 +286,7 @@ describe('AgentResponseService', () => {
       const mockClient = {
         streamMessage: vi.fn().mockRejectedValue(abortError),
       };
-      createAIClient.mockReturnValue(mockClient);
+      mockCreateAIClient.mockReturnValue(mockClient);
 
       const threadId = useChatStore.getState().createThread({
         title: 'Test',
@@ -305,7 +308,7 @@ describe('AgentResponseService', () => {
       const mockClient = {
         streamMessage: vi.fn().mockRejectedValue(error),
       };
-      createAIClient.mockReturnValue(mockClient);
+      mockCreateAIClient.mockReturnValue(mockClient);
 
       const threadId = useChatStore.getState().createThread({
         title: 'Test',
@@ -328,7 +331,7 @@ describe('AgentResponseService', () => {
       const mockClient = {
         streamMessage: vi.fn().mockRejectedValue(new Error('Failure')),
       };
-      createAIClient.mockReturnValue(mockClient);
+      mockCreateAIClient.mockReturnValue(mockClient);
 
       const threadId = useChatStore.getState().createThread({
         title: 'Test',

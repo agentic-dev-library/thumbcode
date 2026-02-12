@@ -85,9 +85,7 @@ export default function WelcomePage() {
             <ThumbIcon size={48} color="charcoal" turbulence={0.2} />
           </div>
 
-          <h1 className="font-display text-4xl font-bold text-coral-500 text-center">
-            ThumbCode
-          </h1>
+          <h1 className="font-display text-4xl font-bold text-coral-500 text-center">ThumbCode</h1>
 
           <p className="font-body text-lg text-neutral-400 text-center">
             Code with your thumbs. Ship apps from your phone.
@@ -108,9 +106,7 @@ export default function WelcomePage() {
                 <span className="font-body font-semibold text-white block mb-1">
                   {feature.title}
                 </span>
-                <span className="font-body text-sm text-neutral-400">
-                  {feature.description}
-                </span>
+                <span className="font-body text-sm text-neutral-400">{feature.description}</span>
               </div>
             </div>
           ))}

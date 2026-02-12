@@ -36,7 +36,7 @@ describe('Retry Utility', () => {
     });
 
     it('should retry on failure and succeed', async () => {
-      const fn = jest
+      const fn = vi
         .fn()
         .mockRejectedValueOnce(new Error('First fail'))
         .mockResolvedValue('success');
@@ -136,7 +136,7 @@ describe('Retry Utility', () => {
 
     it('should use exponential backoff', async () => {
       const delays: number[] = [];
-      const fn = jest
+      const fn = vi
         .fn()
         .mockRejectedValueOnce(new Error('Fail'))
         .mockRejectedValueOnce(new Error('Fail'))
@@ -158,7 +158,7 @@ describe('Retry Utility', () => {
 
     it('should respect maxDelay', async () => {
       const delays: number[] = [];
-      const fn = jest
+      const fn = vi
         .fn()
         .mockRejectedValueOnce(new Error('Fail'))
         .mockRejectedValueOnce(new Error('Fail'))

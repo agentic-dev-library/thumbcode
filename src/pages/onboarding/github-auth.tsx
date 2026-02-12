@@ -98,9 +98,7 @@ export default function GitHubAuthPage() {
 
         {/* Header */}
         <div className="flex flex-col gap-2 mt-8 mb-8">
-          <h1 className="font-display text-3xl font-bold text-white">
-            Connect GitHub
-          </h1>
+          <h1 className="font-display text-3xl font-bold text-white">Connect GitHub</h1>
           <p className="font-body text-neutral-400">
             Link your GitHub account to access repositories and enable code commits from ThumbCode.
           </p>
@@ -120,7 +118,8 @@ export default function GitHubAuthPage() {
                     Secure Device Flow
                   </p>
                   <p className="font-body text-sm text-neutral-400 text-center">
-                    We use GitHub's Device Flow authentication - your credentials are never shared with us.
+                    We use GitHub's Device Flow authentication - your credentials are never shared
+                    with us.
                   </p>
                 </div>
 
@@ -129,7 +128,9 @@ export default function GitHubAuthPage() {
                   onClick={startDeviceFlow}
                   disabled={isAuthenticating}
                   className={`bg-neutral-800 py-4 rounded-organic-button font-body font-semibold text-white text-center transition-colors ${
-                    isAuthenticating ? 'opacity-70 cursor-not-allowed' : 'hover:bg-neutral-700 active:bg-neutral-600'
+                    isAuthenticating
+                      ? 'opacity-70 cursor-not-allowed'
+                      : 'hover:bg-neutral-700 active:bg-neutral-600'
                   }`}
                   data-testid="start-auth-button"
                 >
@@ -168,7 +169,9 @@ export default function GitHubAuthPage() {
                   onClick={checkAuth}
                   disabled={isAuthenticating}
                   className={`bg-teal-600 py-4 rounded-organic-button font-body font-semibold text-white text-center transition-colors ${
-                    isAuthenticating ? 'opacity-70 cursor-not-allowed' : 'hover:bg-teal-700 active:bg-teal-800'
+                    isAuthenticating
+                      ? 'opacity-70 cursor-not-allowed'
+                      : 'hover:bg-teal-700 active:bg-teal-800'
                   }`}
                   data-testid="check-auth-button"
                 >
@@ -192,9 +195,7 @@ export default function GitHubAuthPage() {
 
             {/* Error Message */}
             {errorMessage && (
-              <p className="font-body text-sm text-coral-400 text-center">
-                {errorMessage}
-              </p>
+              <p className="font-body text-sm text-coral-400 text-center">{errorMessage}</p>
             )}
           </div>
         )}

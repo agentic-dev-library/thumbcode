@@ -1,18 +1,18 @@
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { type FileNode, FileTree } from '../FileTree';
 
 vi.mock('@/components/icons', () => ({
-  ChevronDownIcon: () => 'ChevronDownIcon',
-  FileCodeIcon: () => 'FileCodeIcon',
-  FileConfigIcon: () => 'FileConfigIcon',
-  FileDataIcon: () => 'FileDataIcon',
-  FileDocIcon: () => 'FileDocIcon',
-  FileIcon: () => 'FileIcon',
-  FileMediaIcon: () => 'FileMediaIcon',
-  FileStyleIcon: () => 'FileStyleIcon',
-  FileWebIcon: () => 'FileWebIcon',
-  FolderIcon: () => 'FolderIcon',
-  FolderOpenIcon: () => 'FolderOpenIcon',
+  ChevronDownIcon: () => <span>ChevronDown</span>,
+  FileCodeIcon: () => <span>FileCode</span>,
+  FileConfigIcon: () => <span>FileConfig</span>,
+  FileDataIcon: () => <span>FileData</span>,
+  FileDocIcon: () => <span>FileDoc</span>,
+  FileIcon: () => <span>FileGeneric</span>,
+  FileMediaIcon: () => <span>FileMedia</span>,
+  FileStyleIcon: () => <span>FileStyle</span>,
+  FileWebIcon: () => <span>FileWeb</span>,
+  FolderIcon: () => <span>Folder</span>,
+  FolderOpenIcon: () => <span>FolderOpen</span>,
 }));
 
 vi.mock('@/lib/organic-styles', () => ({
@@ -35,70 +35,53 @@ const mockData: FileNode[] = [
 
 describe('FileTree', () => {
   it('renders root level files and folders', () => {
-    const { toJSON } = render(<FileTree data={mockData} />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('src');
-    expect(json).toContain('README.md');
-    expect(json).toContain('package.json');
+    render(<FileTree data={mockData} />);
+    expect(screen.getByText('src')).toBeTruthy();
+    expect(screen.getByText('README.md')).toBeTruthy();
+    expect(screen.getByText('package.json')).toBeTruthy();
   });
 
   it('sorts folders before files', () => {
-    const { toJSON } = render(<FileTree data={mockData} />);
-    const json = JSON.stringify(toJSON());
-    // 'src' folder should appear before files
-    const srcIndex = json.indexOf('src');
-    const readmeIndex = json.indexOf('README.md');
+    const { container } = render(<FileTree data={mockData} />);
+    const html = container.innerHTML;
+    const srcIndex = html.indexOf('src');
+    const readmeIndex = html.indexOf('README.md');
     expect(srcIndex).toBeLessThan(readmeIndex);
   });
 
   it('expands folder when pressed using defaultExpanded', () => {
-    const { toJSON } = render(<FileTree data={mockData} defaultExpanded={['src']} />);
-    const json = JSON.stringify(toJSON());
-    // Children should be visible
-    expect(json).toContain('App.tsx');
-    expect(json).toContain('index.ts');
+    render(<FileTree data={mockData} defaultExpanded={['src']} />);
+    expect(screen.getByText('App.tsx')).toBeTruthy();
+    expect(screen.getByText('index.ts')).toBeTruthy();
   });
 
   it('does not show children of collapsed folder', () => {
-    const { toJSON } = render(<FileTree data={mockData} />);
-    const json = JSON.stringify(toJSON());
-    // Children should not be visible when folder is collapsed
-    expect(json).not.toContain('App.tsx');
+    render(<FileTree data={mockData} />);
+    expect(screen.queryByText('App.tsx')).toBeNull();
   });
 
   it('calls onSelectFile when a file is pressed', () => {
     const onSelectFile = vi.fn();
-    const { UNSAFE_getAllByProps } = render(
-      <FileTree data={mockData} onSelectFile={onSelectFile} defaultExpanded={['src']} />
-    );
-    // Find the App.tsx file button
-    const fileButtons = UNSAFE_getAllByProps({ accessibilityRole: 'button' });
-    // Find the one that has App.tsx in its accessibilityLabel
-    const appButton = fileButtons.find((btn: { props: { accessibilityLabel?: string } }) =>
-      btn.props.accessibilityLabel?.includes('App.tsx')
-    );
-    if (appButton) {
-      fireEvent.click(appButton);
-      expect(onSelectFile).toHaveBeenCalledWith('src/App.tsx');
-    }
+    render(<FileTree data={mockData} onSelectFile={onSelectFile} defaultExpanded={['src']} />);
+    // Find the button with aria-label containing App.tsx
+    const appButton = screen.getByLabelText(/App\.tsx/);
+    fireEvent.click(appButton);
+    expect(onSelectFile).toHaveBeenCalledWith('src/App.tsx');
   });
 
   it('shows status indicator for modified files', () => {
-    const { toJSON } = render(<FileTree data={mockData} defaultExpanded={['src']} showStatus />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('M');
+    render(<FileTree data={mockData} defaultExpanded={['src']} showStatus />);
+    expect(screen.getByText('M')).toBeTruthy();
   });
 
   it('shows status indicator for added files', () => {
-    const { toJSON } = render(<FileTree data={mockData} showStatus />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('A');
+    render(<FileTree data={mockData} showStatus />);
+    expect(screen.getByText('A')).toBeTruthy();
   });
 
   it('has file tree accessibility role', () => {
-    const { toJSON } = render(<FileTree data={mockData} />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('"role":"list"');
-    expect(json).toContain('File tree');
+    render(<FileTree data={mockData} />);
+    expect(screen.getByRole('list')).toBeTruthy();
+    expect(screen.getByLabelText('File tree')).toBeTruthy();
   });
 });

@@ -23,34 +23,31 @@
  */
 
 import { Route, Routes } from 'react-router-dom';
+import { OnboardingLayout } from '@/layouts/OnboardingLayout';
 import { RootLayout } from '@/layouts/RootLayout';
 import { TabLayout } from '@/layouts/TabLayout';
-import { OnboardingLayout } from '@/layouts/OnboardingLayout';
-import { PlaceholderPage } from '@/pages/placeholder';
-import { NotFoundPage } from '@/pages/NotFound';
-
-// Tab screens (migrated from React Native)
-import HomePage from '@/pages/tabs/home';
-import ProjectsPage from '@/pages/tabs/projects';
-import AgentsPage from '@/pages/tabs/agents';
-import ChatPage from '@/pages/tabs/chat';
-import SettingsPage from '@/pages/tabs/settings';
-
 // Detail screens (migrated from React Native)
 import { AgentDetail } from '@/pages/detail/AgentDetail';
 import { ProjectDetail } from '@/pages/detail/ProjectDetail';
+import { NotFoundPage } from '@/pages/NotFound';
+import ApiKeysPage from '@/pages/onboarding/api-keys';
+import CompletePage from '@/pages/onboarding/complete';
+import CreateProjectPage from '@/pages/onboarding/create-project';
+import GitHubAuthPage from '@/pages/onboarding/github-auth';
+// Onboarding screens (migrated from React Native)
+import WelcomePage from '@/pages/onboarding/welcome';
+import { PlaceholderPage } from '@/pages/placeholder';
 
 // Settings sub-screens (migrated from React Native)
 import { AgentSettings } from '@/pages/settings/AgentSettings';
 import { CredentialSettings } from '@/pages/settings/CredentialSettings';
 import { EditorSettings } from '@/pages/settings/EditorSettings';
-
-// Onboarding screens (migrated from React Native)
-import WelcomePage from '@/pages/onboarding/welcome';
-import GitHubAuthPage from '@/pages/onboarding/github-auth';
-import ApiKeysPage from '@/pages/onboarding/api-keys';
-import CreateProjectPage from '@/pages/onboarding/create-project';
-import CompletePage from '@/pages/onboarding/complete';
+import AgentsPage from '@/pages/tabs/agents';
+import ChatPage from '@/pages/tabs/chat';
+// Tab screens (migrated from React Native)
+import HomePage from '@/pages/tabs/home';
+import ProjectsPage from '@/pages/tabs/projects';
+import SettingsPage from '@/pages/tabs/settings';
 
 export function AppRoutes() {
   return (

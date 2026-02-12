@@ -48,8 +48,7 @@ export function Button({
   }[size];
 
   const textColorClass = variant === 'outline' ? 'text-neutral-800' : 'text-white';
-  const spinnerBorder =
-    variant === 'outline' ? `border-neutral-800` : `border-white`;
+  const spinnerBorder = variant === 'outline' ? `border-neutral-800` : `border-white`;
 
   return (
     <button

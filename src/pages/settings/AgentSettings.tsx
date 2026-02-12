@@ -56,9 +56,7 @@ function SettingRow({ title, subtitle, value, badge, onPress, toggle }: Readonly
             </span>
           )}
         </div>
-        {subtitle && (
-          <p className="text-sm text-neutral-500 font-body mt-0.5">{subtitle}</p>
-        )}
+        {subtitle && <p className="text-sm text-neutral-500 font-body mt-0.5">{subtitle}</p>}
       </div>
 
       {value && <span className="text-neutral-400 font-body mr-2">{value}</span>}
@@ -84,9 +82,7 @@ function SettingRow({ title, subtitle, value, badge, onPress, toggle }: Readonly
         </button>
       )}
 
-      {onPress && !toggle && (
-        <span className="text-neutral-600 text-lg ml-2">&rsaquo;</span>
-      )}
+      {onPress && !toggle && <span className="text-neutral-600 text-lg ml-2">&rsaquo;</span>}
     </Wrapper>
   );
 }
@@ -124,9 +120,7 @@ function ApprovalLevelSelector({
             <div className="flex items-center justify-between">
               <div className="flex-1 min-w-0">
                 <p
-                  className={`font-body ${
-                    selected === level.id ? 'text-coral-500' : 'text-white'
-                  }`}
+                  className={`font-body ${selected === level.id ? 'text-coral-500' : 'text-white'}`}
                 >
                   {level.label}
                 </p>
@@ -137,9 +131,7 @@ function ApprovalLevelSelector({
                   selected === level.id ? 'border-coral-500 bg-coral-500' : 'border-neutral-600'
                 }`}
               >
-                {selected === level.id && (
-                  <div className="w-2 h-2 rounded-full bg-white" />
-                )}
+                {selected === level.id && <div className="w-2 h-2 rounded-full bg-white" />}
               </div>
             </div>
           </button>

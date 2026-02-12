@@ -2,7 +2,6 @@ import { act, render, waitFor } from '@testing-library/react';
 import React from 'react';
 import { OnboardingProvider, useOnboarding } from '../onboarding';
 
-
 describe('OnboardingContext Performance', () => {
   it('should have stable context value reference across re-renders', async () => {
     const renderValues: unknown[] = [];
@@ -11,19 +10,19 @@ describe('OnboardingContext Performance', () => {
     const Consumer = () => {
       const value = useOnboarding();
       renderValues.push(value);
-      return <Text>Consumer</Text>;
+      return <span>Consumer</span>;
     };
 
     const TestWrapper = () => {
       const [count, setCount] = React.useState(0);
       triggerUpdate = () => setCount((c) => c + 1);
       return (
-        <View>
-          <Text testID="count">{count}</Text>
+        <div>
+          <span data-testid="count">{count}</span>
           <OnboardingProvider>
             <Consumer />
           </OnboardingProvider>
-        </View>
+        </div>
       );
     };
 

@@ -46,11 +46,9 @@ class RuntimeSecurityService {
 
       if (isLikelyRooted) {
         window.alert(
-          'Security Alert',
-          'This application cannot be run on a rooted or jailbroken device for security reasons. The app will now exit.',
-          [{ text: 'OK', onPress: () => window.close() }],
-          { cancelable: false }
+          'Security Alert: This application cannot be run on a rooted or jailbroken device for security reasons. The app will now exit.'
         );
+        window.close();
       }
     } catch (error) {
       console.error('Failed to perform root detection check:', error);

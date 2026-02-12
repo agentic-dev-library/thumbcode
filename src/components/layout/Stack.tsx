@@ -60,7 +60,9 @@ const justifyMap: Record<StackJustify, React.CSSProperties['justifyContent']> = 
   evenly: 'space-evenly',
 };
 
-function flattenStyle(style?: React.CSSProperties | React.CSSProperties[]): React.CSSProperties | undefined {
+function flattenStyle(
+  style?: React.CSSProperties | React.CSSProperties[]
+): React.CSSProperties | undefined {
   if (!style) return undefined;
   if (Array.isArray(style)) {
     return Object.assign({}, ...style.filter(Boolean));
@@ -92,7 +94,9 @@ export function Stack({
   };
 
   const flattenedStyle = flattenStyle(style);
-  const stackStyle: React.CSSProperties = flattenedStyle ? { ...baseStyle, ...flattenedStyle } : baseStyle;
+  const stackStyle: React.CSSProperties = flattenedStyle
+    ? { ...baseStyle, ...flattenedStyle }
+    : baseStyle;
 
   return (
     <div style={stackStyle} className={className}>

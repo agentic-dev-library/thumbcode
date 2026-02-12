@@ -54,9 +54,7 @@ export function ErrorFallback({
   };
 
   return (
-    <div
-      className="flex-1 bg-charcoal"
-    >
+    <div className="flex-1 bg-charcoal">
       <Container padding="lg" className="flex-1 justify-center">
         <VStack spacing="lg" align="center">
           {/* Error Icon */}
@@ -100,7 +98,8 @@ export function ErrorFallback({
 
           {/* Retry Button */}
           {onRetry && (
-            <button type="button"
+            <button
+              type="button"
               onClick={onRetry}
               className="bg-coral-500 px-8 py-3 active:bg-coral-600"
               style={organicBorderRadius.cta}
@@ -112,7 +111,12 @@ export function ErrorFallback({
           )}
 
           {/* Secondary Action */}
-          <button type="button" className="py-2" onClick={handleReportIssue} data-testid="report-issue-button">
+          <button
+            type="button"
+            className="py-2"
+            onClick={handleReportIssue}
+            data-testid="report-issue-button"
+          >
             <Text size="sm" className="text-teal-500">
               Report Issue
             </Text>

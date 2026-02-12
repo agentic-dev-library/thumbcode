@@ -158,9 +158,7 @@ export default function CreateProjectPage() {
 
         {/* Header */}
         <div className="flex flex-col gap-2 mt-8 mb-8">
-          <h1 className="font-display text-3xl font-bold text-white">
-            Create Your First Project
-          </h1>
+          <h1 className="font-display text-3xl font-bold text-white">Create Your First Project</h1>
           <p className="font-body text-neutral-400">
             Connect a repository to start building with AI agents.
           </p>
@@ -184,9 +182,7 @@ export default function CreateProjectPage() {
 
         {/* Repository Selection */}
         <div className="flex flex-col gap-2 mb-4">
-          <span className="font-body font-semibold text-white">
-            Select Repository
-          </span>
+          <span className="font-body font-semibold text-white">Select Repository</span>
           <input
             type="text"
             placeholder="Search repositories..."
@@ -241,9 +237,7 @@ export default function CreateProjectPage() {
                       <FolderIcon size={18} color="gold" turbulence={0.15} />
                     )}
                   </span>
-                  <span className="font-body font-semibold text-white flex-1">
-                    {repo.name}
-                  </span>
+                  <span className="font-body font-semibold text-white flex-1">{repo.name}</span>
                   {selectedRepo?.key === repo.key && (
                     <SuccessIcon size={18} color="teal" turbulence={0.15} />
                   )}
@@ -252,15 +246,11 @@ export default function CreateProjectPage() {
                   {repo.description || 'No description'}
                 </span>
                 <div className="flex flex-row items-center mt-1">
-                  <span className="font-body text-xs text-neutral-500">
-                    {repo.fullName}
-                  </span>
+                  <span className="font-body text-xs text-neutral-500">{repo.fullName}</span>
                   {(repo.stars || 0) > 0 && (
                     <span className="flex flex-row items-center ml-2">
                       <StarIcon size={12} color="gold" turbulence={0.15} />
-                      <span className="font-body text-xs text-neutral-500 ml-1">
-                        {repo.stars}
-                      </span>
+                      <span className="font-body text-xs text-neutral-500 ml-1">{repo.stars}</span>
                     </span>
                   )}
                 </div>
@@ -284,9 +274,7 @@ export default function CreateProjectPage() {
         ) : (
           <div className="mt-4 p-4 bg-surface border border-teal-600/30 rounded-organic-card flex flex-col gap-2">
             <div className="flex flex-row items-center justify-between mb-2">
-              <span className="font-body font-semibold text-white">
-                New Repository
-              </span>
+              <span className="font-body font-semibold text-white">New Repository</span>
               <button
                 type="button"
                 onClick={() => setMode('select')}

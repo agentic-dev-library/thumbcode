@@ -82,6 +82,7 @@ interface ChatState {
 
   // Message actions
   addMessage: (message: Omit<Message, 'id' | 'timestamp' | 'status'>) => string;
+  updateMessageContent: (messageId: string, threadId: string, content: string) => void;
   updateMessageStatus: (messageId: string, threadId: string, status: MessageStatus) => void;
   deleteMessage: (messageId: string, threadId: string) => void;
 
@@ -194,6 +195,17 @@ export const useChatStore = create<ChatState>()(
           });
           return messageId;
         },
+
+        updateMessageContent: (messageId, threadId, content) =>
+          set((state) => {
+            const threadMessages = state.messages[threadId];
+            if (threadMessages) {
+              const message = threadMessages.find((m) => m.id === messageId);
+              if (message) {
+                message.content = content;
+              }
+            }
+          }),
 
         updateMessageStatus: (messageId, threadId, status) =>
           set((state) => {

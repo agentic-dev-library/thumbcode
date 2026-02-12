@@ -3,6 +3,7 @@
  */
 
 import { act, renderHook } from '@testing-library/react';
+import type { Mock, MockInstance } from 'vitest';
 import {
   useDebouncedCallback,
   useDebouncedValue,
@@ -421,33 +422,40 @@ describe('Performance Hooks', () => {
   describe('useWindowDimensions', () => {
     let addEventListenerSpy: MockInstance;
     let removeEventListenerSpy: MockInstance;
-    const originalWindow = global.window;
+    let originalInnerWidth: number;
+    let originalInnerHeight: number;
 
     beforeEach(() => {
-      // Set up window properties and spies
-      Object.defineProperty(global, 'window', {
-        value: {
-          ...originalWindow,
-          innerWidth: 1024,
-          innerHeight: 768,
-          addEventListener: vi.fn(),
-          removeEventListener: vi.fn(),
-        },
+      originalInnerWidth = window.innerWidth;
+      originalInnerHeight = window.innerHeight;
+      // Set dimensions on the existing window object
+      Object.defineProperty(window, 'innerWidth', {
+        value: 1024,
         writable: true,
+        configurable: true,
       });
-      addEventListenerSpy = vi.spyOn(global.window, 'addEventListener');
-      removeEventListenerSpy = vi.spyOn(global.window, 'removeEventListener');
+      Object.defineProperty(window, 'innerHeight', {
+        value: 768,
+        writable: true,
+        configurable: true,
+      });
+      addEventListenerSpy = vi.spyOn(window, 'addEventListener');
+      removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
     });
 
     afterEach(() => {
-      addEventListenerSpy?.mockRestore();
-      removeEventListenerSpy?.mockRestore();
-      if (originalWindow) {
-        Object.defineProperty(global, 'window', {
-          value: originalWindow,
-          writable: true,
-        });
-      }
+      addEventListenerSpy.mockRestore();
+      removeEventListenerSpy.mockRestore();
+      Object.defineProperty(window, 'innerWidth', {
+        value: originalInnerWidth,
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(window, 'innerHeight', {
+        value: originalInnerHeight,
+        writable: true,
+        configurable: true,
+      });
     });
 
     it('should return current window dimensions', () => {
@@ -471,11 +479,11 @@ describe('Performance Hooks', () => {
     });
 
     it('should update dimensions on resize', () => {
-      // Store the resize handler to call it manually
+      // Capture the resize handler registered by the hook
       let resizeHandler: (() => void) | null = null;
-      vi.spyOn(global.window, 'addEventListener').mockImplementation((event, handler) => {
+      addEventListenerSpy.mockImplementation((event: string, handler: EventListener) => {
         if (event === 'resize') {
-          resizeHandler = handler as () => void;
+          resizeHandler = handler as unknown as () => void;
         }
       });
 
@@ -484,8 +492,16 @@ describe('Performance Hooks', () => {
       expect(result.current).toEqual({ width: 1024, height: 768 });
 
       // Simulate resize
-      Object.defineProperty(global.window, 'innerWidth', { value: 800, writable: true });
-      Object.defineProperty(global.window, 'innerHeight', { value: 600, writable: true });
+      Object.defineProperty(window, 'innerWidth', {
+        value: 800,
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(window, 'innerHeight', {
+        value: 600,
+        writable: true,
+        configurable: true,
+      });
 
       act(() => {
         resizeHandler?.();
@@ -517,12 +533,16 @@ describe('Performance Hooks', () => {
         unobserve: vi.fn(),
       };
 
-      (global as unknown as { IntersectionObserver: unknown }).IntersectionObserver = vi.fn(
-        (callback) => {
-          observerCallback = callback;
-          return mockObserver;
-        }
-      );
+      // Must use function (not arrow) so it can be called with `new`
+      const MockIntersectionObserver = vi.fn(function MockIO(
+        this: unknown,
+        _callback: (entries: IntersectionObserverEntry[]) => void
+      ) {
+        observerCallback = _callback;
+        return mockObserver;
+      });
+      (global as unknown as { IntersectionObserver: unknown }).IntersectionObserver =
+        MockIntersectionObserver;
     });
 
     afterEach(() => {

@@ -6,14 +6,7 @@
  */
 
 import { selectAgents, selectProjects, useAgentStore, useProjectStore } from '@thumbcode/state';
-import {
-  Bell,
-  CheckCircle,
-  ClipboardList,
-  FolderOpen,
-  Pencil,
-  Users,
-} from 'lucide-react';
+import { Bell, CheckCircle, ClipboardList, FolderOpen, Pencil, Users } from 'lucide-react';
 import type React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProgressBar } from '@/components/feedback/Progress';
@@ -117,9 +110,7 @@ export default function HomePage() {
             <div className="mb-2">
               <FolderOpen size={32} className="text-teal-500" />
             </div>
-            <span className="block text-2xl font-bold font-body text-white">
-              {projects.length}
-            </span>
+            <span className="block text-2xl font-bold font-body text-white">{projects.length}</span>
             <span className="text-sm font-body text-neutral-400">Projects</span>
           </div>
 
@@ -130,9 +121,7 @@ export default function HomePage() {
             <div className="mb-2">
               <Users size={32} className="text-coral-500" />
             </div>
-            <span className="block text-2xl font-bold font-body text-white">
-              {runningAgents}
-            </span>
+            <span className="block text-2xl font-bold font-body text-white">{runningAgents}</span>
             <span className="text-sm font-body text-neutral-400">Running Agents</span>
           </div>
 
@@ -143,9 +132,7 @@ export default function HomePage() {
             <div className="mb-2">
               <ClipboardList size={32} className="text-gold-400" />
             </div>
-            <span className="block text-2xl font-bold font-body text-white">
-              {pendingTasks}
-            </span>
+            <span className="block text-2xl font-bold font-body text-white">{pendingTasks}</span>
             <span className="text-sm font-body text-neutral-400">Pending Tasks</span>
           </div>
         </div>

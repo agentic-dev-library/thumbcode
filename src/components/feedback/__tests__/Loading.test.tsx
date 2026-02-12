@@ -1,66 +1,58 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { LoadingOverlay, Skeleton, Spinner } from '../Loading';
-
-vi.mock('@/lib/organic-styles', () => ({
-  organicBorderRadius: { card: {} },
-}));
-
-vi.mock('@/utils/design-tokens', () => ({
-  getColor: vi.fn(() => '#FF7059'),
-  getColorWithOpacity: vi.fn(() => 'rgba(255,112,89,0.2)'),
-}));
 
 describe('Spinner', () => {
   it('renders with default props', () => {
-    const { toJSON } = render(<Spinner />);
-    expect(toJSON()).toBeTruthy();
+    const { container } = render(<Spinner />);
+    expect(container.querySelector('.animate-spin')).toBeTruthy();
   });
 
   it('renders with label', () => {
-    const { toJSON } = render(<Spinner label="Loading data..." />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Loading data...');
+    render(<Spinner label="Loading data..." />);
+    expect(screen.getByText('Loading data...')).toBeTruthy();
   });
 
   it('renders different sizes', () => {
-    const { toJSON: sm } = render(<Spinner size="sm" />);
-    const { toJSON: lg } = render(<Spinner size="lg" />);
-    expect(sm()).toBeTruthy();
-    expect(lg()).toBeTruthy();
+    const { unmount } = render(<Spinner size="sm" />);
+    expect(document.querySelector('.w-4')).toBeTruthy();
+    unmount();
+
+    render(<Spinner size="lg" />);
+    expect(document.querySelector('.w-8')).toBeTruthy();
   });
 });
 
 describe('Skeleton', () => {
   it('renders with default props', () => {
-    const { toJSON } = render(<Skeleton />);
-    expect(toJSON()).toBeTruthy();
+    const { container } = render(<Skeleton />);
+    expect(container.querySelector('.animate-pulse')).toBeTruthy();
   });
 
   it('renders as circle', () => {
-    const { toJSON } = render(<Skeleton circle height={40} />);
-    expect(toJSON()).toBeTruthy();
+    const { container } = render(<Skeleton circle height={40} />);
+    const el = container.querySelector('.animate-pulse');
+    expect(el).toBeTruthy();
   });
 
   it('renders with custom dimensions', () => {
-    const { toJSON } = render(<Skeleton width={200} height={24} />);
-    expect(toJSON()).toBeTruthy();
+    const { container } = render(<Skeleton width={200} height={24} />);
+    expect(container.querySelector('.animate-pulse')).toBeTruthy();
   });
 });
 
 describe('LoadingOverlay', () => {
   it('returns null when not visible', () => {
-    const { toJSON } = render(<LoadingOverlay visible={false} />);
-    expect(toJSON()).toBeNull();
+    const { container } = render(<LoadingOverlay visible={false} />);
+    expect(container.innerHTML).toBe('');
   });
 
   it('renders overlay with spinner when visible', () => {
-    const { toJSON } = render(<LoadingOverlay visible />);
-    expect(toJSON()).toBeTruthy();
+    const { container } = render(<LoadingOverlay visible />);
+    expect(container.querySelector('.animate-spin')).toBeTruthy();
   });
 
   it('renders message when provided', () => {
-    const { toJSON } = render(<LoadingOverlay visible message="Processing your request..." />);
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Processing your request...');
+    render(<LoadingOverlay visible message="Processing your request..." />);
+    expect(screen.getByText('Processing your request...')).toBeTruthy();
   });
 });

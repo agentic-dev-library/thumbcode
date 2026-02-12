@@ -7,7 +7,7 @@
  * Uses lucide-react icons and the P3 "Warm Technical" brand palette.
  */
 
-import { Home, Users, FolderGit2, Settings, MessageSquare } from 'lucide-react';
+import { FolderGit2, Home, MessageSquare, Settings, Users } from 'lucide-react';
 import { NavLink, Outlet } from 'react-router-dom';
 
 interface TabItemProps {
@@ -24,7 +24,9 @@ function TabItem({ to, label, icon, activeIcon }: TabItemProps) {
       end={to === '/'}
       className={({ isActive }) =>
         `flex flex-col items-center justify-center py-2 px-3 text-xs font-body transition-colors ${
-          isActive ? 'text-coral-500 font-semibold opacity-100' : 'text-neutral-400 opacity-60 hover:opacity-80'
+          isActive
+            ? 'text-coral-500 font-semibold opacity-100'
+            : 'text-neutral-400 opacity-60 hover:opacity-80'
         }`
       }
       aria-label={label}

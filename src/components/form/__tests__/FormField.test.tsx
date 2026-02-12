@@ -1,64 +1,58 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { FormField } from '../FormField';
 
 describe('FormField', () => {
   it('renders children', () => {
-    const { toJSON } = render(
+    render(
       <FormField>
-        <Text>Child content</Text>
+        <span>Child content</span>
       </FormField>
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Child content');
+    expect(screen.getByText('Child content')).toBeTruthy();
   });
 
   it('renders label text', () => {
-    const { toJSON } = render(
+    render(
       <FormField label="Email">
-        <Text>Input</Text>
+        <input />
       </FormField>
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Email');
+    expect(screen.getByText('Email')).toBeTruthy();
   });
 
   it('renders required indicator', () => {
-    const { toJSON } = render(
+    render(
       <FormField label="Email" required>
-        <Text>Input</Text>
+        <input />
       </FormField>
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('*');
+    expect(screen.getByText('*')).toBeTruthy();
   });
 
   it('renders helper text', () => {
-    const { toJSON } = render(
+    render(
       <FormField helper="We will never share your email">
-        <Text>Input</Text>
+        <input />
       </FormField>
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('We will never share your email');
+    expect(screen.getByText('We will never share your email')).toBeTruthy();
   });
 
   it('renders error text instead of helper when error is set', () => {
-    const { toJSON } = render(
+    render(
       <FormField helper="Enter a valid email" error="Invalid email address">
-        <Text>Input</Text>
+        <input />
       </FormField>
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Invalid email address');
+    expect(screen.getByText('Invalid email address')).toBeTruthy();
   });
 
   it('renders labelRight content', () => {
-    const { toJSON } = render(
-      <FormField label="Password" labelRight={<Text>Forgot?</Text>}>
-        <Text>Input</Text>
+    render(
+      <FormField label="Password" labelRight={<span>Forgot?</span>}>
+        <input />
       </FormField>
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Forgot?');
+    expect(screen.getByText('Forgot?')).toBeTruthy();
   });
 });

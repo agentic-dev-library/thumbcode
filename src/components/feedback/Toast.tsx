@@ -6,14 +6,8 @@
  * Supports different variants for success, error, warning, and info.
  */
 
+import { CircleAlert, CircleCheck, Info, TriangleAlert, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import {
-  CircleAlert,
-  CircleCheck,
-  Info,
-  TriangleAlert,
-  X,
-} from 'lucide-react';
 
 type ToastVariant = 'success' | 'error' | 'warning' | 'info';
 type ToastPosition = 'top' | 'bottom';
@@ -43,7 +37,7 @@ interface ToastProps {
 interface VariantStyle {
   bg: string;
   borderColor: string;
-  Icon: React.ComponentType<{ size?: number; className?: string }>;
+  Icon: React.ComponentType<any>;
   iconClass: string;
 }
 
@@ -131,9 +125,7 @@ export function Toast({
         </span>
 
         <div className="flex-1 min-w-0">
-          {title && (
-            <span className="block font-display text-base text-white mb-1">{title}</span>
-          )}
+          {title && <span className="block font-display text-base text-white mb-1">{title}</span>}
           <span className="block font-body text-sm text-neutral-200">{message}</span>
         </div>
 

@@ -26,5 +26,5 @@ ReactDOM.createRoot(rootElement).render(
         </OnboardingProvider>
       </ErrorBoundary>
     </BrowserRouter>
-  </React.StrictMode>,
+  </React.StrictMode>
 );

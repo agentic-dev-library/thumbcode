@@ -9,7 +9,7 @@
  */
 
 import { useEffect } from 'react';
-import { useNavigate, useLocation, Outlet } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useOnboarding } from '@/contexts/onboarding';
 
 export function RootLayoutNav() {

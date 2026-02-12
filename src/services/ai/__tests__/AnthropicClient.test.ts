@@ -2,6 +2,7 @@
  * Anthropic Client Tests
  */
 
+import AnthropicSdk from '@anthropic-ai/sdk';
 import { AnthropicClient } from '../AnthropicClient';
 import type { AIMessage, AIStreamChunk } from '../types';
 
@@ -11,21 +12,25 @@ const mockStreamOn = vi.fn();
 const mockStreamFinalMessage = vi.fn();
 
 vi.mock('@anthropic-ai/sdk', () => {
-  return {
-    __esModule: true,
-    default: vi.fn().mockImplementation(() => ({
-      messages: {
-        create: mockCreate,
-        stream: vi.fn().mockImplementation(() => {
-          const stream = {
-            on: mockStreamOn.mockReturnThis(),
-            finalMessage: mockStreamFinalMessage,
-          };
-          return stream;
-        }),
-      },
-    })),
-  };
+  class MockAnthropic {
+    messages = {
+      create: mockCreate,
+      stream: vi.fn().mockImplementation(() => {
+        const stream = {
+          on: mockStreamOn.mockReturnThis(),
+          finalMessage: mockStreamFinalMessage,
+        };
+        return stream;
+      }),
+    };
+    constructor(...args: unknown[]) {
+      MockAnthropic._lastArgs = args;
+      MockAnthropic._instances.push(this);
+    }
+    static _lastArgs: unknown[] = [];
+    static _instances: MockAnthropic[] = [];
+  }
+  return { __esModule: true, default: MockAnthropic };
 });
 
 describe('AnthropicClient', () => {
@@ -146,7 +151,7 @@ describe('AnthropicClient', () => {
       });
 
       // We need to get the stream mock to check its call
-      const Anthropic = require('@anthropic-ai/sdk').default;
+      const Anthropic = AnthropicSdk as any;
       const _instance = new Anthropic();
 
       // Create a new client that uses this instance
@@ -160,14 +165,14 @@ describe('AnthropicClient', () => {
 
   describe('constructor', () => {
     it('should use the default model', () => {
-      const Anthropic = require('@anthropic-ai/sdk').default;
+      const Anthropic = AnthropicSdk as any;
+      Anthropic._instances = [];
+      Anthropic._lastArgs = [];
       new AnthropicClient('test-key');
-      expect(Anthropic).toHaveBeenCalledWith(
-        expect.objectContaining({
-          apiKey: 'test-key',
-          dangerouslyAllowBrowser: true,
-        })
-      );
+      expect(Anthropic._lastArgs[0]).toMatchObject({
+        apiKey: 'test-key',
+        dangerouslyAllowBrowser: true,
+      });
     });
 
     it('should accept a custom model', async () => {

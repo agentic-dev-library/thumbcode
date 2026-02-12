@@ -1,13 +1,16 @@
-name: Deploy Documentation to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
     paths:
-      - 'docs/**'
-      - 'docs-site/**'
-      - 'src/**/*.ts'
-      - 'src/**/*.tsx'
+      - 'src/**'
+      - 'packages/**'
+      - 'public/**'
+      - 'index.html'
+      - 'vite.config.ts'
+      - 'tailwind.config.ts'
+      - 'package.json'
       - '.github/workflows/deploy-gh-pages.yml'
   workflow_dispatch:
 
@@ -23,7 +26,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build Documentation
+    name: Build Static Site
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -31,39 +34,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c # v4
-        # Reads version from packageManager field in package.json
+      - name: Setup ThumbCode environment
+        uses: ./.github/actions/setup-thumbcode
 
-      - name: Use Node.js
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build Astro documentation site
-        run: |
-          # Install docs-site dependencies (workspace handles this)
-          pnpm --filter @thumbcode/docs install
-          # Build the Astro site
-          pnpm --filter @thumbcode/docs build
-          # Move built files to docs-dist
-          mv docs-site/dist docs-dist
-
-      - name: Generate API documentation with TypeDoc
-        run: |
-          npx typedoc --out docs-dist/api packages/core/src/index.ts --plugin typedoc-plugin-markdown || echo "TypeDoc generation skipped or failed (non-blocking)"
-          # TypeDoc generates markdown, which Astro can't serve directly
-          # For now, we'll keep it as markdown files accessible via direct links
-
-      - name: Inject no-cache headers for staging
-        run: |
-          # Add no-cache meta tags to all HTML files for staging environment
-          find docs-dist -name "*.html" -exec sed -i 's/<head>/<head>\n  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">\n  <meta http-equiv="Pragma" content="no-cache">\n  <meta http-equiv="Expires" content="0">/' {} \;
-          echo "Injected no-cache headers into $(find docs-dist -name '*.html' | wc -l) HTML files"
+      - name: Build Vite static site
+        run: pnpm build
+        env:
+          CI: true
 
       - name: Setup Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
@@ -71,7 +48,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
-          path: 'docs-dist'
+          path: 'dist'
 
   deploy:
     name: Deploy to GitHub Pages

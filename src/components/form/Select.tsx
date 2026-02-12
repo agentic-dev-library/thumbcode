@@ -49,9 +49,7 @@ export function Select({
 
   return (
     <div className="w-full">
-      {label && (
-        <label className="block font-body text-sm text-neutral-300 mb-1.5">{label}</label>
-      )}
+      {label && <label className="block font-body text-sm text-neutral-300 mb-1.5">{label}</label>}
 
       <div className="relative">
         <select
@@ -86,9 +84,7 @@ export function Select({
         </div>
       </div>
 
-      {error && (
-        <p className="font-body text-xs text-coral-400 mt-1">{error}</p>
-      )}
+      {error && <p className="font-body text-xs text-coral-400 mt-1">{error}</p>}
     </div>
   );
 }

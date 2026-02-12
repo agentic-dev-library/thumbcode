@@ -6,7 +6,7 @@
  */
 
 import { useCallback } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 /**
  * Navigation hook that mirrors expo-router's useRouter API.
@@ -47,7 +47,9 @@ export function useAppRouter() {
  * Usage:
  *   const { id } = useRouteParams<{ id: string }>();
  */
-export function useRouteParams<T extends Record<string, string | undefined> = Record<string, string | undefined>>(): T {
+export function useRouteParams<
+  T extends Record<string, string | undefined> = Record<string, string | undefined>,
+>(): T {
   return useParams() as T;
 }
 

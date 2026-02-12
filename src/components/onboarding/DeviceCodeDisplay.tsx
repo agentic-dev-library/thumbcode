@@ -41,7 +41,8 @@ export function DeviceCodeDisplay({
           </Text>
         </div>
 
-        <button type="button"
+        <button
+          type="button"
           onClick={onStartDeviceFlow}
           disabled={isAuthenticating}
           className={`bg-neutral-800 py-4 ${isAuthenticating ? 'opacity-70' : 'active:bg-neutral-700'}`}
@@ -75,7 +76,8 @@ export function DeviceCodeDisplay({
         </Text>
       </div>
 
-      <button type="button"
+      <button
+        type="button"
         onClick={onOpenGitHub}
         className="bg-neutral-800 py-4 active:bg-neutral-700"
         style={organicBorderRadius.cta}
@@ -85,7 +87,8 @@ export function DeviceCodeDisplay({
         </Text>
       </button>
 
-      <button type="button"
+      <button
+        type="button"
         onClick={onCheckAuth}
         disabled={isAuthenticating}
         className={`bg-teal-600 py-4 ${isAuthenticating ? 'opacity-70' : 'active:bg-teal-700'}`}

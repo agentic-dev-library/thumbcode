@@ -22,8 +22,8 @@ function mockCreateAsyncIterator<T>(items: T[]) {
 
 // Mock the Anthropic SDK
 vi.mock('@anthropic-ai/sdk', () => {
-  return vi.fn().mockImplementation(() => ({
-    messages: {
+  class MockAnthropic {
+    messages = {
       create: vi.fn().mockResolvedValue({
         id: 'msg_123',
         content: [{ type: 'text', text: 'Hello, world!' }],
@@ -64,16 +64,17 @@ vi.mock('@anthropic-ai/sdk', () => {
           }),
         };
       }),
-    },
-  }));
+    };
+  }
+  return { __esModule: true, default: MockAnthropic };
 });
 
 // Mock the OpenAI SDK
 vi.mock('openai', () => {
-  return vi.fn().mockImplementation(() => ({
-    chat: {
+  class MockOpenAI {
+    chat = {
       completions: {
-        create: vi.fn().mockImplementation((params) => {
+        create: vi.fn().mockImplementation((params: { stream?: boolean }) => {
           if (params.stream) {
             const streamEvents = [
               {
@@ -134,8 +135,9 @@ vi.mock('openai', () => {
           });
         }),
       },
-    },
-  }));
+    };
+  }
+  return { __esModule: true, default: MockOpenAI };
 });
 
 describe('AI Client Factory', () => {

@@ -32,9 +32,7 @@ function SettingRow({ title, subtitle, value, onPress, toggle }: Readonly<Settin
     >
       <div className="flex-1 min-w-0">
         <span className="text-white font-body">{title}</span>
-        {subtitle && (
-          <p className="text-sm text-neutral-500 font-body mt-0.5">{subtitle}</p>
-        )}
+        {subtitle && <p className="text-sm text-neutral-500 font-body mt-0.5">{subtitle}</p>}
       </div>
 
       {value && <span className="text-neutral-400 font-body">{value}</span>}
@@ -60,9 +58,7 @@ function SettingRow({ title, subtitle, value, onPress, toggle }: Readonly<Settin
         </button>
       )}
 
-      {onPress && !toggle && (
-        <span className="text-neutral-600 text-lg ml-2">&rsaquo;</span>
-      )}
+      {onPress && !toggle && <span className="text-neutral-600 text-lg ml-2">&rsaquo;</span>}
     </Wrapper>
   );
 }
@@ -253,9 +249,7 @@ export function EditorSettings() {
               style={{ fontSize: `${fontSize}px` }}
             >
               <div>
-                {lineNumbers && (
-                  <span className="text-neutral-600 select-none mr-4">1</span>
-                )}
+                {lineNumbers && <span className="text-neutral-600 select-none mr-4">1</span>}
                 <span className={getThemeColor(theme as Theme, 'keyword')}>function</span>{' '}
                 <span className={getThemeColor(theme as Theme, 'function')}>greet</span>
                 <span className={getThemeColor(theme as Theme, 'text')}>(name: </span>
@@ -263,9 +257,7 @@ export function EditorSettings() {
                 <span className={getThemeColor(theme as Theme, 'text')}>) {'{'}</span>
               </div>
               <div>
-                {lineNumbers && (
-                  <span className="text-neutral-600 select-none mr-4">2</span>
-                )}
+                {lineNumbers && <span className="text-neutral-600 select-none mr-4">2</span>}
                 <span className={getThemeColor(theme as Theme, 'text')}>{'  '}</span>
                 <span className={getThemeColor(theme as Theme, 'keyword')}>return</span>{' '}
                 <span className={getThemeColor(theme as Theme, 'text')}>
@@ -273,9 +265,7 @@ export function EditorSettings() {
                 </span>
               </div>
               <div>
-                {lineNumbers && (
-                  <span className="text-neutral-600 select-none mr-4">3</span>
-                )}
+                {lineNumbers && <span className="text-neutral-600 select-none mr-4">3</span>}
                 <span className={getThemeColor(theme as Theme, 'text')}>{'}'}</span>
               </div>
             </div>

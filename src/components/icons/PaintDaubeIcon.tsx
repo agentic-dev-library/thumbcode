@@ -78,7 +78,7 @@ export type IconVariant =
 /**
  * Maps icon variants to the closest Lucide icon component.
  */
-const variantToLucide: Record<IconVariant, React.ComponentType<{ size?: number; color?: string; className?: string }>> = {
+const variantToLucide: Record<IconVariant, React.ComponentType<any>> = {
   agent: LucideIcons.Bot,
   mobile: LucideIcons.Smartphone,
   security: LucideIcons.ShieldCheck,

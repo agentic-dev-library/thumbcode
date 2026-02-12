@@ -23,8 +23,8 @@ function mockCreateAsyncIterator(items: unknown[]) {
 
 // Mock the AI SDKs
 vi.mock('@anthropic-ai/sdk', () => {
-  return vi.fn().mockImplementation(() => ({
-    messages: {
+  class MockAnthropic {
+    messages = {
       create: vi.fn().mockResolvedValue({
         id: 'msg_123',
         content: [{ type: 'text', text: 'Task completed successfully.' }],
@@ -51,14 +51,16 @@ vi.mock('@anthropic-ai/sdk', () => {
           }),
         };
       }),
-    },
-  }));
+    };
+  }
+  return { __esModule: true, default: MockAnthropic };
 });
 
 vi.mock('openai', () => {
-  return vi.fn().mockImplementation(() => ({
-    chat: { completions: { create: vi.fn() } },
-  }));
+  class MockOpenAI {
+    chat = { completions: { create: vi.fn() } };
+  }
+  return { __esModule: true, default: MockOpenAI };
 });
 
 describe('AgentOrchestrator', () => {

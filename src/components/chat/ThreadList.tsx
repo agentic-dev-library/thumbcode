@@ -70,7 +70,8 @@ function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
     .join(', ');
 
   return (
-    <button type="button"
+    <button
+      type="button"
       onClick={onPress}
       className="bg-surface-elevated p-4 mb-2 active:bg-neutral-700"
       role="button"
@@ -157,7 +158,8 @@ export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadLi
           Start a new thread to collaborate with AI agents
         </Text>
         {onCreateThread && (
-          <button type="button"
+          <button
+            type="button"
             onClick={onCreateThread}
             className="bg-coral-500 px-6 py-3 active:bg-coral-600"
             style={organicBorderRadius.button}
@@ -182,7 +184,8 @@ export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadLi
           Conversations
         </Text>
         {onCreateThread && (
-          <button type="button"
+          <button
+            type="button"
             onClick={onCreateThread}
             className="bg-teal-600 px-3 py-1.5 active:bg-teal-700"
             style={organicBorderRadius.button}

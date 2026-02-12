@@ -29,6 +29,7 @@ vi.mock('@capacitor/filesystem', () => ({
     readFile: vi.fn().mockResolvedValue({ data: '' }),
     writeFile: vi.fn().mockResolvedValue({ uri: '' }),
     mkdir: vi.fn().mockResolvedValue(undefined),
+    rmdir: vi.fn().mockResolvedValue(undefined),
     readdir: vi.fn().mockResolvedValue({ files: [] }),
     deleteFile: vi.fn().mockResolvedValue(undefined),
     stat: vi.fn().mockResolvedValue({ type: 'file', size: 0, uri: '' }),

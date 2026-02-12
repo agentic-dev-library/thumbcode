@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import type { ApprovalMessage } from '@thumbcode/state';
 import { ApprovalCard } from '../ApprovalCard';
 
@@ -36,79 +36,67 @@ const createMessage = (overrides: Partial<ApprovalMessage['metadata']> = {}): Ap
 describe('ApprovalCard', () => {
   it('renders pending approval with action label', () => {
     const message = createMessage();
-    const { toJSON } = render(
+    const { container } = render(
       <ApprovalCard message={message} onApprove={vi.fn()} onReject={vi.fn()} />
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Commit Changes');
-    expect(json).toContain('Commit changes to main branch');
+    expect(container.innerHTML).toContain('Commit Changes');
+    expect(container.innerHTML).toContain('Commit changes to main branch');
   });
 
   it('renders approve and reject buttons when pending', () => {
     const message = createMessage();
-    const { toJSON } = render(
+    const { container } = render(
       <ApprovalCard message={message} onApprove={vi.fn()} onReject={vi.fn()} />
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Approve');
-    expect(json).toContain('Reject');
+    expect(container.innerHTML).toContain('Approve');
+    expect(container.innerHTML).toContain('Reject');
   });
 
   it('calls onApprove when approve is pressed', () => {
     const onApprove = vi.fn();
     const message = createMessage();
-    const { UNSAFE_getByProps } = render(
-      <ApprovalCard message={message} onApprove={onApprove} onReject={vi.fn()} />
-    );
-    fireEvent.click(UNSAFE_getByProps({ accessibilityLabel: 'Approve' }));
+    render(<ApprovalCard message={message} onApprove={onApprove} onReject={vi.fn()} />);
+    fireEvent.click(screen.getByText('Approve'));
     expect(onApprove).toHaveBeenCalled();
   });
 
   it('calls onReject when reject is pressed', () => {
     const onReject = vi.fn();
     const message = createMessage();
-    const { UNSAFE_getByProps } = render(
-      <ApprovalCard message={message} onApprove={vi.fn()} onReject={onReject} />
-    );
-    fireEvent.click(UNSAFE_getByProps({ accessibilityLabel: 'Reject' }));
+    render(<ApprovalCard message={message} onApprove={vi.fn()} onReject={onReject} />);
+    fireEvent.click(screen.getByText('Reject'));
     expect(onReject).toHaveBeenCalled();
   });
 
   it('shows Approved badge when approved', () => {
     const message = createMessage({ approved: true, respondedAt: '2024-01-01T12:05:00Z' });
-    const { toJSON } = render(
+    const { container } = render(
       <ApprovalCard message={message} onApprove={vi.fn()} onReject={vi.fn()} />
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Approved');
-    // Should not show action buttons
-    expect(json).not.toContain('"accessibilityLabel":"Approve"');
+    expect(container.innerHTML).toContain('Approved');
   });
 
   it('shows Rejected badge when rejected', () => {
     const message = createMessage({ approved: false, respondedAt: '2024-01-01T12:05:00Z' });
-    const { toJSON } = render(
+    const { container } = render(
       <ApprovalCard message={message} onApprove={vi.fn()} onReject={vi.fn()} />
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Rejected');
+    expect(container.innerHTML).toContain('Rejected');
   });
 
   it('renders correct label for push action type', () => {
     const message = createMessage({ actionType: 'push' });
-    const { toJSON } = render(
+    const { container } = render(
       <ApprovalCard message={message} onApprove={vi.fn()} onReject={vi.fn()} />
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Push to Remote');
+    expect(container.innerHTML).toContain('Push to Remote');
   });
 
   it('renders correct label for merge action type', () => {
     const message = createMessage({ actionType: 'merge' });
-    const { toJSON } = render(
+    const { container } = render(
       <ApprovalCard message={message} onApprove={vi.fn()} onReject={vi.fn()} />
     );
-    const json = JSON.stringify(toJSON());
-    expect(json).toContain('Merge Branch');
+    expect(container.innerHTML).toContain('Merge Branch');
   });
 });

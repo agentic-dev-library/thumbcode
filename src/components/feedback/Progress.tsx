@@ -102,7 +102,10 @@ export function ProgressCircle({
   const offset = circumference - (clampedValue / 100) * circumference;
 
   return (
-    <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
+    <div
+      className="relative inline-flex items-center justify-center"
+      style={{ width: size, height: size }}
+    >
       <svg width={size} height={size} className="-rotate-90">
         {/* Background circle */}
         <circle
@@ -160,7 +163,10 @@ export function StepsProgress({ totalSteps, currentStep, labels }: Readonly<Step
           else if (isCurrent) stepBg = 'bg-coral-500';
 
           return (
-            <div key={stepNum} className={`flex items-center ${stepNum < totalSteps ? 'flex-1' : ''}`}>
+            <div
+              key={stepNum}
+              className={`flex items-center ${stepNum < totalSteps ? 'flex-1' : ''}`}
+            >
               <div
                 className={`w-8 h-8 flex items-center justify-center ${stepBg} rounded-organic-button`}
               >
@@ -188,7 +194,10 @@ export function StepsProgress({ totalSteps, currentStep, labels }: Readonly<Step
             if (i === labels.length - 1) alignClass = 'text-right';
 
             return (
-              <span key={stepLabel} className={`flex-1 text-xs font-body ${colorClass} ${alignClass}`}>
+              <span
+                key={stepLabel}
+                className={`flex-1 text-xs font-body ${colorClass} ${alignClass}`}
+              >
                 {stepLabel}
               </span>
             );

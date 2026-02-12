@@ -9,12 +9,7 @@
 
 import { useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
-import {
-  CloseIcon,
-  LightbulbIcon,
-  SecurityIcon,
-  SuccessIcon,
-} from '@/components/icons';
+import { CloseIcon, LightbulbIcon, SecurityIcon, SuccessIcon } from '@/components/icons';
 import { useAppRouter } from '@/hooks/useAppRouter';
 
 /** Spinner component for loading states */
@@ -48,7 +43,9 @@ export default function ApiKeysPage() {
     isValid: null,
   });
 
-  const validateAnthropicKey = async (key: string): Promise<{ isValid: boolean; error?: string }> => {
+  const validateAnthropicKey = async (
+    key: string
+  ): Promise<{ isValid: boolean; error?: string }> => {
     // TODO: Wire up CredentialService.validateCredential when core package is web-ready
     // Simulate validation
     await new Promise((resolve) => setTimeout(resolve, 800));
@@ -119,9 +116,7 @@ export default function ApiKeysPage() {
 
         {/* Header */}
         <div className="flex flex-col gap-2 mt-8 mb-8">
-          <h1 className="font-display text-3xl font-bold text-white">
-            AI Provider Keys
-          </h1>
+          <h1 className="font-display text-3xl font-bold text-white">AI Provider Keys</h1>
           <p className="font-body text-neutral-400">
             Add your API keys to power the AI agents. You need at least one provider.
           </p>
@@ -133,9 +128,7 @@ export default function ApiKeysPage() {
             <span className="mr-2">
               <SecurityIcon size={20} color="teal" turbulence={0.2} />
             </span>
-            <span className="font-body font-semibold text-teal-400">
-              Your Keys, Your Device
-            </span>
+            <span className="font-body font-semibold text-teal-400">Your Keys, Your Device</span>
           </div>
           <p className="font-body text-sm text-neutral-400">
             Keys will be stored securely on your device. They never leave your phone and are not
@@ -146,9 +139,7 @@ export default function ApiKeysPage() {
         {/* Anthropic Key */}
         <div className="flex flex-col gap-2 mb-6">
           <div className="flex flex-row items-center">
-            <span className="font-body font-semibold text-white flex-1">
-              Anthropic (Claude)
-            </span>
+            <span className="font-body font-semibold text-white flex-1">Anthropic (Claude)</span>
             {anthropicKey.isValidating && <Spinner />}
             {anthropicKey.isValid === true && (
               <SuccessIcon size={18} color="teal" turbulence={0.15} />
@@ -181,16 +172,10 @@ export default function ApiKeysPage() {
         {/* OpenAI Key */}
         <div className="flex flex-col gap-2 mb-6">
           <div className="flex flex-row items-center">
-            <span className="font-body font-semibold text-white flex-1">
-              OpenAI (GPT-4)
-            </span>
+            <span className="font-body font-semibold text-white flex-1">OpenAI (GPT-4)</span>
             {openaiKey.isValidating && <Spinner />}
-            {openaiKey.isValid === true && (
-              <SuccessIcon size={18} color="teal" turbulence={0.15} />
-            )}
-            {openaiKey.isValid === false && (
-              <CloseIcon size={18} color="coral" turbulence={0.15} />
-            )}
+            {openaiKey.isValid === true && <SuccessIcon size={18} color="teal" turbulence={0.15} />}
+            {openaiKey.isValid === false && <CloseIcon size={18} color="coral" turbulence={0.15} />}
           </div>
 
           <input
@@ -220,8 +205,8 @@ export default function ApiKeysPage() {
               <LightbulbIcon size={16} color="gold" turbulence={0.2} />
             </span>
             <p className="font-body text-sm text-neutral-400 flex-1">
-              <span className="text-white">Tip:</span> You can add more providers later in
-              Settings. At least one key is recommended to enable AI agents.
+              <span className="text-white">Tip:</span> You can add more providers later in Settings.
+              At least one key is recommended to enable AI agents.
             </p>
           </div>
         </div>

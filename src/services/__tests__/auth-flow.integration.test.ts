@@ -5,9 +5,10 @@
  * and session management using mocked SecureStore and fetch.
  */
 
-import { CredentialService } from '@thumbcode/core';
 import { BiometricAuth } from '@aparajita/capacitor-biometric-auth';
+import { CredentialService } from '@thumbcode/core';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+import type { Mock } from 'vitest';
 
 // In-memory store to simulate Capacitor Secure Storage
 const secureStoreMap = new Map<string, string>();
@@ -17,16 +18,16 @@ beforeEach(() => {
   vi.clearAllMocks();
 
   // Wire up SecureStoragePlugin mocks to an in-memory map
-  (SecureStoragePlugin.set as Mock).mockImplementation(async ({ key, value }: { key: string; value: string }) => {
-    secureStoreMap.set(key, value);
-  });
-  (SecureStoragePlugin.get as Mock).mockImplementation(
-    async ({ key }: { key: string }) => {
-      const value = secureStoreMap.get(key);
-      if (value === undefined) throw new Error('Key not found');
-      return { value };
+  (SecureStoragePlugin.set as Mock).mockImplementation(
+    async ({ key, value }: { key: string; value: string }) => {
+      secureStoreMap.set(key, value);
     }
   );
+  (SecureStoragePlugin.get as Mock).mockImplementation(async ({ key }: { key: string }) => {
+    const value = secureStoreMap.get(key);
+    if (value === undefined) throw new Error('Key not found');
+    return { value };
+  });
   (SecureStoragePlugin.remove as Mock).mockImplementation(async ({ key }: { key: string }) => {
     secureStoreMap.delete(key);
     return { value: true };
@@ -154,9 +155,7 @@ describe('Auth Flow Integration', () => {
     });
 
     it('blocks storage when biometric auth fails', async () => {
-      (BiometricAuth.authenticate as Mock).mockRejectedValue(
-        new Error('user_cancel')
-      );
+      (BiometricAuth.authenticate as Mock).mockRejectedValue(new Error('user_cancel'));
 
       const result = await CredentialService.store('anthropic', 'sk-ant-test-key-bio', {
         requireBiometric: true,
@@ -183,9 +182,7 @@ describe('Auth Flow Integration', () => {
       });
 
       // Then attempt retrieval with biometric (but auth fails)
-      (BiometricAuth.authenticate as Mock).mockRejectedValue(
-        new Error('user_cancel')
-      );
+      (BiometricAuth.authenticate as Mock).mockRejectedValue(new Error('user_cancel'));
 
       const retrieved = await CredentialService.retrieve('anthropic', {
         requireBiometric: true,

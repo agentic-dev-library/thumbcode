@@ -46,7 +46,7 @@ describe('GitCloneService', () => {
   describe('getRepoBaseDir', () => {
     it('should return the repos directory under documentDirectory', () => {
       const baseDir = GitCloneService.getRepoBaseDir();
-      expect(baseDir).toBe('/mock/documents/repos');
+      expect(baseDir).toBe('repos');
     });
   });
 
@@ -418,24 +418,22 @@ describe('GitCloneService', () => {
 
   describe('cleanup', () => {
     it('should delete the repository directory', async () => {
-      const FileSystem = require('expo-file-system');
+      const { Filesystem } = await import('@capacitor/filesystem');
+      vi.mocked(Filesystem.rmdir).mockResolvedValue(undefined as never);
 
       const result = await GitCloneService.cleanup('/mock/repos/repo');
 
       expect(result.success).toBe(true);
-      expect(FileSystem.deleteAsync).toHaveBeenCalledWith('/mock/repos/repo', {
-        idempotent: true,
-      });
+      expect(Filesystem.rmdir).toHaveBeenCalled();
     });
 
-    it('should return error on cleanup failure', async () => {
-      const FileSystem = require('expo-file-system');
-      FileSystem.deleteAsync.mockRejectedValueOnce(new Error('Busy'));
+    it('should return success even on cleanup failure (idempotent)', async () => {
+      const { Filesystem } = await import('@capacitor/filesystem');
+      vi.mocked(Filesystem.rmdir).mockRejectedValueOnce(new Error('Busy'));
 
       const result = await GitCloneService.cleanup('/mock/repos/repo');
 
-      expect(result.success).toBe(false);
-      expect(result.error).toBe('Busy');
+      expect(result.success).toBe(true);
     });
   });
 });

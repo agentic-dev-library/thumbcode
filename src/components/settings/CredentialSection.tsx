@@ -68,7 +68,8 @@ export function CredentialItem({
           )}
         </VStack>
 
-        <button type="button"
+        <button
+          type="button"
           onClick={isConnected ? onDisconnect : onConnect}
           className={`px-4 py-2 ${isConnected ? 'bg-coral-500/20' : 'bg-teal-500/20'}`}
           style={organicBorderRadius.button}
@@ -133,7 +134,7 @@ export function ApiKeyInput({
             <input
               placeholder={placeholder}
               value={value}
-              onChangeText={onChange}
+              onChange={(e) => onChange(e.target.value)}
               type="password"
               disabled={isSaving}
               className="text-white font-mono text-sm"
@@ -145,7 +146,8 @@ export function ApiKeyInput({
             </Text>
           )}
           <HStack spacing="sm">
-            <button type="button"
+            <button
+              type="button"
               onClick={handleSave}
               disabled={!canSave}
               className={`flex-1 py-3 ${canSave ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}
@@ -162,7 +164,8 @@ export function ApiKeyInput({
               )}
             </button>
             {isSet && (
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => {
                   setIsEditing(false);
                   onChange('');
@@ -177,7 +180,8 @@ export function ApiKeyInput({
           </HStack>
         </VStack>
       ) : (
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setIsEditing(true)}
           className="bg-charcoal border border-neutral-700 px-4 py-3"
           style={organicBorderRadius.input}

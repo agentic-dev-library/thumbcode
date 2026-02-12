@@ -7,15 +7,9 @@
 
 import type { Agent, AgentRole, AgentStatus } from '@thumbcode/state';
 import { useAgentStore } from '@thumbcode/state';
-import {
-  ArrowLeft,
-  Sparkles,
-  Zap,
-  Eye,
-  FlaskConical,
-} from 'lucide-react';
+import { ArrowLeft, Eye, FlaskConical, Sparkles, Zap } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const ROLE_DESCRIPTION: Record<AgentRole, string> = {
   architect:

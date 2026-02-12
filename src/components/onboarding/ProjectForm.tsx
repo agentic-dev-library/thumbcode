@@ -52,7 +52,8 @@ export function ProjectFormActions({
       className="border-t border-neutral-800 px-6 py-4 flex-row gap-4"
       style={{ paddingBottom: bottomInset + 16 }}
     >
-      <button type="button"
+      <button
+        type="button"
         onClick={onSkip}
         className="flex-1 bg-neutral-800 py-4 active:bg-neutral-700"
         style={organicBorderRadius.cta}
@@ -60,7 +61,8 @@ export function ProjectFormActions({
         <Text className="text-neutral-300 text-center">Skip for Now</Text>
       </button>
 
-      <button type="button"
+      <button
+        type="button"
         onClick={onCreate}
         disabled={!canCreate || isLoading}
         className={`flex-1 py-4 ${canCreate && !isLoading ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}

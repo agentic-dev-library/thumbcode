@@ -29,9 +29,7 @@ const spinnerColors = {
 export function Spinner({ size = 'md', color = 'primary', label }: Readonly<SpinnerProps>) {
   return (
     <div className="flex flex-col items-center">
-      <div
-        className={`rounded-full animate-spin ${spinnerSizes[size]} ${spinnerColors[color]}`}
-      />
+      <div className={`rounded-full animate-spin ${spinnerSizes[size]} ${spinnerColors[color]}`} />
       {label && <span className="font-body text-sm text-neutral-400 mt-2">{label}</span>}
     </div>
   );
@@ -85,9 +83,7 @@ export function LoadingOverlay({ visible, message }: Readonly<LoadingOverlayProp
         style={{ borderRadius: '16px 12px 20px 8px' }}
       >
         <Spinner size="lg" />
-        {message && (
-          <span className="font-body text-white mt-4 text-center">{message}</span>
-        )}
+        {message && <span className="font-body text-white mt-4 text-center">{message}</span>}
       </div>
     </div>
   );

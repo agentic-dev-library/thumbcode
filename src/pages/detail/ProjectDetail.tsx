@@ -10,21 +10,21 @@
  * are wired in.
  */
 
-import { useAgentStore, useProjectStore } from '@thumbcode/state';
 import type { AgentTask } from '@thumbcode/state';
+import { useAgentStore, useProjectStore } from '@thumbcode/state';
 import {
   ArrowLeft,
-  GitBranch,
-  Users,
-  ListTodo,
-  FolderOpen,
-  GitCommitHorizontal,
+  ChevronRight,
   FileText,
   Folder,
-  ChevronRight,
+  FolderOpen,
+  GitBranch,
+  GitCommitHorizontal,
+  ListTodo,
+  Users,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 type Tab = 'files' | 'commits' | 'tasks' | 'agents';
 
@@ -47,7 +47,7 @@ export function ProjectDetail() {
 
   const activeAgents = agents.filter((a) => a.status !== 'idle').length;
   const pendingTasks = scopedTasks.filter(
-    (t) => t.status === 'pending' || t.status === 'in_progress',
+    (t) => t.status === 'pending' || t.status === 'in_progress'
   ).length;
 
   useEffect(() => {
@@ -138,7 +138,9 @@ export function ProjectDetail() {
         {activeTab === 'files' && <FilesTab />}
         {activeTab === 'commits' && <CommitsTab />}
         {activeTab === 'tasks' && <TasksTab tasks={scopedTasks} />}
-        {activeTab === 'agents' && <AgentsTab agents={agents} onAgentPress={(agentId) => navigate(`/agent/${agentId}`)} />}
+        {activeTab === 'agents' && (
+          <AgentsTab agents={agents} onAgentPress={(agentId) => navigate(`/agent/${agentId}`)} />
+        )}
       </div>
     </div>
   );
@@ -155,7 +157,8 @@ function FilesTab() {
       <div className="bg-surface rounded-organic-card p-6 text-center">
         <Folder size={32} className="text-neutral-600 mx-auto mb-3" />
         <p className="text-neutral-500 font-body text-sm">
-          File system access is not yet available on web. Clone operations and file browsing will be enabled in a future update.
+          File system access is not yet available on web. Clone operations and file browsing will be
+          enabled in a future update.
         </p>
       </div>
     </div>

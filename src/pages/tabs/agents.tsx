@@ -6,22 +6,17 @@
  */
 
 import { type Agent as StoreAgent, selectAgents, useAgentStore } from '@thumbcode/state';
-import {
-  CheckCircle,
-  Eye,
-  Search,
-  Star,
-  Users,
-  Zap,
-} from 'lucide-react';
+import { CheckCircle, Eye, Search, Star, Users, Zap } from 'lucide-react';
 import type React from 'react';
 import { memo, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProgressBar } from '@/components/feedback/Progress';
 
-function getStatusBadgeVariant(
-  status: StoreAgent['status']
-): { bg: string; text: string; label: string } {
+function getStatusBadgeVariant(status: StoreAgent['status']): {
+  bg: string;
+  text: string;
+  label: string;
+} {
   switch (status) {
     case 'working':
     case 'needs_review':
@@ -54,7 +49,13 @@ function getRoleColor(role: StoreAgent['role']): string {
   }
 }
 
-function AvatarIcon({ role, size = 28 }: { role: StoreAgent['role']; size?: number }): React.ReactElement {
+function AvatarIcon({
+  role,
+  size = 28,
+}: {
+  role: StoreAgent['role'];
+  size?: number;
+}): React.ReactElement {
   switch (role) {
     case 'architect':
       return <Star size={size} className="text-gold-400" />;
@@ -136,9 +137,7 @@ export default function AgentsPage() {
             <div className="mb-2">
               <CheckCircle size={28} className="text-teal-500" />
             </div>
-            <span className="block text-2xl font-bold font-body text-white">
-              {totalTasks}
-            </span>
+            <span className="block text-2xl font-bold font-body text-white">{totalTasks}</span>
             <span className="text-sm font-body text-neutral-400">Tasks Completed</span>
           </div>
         </div>
@@ -176,7 +175,8 @@ export default function AgentsPage() {
             const failedTasks = agentTasks.filter((t) => t.status === 'failed').length;
             const activeTasks = agentTasks.filter((t) => t.status === 'in_progress').length;
             const successDenom = completedTasks + failedTasks;
-            const successRate = successDenom > 0 ? `${Math.round((completedTasks / successDenom) * 100)}%` : '\u2014';
+            const successRate =
+              successDenom > 0 ? `${Math.round((completedTasks / successDenom) * 100)}%` : '\u2014';
 
             const currentTask = agent.currentTaskId
               ? tasks.find((t) => t.id === agent.currentTaskId)
@@ -221,9 +221,7 @@ export default function AgentsPage() {
                       <span className="text-sm font-body text-neutral-300 truncate flex-1">
                         {currentTask.description}
                       </span>
-                      <span className="text-sm font-body text-teal-400 ml-2">
-                        {progress}%
-                      </span>
+                      <span className="text-sm font-body text-teal-400 ml-2">{progress}%</span>
                     </div>
                     <ProgressBar value={progress} color="secondary" size="sm" />
                   </div>
@@ -238,15 +236,11 @@ export default function AgentsPage() {
                     <span className="text-xs font-body text-neutral-500">Tasks</span>
                   </div>
                   <div className="text-center">
-                    <span className="block font-body font-semibold text-white">
-                      {successRate}
-                    </span>
+                    <span className="block font-body font-semibold text-white">{successRate}</span>
                     <span className="text-xs font-body text-neutral-500">Success</span>
                   </div>
                   <div className="text-center">
-                    <span className="block font-body font-semibold text-white">
-                      {activeTasks}
-                    </span>
+                    <span className="block font-body font-semibold text-white">{activeTasks}</span>
                     <span className="text-xs font-body text-neutral-500">Active</span>
                   </div>
                 </div>

@@ -80,7 +80,8 @@ export function EmptyState({
       {(action || secondaryAction) && (
         <div className="flex-row items-center gap-3 mt-4">
           {secondaryAction && (
-            <button type="button"
+            <button
+              type="button"
               onClick={secondaryAction.onPress}
               className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
               style={organicBorderRadius.button}
@@ -92,7 +93,8 @@ export function EmptyState({
             </button>
           )}
           {action && (
-            <button type="button"
+            <button
+              type="button"
               onClick={action.onPress}
               className="px-4 py-2 bg-coral-500 active:bg-coral-600"
               style={organicBorderRadius.button}

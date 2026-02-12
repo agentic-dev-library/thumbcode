@@ -81,13 +81,8 @@ export class AgentResponseService {
         (chunk) => {
           currentContent += chunk.text;
 
-          // Update message content
-          const store = useChatStore.getState();
-          const msgs = store.messages[threadId] || [];
-          const msgIndex = msgs.findIndex((m) => m.id === messageId);
-          if (msgIndex !== -1) {
-            msgs[msgIndex].content = currentContent;
-          }
+          // Update message content via store action
+          useChatStore.getState().updateMessageContent(messageId, threadId, currentContent);
 
           this.streamHandler.emit({
             type: 'message_delta',

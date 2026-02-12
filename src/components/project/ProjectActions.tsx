@@ -27,7 +27,7 @@ export function ProjectCommits({ commits, isLoading }: Readonly<ProjectCommitsPr
     <VStack
       spacing="none"
       className="bg-surface"
-      style={{ ...organicBorderRadius.card,  overflow: 'hidden'  }}
+      style={{ ...organicBorderRadius.card, overflow: 'hidden' }}
     >
       <div className="px-4 py-3 border-b border-neutral-700">
         <Text size="sm" weight="semibold" className="text-neutral-400">
@@ -87,7 +87,7 @@ export function ProjectTasks({ tasks }: Readonly<ProjectTasksProps>) {
     <VStack
       spacing="none"
       className="bg-surface"
-      style={{ ...organicBorderRadius.card,  overflow: 'hidden'  }}
+      style={{ ...organicBorderRadius.card, overflow: 'hidden' }}
     >
       <div className="px-4 py-3 border-b border-neutral-700">
         <Text size="sm" weight="semibold" className="text-neutral-400">
@@ -141,7 +141,8 @@ export function ProjectAgents({ agents, onAgentPress }: Readonly<ProjectAgentsPr
   return (
     <VStack spacing="md">
       {agents.map((a) => (
-        <button type="button"
+        <button
+          type="button"
           key={a.id}
           onClick={() => onAgentPress(a.id)}
           className="bg-surface p-4 active:bg-neutral-700"
