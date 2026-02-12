@@ -10,14 +10,14 @@ import { CredentialService, GitHubAuthService } from '@thumbcode/core';
 import { useCredentialStore, useUserStore } from '@thumbcode/state';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Linking, Pressable, View } from 'react-native';
+import { Linking, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StepsProgress } from '@/components/feedback';
-import { LinkIcon, SuccessIcon } from '@/components/icons';
+import { SuccessIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
+import { DeviceCodeDisplay, PollingStatus } from '@/components/onboarding';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
-import { getColor } from '@/utils/design-tokens';
 
 export default function GitHubAuthScreen() {
   const router = useRouter();
@@ -53,7 +53,6 @@ export default function GitHubAuthScreen() {
       return;
     }
 
-    // Automatically start polling for token
     checkAuth();
   };
 
@@ -65,7 +64,6 @@ export default function GitHubAuthScreen() {
     setIsAuthenticating(true);
     setErrorMessage(null);
 
-    // Poll for authorization completion using Device Flow
     const result = await GitHubAuthService.pollForToken({
       clientId: env.githubClientId,
       onPollAttempt: (attempt, max) => setPollStatus({ attempt, max }),
@@ -77,7 +75,6 @@ export default function GitHubAuthScreen() {
       return;
     }
 
-    // Update metadata stores after successful auth
     const { secret } = await CredentialService.retrieve('github');
     if (secret) {
       const validation = await CredentialService.validateCredential('github', secret);
@@ -143,14 +140,12 @@ export default function GitHubAuthScreen() {
   return (
     <View className="flex-1 bg-charcoal" style={{ paddingTop: insets.top }}>
       <Container padding="lg" className="flex-1">
-        {/* Progress */}
         <StepsProgress
           totalSteps={4}
           currentStep={1}
           labels={['GitHub', 'API Keys', 'Project', 'Done']}
         />
 
-        {/* Header */}
         <VStack spacing="sm" className="mt-8 mb-8">
           <Text variant="display" size="3xl" weight="bold" className="text-white">
             Connect GitHub
@@ -160,97 +155,17 @@ export default function GitHubAuthScreen() {
           </Text>
         </VStack>
 
-        {/* Auth Flow */}
-        {!userCode && !isConnected && (
-          <VStack spacing="lg">
-            <View className="bg-surface p-6" style={organicBorderRadius.card}>
-              <View className="items-center mb-4">
-                <LinkIcon size={40} color="teal" turbulence={0.25} />
-              </View>
-              <Text weight="semibold" className="text-white text-center mb-2">
-                Secure Device Flow
-              </Text>
-              <Text size="sm" className="text-neutral-400 text-center">
-                We use GitHub's Device Flow authentication - your credentials are never shared with
-                us.
-              </Text>
-            </View>
-
-            <Pressable
-              onPress={startDeviceFlow}
-              disabled={isAuthenticating}
-              className={`bg-neutral-800 py-4 ${isAuthenticating ? 'opacity-70' : 'active:bg-neutral-700'}`}
-              style={organicBorderRadius.cta}
-            >
-              {isAuthenticating ? (
-                <ActivityIndicator color={getColor('neutral', '50')} />
-              ) : (
-                <Text weight="semibold" className="text-white text-center">
-                  Start GitHub Authentication
-                </Text>
-              )}
-            </Pressable>
-
-            {errorMessage && (
-              <Text size="sm" className="text-coral-400 text-center">
-                {errorMessage}
-              </Text>
-            )}
-          </VStack>
-        )}
-
-        {userCode && !isConnected && (
-          <VStack spacing="lg">
-            <View className="bg-surface p-6" style={organicBorderRadius.card}>
-              <Text size="sm" className="text-neutral-400 text-center mb-2">
-                Enter this code on GitHub:
-              </Text>
-              <Text
-                variant="display"
-                size="3xl"
-                weight="bold"
-                className="text-coral-500 text-center tracking-wider"
-              >
-                {userCode}
-              </Text>
-            </View>
-
-            <Pressable
-              onPress={openGitHub}
-              className="bg-neutral-800 py-4 active:bg-neutral-700"
-              style={organicBorderRadius.cta}
-            >
-              <Text weight="semibold" className="text-white text-center">
-                Open GitHub →
-              </Text>
-            </Pressable>
-
-            <Pressable
-              onPress={checkAuth}
-              disabled={isAuthenticating}
-              className={`bg-teal-600 py-4 ${isAuthenticating ? 'opacity-70' : 'active:bg-teal-700'}`}
-              style={organicBorderRadius.cta}
-            >
-              {isAuthenticating ? (
-                <ActivityIndicator color={getColor('neutral', '50')} />
-              ) : (
-                <Text weight="semibold" className="text-white text-center">
-                  I've Entered the Code
-                </Text>
-              )}
-            </Pressable>
-
-            {pollStatus && (
-              <Text size="sm" className="text-neutral-500 text-center">
-                Checking authorization… {pollStatus.attempt}/{pollStatus.max}
-              </Text>
-            )}
-            {errorMessage && (
-              <Text size="sm" className="text-coral-400 text-center">
-                {errorMessage}
-              </Text>
-            )}
-          </VStack>
+        {!isConnected && (
+          <>
+            <DeviceCodeDisplay
+              userCode={userCode}
+              isAuthenticating={isAuthenticating}
+              onStartDeviceFlow={startDeviceFlow}
+              onOpenGitHub={openGitHub}
+              onCheckAuth={checkAuth}
+            />
+            <PollingStatus pollStatus={pollStatus} errorMessage={errorMessage} />
+          </>
         )}
 
         {isConnected && (
