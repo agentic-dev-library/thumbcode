@@ -10,10 +10,11 @@ import type React from 'react';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AgentActions, AgentHistory, AgentMetrics } from '@/components/agents';
 import { Badge, StatusBadge } from '@/components/display';
 import { ProgressBar } from '@/components/feedback';
 import { type IconColor, LightningIcon, ReviewIcon, StarIcon, TestIcon } from '@/components/icons';
-import { Container, Divider, HStack, VStack } from '@/components/layout';
+import { Container, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
@@ -85,17 +86,6 @@ function getAvatarColor(role: Agent['role']): IconColor {
   }
 }
 
-function formatDateTime(value: string) {
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return value;
-  return d.toLocaleString([], {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
 export default function AgentDetailScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -124,7 +114,7 @@ export default function AgentDetailScreen() {
           Agent not found
         </Text>
         <Text className="text-neutral-500 text-center mb-6">
-          This agent ID doesn’t exist in local state. Go back and select an agent from the list.
+          This agent ID doesn't exist in local state. Go back and select an agent from the list.
         </Text>
         <Pressable
           onPress={() => router.back()}
@@ -234,118 +224,19 @@ export default function AgentDetailScreen() {
           <Container padding="lg">
             {activeTab === 'overview' ? (
               <VStack spacing="md">
-                {/* Metrics */}
-                <View className="bg-surface p-4" style={organicBorderRadius.card}>
-                  <Text weight="semibold" className="text-white mb-3">
-                    Metrics
-                  </Text>
-                  <HStack justify="around">
-                    <VStack align="center">
-                      <Text weight="semibold" className="text-white">
-                        {completed}
-                      </Text>
-                      <Text size="xs" className="text-neutral-500">
-                        Completed
-                      </Text>
-                    </VStack>
-                    <VStack align="center">
-                      <Text weight="semibold" className="text-white">
-                        {failed}
-                      </Text>
-                      <Text size="xs" className="text-neutral-500">
-                        Failed
-                      </Text>
-                    </VStack>
-                    <VStack align="center">
-                      <Text weight="semibold" className="text-white">
-                        {successRate !== null ? `${successRate}%` : '—'}
-                      </Text>
-                      <Text size="xs" className="text-neutral-500">
-                        Success
-                      </Text>
-                    </VStack>
-                  </HStack>
-                </View>
-
-                {/* Controls */}
-                <View className="bg-surface p-4" style={organicBorderRadius.card}>
-                  <Text weight="semibold" className="text-white mb-3">
-                    Controls
-                  </Text>
-                  <HStack spacing="sm">
-                    <Pressable
-                      onPress={() => updateAgentStatus(agent.id, 'idle')}
-                      className="flex-1 bg-surface-elevated py-3 active:bg-neutral-700"
-                      style={organicBorderRadius.button}
-                      accessibilityRole="button"
-                      accessibilityLabel="Set agent to idle"
-                    >
-                      <Text className="text-center text-neutral-200">Idle</Text>
-                    </Pressable>
-                    <Pressable
-                      onPress={() => updateAgentStatus(agent.id, 'working')}
-                      className="flex-1 bg-teal-600 py-3 active:bg-teal-700"
-                      style={organicBorderRadius.button}
-                      accessibilityRole="button"
-                      accessibilityLabel="Set agent to working"
-                    >
-                      <Text className="text-center text-white font-semibold">Work</Text>
-                    </Pressable>
-                  </HStack>
-                </View>
+                <AgentMetrics
+                  completed={completed}
+                  failed={failed}
+                  successRate={successRate}
+                />
+                <AgentActions
+                  agentId={agent.id}
+                  onSetIdle={(id) => updateAgentStatus(id, 'idle')}
+                  onSetWorking={(id) => updateAgentStatus(id, 'working')}
+                />
               </VStack>
             ) : (
-              <VStack
-                spacing="none"
-                className="bg-surface"
-                style={[organicBorderRadius.card, { overflow: 'hidden' }]}
-              >
-                <View className="px-4 py-3 border-b border-neutral-700">
-                  <Text size="sm" weight="semibold" className="text-neutral-400">
-                    TASK HISTORY
-                  </Text>
-                </View>
-                <View className="px-4">
-                  {tasks.length === 0 ? (
-                    <View className="py-6">
-                      <Text className="text-neutral-500">No tasks yet.</Text>
-                    </View>
-                  ) : (
-                    tasks
-                      .slice()
-                      .sort(
-                        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-                      )
-                      .map((t, idx) => (
-                        <View key={t.id}>
-                          <View className="py-4">
-                            <HStack justify="between" align="center" className="mb-1">
-                              <Text className="text-white flex-1" numberOfLines={1}>
-                                {t.description}
-                              </Text>
-                              <Badge
-                                variant={
-                                  t.status === 'completed'
-                                    ? 'success'
-                                    : t.status === 'failed'
-                                      ? 'error'
-                                      : 'warning'
-                                }
-                              >
-                                {t.status.replaceAll('_', ' ')}
-                              </Badge>
-                            </HStack>
-                            <Text size="xs" className="text-neutral-600">
-                              {formatDateTime(t.createdAt)}
-                              {t.completedAt ? ` → ${formatDateTime(t.completedAt)}` : ''}
-                            </Text>
-                          </View>
-                          {idx < tasks.length - 1 && <Divider />}
-                        </View>
-                      ))
-                  )}
-                </View>
-              </VStack>
+              <AgentHistory tasks={tasks} />
             )}
           </Container>
         </ScrollView>
