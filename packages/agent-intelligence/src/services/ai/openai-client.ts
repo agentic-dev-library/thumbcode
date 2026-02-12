@@ -5,12 +5,12 @@
  */
 
 import OpenAI from 'openai';
+import { formatMessagesForOpenAI, mapOpenAIStopReason, parseOpenAIContent } from './openai-helpers';
 import { createStreamParserState, finalizeStream, processStreamChunk } from './openai-stream-parser';
 import type {
   AIClient,
   CompletionOptions,
   CompletionResponse,
-  ContentBlock,
   Message,
   StreamEvent,
 } from './types';
@@ -120,125 +120,4 @@ export function createOpenAIClient(apiKey: string): AIClient {
       };
     },
   };
-}
-
-/**
- * Format messages for OpenAI API
- */
-function formatMessagesForOpenAI(
-  messages: Message[],
-  systemPrompt?: string
-): OpenAI.Chat.Completions.ChatCompletionMessageParam[] {
-  const result: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [];
-
-  if (systemPrompt) {
-    result.push({ role: 'system', content: systemPrompt });
-  }
-
-  for (const msg of messages) {
-    if (msg.role === 'system') {
-      if (!systemPrompt) {
-        result.push({
-          role: 'system',
-          content: typeof msg.content === 'string' ? msg.content : '',
-        });
-      }
-      continue;
-    }
-
-    if (typeof msg.content === 'string') {
-      result.push({
-        role: msg.role as 'user' | 'assistant',
-        content: msg.content,
-      });
-    } else {
-      const toolResults = msg.content.filter((b) => b.type === 'tool_result');
-      for (const toolResult of toolResults) {
-        result.push({
-          role: 'tool',
-          tool_call_id: toolResult.tool_use_id || '',
-          content: toolResult.content || '',
-        });
-      }
-
-      const textBlocks = msg.content.filter((b) => b.type === 'text');
-      if (textBlocks.length > 0) {
-        result.push({
-          role: msg.role as 'user' | 'assistant',
-          content: textBlocks.map((b) => b.text || '').join('\n'),
-        });
-      }
-
-      if (msg.role === 'assistant') {
-        const toolUseBlocks = msg.content.filter((b) => b.type === 'tool_use');
-        if (toolUseBlocks.length > 0) {
-          result.push({
-            role: 'assistant',
-            content: null,
-            tool_calls: toolUseBlocks.map((b, i) => ({
-              id: b.id || `call_${i}`,
-              type: 'function' as const,
-              function: {
-                name: b.name || '',
-                arguments: JSON.stringify(b.input || {}),
-              },
-            })),
-          });
-        }
-      }
-    }
-  }
-
-  return result;
-}
-
-/**
- * Parse OpenAI response content to our format
- */
-function parseOpenAIContent(
-  message: OpenAI.Chat.Completions.ChatCompletionMessage
-): ContentBlock[] {
-  const content: ContentBlock[] = [];
-
-  if (message.content) {
-    content.push({ type: 'text', text: message.content });
-  }
-
-  if (message.tool_calls) {
-    for (const toolCall of message.tool_calls) {
-      let parsedInput: Record<string, unknown> = {};
-      try {
-        parsedInput = JSON.parse(toolCall.function.arguments);
-      } catch {
-        parsedInput = {};
-      }
-
-      content.push({
-        type: 'tool_use',
-        id: toolCall.id,
-        name: toolCall.function.name,
-        input: parsedInput,
-      });
-    }
-  }
-
-  return content;
-}
-
-/**
- * Map OpenAI stop reason to our format
- */
-function mapOpenAIStopReason(reason: string | null): CompletionResponse['stopReason'] {
-  switch (reason) {
-    case 'stop':
-      return 'end_turn';
-    case 'length':
-      return 'max_tokens';
-    case 'tool_calls':
-      return 'tool_use';
-    case 'content_filter':
-      return 'stop_sequence';
-    default:
-      return 'end_turn';
-  }
 }
