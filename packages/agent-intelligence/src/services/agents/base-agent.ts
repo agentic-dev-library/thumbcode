@@ -1,56 +1,27 @@
 /**
- * Base Agent
+ * Base Agent - Unified Facade
  *
  * Abstract base class for specialized AI agents.
+ * Delegates to focused trait modules:
+ * - Promptable: task formatting and prompt construction
+ * - Reviewable: the agentic execution loop (standard and streaming)
+ * - Committable: result parsing from conversation history
  */
 
-import type { Agent, AgentRole, AgentStatus, TaskAssignment, TaskOutput } from '@thumbcode/types';
-import type { AIClient, CompletionOptions, Message, StreamEvent, ToolDefinition } from '../ai';
+import type { Agent, AgentRole, AgentStatus, TaskAssignment } from '@thumbcode/types';
+import type { AIClient, Message, StreamEvent, ToolDefinition } from '../ai';
+import { parseExecutionResult } from './Committable';
+import { formatTaskMessage } from './Promptable';
+import { executeTask, executeTaskStream } from './Reviewable';
+import type {
+  AgentContext,
+  AgentEvent,
+  AgentEventCallback,
+  AgentExecutionResult,
+} from './types';
 
-/**
- * Agent execution context
- */
-export interface AgentContext {
-  projectId: string;
-  workspaceDir: string;
-  currentBranch: string;
-  availableFiles: string[];
-}
-
-/**
- * Agent execution result
- */
-export interface AgentExecutionResult {
-  success: boolean;
-  output: TaskOutput;
-  messages: Message[];
-  tokensUsed: number;
-  error?: string;
-}
-
-/**
- * Event emitter callback for agent events
- */
-export type AgentEventCallback = (event: AgentEvent) => void;
-
-/**
- * Agent events
- */
-export interface AgentEvent {
-  type: 'status_change' | 'thinking' | 'tool_use' | 'progress' | 'error' | 'complete';
-  agentId: string;
-  timestamp: string;
-  data?: {
-    status?: AgentStatus;
-    thought?: string;
-    tool?: string;
-    toolInput?: Record<string, unknown>;
-    toolOutput?: string;
-    progress?: number;
-    error?: string;
-    result?: AgentExecutionResult;
-  };
-}
+// Re-export types for backward compatibility
+export type { AgentContext, AgentEvent, AgentEventCallback, AgentExecutionResult } from './types';
 
 /**
  * Base agent abstract class
@@ -174,319 +145,77 @@ export abstract class BaseAgent {
   ): Promise<string>;
 
   /**
-   * Execute a task
+   * Execute a task (delegated to Reviewable)
    */
   async execute(task: TaskAssignment, context: AgentContext): Promise<AgentExecutionResult> {
-    this.setStatus('thinking');
-    this.conversationHistory = [];
-
-    const systemPrompt = this.getSystemPrompt(context);
-    const tools = this.getTools();
-    let totalTokens = 0;
-
-    // Initial user message with task
-    const userMessage: Message = {
-      role: 'user',
-      content: this.formatTaskMessage(task, context),
-    };
-    this.conversationHistory.push(userMessage);
-
-    try {
-      let continueExecution = true;
-      let iterations = 0;
-      const maxIterations = 10;
-
-      while (continueExecution && iterations < maxIterations) {
-        iterations++;
-
-        const options: CompletionOptions = {
-          model: this.model,
-          maxTokens: this.maxTokens,
-          temperature: this.temperature,
-          systemPrompt,
-          tools: tools.length > 0 ? tools : undefined,
-        };
-
-        const response = await this.aiClient.complete(this.conversationHistory, options);
-        totalTokens += response.usage.totalTokens;
-
-        // Process response
-        const assistantMessage: Message = {
-          role: 'assistant',
-          content: response.content,
-        };
-        this.conversationHistory.push(assistantMessage);
-
-        // Check for tool use
-        const toolUseBlocks = response.content.filter((b) => b.type === 'tool_use');
-
-        if (response.stopReason === 'tool_use' && toolUseBlocks.length > 0) {
-          this.setStatus('coding');
-
-          // Execute all tool calls
-          const toolResults = await Promise.all(
-            toolUseBlocks.map(async (block) => {
-              this.emitEvent({
-                type: 'tool_use',
-                data: {
-                  tool: block.name,
-                  toolInput: block.input,
-                },
-              });
-
-              const output = await this.executeTool(block.name || '', block.input || {}, context);
-
-              this.emitEvent({
-                type: 'tool_use',
-                data: {
-                  tool: block.name,
-                  toolOutput: output,
-                },
-              });
-
-              return {
-                type: 'tool_result' as const,
-                tool_use_id: block.id,
-                content: output,
-              };
-            })
-          );
-
-          // Add tool results to history
-          const toolResultMessage: Message = {
-            role: 'user',
-            content: toolResults,
-          };
-          this.conversationHistory.push(toolResultMessage);
-        } else {
-          // No more tool use, we're done
-          continueExecution = false;
-        }
-
-        // Check for thinking content
-        for (const block of response.content) {
-          if (block.type === 'text' && block.text) {
-            this.emitEvent({ type: 'thinking', data: { thought: block.text } });
+    return executeTask(
+      task,
+      context,
+      this.getSystemPrompt(context),
+      this.getTools(),
+      this.aiClient,
+      { model: this.model, maxTokens: this.maxTokens, temperature: this.temperature },
+      {
+        onStatusChange: (status) => this.setStatus(status as AgentStatus),
+        onToolUse: (tool, input, output) => {
+          if (output !== undefined) {
+            this.emitEvent({ type: 'tool_use', data: { tool, toolOutput: output } });
+          } else {
+            this.emitEvent({ type: 'tool_use', data: { tool, toolInput: input } });
           }
-        }
-      }
-
-      this.setStatus('idle');
-
-      const result = this.parseExecutionResult();
-
-      this.emitEvent({ type: 'complete', data: { result } });
-
-      return {
-        success: true,
-        output: result,
-        messages: this.conversationHistory,
-        tokensUsed: totalTokens,
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      this.setStatus('error');
-      this.emitEvent({ type: 'error', data: { error: errorMessage } });
-
-      return {
-        success: false,
-        output: {
-          filesCreated: [],
-          filesModified: [],
-          filesDeleted: [],
-          summary: `Error: ${errorMessage}`,
         },
-        messages: this.conversationHistory,
-        tokensUsed: totalTokens,
-        error: errorMessage,
-      };
-    }
+        onThinking: (thought) => this.emitEvent({ type: 'thinking', data: { thought } }),
+        onError: (error) => this.emitEvent({ type: 'error', data: { error } }),
+        onComplete: (result) => this.emitEvent({ type: 'complete', data: { result } }),
+        executeTool: (name, input, ctx) => this.executeTool(name, input, ctx),
+      }
+    );
   }
 
   /**
-   * Execute with streaming
+   * Execute with streaming (delegated to Reviewable)
    */
   async executeStream(
     task: TaskAssignment,
     context: AgentContext,
     onStream: (event: StreamEvent) => void
   ): Promise<AgentExecutionResult> {
-    this.setStatus('thinking');
-    this.conversationHistory = [];
-
-    const systemPrompt = this.getSystemPrompt(context);
-    const tools = this.getTools();
-    let totalTokens = 0;
-
-    const userMessage: Message = {
-      role: 'user',
-      content: this.formatTaskMessage(task, context),
-    };
-    this.conversationHistory.push(userMessage);
-
-    try {
-      let continueExecution = true;
-      let iterations = 0;
-      const maxIterations = 10;
-
-      while (continueExecution && iterations < maxIterations) {
-        iterations++;
-
-        const options: CompletionOptions = {
-          model: this.model,
-          maxTokens: this.maxTokens,
-          temperature: this.temperature,
-          systemPrompt,
-          tools: tools.length > 0 ? tools : undefined,
-          stream: true,
-        };
-
-        const response = await this.aiClient.completeStream(
-          this.conversationHistory,
-          options,
-          onStream
-        );
-        totalTokens += response.usage.totalTokens;
-
-        const assistantMessage: Message = {
-          role: 'assistant',
-          content: response.content,
-        };
-        this.conversationHistory.push(assistantMessage);
-
-        const toolUseBlocks = response.content.filter((b) => b.type === 'tool_use');
-
-        if (response.stopReason === 'tool_use' && toolUseBlocks.length > 0) {
-          this.setStatus('coding');
-
-          const toolResults = await Promise.all(
-            toolUseBlocks.map(async (block) => {
-              const output = await this.executeTool(block.name || '', block.input || {}, context);
-              return {
-                type: 'tool_result' as const,
-                tool_use_id: block.id,
-                content: output,
-              };
-            })
-          );
-
-          const toolResultMessage: Message = {
-            role: 'user',
-            content: toolResults,
-          };
-          this.conversationHistory.push(toolResultMessage);
-        } else {
-          continueExecution = false;
-        }
-      }
-
-      this.setStatus('idle');
-      const result = this.parseExecutionResult();
-
-      return {
-        success: true,
-        output: result,
-        messages: this.conversationHistory,
-        tokensUsed: totalTokens,
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      this.setStatus('error');
-
-      return {
-        success: false,
-        output: {
-          filesCreated: [],
-          filesModified: [],
-          filesDeleted: [],
-          summary: `Error: ${errorMessage}`,
+    return executeTaskStream(
+      task,
+      context,
+      this.getSystemPrompt(context),
+      this.getTools(),
+      this.aiClient,
+      { model: this.model, maxTokens: this.maxTokens, temperature: this.temperature },
+      {
+        onStatusChange: (status) => this.setStatus(status as AgentStatus),
+        onToolUse: (tool, input, output) => {
+          if (output !== undefined) {
+            this.emitEvent({ type: 'tool_use', data: { tool, toolOutput: output } });
+          } else {
+            this.emitEvent({ type: 'tool_use', data: { tool, toolInput: input } });
+          }
         },
-        messages: this.conversationHistory,
-        tokensUsed: totalTokens,
-        error: errorMessage,
-      };
-    }
+        onThinking: (thought) => this.emitEvent({ type: 'thinking', data: { thought } }),
+        onError: (error) => this.emitEvent({ type: 'error', data: { error } }),
+        onComplete: (result) => this.emitEvent({ type: 'complete', data: { result } }),
+        executeTool: (name, input, ctx) => this.executeTool(name, input, ctx),
+      },
+      onStream
+    );
   }
 
   /**
-   * Format the task into a message
+   * Format task into a message (delegated to Promptable)
    */
   protected formatTaskMessage(task: TaskAssignment, context: AgentContext): string {
-    return `
-# Task: ${task.title}
-
-## Description
-${task.description}
-
-## Acceptance Criteria
-${task.acceptanceCriteria.map((c) => `- ${c}`).join('\n')}
-
-## Context
-- Project: ${context.projectId}
-- Branch: ${context.currentBranch}
-- Workspace: ${context.workspaceDir}
-
-## Available Files
-${context.availableFiles.slice(0, 50).join('\n')}
-${context.availableFiles.length > 50 ? `\n... and ${context.availableFiles.length - 50} more files` : ''}
-
-## References
-${task.references.length > 0 ? task.references.join('\n') : 'None'}
-
-Please complete this task step by step.
-`.trim();
+    return formatTaskMessage(task, context);
   }
 
   /**
-   * Parse the execution result from conversation history
+   * Parse execution result (delegated to Committable)
    */
-  protected parseExecutionResult(): TaskOutput {
-    const filesCreated: string[] = [];
-    const filesModified: string[] = [];
-    const filesDeleted: string[] = [];
-
-    // Look through tool results for file operations
-    for (const message of this.conversationHistory) {
-      if (Array.isArray(message.content)) {
-        for (const block of message.content) {
-          if (block.type === 'tool_result' && block.content) {
-            // Parse file operations from tool results
-            if (block.content.includes('Created file:')) {
-              const match = block.content.match(/Created file: (.+)/);
-              if (match) filesCreated.push(match[1]);
-            }
-            if (block.content.includes('Modified file:')) {
-              const match = block.content.match(/Modified file: (.+)/);
-              if (match) filesModified.push(match[1]);
-            }
-            if (block.content.includes('Deleted file:')) {
-              const match = block.content.match(/Deleted file: (.+)/);
-              if (match) filesDeleted.push(match[1]);
-            }
-          }
-        }
-      }
-    }
-
-    // Get final summary from last assistant message
-    let summary = 'Task completed';
-    const lastAssistantMessage = [...this.conversationHistory]
-      .reverse()
-      .find((m) => m.role === 'assistant');
-    if (lastAssistantMessage && typeof lastAssistantMessage.content === 'string') {
-      summary = lastAssistantMessage.content.slice(0, 500);
-    } else if (lastAssistantMessage && Array.isArray(lastAssistantMessage.content)) {
-      const textBlock = lastAssistantMessage.content.find((b) => b.type === 'text');
-      if (textBlock?.text) {
-        summary = textBlock.text.slice(0, 500);
-      }
-    }
-
-    return {
-      filesCreated,
-      filesModified,
-      filesDeleted,
-      summary,
-    };
+  protected parseExecutionResult() {
+    return parseExecutionResult(this.conversationHistory);
   }
 }

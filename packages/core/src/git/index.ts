@@ -32,6 +32,12 @@
 
 export { GitService } from './GitService';
 
+// Focused services for direct import
+export { GitBranchService } from './GitBranchService';
+export { GitCloneService } from './GitCloneService';
+export { GitCommitService } from './GitCommitService';
+export { GitDiffService } from './GitDiffService';
+
 // Types
 export type {
   BranchInfo,
