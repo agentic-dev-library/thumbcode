@@ -29,8 +29,10 @@ class RequestSigningService {
 
     const timestamp = new Date().toISOString();
     const nonce = Crypto.randomUUID();
-    // Include the secret in the data to be hashed for request signing
-    // This creates a keyed hash similar to HMAC
+    // Security note: This uses a hash(secret + data) construction rather than proper HMAC.
+    // expo-crypto does not expose HMAC. The nonce and timestamp prevent replay attacks,
+    // and the inclusion of the full secret as a prefix is acceptable for this use case
+    // since the signed data is not user-controlled and the signature is not exposed to clients.
     const dataToSign = `${secretResult.secret}${timestamp}${method.toUpperCase()}${new URL(url).pathname}${body || ''}${nonce}`;
 
     const signature = await Crypto.digestStringAsync(

@@ -204,13 +204,14 @@ export default function CredentialsScreen() {
         {
           text: 'Disconnect',
           style: 'destructive',
-          onPress: async () => {
-            const ok = await GitHubAuthService.signOut();
-            if (ok && githubCredential) {
-              removeCredential(githubCredential.id);
-              setGitHubProfile(null);
-              setAuthenticated(false);
-            }
+          onPress: () => {
+            GitHubAuthService.signOut().then((ok) => {
+              if (ok && githubCredential) {
+                removeCredential(githubCredential.id);
+                setGitHubProfile(null);
+                setAuthenticated(false);
+              }
+            });
           },
         },
       ]
