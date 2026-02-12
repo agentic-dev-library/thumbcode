@@ -5,7 +5,6 @@
  * Uses paint daube icons for brand consistency.
  */
 
-// @ts-ignore
 import { env } from '@thumbcode/config/env';
 import { CredentialService, GitHubAuthService } from '@thumbcode/core';
 import { useCredentialStore, useUserStore } from '@thumbcode/state';
