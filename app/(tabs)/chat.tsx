@@ -6,7 +6,13 @@
  */
 
 import { GitService } from '@thumbcode/core';
-import { type ApprovalMessage, type Message, useChatStore, useProjectStore, useUserStore } from '@thumbcode/state';
+import {
+  type ApprovalMessage,
+  type Message,
+  useChatStore,
+  useProjectStore,
+  useUserStore,
+} from '@thumbcode/state';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -60,54 +66,61 @@ export default function ChatScreen() {
     setActiveThread(id);
   };
 
+  const performCommit = useCallback(
+    async (approvalMsg: ApprovalMessage) => {
+      const projectId = activeThread?.projectId;
+      const project = projectId ? projects.find((p) => p.id === projectId) : undefined;
+      const repoDir = project?.localPath;
+
+      if (!repoDir) {
+        Alert.alert('Error', 'No repository path found for project');
+        return false;
+      }
+
+      await GitService.stage({ dir: repoDir, filepath: '.' });
+
+      const author = {
+        name: userProfile?.name || userProfile?.login || 'User',
+        email: userProfile?.email || 'user@example.com',
+      };
+
+      await GitService.commit({
+        dir: repoDir,
+        message: approvalMsg.metadata.actionDescription || 'Commit from chat',
+        author,
+      });
+
+      return true;
+    },
+    [activeThread, projects, userProfile]
+  );
+
   const handleApprovalResponse = useCallback(
     async (messageId: string, approved: boolean) => {
       if (!activeThreadId) return;
 
       const message = messages.find((m) => m.id === messageId);
+      const isCommitApproval =
+        approved &&
+        message?.contentType === 'approval_request' &&
+        (message as ApprovalMessage).metadata.actionType === 'commit';
 
-      if (approved && message?.contentType === 'approval_request') {
-        const approvalMsg = message as ApprovalMessage;
-        if (approvalMsg.metadata.actionType === 'commit') {
-          try {
-            // Find project path
-            const projectId = activeThread?.projectId;
-            const project = projectId ? projects.find((p) => p.id === projectId) : undefined;
-            const repoDir = project?.localPath;
-
-            if (!repoDir) {
-              Alert.alert('Error', 'No repository path found for project');
-              return;
-            }
-
-            // Stage all changes
-            await GitService.stage({ dir: repoDir, filepath: '.' });
-
-            // Commit
-            const author = {
-              name: userProfile?.name || userProfile?.login || 'User',
-              email: userProfile?.email || 'user@example.com',
-            };
-
-            await GitService.commit({
-              dir: repoDir,
-              message: approvalMsg.metadata.actionDescription || 'Commit from chat',
-              author,
-            });
-
-            // Only mark as approved if commit succeeded
+      if (isCommitApproval) {
+        try {
+          const committed = await performCommit(message as ApprovalMessage);
+          if (committed) {
             respondToApproval(messageId, activeThreadId, approved);
-          } catch (error) {
-            console.error('Failed to commit:', error);
-            Alert.alert('Commit Failed', error instanceof Error ? error.message : 'Unknown error');
           }
-          return;
+        } catch (error) {
+          console.error('Failed to commit:', error);
+          Alert.alert('Commit Failed', error instanceof Error ? error.message : 'Unknown error');
         }
+        return;
       }
 
       respondToApproval(messageId, activeThreadId, approved);
     },
-    [activeThreadId, activeThread, projects, userProfile, messages, respondToApproval]
+    [activeThreadId, messages, performCommit, respondToApproval]
   );
 
   return (
