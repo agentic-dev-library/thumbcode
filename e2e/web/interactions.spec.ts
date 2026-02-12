@@ -2,65 +2,30 @@ import { expect, test } from '@playwright/test';
 import { disableAnimations } from './utils/visual';
 
 /**
- * Helper to click a Pressable element by text.
- * Uses page.mouse to perform a real click at the element's coordinates.
- * Falls back to finding the nearest clickable ancestor via evaluate.
+ * Helper to click a button or link by its text content.
  */
-async function clickPressable(page: import('@playwright/test').Page, text: string | RegExp) {
-  const textEl = page.getByText(text).first();
-  await textEl.waitFor({ state: 'attached', timeout: 10_000 });
-
-  // Walk up to the nearest ancestor with cursor:pointer and use its bounding box.
-  // This handles the case where the text element itself has no bounding box but
-  // its clickable parent (a Pressable) does.
-  const box = await textEl.evaluate((el) => {
-    let target: HTMLElement | null = el as HTMLElement;
-    while (target && target !== document.body) {
-      const style = window.getComputedStyle(target);
-      if (style.cursor === 'pointer') {
-        const rect = target.getBoundingClientRect();
-        if (rect.width > 0 && rect.height > 0) {
-          return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
-        }
-      }
-      target = target.parentElement;
-    }
-    // Fall back to the element itself
-    const rect = (el as HTMLElement).getBoundingClientRect();
-    if (rect.width > 0 && rect.height > 0) {
-      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
-    }
-    return null;
-  });
-
-  if (box) {
-    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-  }
+async function clickByText(page: import('@playwright/test').Page, text: string | RegExp) {
+  await page.getByText(text).first().click();
 }
 
 /**
- * Helper to click a tab in the bottom tab bar by its accessible name.
+ * Helper to click a tab in the bottom tab bar by its aria-label.
  */
 async function clickTab(page: import('@playwright/test').Page, name: string) {
-  const tab = page.getByRole('tab', { name: new RegExp(name, 'i') });
-  await tab.waitFor({ state: 'attached', timeout: 10_000 });
-  const box = await tab.boundingBox();
-  if (box) {
-    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-  }
+  const tab = page.getByRole('link', { name: new RegExp(name, 'i') });
+  await tab.click();
 }
 
 /**
  * Helper to complete onboarding and get to dashboard.
- * Sets the AsyncStorage key directly (AsyncStorage uses localStorage on web)
- * to skip onboarding, then navigates to the tabs home page.
+ * Sets localStorage key to skip onboarding, then navigates to home.
  */
 async function completeOnboarding(page: import('@playwright/test').Page) {
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('thumbcode_onboarding_complete', 'true');
   });
-  await page.goto('/(tabs)');
+  await page.goto('/');
   await page.waitForTimeout(1000);
 }
 
@@ -70,24 +35,24 @@ test.describe('User Interactions - Basic', () => {
   });
 
   test('should navigate to GitHub auth step', async ({ page }) => {
-    await page.goto('/welcome');
-    await clickPressable(page, 'Get Started');
+    await page.goto('/onboarding/welcome');
+    await clickByText(page, 'Get Started');
     await page.waitForTimeout(500);
     await expect(page.getByText(/Connect GitHub|GitHub/i).first()).toBeVisible();
   });
 
   test('should show GitHub auth content', async ({ page }) => {
-    await page.goto('/welcome');
-    await clickPressable(page, 'Get Started');
+    await page.goto('/onboarding/welcome');
+    await clickByText(page, 'Get Started');
     await page.waitForTimeout(500);
     await expect(page.getByText(/GitHub|Connect|Secure Device Flow/i).first()).toBeVisible();
   });
 
   test('should navigate to API provider step', async ({ page }) => {
-    await page.goto('/welcome');
-    await clickPressable(page, 'Get Started');
+    await page.goto('/onboarding/welcome');
+    await clickByText(page, 'Get Started');
     await page.waitForTimeout(500);
-    await clickPressable(page, 'Skip for Now');
+    await clickByText(page, 'Skip for Now');
     await page.waitForTimeout(500);
     await expect(page.getByText(/Anthropic|OpenAI|AI Provider/i).first()).toBeVisible();
   });

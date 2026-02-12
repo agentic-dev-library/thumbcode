@@ -10,7 +10,6 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.ts'],
     include: [
       'src/**/__tests__/**/*.test.{ts,tsx}',
-      'app/**/__tests__/**/*.test.{ts,tsx}',
       'packages/state/src/__tests__/**/*.test.{ts,tsx}',
       'packages/core/src/**/__tests__/**/*.test.{ts,tsx}',
       'packages/config/src/__tests__/**/*.test.{ts,tsx}',
@@ -20,6 +19,7 @@ export default defineConfig({
     exclude: ['**/node_modules/**'],
     coverage: {
       provider: 'v8',
+      reporter: ['text', 'json', 'lcov'],
       include: ['src/**/*.{ts,tsx}', 'packages/*/src/**/*.{ts,tsx}'],
       exclude: ['**/__tests__/**', '**/*.d.ts', '**/types/**'],
     },
