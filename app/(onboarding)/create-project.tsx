@@ -11,7 +11,7 @@ import type { Repository } from '@thumbcode/types';
 import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Switch, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StepsProgress } from '@/components/feedback';
 import { FolderIcon, SecurityIcon, StarIcon, SuccessIcon } from '@/components/icons';
@@ -94,6 +94,13 @@ export default function CreateProjectScreen() {
   const [repos, setRepos] = useState<RepoListItem[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // New repo creation state
+  const [mode, setMode] = useState<'select' | 'create'>('select');
+  const [newRepoName, setNewRepoName] = useState('');
+  const [newRepoDescription, setNewRepoDescription] = useState('');
+  const [newRepoPrivate, setNewRepoPrivate] = useState(true);
+  const [isCreatingRepo, setIsCreatingRepo] = useState(false);
+
   useEffect(() => {
     let cancelled = false;
     setIsLoadingRepos(true);
@@ -127,6 +134,35 @@ export default function CreateProjectScreen() {
 
   const handleSkip = () => {
     router.push('/(onboarding)/complete');
+  };
+
+  const handleCreateNewRepo = async () => {
+    const trimmedName = newRepoName.trim();
+    if (!trimmedName || isCreatingRepo) return;
+
+    setIsCreatingRepo(true);
+    setErrorMessage(null);
+    try {
+      const repo = await GitHubApiService.createRepository({
+        name: trimmedName,
+        description: newRepoDescription.trim(),
+        isPrivate: newRepoPrivate,
+      });
+
+      const repoItem: RepoListItem = { ...repo, key: repo.fullName };
+      setRepos((prev) => [repoItem, ...prev]);
+      setSelectedRepo(repoItem);
+      if (!projectName.trim()) {
+        setProjectName(repo.name);
+      }
+      setMode('select');
+      setNewRepoName('');
+      setNewRepoDescription('');
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to create repository');
+    } finally {
+      setIsCreatingRepo(false);
+    }
   };
 
   const handleCreate = async () => {
@@ -273,15 +309,84 @@ export default function CreateProjectScreen() {
             )}
           </VStack>
 
-          {/* Create New Option (Coming Soon) */}
-          <View
-            className="mt-4 p-4 border border-dashed border-neutral-700 opacity-50"
-            style={organicBorderRadius.card}
-          >
-            <View className="flex-row items-center justify-center">
-              <Text className="text-neutral-500">+ Create new repository (coming soon)</Text>
-            </View>
-          </View>
+          {/* Create New Repository */}
+          {mode === 'select' ? (
+            <Pressable
+              onPress={() => setMode('create')}
+              className="mt-4 p-4 border border-dashed border-teal-600/50 active:bg-teal-600/10"
+              style={organicBorderRadius.card}
+            >
+              <View className="flex-row items-center justify-center">
+                <Text className="text-teal-400">+ Create new repository</Text>
+              </View>
+            </Pressable>
+          ) : (
+            <VStack
+              spacing="sm"
+              className="mt-4 p-4 bg-surface border border-teal-600/30"
+              style={organicBorderRadius.card}
+            >
+              <View className="flex-row items-center justify-between mb-2">
+                <Text weight="semibold" className="text-white">
+                  New Repository
+                </Text>
+                <Pressable onPress={() => setMode('select')}>
+                  <Text size="sm" className="text-neutral-400">
+                    Cancel
+                  </Text>
+                </Pressable>
+              </View>
+
+              <Input
+                placeholder="repository-name"
+                value={newRepoName}
+                onChangeText={setNewRepoName}
+              />
+
+              <Input
+                placeholder="Description (optional)"
+                value={newRepoDescription}
+                onChangeText={setNewRepoDescription}
+              />
+
+              <View className="flex-row items-center justify-between py-2">
+                <Text className="text-neutral-300">Private repository</Text>
+                <Switch
+                  value={newRepoPrivate}
+                  onValueChange={setNewRepoPrivate}
+                  trackColor={{
+                    false: getColor('neutral', '700'),
+                    true: getColor('teal', '600'),
+                  }}
+                  thumbColor={getColor('neutral', '50')}
+                />
+              </View>
+
+              {errorMessage && mode === 'create' && (
+                <Text size="sm" className="text-coral-500">
+                  {errorMessage}
+                </Text>
+              )}
+
+              <Pressable
+                onPress={handleCreateNewRepo}
+                disabled={!newRepoName.trim() || isCreatingRepo}
+                className={`py-3 ${newRepoName.trim() && !isCreatingRepo ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}
+                style={organicBorderRadius.button}
+              >
+                {isCreatingRepo ? (
+                  <ActivityIndicator size="small" color="#ffffff" />
+                ) : (
+                  <Text
+                    weight="semibold"
+                    className={`text-center ${newRepoName.trim() ? 'text-white' : 'text-neutral-500'}`}
+                  >
+                    Create Repository
+                  </Text>
+                )}
+              </Pressable>
+            </VStack>
+          )}
         </Container>
       </ScrollView>
 
