@@ -74,7 +74,6 @@ function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
       type="button"
       onClick={onPress}
       className="bg-surface-elevated p-4 mb-2 active:bg-neutral-700"
-      role="button"
       aria-label={accessibilityLabel}
       aria-description="Open this thread"
       style={{ ...organicBorderRadius.card, transform: 'rotate(-0.2deg)' }}
@@ -163,7 +162,6 @@ export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadLi
             onClick={onCreateThread}
             className="bg-coral-500 px-6 py-3 active:bg-coral-600"
             style={organicBorderRadius.button}
-            role="button"
             aria-label="New Thread"
             aria-description="Create a new chat thread"
           >
@@ -189,7 +187,6 @@ export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadLi
             onClick={onCreateThread}
             className="bg-teal-600 px-3 py-1.5 active:bg-teal-700"
             style={organicBorderRadius.button}
-            role="button"
             aria-label="New Thread"
             aria-description="Create a new chat thread"
           >

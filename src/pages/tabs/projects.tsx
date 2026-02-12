@@ -75,6 +75,7 @@ export default function ProjectsPage() {
                 : 'Create your first project to get started with ThumbCode.'}
             </p>
             <button
+              type="button"
               onClick={() => navigate('/onboarding/create-project')}
               className="px-4 py-2 bg-coral-500 text-white font-body font-semibold rounded-organic-button hover:bg-coral-600 transition-colors"
             >
@@ -85,6 +86,7 @@ export default function ProjectsPage() {
           <div className="flex flex-col gap-4">
             {filteredProjects.map((project, index) => (
               <button
+                type="button"
                 key={project.id}
                 onClick={() => navigate(`/project/${project.id}`)}
                 className="bg-surface p-4 rounded-organic-card shadow-organic-card hover:bg-surface-elevated transition-colors text-left"
@@ -143,6 +145,7 @@ export default function ProjectsPage() {
 
       {/* FAB */}
       <button
+        type="button"
         onClick={() => navigate('/onboarding/create-project')}
         className="fixed bottom-6 right-6 w-14 h-14 bg-coral-500 flex items-center justify-center rounded-organic-button shadow-organic-float hover:bg-coral-600 transition-colors z-10"
         aria-label="Create new project"

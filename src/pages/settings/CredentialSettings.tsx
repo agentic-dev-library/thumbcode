@@ -57,6 +57,7 @@ function ApiKeyInput({
           data-testid={`api-key-input-${label.toLowerCase().replace(/\s+/g, '-')}`}
         />
         <button
+          type="button"
           onClick={onSave}
           disabled={!value.trim() || isSaving}
           className={`px-4 py-2 font-body text-sm font-medium rounded-organic-button transition-colors ${
@@ -144,6 +145,7 @@ export function CredentialSettings() {
       {/* Back navigation */}
       <div className="px-4 py-3 border-b border-neutral-800">
         <button
+          type="button"
           onClick={() => navigate('/settings')}
           className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body"
           aria-label="Back to settings"
@@ -185,6 +187,7 @@ export function CredentialSettings() {
               <div>
                 {isGitHubConnected ? (
                   <button
+                    type="button"
                     onClick={handleGitHubDisconnect}
                     className="px-3 py-1.5 text-sm text-coral-500 border border-coral-500/30 rounded-organic-button font-body hover:bg-coral-500/10 transition-colors"
                     data-testid="disconnect-github"
@@ -193,6 +196,7 @@ export function CredentialSettings() {
                   </button>
                 ) : (
                   <button
+                    type="button"
                     onClick={handleGitHubConnect}
                     className="px-3 py-1.5 text-sm text-teal-400 border border-teal-500/30 rounded-organic-button font-body hover:bg-teal-500/10 transition-colors"
                     data-testid="connect-github"

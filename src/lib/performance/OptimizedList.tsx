@@ -5,7 +5,7 @@
  * Replaces React Native's FlatList for web.
  */
 
-import React, { memo, useCallback, useMemo, useRef } from 'react';
+import React, { memo, useCallback } from 'react';
 
 export interface OptimizedListProps<T> {
   /** Data to render */
@@ -34,7 +34,7 @@ function OptimizedListInner<T>(
   props: OptimizedListProps<T>,
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
-  const { data, renderItem, keyExtractor: customKeyExtractor, className, style, ...rest } = props;
+  const { data, renderItem, keyExtractor: customKeyExtractor, className, style } = props;
 
   const keyExtractor = useCallback(
     (item: T, index: number) => {

@@ -142,6 +142,7 @@ export default function HomePage() {
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-body font-semibold text-white text-lg">Agent Team</h2>
             <button
+              type="button"
               onClick={() => navigate('/agents')}
               className="text-sm font-body text-coral-500 hover:text-coral-400 transition-colors"
             >
@@ -152,6 +153,7 @@ export default function HomePage() {
           <div className="flex flex-wrap gap-3">
             {agents.map((agent) => (
               <button
+                type="button"
                 key={agent.id}
                 onClick={() => navigate(`/agent/${agent.id}`)}
                 className="bg-surface p-3 flex items-center rounded-organic-card shadow-organic-card hover:bg-surface-elevated transition-colors text-left"
@@ -202,7 +204,10 @@ export default function HomePage() {
         <div>
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-body font-semibold text-white text-lg">Recent Activity</h2>
-            <button className="text-sm font-body text-coral-500 hover:text-coral-400 transition-colors">
+            <button
+              type="button"
+              className="text-sm font-body text-coral-500 hover:text-coral-400 transition-colors"
+            >
               See All &rarr;
             </button>
           </div>

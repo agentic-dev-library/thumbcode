@@ -85,7 +85,6 @@ export function EmptyState({
               onClick={secondaryAction.onPress}
               className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
               style={organicBorderRadius.button}
-              role="button"
               aria-label={secondaryAction.label}
               aria-description={`Perform the action: ${secondaryAction.label}`}
             >
@@ -98,7 +97,6 @@ export function EmptyState({
               onClick={action.onPress}
               className="px-4 py-2 bg-coral-500 active:bg-coral-600"
               style={organicBorderRadius.button}
-              role="button"
               aria-label={action.label}
               aria-description={`Perform the action: ${action.label}`}
             >

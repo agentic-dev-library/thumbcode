@@ -26,7 +26,6 @@ export function AgentActions({ agentId, onSetIdle, onSetWorking }: Readonly<Agen
           onClick={() => onSetIdle(agentId)}
           className="flex-1 bg-surface-elevated py-3 active:bg-neutral-700"
           style={organicBorderRadius.button}
-          role="button"
           aria-label="Set agent to idle"
         >
           <Text className="text-center text-neutral-200">Idle</Text>
@@ -36,7 +35,6 @@ export function AgentActions({ agentId, onSetIdle, onSetWorking }: Readonly<Agen
           onClick={() => onSetWorking(agentId)}
           className="flex-1 bg-teal-600 py-3 active:bg-teal-700"
           style={organicBorderRadius.button}
-          role="button"
           aria-label="Set agent to working"
         >
           <Text className="text-center text-white font-semibold">Work</Text>

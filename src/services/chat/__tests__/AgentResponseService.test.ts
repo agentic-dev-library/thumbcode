@@ -366,9 +366,9 @@ describe('AgentResponseService', () => {
       const messages = useChatStore.getState().messages[threadId] || [];
       const approvalMsg = messages.find((m) => m.id === messageId);
       expect(approvalMsg).toBeDefined();
-      expect(approvalMsg!.contentType).toBe('approval_request');
-      expect(approvalMsg!.content).toContain('Commit changes to main branch');
-      expect(approvalMsg!.sender).toBe('implementer');
+      expect(approvalMsg?.contentType).toBe('approval_request');
+      expect(approvalMsg?.content).toContain('Commit changes to main branch');
+      expect(approvalMsg?.sender).toBe('implementer');
     });
 
     it('should emit approval_request event', () => {

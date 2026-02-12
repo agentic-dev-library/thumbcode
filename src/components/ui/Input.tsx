@@ -13,7 +13,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 /** Placeholder color from design tokens - neutral-400 */
-const PLACEHOLDER_COLOR = getColor('neutral', '400');
+const _PLACEHOLDER_COLOR = getColor('neutral', '400');
 
 /**
  * Renders a text input with an optional label and error message.

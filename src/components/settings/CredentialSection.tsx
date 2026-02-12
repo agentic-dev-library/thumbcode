@@ -12,7 +12,6 @@ import type { IconColor } from '@/components/icons';
 import { HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
-import { getColor } from '@/utils/design-tokens';
 
 type CredentialIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 

@@ -77,14 +77,23 @@ export function Text({
       }
     : undefined;
 
+  const ariaProps: Record<string, unknown> = {};
+  if (accessibilityRole) {
+    ariaProps.role = accessibilityRole as React.AriaRole;
+    if (accessibilityLabel) {
+      ariaProps['aria-label'] = accessibilityLabel;
+    }
+  }
+  if (accessibilityElementsHidden !== undefined) {
+    ariaProps['aria-hidden'] = accessibilityElementsHidden;
+  }
+
   return (
     <span
       className={`${variantClass} ${sizeClass} ${weightClass} ${className}`}
       style={{ ...lineClampStyle, ...style }}
       data-testid={testID}
-      role={accessibilityRole as React.AriaRole | undefined}
-      aria-label={accessibilityLabel}
-      aria-hidden={accessibilityElementsHidden}
+      {...ariaProps}
       {...props}
     >
       {children}

@@ -60,11 +60,13 @@ export function BottomSheet({
   return (
     <div className="fixed inset-0 z-50">
       {/* Backdrop */}
-      <div
-        className={`absolute inset-0 bg-black transition-opacity duration-200 ${
+      <button
+        type="button"
+        className={`absolute inset-0 bg-black transition-opacity duration-200 border-none cursor-default w-full ${
           isAnimating ? 'opacity-50' : 'opacity-0'
         }`}
         onClick={onClose}
+        aria-label="Close bottom sheet"
       />
 
       {/* Sheet */}
@@ -152,11 +154,7 @@ export function ActionSheet({
     <BottomSheet visible={visible} onClose={onClose} height="auto" showHandle={false}>
       {(title || message) && (
         <div className="text-center mb-4 pb-4 border-b border-neutral-700">
-          {title && (
-            <h3 className="font-display text-base text-white mb-1" role="heading">
-              {title}
-            </h3>
-          )}
+          {title && <h3 className="font-display text-base text-white mb-1">{title}</h3>}
           {message && <p className="font-body text-sm text-neutral-400 text-center">{message}</p>}
         </div>
       )}

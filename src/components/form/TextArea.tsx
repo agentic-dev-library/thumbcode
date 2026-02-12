@@ -73,12 +73,16 @@ export function TextArea({
   return (
     <div className="w-full">
       {label && (
-        <label className="block font-body text-sm text-neutral-300 mb-1.5">
+        <label
+          htmlFor={testID || `textarea-${label}`}
+          className="block font-body text-sm text-neutral-300 mb-1.5"
+        >
           {label}
           {required && <span className="text-coral-500 ml-0.5">*</span>}
         </label>
       )}
       <textarea
+        id={testID || (label ? `textarea-${label}` : undefined)}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
         placeholder={placeholder}

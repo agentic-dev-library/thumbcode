@@ -51,7 +51,7 @@ export function RadioGroup({
   const groupName = name || `radio-group-${label || 'default'}`;
 
   return (
-    <fieldset className="w-full border-none p-0 m-0" role="radiogroup" aria-label={label}>
+    <fieldset className="w-full border-none p-0 m-0" aria-label={label}>
       {label && <legend className="font-body text-sm text-neutral-300 mb-2">{label}</legend>}
 
       <div className={direction === 'horizontal' ? 'flex flex-wrap gap-4' : 'flex flex-col gap-3'}>

@@ -73,6 +73,9 @@ export function Modal({
       ref={dialogRef}
       onClose={onClose}
       onClick={handleBackdropClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') onClose();
+      }}
       className="backdrop:bg-black/60 bg-transparent p-0 m-auto open:flex items-center justify-center"
     >
       <div
@@ -80,14 +83,11 @@ export function Modal({
         style={{
           borderRadius: isFull ? undefined : '18px 16px 20px 14px',
         }}
-        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         {title && (
           <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-700">
-            <h2 className="font-display text-lg text-white flex-1" role="heading">
-              {title}
-            </h2>
+            <h2 className="font-display text-lg text-white flex-1">{title}</h2>
             <button
               onClick={onClose}
               className="w-8 h-8 flex items-center justify-center -mr-2 text-neutral-400 hover:text-white transition-colors"

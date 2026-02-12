@@ -66,6 +66,7 @@ export function ProjectDetail() {
             This project ID doesn't exist locally. Go back and create or select a project.
           </p>
           <button
+            type="button"
             onClick={() => navigate(-1)}
             className="bg-surface px-4 py-3 text-white font-semibold font-body rounded-organic-button hover:bg-neutral-700 transition-colors"
             aria-label="Go back"
@@ -85,6 +86,7 @@ export function ProjectDetail() {
       {/* Back navigation */}
       <div className="px-4 py-3 border-b border-neutral-800">
         <button
+          type="button"
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body"
           aria-label="Go back"
@@ -119,6 +121,7 @@ export function ProjectDetail() {
       <div className="flex border-b border-neutral-800">
         {(['files', 'commits', 'tasks', 'agents'] as const).map((tab) => (
           <button
+            type="button"
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`flex-1 py-3 text-center capitalize font-body transition-colors ${
@@ -238,6 +241,7 @@ function AgentsTab({
     <div className="space-y-3">
       {agents.map((agent) => (
         <button
+          type="button"
           key={agent.id}
           onClick={() => onAgentPress(agent.id)}
           className="w-full bg-surface p-4 rounded-organic-card flex items-center justify-between hover:bg-surface-elevated transition-colors text-left"

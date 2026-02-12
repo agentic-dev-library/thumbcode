@@ -49,10 +49,18 @@ export function Select({
 
   return (
     <div className="w-full">
-      {label && <label className="block font-body text-sm text-neutral-300 mb-1.5">{label}</label>}
+      {label && (
+        <label
+          htmlFor={testID || `select-${label}`}
+          className="block font-body text-sm text-neutral-300 mb-1.5"
+        >
+          {label}
+        </label>
+      )}
 
       <div className="relative">
         <select
+          id={testID || (label ? `select-${label}` : undefined)}
           value={value ?? ''}
           onChange={(e) => onValueChange(e.target.value)}
           disabled={disabled}
@@ -78,6 +86,7 @@ export function Select({
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>

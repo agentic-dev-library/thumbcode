@@ -35,7 +35,7 @@ function getBadgeClasses(variant: 'success' | 'warning' | 'error' | 'secondary')
 }
 
 function SettingRow({ title, subtitle, value, badge, onPress, toggle }: Readonly<SettingRowProps>) {
-  const isInteractive = !!onPress || !!toggle;
+  const _isInteractive = !!onPress || !!toggle;
   const Wrapper = onPress ? 'button' : 'div';
 
   return (
@@ -109,6 +109,7 @@ function ApprovalLevelSelector({
       <div className="space-y-2">
         {levels.map((level) => (
           <button
+            type="button"
             key={level.id}
             onClick={() => onSelect(level.id)}
             className={`w-full p-4 border text-left rounded-organic-button transition-colors ${
@@ -176,6 +177,7 @@ export function AgentSettings() {
       {/* Back navigation */}
       <div className="px-4 py-3 border-b border-neutral-800">
         <button
+          type="button"
           onClick={() => navigate('/settings')}
           className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body"
           aria-label="Back to settings"

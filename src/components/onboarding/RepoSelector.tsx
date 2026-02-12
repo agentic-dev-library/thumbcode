@@ -9,7 +9,6 @@ import { FolderIcon, SecurityIcon, StarIcon, SuccessIcon } from '@/components/ic
 import { VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
-import { getColor } from '@/utils/design-tokens';
 
 export interface RepoListItem extends Repository {
   /** Stable key for list rendering */

@@ -78,6 +78,7 @@ interface RoleFilterButtonProps {
 
 const RoleFilterButton = memo(({ role, isSelected, onPress }: Readonly<RoleFilterButtonProps>) => (
   <button
+    type="button"
     data-testid={`role-filter-${role}`}
     onClick={() => onPress(role)}
     className={`px-4 py-2 capitalize font-body transition-colors ${
@@ -145,6 +146,7 @@ export default function AgentsPage() {
         {/* Role Filter */}
         <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
           <button
+            type="button"
             data-testid="role-filter-all"
             onClick={handleAllPress}
             className={`px-4 py-2 font-body transition-colors ${
@@ -186,6 +188,7 @@ export default function AgentsPage() {
 
             return (
               <button
+                type="button"
                 key={agent.id}
                 onClick={() => navigate(`/agent/${agent.id}`)}
                 className="bg-surface p-4 rounded-organic-card shadow-organic-card hover:bg-surface-elevated transition-colors text-left"

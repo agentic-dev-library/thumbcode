@@ -147,7 +147,6 @@ export function ProjectAgents({ agents, onAgentPress }: Readonly<ProjectAgentsPr
           onClick={() => onAgentPress(a.id)}
           className="bg-surface p-4 active:bg-neutral-700"
           style={organicBorderRadius.card}
-          role="button"
           aria-label={`Open agent ${a.name}`}
         >
           <HStack justify="between" align="center">

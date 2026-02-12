@@ -77,6 +77,7 @@ function OptionSelector({ title, options, selected, onSelect }: Readonly<OptionS
       <div className="flex flex-wrap gap-2">
         {options.map((option) => (
           <button
+            type="button"
             key={option.value}
             onClick={() => onSelect(option.value)}
             className={`px-4 py-2 text-sm font-body rounded-organic-button transition-colors ${
@@ -130,6 +131,7 @@ export function EditorSettings() {
       {/* Back navigation */}
       <div className="px-4 py-3 border-b border-neutral-800">
         <button
+          type="button"
           onClick={() => navigate('/settings')}
           className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body"
           aria-label="Back to settings"

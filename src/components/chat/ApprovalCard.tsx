@@ -113,7 +113,6 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
             onClick={onReject}
             className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
             style={organicBorderRadius.button}
-            role="button"
             aria-label="Reject"
             aria-description="Reject this action"
           >
@@ -124,7 +123,6 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
             onClick={onApprove}
             className="px-4 py-2 bg-teal-600 active:bg-teal-700 ml-2"
             style={organicBorderRadius.button}
-            role="button"
             aria-label="Approve"
             aria-description="Approve this action"
           >

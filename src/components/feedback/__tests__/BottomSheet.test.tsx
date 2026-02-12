@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { ActionSheet, BottomSheet } from '../BottomSheet';
 
 vi.mock('lucide-react', () => ({
@@ -34,7 +34,7 @@ describe('BottomSheet', () => {
   });
 
   it('does not render when not visible', () => {
-    const { container } = render(
+    render(
       <BottomSheet visible={false} onClose={vi.fn()}>
         <span>Hidden</span>
       </BottomSheet>

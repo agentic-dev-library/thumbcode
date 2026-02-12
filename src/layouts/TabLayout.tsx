@@ -49,7 +49,6 @@ export function TabLayout() {
       </main>
       <nav
         className="flex items-center justify-around border-t border-neutral-700 bg-neutral-800 py-2"
-        role="tablist"
         aria-label="Main navigation"
       >
         <TabItem

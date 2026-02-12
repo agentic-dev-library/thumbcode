@@ -156,6 +156,7 @@ export default function SettingsPage() {
       <div className="w-full p-6">
         {/* Profile */}
         <button
+          type="button"
           className="bg-surface p-4 mb-6 flex items-center rounded-organic-card shadow-organic-card hover:bg-surface-elevated transition-colors w-full text-left"
           style={{ transform: 'rotate(-0.2deg)' }}
         >
@@ -298,7 +299,10 @@ export default function SettingsPage() {
         </SettingsSectionGroup>
 
         {/* Danger Zone */}
-        <button className="w-full bg-coral-500/10 p-4 rounded-organic-card text-center hover:bg-coral-500/20 transition-colors">
+        <button
+          type="button"
+          className="w-full bg-coral-500/10 p-4 rounded-organic-card text-center hover:bg-coral-500/20 transition-colors"
+        >
           <div className="flex items-center justify-center gap-2">
             <LogOut size={18} className="text-coral-500" />
             <span className="text-coral-500 font-body font-semibold">Sign Out</span>

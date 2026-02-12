@@ -123,16 +123,14 @@ export function InfoTip({ content, size = 'sm' }: Readonly<InfoTipProps>) {
 
   return (
     <Tooltip content={content}>
-      <div
-        className="items-center justify-center bg-neutral-700 rounded-full"
+      <span
+        className="inline-flex items-center justify-center bg-neutral-700 rounded-full"
         style={{ width: dimension, height: dimension }}
-        role="button"
-        aria-label="Information"
       >
         <Text className="font-body text-neutral-300" style={{ fontSize, lineHeight: fontSize + 2 }}>
           ?
         </Text>
-      </div>
+      </span>
     </Tooltip>
   );
 }

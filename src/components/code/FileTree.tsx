@@ -73,10 +73,9 @@ export function FileTree({
   }, [data]);
 
   return (
-    <div
-      role="list"
+    <ul
       aria-label="File tree"
-      className="bg-surface overflow-hidden"
+      className="bg-surface overflow-hidden list-none p-0 m-0"
       style={organicBorderRadius.card}
     >
       {sortedData.map((node) => (
@@ -91,6 +90,6 @@ export function FileTree({
           showStatus={showStatus}
         />
       ))}
-    </div>
+    </ul>
   );
 }

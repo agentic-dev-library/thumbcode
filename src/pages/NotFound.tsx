@@ -38,6 +38,7 @@ export function NotFoundPage() {
             </Link>
 
             <button
+              type="button"
               onClick={() => navigate(-1)}
               className="block w-full py-4 px-8 bg-surface text-center text-white font-body rounded-[14px_16px_12px_18px/12px_14px_16px_10px] hover:bg-neutral-700 transition-colors"
             >

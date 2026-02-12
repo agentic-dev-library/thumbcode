@@ -71,7 +71,6 @@ export function ErrorFallback({
             weight="bold"
             className="text-white text-center font-display"
             data-testid="error-title"
-            role="header"
           >
             {title}
           </Text>

@@ -125,7 +125,6 @@ function FileTreeNodeRow({
     <button
       type="button"
       onClick={onPress}
-      role="button"
       aria-label={accessibilityLabel}
       aria-description={accessibilityHint}
       className={`flex-row items-center py-1.5 px-2 ${rowClass}`}

@@ -73,7 +73,6 @@ export function ChatInput({
         disabled={!canSend}
         className={`px-4 py-3 ${canSend ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}
         style={organicBorderRadius.button}
-        role="button"
         aria-label="Send"
         aria-description="Send the message"
       >

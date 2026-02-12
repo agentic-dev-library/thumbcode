@@ -3,7 +3,7 @@ import { getColor } from '@/utils/design-tokens';
 import { Text } from './Text';
 
 /** Brand colors from design tokens for spinner */
-const SPINNER_COLORS = {
+const _SPINNER_COLORS = {
   light: getColor('neutral', '800'),
   dark: getColor('neutral', '50'),
 } as const;

@@ -5,7 +5,7 @@
  * Migrated from app/agent/[id].tsx (React Native) to web React.
  */
 
-import type { Agent, AgentRole, AgentStatus } from '@thumbcode/state';
+import type { AgentRole, AgentStatus } from '@thumbcode/state';
 import { useAgentStore } from '@thumbcode/state';
 import { ArrowLeft, Eye, FlaskConical, Sparkles, Zap } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -113,6 +113,7 @@ export function AgentDetail() {
             This agent ID doesn't exist in local state. Go back and select an agent from the list.
           </p>
           <button
+            type="button"
             onClick={() => navigate(-1)}
             className="bg-surface px-4 py-3 text-white font-semibold font-body rounded-organic-button hover:bg-neutral-700 transition-colors"
             aria-label="Go back"
@@ -132,6 +133,7 @@ export function AgentDetail() {
       {/* Back navigation */}
       <div className="px-4 py-3 border-b border-neutral-800">
         <button
+          type="button"
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body"
           aria-label="Go back"
@@ -202,6 +204,7 @@ export function AgentDetail() {
       <div className="flex border-b border-neutral-800">
         {(['overview', 'history'] as const).map((tab) => (
           <button
+            type="button"
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`flex-1 py-3 text-center capitalize font-body transition-colors ${
@@ -243,6 +246,7 @@ export function AgentDetail() {
               <h3 className="text-sm font-semibold text-neutral-400 font-body mb-3">ACTIONS</h3>
               <div className="flex gap-3">
                 <button
+                  type="button"
                   onClick={() => updateAgentStatus(agent.id, 'idle')}
                   className="flex-1 py-2.5 bg-neutral-700 text-white font-body text-sm font-medium rounded-organic-button hover:bg-neutral-600 transition-colors"
                   data-testid="set-idle-button"
@@ -250,6 +254,7 @@ export function AgentDetail() {
                   Set Idle
                 </button>
                 <button
+                  type="button"
                   onClick={() => updateAgentStatus(agent.id, 'working')}
                   className="flex-1 py-2.5 bg-teal-600 text-white font-body text-sm font-medium rounded-organic-button hover:bg-teal-700 transition-colors"
                   data-testid="set-working-button"

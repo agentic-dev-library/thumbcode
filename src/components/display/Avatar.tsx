@@ -82,7 +82,12 @@ export function Avatar({
         }}
       >
         {src ? (
-          <img src={src} style={{ width: dimension, height: dimension }} className="rounded-full" />
+          <img
+            src={src}
+            alt={name || 'Avatar'}
+            style={{ width: dimension, height: dimension }}
+            className="rounded-full"
+          />
         ) : (
           <Text className="font-body text-white font-semibold" style={{ fontSize }}>
             {initials}

@@ -13,7 +13,7 @@ describe('tokenize', () => {
       const tokens = lines[0];
       const constToken = tokens.find((t) => t.value === 'const');
       expect(constToken).toBeDefined();
-      expect(constToken!.type).toBe('keyword');
+      expect(constToken?.type).toBe('keyword');
     });
 
     it('identifies strings', () => {
@@ -21,7 +21,7 @@ describe('tokenize', () => {
       const tokens = lines[0];
       const stringToken = findToken(tokens, 'string');
       expect(stringToken).toBeDefined();
-      expect(stringToken!.value).toBe('"hello"');
+      expect(stringToken?.value).toBe('"hello"');
     });
 
     it('identifies single-quoted strings', () => {
@@ -29,7 +29,7 @@ describe('tokenize', () => {
       const tokens = lines[0];
       const stringToken = findToken(tokens, 'string');
       expect(stringToken).toBeDefined();
-      expect(stringToken!.value).toBe("'world'");
+      expect(stringToken?.value).toBe("'world'");
     });
 
     it('identifies template literals', () => {
@@ -37,7 +37,7 @@ describe('tokenize', () => {
       const tokens = lines[0];
       const stringToken = findToken(tokens, 'string');
       expect(stringToken).toBeDefined();
-      expect(stringToken!.value).toBe('`hi`');
+      expect(stringToken?.value).toBe('`hi`');
     });
 
     it('identifies numbers', () => {
@@ -45,7 +45,7 @@ describe('tokenize', () => {
       const tokens = lines[0];
       const numToken = findToken(tokens, 'number');
       expect(numToken).toBeDefined();
-      expect(numToken!.value).toBe('42');
+      expect(numToken?.value).toBe('42');
     });
 
     it('identifies hex numbers', () => {
@@ -53,7 +53,7 @@ describe('tokenize', () => {
       const tokens = lines[0];
       const numToken = findToken(tokens, 'number');
       expect(numToken).toBeDefined();
-      expect(numToken!.value).toBe('0xFF00FF');
+      expect(numToken?.value).toBe('0xFF00FF');
     });
 
     it('identifies line comments', () => {
@@ -86,7 +86,7 @@ describe('tokenize', () => {
       const tokens = lines[0];
       const plainToken = tokens.find((t) => t.value === 'myVar');
       expect(plainToken).toBeDefined();
-      expect(plainToken!.type).toBe('plain');
+      expect(plainToken?.type).toBe('plain');
     });
   });
 
@@ -103,7 +103,7 @@ describe('tokenize', () => {
       const tokens = lines[0];
       const numToken = findToken(tokens, 'number');
       expect(numToken).toBeDefined();
-      expect(numToken!.value).toBe('42');
+      expect(numToken?.value).toBe('42');
     });
 
     it('does not treat JSON keys as keywords', () => {
@@ -127,7 +127,7 @@ describe('tokenize', () => {
       const tokens = lines[0];
       const defToken = tokens.find((t) => t.value === 'def');
       expect(defToken).toBeDefined();
-      expect(defToken!.type).toBe('keyword');
+      expect(defToken?.type).toBe('keyword');
     });
 
     it('identifies Python-specific keywords', () => {
@@ -152,7 +152,7 @@ describe('tokenize', () => {
       const lines = tokenize('def foo(): pass', 'py');
       const tokens = lines[0];
       const defToken = tokens.find((t) => t.value === 'def');
-      expect(defToken!.type).toBe('keyword');
+      expect(defToken?.type).toBe('keyword');
     });
   });
 
@@ -178,7 +178,7 @@ describe('tokenize', () => {
       const lines = tokenize('export PATH="/usr/bin"', 'sh');
       const tokens = lines[0];
       const exportToken = tokens.find((t) => t.value === 'export');
-      expect(exportToken!.type).toBe('keyword');
+      expect(exportToken?.type).toBe('keyword');
     });
   });
 

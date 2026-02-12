@@ -51,9 +51,9 @@ describe('InfoTip', () => {
     expect(screen.getByText('?')).toBeTruthy();
   });
 
-  it('renders with Information accessibility label', () => {
+  it('renders with accessible button wrapper', () => {
     render(<InfoTip content="More info" />);
-    expect(screen.getByLabelText('Information')).toBeTruthy();
+    expect(screen.getByRole('button')).toBeTruthy();
   });
 
   it('renders small size by default', () => {

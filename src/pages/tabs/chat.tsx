@@ -80,6 +80,7 @@ function ThreadItem({ thread, onSelect }: Readonly<ThreadItemProps>) {
 
   return (
     <button
+      type="button"
       onClick={onSelect}
       className="w-full bg-surface-elevated p-4 mb-2 rounded-organic-card shadow-organic-card hover:bg-neutral-700 transition-colors text-left"
       style={{ transform: 'rotate(-0.2deg)' }}
@@ -156,6 +157,7 @@ function ThreadListView({ onSelectThread, onCreateThread }: Readonly<ThreadListV
           Start a new thread to collaborate with AI agents
         </p>
         <button
+          type="button"
           onClick={onCreateThread}
           className="bg-coral-500 px-6 py-3 font-body font-semibold text-white rounded-organic-button hover:bg-coral-600 transition-colors"
         >
@@ -171,6 +173,7 @@ function ThreadListView({ onSelectThread, onCreateThread }: Readonly<ThreadListV
       <div className="flex justify-between items-center px-4 py-3 border-b border-neutral-700">
         <h2 className="font-display text-lg text-white">Conversations</h2>
         <button
+          type="button"
           onClick={onCreateThread}
           className="bg-teal-600 px-3 py-1.5 rounded-organic-button hover:bg-teal-700 transition-colors flex items-center gap-1"
         >
@@ -243,12 +246,14 @@ function ChatMessageView({ message, onApprovalResponse }: Readonly<ChatMessageVi
             </p>
             <div className="flex gap-2">
               <button
+                type="button"
                 onClick={() => onApprovalResponse?.(message.id, true)}
                 className="px-3 py-1.5 bg-teal-600 text-white text-sm font-body font-semibold rounded-organic-button hover:bg-teal-700 transition-colors"
               >
                 Approve
               </button>
               <button
+                type="button"
                 onClick={() => onApprovalResponse?.(message.id, false)}
                 className="px-3 py-1.5 bg-coral-500 text-white text-sm font-body font-semibold rounded-organic-button hover:bg-coral-600 transition-colors"
               >
@@ -382,6 +387,7 @@ function ChatInputBar({ threadId }: Readonly<ChatInputBarProps>) {
         onKeyDown={handleKeyDown}
       />
       <button
+        type="button"
         onClick={handleSend}
         disabled={!canSend}
         className={`px-4 py-3 rounded-organic-button transition-colors flex items-center gap-1 ${
@@ -409,8 +415,8 @@ export default function ChatPage() {
   const setActiveThread = useChatStore((s) => s.setActiveThread);
   const respondToApproval = useChatStore((s) => s.respondToApproval);
 
-  const projects = useProjectStore((s) => s.projects);
-  const userProfile = useUserStore((s) => s.githubProfile);
+  const _projects = useProjectStore((s) => s.projects);
+  const _userProfile = useUserStore((s) => s.githubProfile);
 
   const activeThread = useChatStore((s) =>
     activeThreadId ? s.threads.find((t) => t.id === activeThreadId) : undefined
@@ -435,7 +441,7 @@ export default function ChatPage() {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 50);
     return () => clearTimeout(timer);
-  }, [activeThreadId, messages.length]);
+  }, [activeThreadId]);
 
   const handleCreateThread = useCallback(() => {
     const id = ChatService.createThread({
@@ -462,6 +468,7 @@ export default function ChatPage() {
           {/* Thread header */}
           <div className="flex items-center px-4 py-3 border-b border-neutral-800 bg-charcoal">
             <button
+              type="button"
               onClick={() => setActiveThread(null)}
               className="mr-3 p-2 -ml-2 hover:bg-neutral-800 rounded-organic-button transition-colors"
               aria-label="Back to thread list"

@@ -10,7 +10,6 @@ import type { IconColor } from '@/components/icons';
 import { HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
-import { getColor } from '@/utils/design-tokens';
 
 export interface SettingsItemProps {
   Icon: React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;

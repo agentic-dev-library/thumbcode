@@ -139,7 +139,6 @@ export function DiffViewer({
         type="button"
         onClick={() => setCollapsed(!collapsed)}
         className="flex-row items-center justify-between px-3 py-2 bg-neutral-800 border-b border-neutral-700"
-        role="button"
         aria-label={`${filename || 'file'}, ${additions} additions, ${deletions} deletions`}
         aria-description={collapsed ? 'Expand the diff' : 'Collapse the diff'}
         aria-expanded={!collapsed}

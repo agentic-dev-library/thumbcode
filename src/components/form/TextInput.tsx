@@ -63,12 +63,16 @@ export function TextInput({
   return (
     <div className="w-full">
       {label && (
-        <label className="block font-body text-sm text-neutral-300 mb-1.5">
+        <label
+          htmlFor={testID || `input-${label}`}
+          className="block font-body text-sm text-neutral-300 mb-1.5"
+        >
           {label}
           {required && <span className="text-coral-500 ml-0.5">*</span>}
         </label>
       )}
       <input
+        id={testID || (label ? `input-${label}` : undefined)}
         type={type}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}

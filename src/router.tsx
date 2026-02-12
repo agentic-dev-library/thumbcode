@@ -36,7 +36,6 @@ import CreateProjectPage from '@/pages/onboarding/create-project';
 import GitHubAuthPage from '@/pages/onboarding/github-auth';
 // Onboarding screens (migrated from React Native)
 import WelcomePage from '@/pages/onboarding/welcome';
-import { PlaceholderPage } from '@/pages/placeholder';
 
 // Settings sub-screens (migrated from React Native)
 import { AgentSettings } from '@/pages/settings/AgentSettings';

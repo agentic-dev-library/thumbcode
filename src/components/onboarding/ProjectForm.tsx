@@ -7,7 +7,6 @@
 import { VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
-import { getColor } from '@/utils/design-tokens';
 
 interface ProjectFormHeaderProps {
   projectName: string;

@@ -38,10 +38,10 @@ export function FormField({
       {(label || labelRight) && (
         <div className="flex items-center justify-between mb-1.5">
           {label && (
-            <label className="font-body text-sm text-neutral-300">
+            <span className="font-body text-sm text-neutral-300">
               {label}
               {required && <span className="text-coral-500 ml-0.5">*</span>}
-            </label>
+            </span>
           )}
           {labelRight}
         </div>

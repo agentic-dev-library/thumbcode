@@ -9,7 +9,6 @@ import { LinkIcon } from '@/components/icons';
 import { VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
-import { getColor } from '@/utils/design-tokens';
 
 interface DeviceCodeDisplayProps {
   userCode: string | null;

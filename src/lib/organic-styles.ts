@@ -7,7 +7,6 @@
  */
 
 import type React from 'react';
-import { getColor } from '@/utils/design-tokens';
 
 /**
  * Shared input border radius values
