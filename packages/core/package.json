@@ -13,9 +13,10 @@
     "@thumbcode/config": "workspace:*",
     "@thumbcode/types": "workspace:*",
     "diff": "^8.0.3",
-    "expo-file-system": "~18.0.0",
-    "expo-local-authentication": "~15.0.0",
-    "expo-secure-store": "~14.0.0",
+    "@aparajita/capacitor-biometric-auth": "^10.0.0",
+    "@capacitor/device": "^8.0.0",
+    "@capacitor/filesystem": "^8.1.1",
+    "capacitor-secure-storage-plugin": "^0.13.0",
     "isomorphic-git": "^1.27.0",
     "zod": "^3.23.0"
   },

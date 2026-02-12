@@ -5,7 +5,7 @@
  */
 
 import * as Diff from 'diff';
-import * as FileSystem from 'expo-file-system';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import git from 'isomorphic-git';
 
 import { fs } from './git-fs';
@@ -272,7 +272,12 @@ class GitDiffServiceClass {
             // New file (untracked or added)
             type = 'add';
             try {
-              newContent = await FileSystem.readAsStringAsync(`${dir}/${filepath}`);
+              const fileResult = await Filesystem.readFile({
+                path: `${dir}/${filepath}`,
+                directory: Directory.Documents,
+                encoding: Encoding.UTF8,
+              });
+              newContent = fileResult.data as string;
             } catch {
               newContent = '';
             }
@@ -285,7 +290,12 @@ class GitDiffServiceClass {
             type = 'modify';
             oldContent = (await readBlobContent(dir, headOid, filepath)) || '';
             try {
-              newContent = await FileSystem.readAsStringAsync(`${dir}/${filepath}`);
+              const fileResult = await Filesystem.readFile({
+                path: `${dir}/${filepath}`,
+                directory: Directory.Documents,
+                encoding: Encoding.UTF8,
+              });
+              newContent = fileResult.data as string;
             } catch {
               newContent = '';
             }

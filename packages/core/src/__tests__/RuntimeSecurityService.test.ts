@@ -1,8 +1,8 @@
 import { runtimeSecurityService } from '../security/RuntimeSecurityService';
-import * as Device from 'expo-device';
+import { Device } from '@capacitor/device';
 import { Alert, BackHandler } from 'react-native';
 
-jest.mock('expo-device');
+jest.mock('@capacitor/device');
 
 describe('RuntimeSecurityService', () => {
   let alertSpy: jest.SpyInstance;
@@ -26,14 +26,30 @@ describe('RuntimeSecurityService', () => {
 
   describe('checkAndHandleRootedStatus', () => {
     it('should not alert or exit if the device is not rooted', async () => {
-      (Device.isRootedExperimentalAsync as jest.Mock).mockResolvedValue(false);
+      (Device.getInfo as jest.Mock).mockResolvedValue({
+        platform: 'android',
+        isVirtual: false,
+        model: 'Pixel',
+        operatingSystem: 'android',
+        osVersion: '14',
+        manufacturer: 'Google',
+        webViewVersion: '120',
+      });
       await runtimeSecurityService.checkAndHandleRootedStatus();
       expect(alertSpy).not.toHaveBeenCalled();
       expect(exitAppSpy).not.toHaveBeenCalled();
     });
 
-    it('should alert and exit if the device is rooted', async () => {
-      (Device.isRootedExperimentalAsync as jest.Mock).mockResolvedValue(true);
+    it('should alert and exit if the device appears rooted (virtual Android)', async () => {
+      (Device.getInfo as jest.Mock).mockResolvedValue({
+        platform: 'android',
+        isVirtual: true,
+        model: 'Emulator',
+        operatingSystem: 'android',
+        osVersion: '14',
+        manufacturer: 'Google',
+        webViewVersion: '120',
+      });
 
       // Configure Alert.alert to automatically invoke the button's onPress callback
       alertSpy.mockImplementation(

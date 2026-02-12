@@ -10,9 +10,7 @@
     "./constants": "./src/constants.ts",
     "./features": "./src/features.ts"
   },
-  "dependencies": {
-    "expo-constants": "~17.0.0"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-native": ">=0.70.0"

@@ -1,11 +1,12 @@
 /**
  * KeyStorage Tests
  *
- * Tests for secure credential storage and retrieval using SecureStore.
+ * Tests for secure credential storage and retrieval using Capacitor Secure Storage
+ * and @aparajita/capacitor-biometric-auth.
  */
 
-import * as LocalAuthentication from 'expo-local-authentication';
-import * as SecureStore from 'expo-secure-store';
+import { BiometricAuth } from '@aparajita/capacitor-biometric-auth';
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 
 import { KeyStorage } from '../KeyStorage';
 import type { KeyValidator } from '../KeyValidator';
@@ -15,8 +16,8 @@ const mockValidator: jest.Mocked<KeyValidator> = {
   maskSecret: jest.fn(),
 } as any;
 
-const mockSecureStore = SecureStore as jest.Mocked<typeof SecureStore>;
-const mockLocalAuth = LocalAuthentication as jest.Mocked<typeof LocalAuthentication>;
+const mockSecureStorage = SecureStoragePlugin as jest.Mocked<typeof SecureStoragePlugin>;
+const mockBiometricAuth = BiometricAuth as jest.Mocked<typeof BiometricAuth>;
 
 describe('KeyStorage', () => {
   let storage: KeyStorage;
@@ -37,13 +38,10 @@ describe('KeyStorage', () => {
 
       expect(result.isValid).toBe(true);
       expect(result.message).toBe('Credential stored successfully');
-      expect(mockSecureStore.setItemAsync).toHaveBeenCalledWith(
-        'thumbcode_cred_anthropic',
-        expect.any(String),
-        expect.objectContaining({
-          keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
-        })
-      );
+      expect(mockSecureStorage.set).toHaveBeenCalledWith({
+        key: 'thumbcode_cred_anthropic',
+        value: expect.any(String),
+      });
     });
 
     it('should reject invalid format', async () => {
@@ -51,7 +49,7 @@ describe('KeyStorage', () => {
 
       expect(result.isValid).toBe(false);
       expect(result.message).toBe('Invalid credential format');
-      expect(mockSecureStore.setItemAsync).not.toHaveBeenCalled();
+      expect(mockSecureStorage.set).not.toHaveBeenCalled();
     });
 
     it('should skip API validation when skipValidation is true', async () => {
@@ -73,11 +71,12 @@ describe('KeyStorage', () => {
 
       expect(result.isValid).toBe(false);
       expect(result.message).toBe('API key expired');
-      expect(mockSecureStore.setItemAsync).not.toHaveBeenCalled();
+      expect(mockSecureStorage.set).not.toHaveBeenCalled();
     });
 
     it('should require biometric when specified', async () => {
-      mockLocalAuth.authenticateAsync.mockResolvedValue({ success: true });
+      // BiometricAuth.authenticate resolves on success
+      mockBiometricAuth.authenticate.mockResolvedValue(undefined);
       mockValidator.validateCredential.mockResolvedValue({
         isValid: true,
         message: 'Valid',
@@ -88,14 +87,12 @@ describe('KeyStorage', () => {
       });
 
       expect(result.isValid).toBe(true);
-      expect(mockLocalAuth.authenticateAsync).toHaveBeenCalled();
+      expect(mockBiometricAuth.authenticate).toHaveBeenCalled();
     });
 
     it('should reject when biometric fails', async () => {
-      mockLocalAuth.authenticateAsync.mockResolvedValue({
-        success: false,
-        error: 'user_cancel',
-      });
+      // BiometricAuth.authenticate throws on failure
+      mockBiometricAuth.authenticate.mockRejectedValue(new Error('user_cancel'));
 
       const result = await storage.store('github', 'ghp_' + 'a'.repeat(36), {
         requireBiometric: true,
@@ -110,7 +107,7 @@ describe('KeyStorage', () => {
         isValid: true,
         message: 'Valid',
       });
-      mockSecureStore.setItemAsync.mockRejectedValueOnce(new Error('Storage full'));
+      mockSecureStorage.set.mockRejectedValueOnce(new Error('Storage full'));
 
       const result = await storage.store('openai', 'sk-test123');
 
@@ -126,7 +123,7 @@ describe('KeyStorage', () => {
         storedAt: '2025-01-01T00:00:00Z',
         type: 'anthropic',
       });
-      mockSecureStore.getItemAsync.mockResolvedValue(payload);
+      mockSecureStorage.get.mockResolvedValue({ value: payload });
 
       const result = await storage.retrieve('anthropic');
 
@@ -135,7 +132,7 @@ describe('KeyStorage', () => {
     });
 
     it('should return null secret when not stored', async () => {
-      mockSecureStore.getItemAsync.mockResolvedValue(null);
+      mockSecureStorage.get.mockRejectedValue(new Error('Key not found'));
 
       const result = await storage.retrieve('github');
 
@@ -143,22 +140,19 @@ describe('KeyStorage', () => {
     });
 
     it('should require biometric when specified', async () => {
-      mockLocalAuth.authenticateAsync.mockResolvedValue({ success: true });
-      mockSecureStore.getItemAsync.mockResolvedValue(
-        JSON.stringify({ secret: 'test', storedAt: 'now', type: 'github' })
-      );
+      mockBiometricAuth.authenticate.mockResolvedValue(undefined);
+      mockSecureStorage.get.mockResolvedValue({
+        value: JSON.stringify({ secret: 'test', storedAt: 'now', type: 'github' }),
+      });
 
       const result = await storage.retrieve('github', { requireBiometric: true });
 
       expect(result.secret).toBe('test');
-      expect(mockLocalAuth.authenticateAsync).toHaveBeenCalled();
+      expect(mockBiometricAuth.authenticate).toHaveBeenCalled();
     });
 
     it('should return null when biometric fails', async () => {
-      mockLocalAuth.authenticateAsync.mockResolvedValue({
-        success: false,
-        error: 'user_cancel',
-      });
+      mockBiometricAuth.authenticate.mockRejectedValue(new Error('user_cancel'));
 
       const result = await storage.retrieve('github', { requireBiometric: true });
 
@@ -166,7 +160,7 @@ describe('KeyStorage', () => {
     });
 
     it('should handle SecureStore read errors', async () => {
-      mockSecureStore.getItemAsync.mockRejectedValueOnce(new Error('Access denied'));
+      mockSecureStorage.get.mockRejectedValueOnce(new Error('Access denied'));
 
       const result = await storage.retrieve('anthropic');
 
@@ -176,16 +170,16 @@ describe('KeyStorage', () => {
 
   describe('delete', () => {
     it('should delete a credential', async () => {
-      mockSecureStore.deleteItemAsync.mockResolvedValue(undefined);
+      mockSecureStorage.remove.mockResolvedValue({ value: true });
 
       const result = await storage.delete('github');
 
       expect(result).toBe(true);
-      expect(mockSecureStore.deleteItemAsync).toHaveBeenCalledWith('thumbcode_cred_github');
+      expect(mockSecureStorage.remove).toHaveBeenCalledWith({ key: 'thumbcode_cred_github' });
     });
 
     it('should return false on delete error', async () => {
-      mockSecureStore.deleteItemAsync.mockRejectedValueOnce(new Error('Failed'));
+      mockSecureStorage.remove.mockRejectedValueOnce(new Error('Failed'));
 
       const result = await storage.delete('github');
 
@@ -195,7 +189,7 @@ describe('KeyStorage', () => {
 
   describe('exists', () => {
     it('should return true when credential exists', async () => {
-      mockSecureStore.getItemAsync.mockResolvedValue('some-value');
+      mockSecureStorage.get.mockResolvedValue({ value: 'some-value' });
 
       const result = await storage.exists('anthropic');
 
@@ -203,7 +197,7 @@ describe('KeyStorage', () => {
     });
 
     it('should return false when credential does not exist', async () => {
-      mockSecureStore.getItemAsync.mockResolvedValue(null);
+      mockSecureStorage.get.mockRejectedValue(new Error('Key not found'));
 
       const result = await storage.exists('openai');
 
@@ -212,18 +206,30 @@ describe('KeyStorage', () => {
   });
 
   describe('isBiometricAvailable', () => {
-    it('should return true when hardware and enrollment are available', async () => {
-      mockLocalAuth.hasHardwareAsync.mockResolvedValue(true);
-      mockLocalAuth.isEnrolledAsync.mockResolvedValue(true);
+    it('should return true when biometry is available', async () => {
+      mockBiometricAuth.checkBiometry.mockResolvedValue({
+        isAvailable: true,
+        biometryType: 1, // face ID
+        reason: '',
+        code: 0,
+        strongBiometryIsAvailable: true,
+        biometryTypes: [1],
+      } as any);
 
       const result = await storage.isBiometricAvailable();
 
       expect(result).toBe(true);
     });
 
-    it('should return false when no hardware', async () => {
-      mockLocalAuth.hasHardwareAsync.mockResolvedValue(false);
-      mockLocalAuth.isEnrolledAsync.mockResolvedValue(true);
+    it('should return false when biometry is not available', async () => {
+      mockBiometricAuth.checkBiometry.mockResolvedValue({
+        isAvailable: false,
+        biometryType: 0,
+        reason: 'No biometry available',
+        code: 0,
+        strongBiometryIsAvailable: false,
+        biometryTypes: [],
+      } as any);
 
       const result = await storage.isBiometricAvailable();
 
@@ -233,11 +239,11 @@ describe('KeyStorage', () => {
 
   describe('getStoredCredentialTypes', () => {
     it('should return types of stored credentials', async () => {
-      mockSecureStore.getItemAsync.mockImplementation(async (key: string) => {
+      mockSecureStorage.get.mockImplementation(async ({ key }: { key: string }) => {
         if (key === 'thumbcode_cred_github' || key === 'thumbcode_cred_anthropic') {
-          return 'value';
+          return { value: 'value' };
         }
-        return null;
+        throw new Error('Key not found');
       });
 
       const types = await storage.getStoredCredentialTypes();
