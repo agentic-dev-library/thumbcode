@@ -48,7 +48,7 @@ jest.mock('../Modal', () => {
     message,
     confirmText = 'Confirm',
     cancelText = 'Cancel',
-    _variant = 'default',
+    variant: _variant = 'default',
   }: {
     visible: boolean;
     onClose: () => void;

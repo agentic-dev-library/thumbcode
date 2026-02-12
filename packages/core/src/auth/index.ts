@@ -17,7 +17,6 @@ export type {
   TokenErrorResponse,
 } from './types';
 
-// Focused modules for direct import
 export { DeviceFlowHandler } from './DeviceFlowHandler';
 export { PollingService } from './PollingService';
 export { TokenManager } from './TokenManager';

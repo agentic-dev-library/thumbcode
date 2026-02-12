@@ -24,8 +24,10 @@ jest.mock('expo-router', () => ({
 
 // Mock @thumbcode/core - use pending promises to avoid state update loops
 jest.mock('@thumbcode/core', () => ({
-  GitService: {
+  GitBranchService: {
     currentBranch: jest.fn(() => new Promise(() => {})),
+  },
+  GitCommitService: {
     log: jest.fn(() => new Promise(() => {})),
   },
 }));

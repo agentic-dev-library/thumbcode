@@ -5,7 +5,7 @@
  * Uses paint daube icons for brand consistency.
  */
 
-import { GitService } from '@thumbcode/core';
+import { GitCommitService } from '@thumbcode/core';
 import {
   type ApprovalMessage,
   type Message,
@@ -75,14 +75,14 @@ export default function ChatScreen() {
         return false;
       }
 
-      await GitService.stage({ dir: repoDir, filepath: '.' });
+      await GitCommitService.stage({ dir: repoDir, filepath: '.' });
 
       const author = {
         name: userProfile?.name || userProfile?.login || 'User',
         email: userProfile?.email || 'user@example.com',
       };
 
-      await GitService.commit({
+      await GitCommitService.commit({
         dir: repoDir,
         message: approvalMsg.metadata.actionDescription || 'Commit from chat',
         author,

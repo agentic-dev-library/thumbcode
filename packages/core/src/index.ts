@@ -19,8 +19,8 @@ export type {
   TokenErrorResponse,
 } from './auth';
 
-// Git service
-export { GitService } from './git';
+// Git services
+export { GitBranchService, GitCloneService, GitCommitService, GitDiffService } from './git';
 export type {
   BranchInfo,
   BranchOptions,

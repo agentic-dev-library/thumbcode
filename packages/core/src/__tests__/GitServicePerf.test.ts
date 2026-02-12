@@ -1,13 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-// Mock expo-crypto before importing GitService
+// Mock expo-crypto before importing Git services
 jest.mock('expo-crypto', () => ({
   digestStringAsync: jest.fn(async () => 'mock-hash'),
   CryptoDigestAlgorithm: { SHA256: 'SHA-256' },
 }));
 
-import { GitService } from '../git/GitService';
+import { GitCloneService } from '../git/GitCloneService';
+import { GitCommitService } from '../git/GitCommitService';
+import { GitDiffService } from '../git/GitDiffService';
 import * as FileSystem from 'expo-file-system';
 
 // Mock expo-file-system
@@ -81,7 +83,7 @@ jest.mock('expo-file-system', () => {
   };
 });
 
-describe('GitService Performance', () => {
+describe('Git Services Performance', () => {
   const repoName = 'perf-repo-' + Date.now();
   const repoDir = path.join(FileSystem.documentDirectory as string, 'repos', repoName);
 
@@ -97,7 +99,7 @@ describe('GitService Performance', () => {
 
   it('measures diff performance with many files', async () => {
     // 1. Initialize repo
-    const initResult = await GitService.init(repoDir);
+    const initResult = await GitCloneService.init(repoDir);
     if (!initResult.success) {
       console.error('Init failed:', initResult.error);
     }
@@ -116,9 +118,9 @@ describe('GitService Performance', () => {
     }
 
     // 3. Stage and commit
-    const stage1 = await GitService.stage({ dir: repoDir, filepath: files });
+    const stage1 = await GitCommitService.stage({ dir: repoDir, filepath: files });
     expect(stage1.success).toBe(true);
-    const commit1 = await GitService.commit({
+    const commit1 = await GitCommitService.commit({
       dir: repoDir,
       message: 'Initial commit',
       author: { name: 'Test User', email: 'test@example.com', timestamp: Math.floor(Date.now() / 1000) },
@@ -135,9 +137,9 @@ describe('GitService Performance', () => {
     }
 
     // 5. Stage and commit
-    const stage2 = await GitService.stage({ dir: repoDir, filepath: files });
+    const stage2 = await GitCommitService.stage({ dir: repoDir, filepath: files });
     expect(stage2.success).toBe(true);
-    const commit2 = await GitService.commit({
+    const commit2 = await GitCommitService.commit({
       dir: repoDir,
       message: 'Modify files',
       author: { name: 'Test User', email: 'test@example.com', timestamp: Math.floor(Date.now() / 1000) },
@@ -148,12 +150,12 @@ describe('GitService Performance', () => {
 
     // 6. Measure diff time
     const start = performance.now();
-    const diffResult = await GitService.diff(repoDir, commit1.data!, commit2.data!);
+    const diffResult = await GitDiffService.diff(repoDir, commit1.data!, commit2.data!);
     const end = performance.now();
 
     expect(diffResult.success).toBe(true);
     expect(diffResult.data?.files.length).toBe(fileCount);
 
-    console.log(`GitService.diff for ${fileCount} files took ${(end - start).toFixed(2)}ms`);
+    console.log(`GitDiffService.diff for ${fileCount} files took ${(end - start).toFixed(2)}ms`);
   }, 30000); // Increase timeout
 });

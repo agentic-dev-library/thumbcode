@@ -1,10 +1,10 @@
 /**
  * Project Detail Screen
  *
- * Production project workspace view backed by @thumbcode/state + @thumbcode/core GitService.
+ * Production project workspace view backed by @thumbcode/state + @thumbcode/core Git services.
  */
 
-import { GitService } from '@thumbcode/core';
+import { GitBranchService, GitCommitService } from '@thumbcode/core';
 import { useAgentStore, useProjectStore } from '@thumbcode/state';
 import * as FileSystem from 'expo-file-system';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
@@ -120,7 +120,7 @@ export default function ProjectDetailScreen() {
     const load = async () => {
       if (!project) return;
       setErrorMessage(null);
-      const branchResult = await GitService.currentBranch(project.localPath);
+      const branchResult = await GitBranchService.currentBranch(project.localPath);
       if (!cancelled) {
         setCurrentBranch(
           branchResult.success && branchResult.data ? branchResult.data : project.defaultBranch
@@ -162,7 +162,7 @@ export default function ProjectDetailScreen() {
       if (!project || activeTab !== 'commits') return;
       setIsLoadingCommits(true);
       setErrorMessage(null);
-      const result = await GitService.log(project.localPath, 20);
+      const result = await GitCommitService.log(project.localPath, 20);
       if (cancelled) return;
 
       if (!(result.success && Array.isArray(result.data))) {
