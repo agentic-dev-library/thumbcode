@@ -90,9 +90,6 @@ importers:
       expo-notifications:
         specifier: ~0.29.0
         version: 0.29.14(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1)
-      expo-router:
-        specifier: ~4.0.0
-        version: 4.0.22(46b8ebc0c2bc7fef06deb38b99d66fd6)
       expo-secure-store:
         specifier: ~14.0.0
         version: 14.0.1(expo@52.0.48(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@expo/metro-runtime@4.0.1(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1)))(react-native@0.76.0(@babel/core@7.29.0)(@babel/preset-env@7.28.6(@babel/core@7.29.0))(@types/react@18.3.27)(react@18.3.1))(react@18.3.1))

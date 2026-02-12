@@ -1,15 +1,16 @@
+/**
+ * Application Entry Point
+ *
+ * Mounts the React app with BrowserRouter and all required providers.
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import { ErrorBoundary } from '@/components/error';
+import { OnboardingProvider } from '@/contexts/onboarding';
+import { AppRoutes } from '@/router';
 import '../global.css';
-
-function App() {
-  return (
-    <div id="thumbcode-app">
-      <h1>ThumbCode</h1>
-      <p>Migration in progress — Vite + React build foundation.</p>
-    </div>
-  );
-}
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -18,6 +19,12 @@ if (!rootElement) {
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <ErrorBoundary>
+        <OnboardingProvider>
+          <AppRoutes />
+        </OnboardingProvider>
+      </ErrorBoundary>
+    </BrowserRouter>
   </React.StrictMode>,
 );
