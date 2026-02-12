@@ -1,13 +1,9 @@
 /**
  * Project Components
  *
- * Components for project cards and repository info.
+ * Components for project cards, repository info, and project detail views.
  */
 
-// Export project components here as they are created
-// Example:
-// export { ProjectCard } from './ProjectCard';
-// export { BranchSelector } from './BranchSelector';
-// export { RepoInfo } from './RepoInfo';
-
-export {};
+export { ProjectHeader } from './ProjectHeader';
+export { ProjectFileExplorer } from './ProjectFileExplorer';
+export { ProjectCommits, ProjectTasks, ProjectAgents } from './ProjectActions';
