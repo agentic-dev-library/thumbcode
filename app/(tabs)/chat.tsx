@@ -5,9 +5,16 @@
  * Uses paint daube icons for brand consistency.
  */
 
-import { type Message, useChatStore } from '@thumbcode/state';
-import { useEffect, useMemo, useRef } from 'react';
-import { FlatList, KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
+import { GitService } from '@thumbcode/core';
+import {
+  type ApprovalMessage,
+  type Message,
+  useChatStore,
+  useProjectStore,
+  useUserStore,
+} from '@thumbcode/state';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChatInput, ChatMessage, ThreadList } from '@/components/chat';
 import { ChevronDownIcon } from '@/components/icons';
@@ -22,9 +29,13 @@ export default function ChatScreen() {
   const setActiveThread = useChatStore((s) => s.setActiveThread);
   const respondToApproval = useChatStore((s) => s.respondToApproval);
 
-  const activeThreadTitle = useChatStore((s) =>
-    activeThreadId ? s.threads.find((t) => t.id === activeThreadId)?.title : undefined
+  const projects = useProjectStore((s) => s.projects);
+  const userProfile = useUserStore((s) => s.githubProfile);
+
+  const activeThread = useChatStore((s) =>
+    activeThreadId ? s.threads.find((t) => t.id === activeThreadId) : undefined
   );
+  const activeThreadTitle = activeThread?.title;
 
   const messages = useChatStore((s) => (activeThreadId ? (s.messages[activeThreadId] ?? []) : []));
   const typingSenders = useChatStore((s) =>
@@ -54,6 +65,63 @@ export default function ChatScreen() {
     });
     setActiveThread(id);
   };
+
+  const performCommit = useCallback(
+    async (approvalMsg: ApprovalMessage) => {
+      const projectId = activeThread?.projectId;
+      const project = projectId ? projects.find((p) => p.id === projectId) : undefined;
+      const repoDir = project?.localPath;
+
+      if (!repoDir) {
+        Alert.alert('Error', 'No repository path found for project');
+        return false;
+      }
+
+      await GitService.stage({ dir: repoDir, filepath: '.' });
+
+      const author = {
+        name: userProfile?.name || userProfile?.login || 'User',
+        email: userProfile?.email || 'user@example.com',
+      };
+
+      await GitService.commit({
+        dir: repoDir,
+        message: approvalMsg.metadata.actionDescription || 'Commit from chat',
+        author,
+      });
+
+      return true;
+    },
+    [activeThread, projects, userProfile]
+  );
+
+  const handleApprovalResponse = useCallback(
+    async (messageId: string, approved: boolean) => {
+      if (!activeThreadId) return;
+
+      const message = messages.find((m) => m.id === messageId);
+      const isCommitApproval =
+        approved &&
+        message?.contentType === 'approval_request' &&
+        (message as ApprovalMessage).metadata.actionType === 'commit';
+
+      if (isCommitApproval) {
+        try {
+          const committed = await performCommit(message as ApprovalMessage);
+          if (committed) {
+            respondToApproval(messageId, activeThreadId, approved);
+          }
+        } catch (error) {
+          console.error('Failed to commit:', error);
+          Alert.alert('Commit Failed', error instanceof Error ? error.message : 'Unknown error');
+        }
+        return;
+      }
+
+      respondToApproval(messageId, activeThreadId, approved);
+    },
+    [activeThreadId, messages, performCommit, respondToApproval]
+  );
 
   return (
     <KeyboardAvoidingView
@@ -91,13 +159,7 @@ export default function ChatScreen() {
             data={messages}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <ChatMessage
-                message={item}
-                onApprovalResponse={(messageId, approved) => {
-                  if (!activeThreadId) return;
-                  respondToApproval(messageId, activeThreadId, approved);
-                }}
-              />
+              <ChatMessage message={item} onApprovalResponse={handleApprovalResponse} />
             )}
             contentContainerStyle={{
               paddingTop: 12,
