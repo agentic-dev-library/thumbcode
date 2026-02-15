@@ -54,8 +54,12 @@ export default function ApiKeysPage() {
   };
 
   const validateOpenAIKey = async (key: string): Promise<{ isValid: boolean; error?: string }> => {
-    const result = await CredentialService.validateCredential('openai', key);
-    return { isValid: result.isValid, error: result.message };
+    try {
+      const result = await CredentialService.validateCredential('openai', key);
+      return { isValid: result.isValid, error: result.message };
+    } catch (error) {
+      return { isValid: false, error: 'Validation failed. Please check your connection.' };
+    }
   };
 
   const handleAnthropicChange = async (value: string) => {
