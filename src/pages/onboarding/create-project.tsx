@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
+import { GitHubApiService } from '@thumbcode/core';
 import { StepsProgress } from '@/components/feedback/Progress';
 import { FolderIcon, SecurityIcon, StarIcon, SuccessIcon } from '@/components/icons';
 import { useAppRouter } from '@/hooks/useAppRouter';
@@ -56,11 +57,20 @@ export default function CreateProjectPage() {
       setIsLoadingRepos(true);
       setErrorMessage(null);
       try {
-        // TODO: Wire up GitHubApiService.listRepositories when core package is web-ready
-        // Simulate loading delay then provide empty list
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const repositories = await GitHubApiService.listRepositories();
         if (!cancelled) {
-          setRepos([]);
+          setRepos(
+            repositories.map((r) => ({
+              key: r.fullName,
+              name: r.name,
+              fullName: r.fullName,
+              description: r.description ?? null,
+              cloneUrl: r.cloneUrl,
+              defaultBranch: r.defaultBranch,
+              isPrivate: r.isPrivate,
+              stars: r.stars,
+            }))
+          );
         }
       } catch (error) {
         if (!cancelled) {
