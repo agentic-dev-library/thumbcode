@@ -52,7 +52,7 @@ export function FileTree({
         expandedPaths: new Set(defaultExpanded),
         selectedPath,
       }),
-    []
+    [defaultExpanded, selectedPath]
   );
 
   useEffect(() => {
