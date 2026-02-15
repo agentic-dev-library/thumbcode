@@ -138,7 +138,6 @@ export function CredentialSettings() {
         provider: type,
         name,
         secureStoreKey: `thumbcode_cred_${type}`,
-        status: 'valid',
         maskedValue,
         lastValidatedAt: new Date().toISOString(),
         expiresAt: result.expiresAt ? result.expiresAt.toISOString() : undefined,
