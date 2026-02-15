@@ -7,12 +7,12 @@
  * Migrated from React Native: app/(onboarding)/api-keys.tsx
  */
 
+import { CredentialService } from '@thumbcode/core';
+import { useCredentialStore } from '@thumbcode/state';
 import { useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
 import { CloseIcon, LightbulbIcon, SecurityIcon, SuccessIcon } from '@/components/icons';
 import { useAppRouter } from '@/hooks/useAppRouter';
-import { CredentialService } from '@thumbcode/core';
-import { useCredentialStore } from '@thumbcode/state';
 
 /** Spinner component for loading states */
 function Spinner({ className = '' }: { className?: string }) {
