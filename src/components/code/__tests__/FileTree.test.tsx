@@ -86,7 +86,9 @@ describe('FileTree', () => {
   });
 
   it('selects file path when updated via props', () => {
-    const { rerender } = render(<FileTree data={mockData} selectedPath="src/App.tsx" defaultExpanded={['src']} />);
+    const { rerender } = render(
+      <FileTree data={mockData} selectedPath="src/App.tsx" defaultExpanded={['src']} />
+    );
 
     // Check if App.tsx is selected (has text-teal-300 class applied to text)
     const appNode = screen.getByText('App.tsx');
