@@ -56,7 +56,7 @@ export function FileTree({
   );
 
   useEffect(() => {
-    store.getState().setSelectedPath(selectedPath || '');
+    store.getState().setSelectedPath(selectedPath);
   }, [selectedPath, store]);
 
   // Sort nodes: folders first, then alphabetically
