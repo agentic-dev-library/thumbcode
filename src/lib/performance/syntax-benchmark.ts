@@ -31,10 +31,21 @@ const LARGE_PY = PY_SAMPLE.repeat(1000);
 const LARGE_BASH = BASH_SAMPLE.repeat(1000);
 
 function measure(name: string, fn: () => void) {
-  const start = performance.now();
+  const RUNS = 10;
+  const times: number[] = [];
+
+  // Warmup to allow for JIT compilation.
   fn();
-  const end = performance.now();
-  console.log(`${name}: ${(end - start).toFixed(2)}ms`);
+
+  for (let i = 0; i < RUNS; i++) {
+    const start = performance.now();
+    fn();
+    const end = performance.now();
+    times.push(end - start);
+  }
+
+  const avg = times.reduce((a, b) => a + b, 0) / RUNS;
+  console.log(`${name}: ${avg.toFixed(2)}ms (avg over ${RUNS} runs)`);
 }
 
 console.log('--- Benchmarking Syntax Highlighter ---');
