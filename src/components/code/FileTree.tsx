@@ -6,8 +6,10 @@
  * Uses paint daube icons for brand consistency.
  */
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
+import { createStore } from 'zustand/vanilla';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { FileTreeContext, type FileTreeStore } from './FileTreeContext';
 import { TreeNode } from './TreeNode';
 
 export interface FileNode {
@@ -40,19 +42,39 @@ export function FileTree({
   defaultExpanded = [],
   showStatus = true,
 }: Readonly<FileTreeProps>) {
-  const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set(defaultExpanded));
+  const store = useMemo(
+    () =>
+      createStore<FileTreeStore>((set, get) => ({
+        expandedPaths: new Set(defaultExpanded),
+        selectedPath,
+        onSelectFile,
+        toggleExpanded: (path) =>
+          set((state) => {
+            const next = new Set(state.expandedPaths);
+            if (next.has(path)) {
+              next.delete(path);
+            } else {
+              next.add(path);
+            }
+            return { expandedPaths: next };
+          }),
+        selectFile: (path) => {
+          set({ selectedPath: path });
+          get().onSelectFile?.(path);
+        },
+      })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
-  const toggleExpanded = (path: string) => {
-    setExpandedPaths((prev) => {
-      const next = new Set(prev);
-      if (next.has(path)) {
-        next.delete(path);
-      } else {
-        next.add(path);
-      }
-      return next;
-    });
-  };
+  // Sync props to store
+  useEffect(() => {
+    store.setState({ selectedPath });
+  }, [selectedPath, store]);
+
+  useEffect(() => {
+    store.setState({ onSelectFile });
+  }, [onSelectFile, store]);
 
   // Sort nodes: folders first, then alphabetically
   const sortedData = useMemo(() => {
@@ -73,23 +95,16 @@ export function FileTree({
   }, [data]);
 
   return (
-    <ul
-      aria-label="File tree"
-      className="bg-surface overflow-hidden list-none p-0 m-0"
-      style={organicBorderRadius.card}
-    >
-      {sortedData.map((node) => (
-        <TreeNode
-          key={node.path}
-          node={node}
-          depth={0}
-          onSelectFile={onSelectFile}
-          selectedPath={selectedPath}
-          expandedPaths={expandedPaths}
-          toggleExpanded={toggleExpanded}
-          showStatus={showStatus}
-        />
-      ))}
-    </ul>
+    <FileTreeContext.Provider value={store}>
+      <ul
+        aria-label="File tree"
+        className="bg-surface overflow-hidden list-none p-0 m-0"
+        style={organicBorderRadius.card}
+      >
+        {sortedData.map((node) => (
+          <TreeNode key={node.path} node={node} depth={0} showStatus={showStatus} />
+        ))}
+      </ul>
+    </FileTreeContext.Provider>
   );
 }

@@ -5,6 +5,7 @@
  * including the icon, label, status indicator, and recursive children.
  */
 
+import { memo } from 'react';
 import type React from 'react';
 import {
   ChevronDownIcon,
@@ -21,6 +22,7 @@ import {
   type IconColor,
 } from '@/components/icons';
 import { Text } from '@/components/ui';
+import { useFileTreeStore } from './FileTreeContext';
 import type { FileNode } from './FileTree';
 
 type FileIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
@@ -150,24 +152,19 @@ function FileTreeNodeRow({
 export interface TreeNodeProps {
   node: FileNode;
   depth: number;
-  onSelectFile?: (path: string) => void;
-  selectedPath?: string;
-  expandedPaths: Set<string>;
-  toggleExpanded: (path: string) => void;
   showStatus?: boolean;
 }
 
-export function TreeNode({
+export const TreeNode = memo(function TreeNode({
   node,
   depth,
-  onSelectFile,
-  selectedPath,
-  expandedPaths,
-  toggleExpanded,
   showStatus,
 }: Readonly<TreeNodeProps>) {
-  const isExpanded = expandedPaths.has(node.path);
-  const isSelected = selectedPath === node.path;
+  const isExpanded = useFileTreeStore((s) => s.expandedPaths.has(node.path));
+  const isSelected = useFileTreeStore((s) => s.selectedPath === node.path);
+  const toggleExpanded = useFileTreeStore((s) => s.toggleExpanded);
+  const selectFile = useFileTreeStore((s) => s.selectFile);
+
   const isFolder = node.type === 'folder';
   const hasChildren = Boolean(node.children?.length);
   const statusColor = getStatusColor(node);
@@ -176,7 +173,7 @@ export function TreeNode({
     if (isFolder && hasChildren) {
       toggleExpanded(node.path);
     } else if (!isFolder) {
-      onSelectFile?.(node.path);
+      selectFile(node.path);
     }
   };
 
@@ -215,10 +212,6 @@ export function TreeNode({
               key={child.path}
               node={child}
               depth={depth + 1}
-              onSelectFile={onSelectFile}
-              selectedPath={selectedPath}
-              expandedPaths={expandedPaths}
-              toggleExpanded={toggleExpanded}
               showStatus={showStatus}
             />
           ))}
@@ -226,4 +219,4 @@ export function TreeNode({
       )}
     </div>
   );
-}
+});
