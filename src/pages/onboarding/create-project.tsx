@@ -7,8 +7,8 @@
  * Migrated from React Native: app/(onboarding)/create-project.tsx
  */
 
-import { useEffect, useMemo, useState } from 'react';
 import { GitHubApiService } from '@thumbcode/core';
+import { useEffect, useMemo, useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
 import { FolderIcon, SecurityIcon, StarIcon, SuccessIcon } from '@/components/icons';
 import { useAppRouter } from '@/hooks/useAppRouter';

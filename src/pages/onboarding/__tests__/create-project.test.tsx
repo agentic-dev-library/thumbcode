@@ -1,7 +1,7 @@
-import { render, screen, waitFor, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import CreateProjectPage from '../create-project';
 import { GitHubApiService } from '@thumbcode/core';
+import { render, screen, waitFor } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import CreateProjectPage from '../create-project';
 
 // Mock GitHubApiService
 vi.mock('@thumbcode/core', async () => {
@@ -58,7 +58,7 @@ describe('CreateProjectPage', () => {
       },
     ];
 
-    (GitHubApiService.listRepositories as any).mockResolvedValue(mockRepos);
+    vi.mocked(GitHubApiService.listRepositories).mockResolvedValue(mockRepos);
 
     render(<CreateProjectPage />);
 
@@ -76,7 +76,7 @@ describe('CreateProjectPage', () => {
 
   it('handles fetch error gracefully', async () => {
     const errorMessage = 'API Error';
-    (GitHubApiService.listRepositories as any).mockRejectedValue(new Error(errorMessage));
+    vi.mocked(GitHubApiService.listRepositories).mockRejectedValue(new Error(errorMessage));
 
     render(<CreateProjectPage />);
 
@@ -88,7 +88,7 @@ describe('CreateProjectPage', () => {
   });
 
   it('handles empty repository list', async () => {
-    (GitHubApiService.listRepositories as any).mockResolvedValue([]);
+    vi.mocked(GitHubApiService.listRepositories).mockResolvedValue([]);
 
     render(<CreateProjectPage />);
 
