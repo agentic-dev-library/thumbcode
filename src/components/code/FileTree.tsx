@@ -6,10 +6,10 @@
  * Uses paint daube icons for brand consistency.
  */
 
-import { useMemo, useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { organicBorderRadius } from '@/lib/organic-styles';
-import { TreeNode } from './TreeNode';
 import { createFileTreeStore, FileTreeContext } from './FileTreeContext';
+import { TreeNode } from './TreeNode';
 
 export interface FileNode {
   name: string;
@@ -41,6 +41,11 @@ export function FileTree({
   defaultExpanded = [],
   showStatus = true,
 }: Readonly<FileTreeProps>) {
+  // Create a singleton store instance for this component.
+  // We intentionally ignore dependency updates because:
+  // 1. defaultExpanded is only used for initialization
+  // 2. selectedPath updates are synced via useEffect
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Store should be stable
   const store = useMemo(
     () =>
       createFileTreeStore({

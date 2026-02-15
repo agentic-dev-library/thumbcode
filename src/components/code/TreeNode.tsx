@@ -5,7 +5,8 @@
  * including the icon, label, status indicator, and recursive children.
  */
 
-import React, { memo, useContext } from 'react';
+import type React from 'react';
+import { memo, useContext } from 'react';
 import { useStore } from 'zustand';
 import {
   ChevronDownIcon,
@@ -154,10 +155,7 @@ export interface TreeNodeProps {
   depth: number;
 }
 
-export const TreeNode = memo(function TreeNode({
-  node,
-  depth,
-}: Readonly<TreeNodeProps>) {
+export const TreeNode = memo(function TreeNode({ node, depth }: Readonly<TreeNodeProps>) {
   const context = useContext(FileTreeContext);
   if (!context) {
     throw new Error('TreeNode must be used within a FileTreeContext.Provider');
@@ -209,11 +207,7 @@ export const TreeNode = memo(function TreeNode({
       {isFolder && isExpanded && hasChildren && (
         <div>
           {node.children?.map((child) => (
-            <TreeNode
-              key={child.path}
-              node={child}
-              depth={depth + 1}
-            />
+            <TreeNode key={child.path} node={child} depth={depth + 1} />
           ))}
         </div>
       )}
