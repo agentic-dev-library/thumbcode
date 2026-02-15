@@ -17,6 +17,13 @@ beforeEach(() => {
   secureStoreMap.clear();
   vi.clearAllMocks();
 
+  // Mock global window/Capacitor for native platform
+  vi.stubGlobal('window', {
+    Capacitor: {
+      isNativePlatform: () => true, // Native for integration tests to use SecureStorage
+    },
+  });
+
   // Wire up SecureStoragePlugin mocks to an in-memory map
   (SecureStoragePlugin.set as Mock).mockImplementation(
     async ({ key, value }: { key: string; value: string }) => {
@@ -43,6 +50,10 @@ beforeEach(() => {
     biometryTypes: [1],
   });
   (BiometricAuth.authenticate as Mock).mockResolvedValue(undefined);
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
 });
 
 describe('Auth Flow Integration', () => {
