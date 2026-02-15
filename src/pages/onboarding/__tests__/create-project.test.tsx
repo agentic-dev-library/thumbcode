@@ -1,5 +1,5 @@
-import { GitHubApiService } from '@thumbcode/core';
 import { render, screen, waitFor } from '@testing-library/react';
+import { GitHubApiService } from '@thumbcode/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import CreateProjectPage from '../create-project';
 
