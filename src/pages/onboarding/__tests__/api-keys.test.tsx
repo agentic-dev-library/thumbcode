@@ -82,6 +82,35 @@ describe('ApiKeysPage', () => {
     });
   });
 
+  it('navigates to create project when skipping', () => {
+    render(<ApiKeysPage />);
+    const skipBtn = screen.getByTestId('skip-button');
+    fireEvent.click(skipBtn);
+    expect(mockPush).toHaveBeenCalledWith('/onboarding/create-project');
+  });
+
+  it('disables continue button initially', () => {
+    render(<ApiKeysPage />);
+    const continueBtn = screen.getByTestId('continue-button');
+    expect(continueBtn).toBeDisabled();
+  });
+
+  it('shows error state for invalid keys', async () => {
+    vi.mocked(CredentialService.validateCredential).mockResolvedValue({
+      isValid: false,
+      message: 'Invalid API key format',
+    });
+
+    render(<ApiKeysPage />);
+
+    const input = screen.getByTestId('anthropic-key-input');
+    fireEvent.change(input, { target: { value: 'invalid-key' } });
+
+    await waitFor(() => {
+      expect(screen.getByText('Invalid API key format')).toBeInTheDocument();
+    });
+  });
+
   it('stores valid keys on continue', async () => {
     // Setup valid keys
     vi.mocked(CredentialService.validateCredential).mockImplementation(
