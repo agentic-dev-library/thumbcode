@@ -11,6 +11,8 @@ import { useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
 import { CloseIcon, LightbulbIcon, SecurityIcon, SuccessIcon } from '@/components/icons';
 import { useAppRouter } from '@/hooks/useAppRouter';
+import { CredentialService } from '@thumbcode/core';
+import { useCredentialStore } from '@thumbcode/state';
 
 /** Spinner component for loading states */
 function Spinner({ className = '' }: { className?: string }) {
@@ -30,6 +32,7 @@ interface APIKeyState {
 
 export default function ApiKeysPage() {
   const router = useAppRouter();
+  const addCredential = useCredentialStore((state) => state.addCredential);
 
   const [anthropicKey, setAnthropicKey] = useState<APIKeyState>({
     key: '',
@@ -46,19 +49,13 @@ export default function ApiKeysPage() {
   const validateAnthropicKey = async (
     key: string
   ): Promise<{ isValid: boolean; error?: string }> => {
-    // TODO: Wire up CredentialService.validateCredential when core package is web-ready
-    // Simulate validation
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    const isValid = key.startsWith('sk-ant-');
-    return { isValid, error: isValid ? undefined : 'Invalid Anthropic API key format' };
+    const result = await CredentialService.validateCredential('anthropic', key);
+    return { isValid: result.isValid, error: result.message };
   };
 
   const validateOpenAIKey = async (key: string): Promise<{ isValid: boolean; error?: string }> => {
-    // TODO: Wire up CredentialService.validateCredential when core package is web-ready
-    // Simulate validation
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    const isValid = key.startsWith('sk-');
-    return { isValid, error: isValid ? undefined : 'Invalid OpenAI API key format' };
+    const result = await CredentialService.validateCredential('openai', key);
+    return { isValid: result.isValid, error: result.message };
   };
 
   const handleAnthropicChange = async (value: string) => {
@@ -98,8 +95,32 @@ export default function ApiKeysPage() {
   };
 
   const handleContinue = async () => {
-    // TODO: Wire up CredentialService.store and useCredentialStore when packages are web-ready
-    // For now, just navigate forward
+    // Store Anthropic key if valid
+    if (anthropicKey.isValid && anthropicKey.key) {
+      await CredentialService.store('anthropic', anthropicKey.key);
+      addCredential({
+        provider: 'anthropic',
+        name: 'Anthropic',
+        secureStoreKey: 'anthropic',
+        status: 'valid',
+        lastValidatedAt: new Date().toISOString(),
+        maskedValue: CredentialService.maskSecret(anthropicKey.key, 'anthropic'),
+      });
+    }
+
+    // Store OpenAI key if valid
+    if (openaiKey.isValid && openaiKey.key) {
+      await CredentialService.store('openai', openaiKey.key);
+      addCredential({
+        provider: 'openai',
+        name: 'OpenAI',
+        secureStoreKey: 'openai',
+        status: 'valid',
+        lastValidatedAt: new Date().toISOString(),
+        maskedValue: CredentialService.maskSecret(openaiKey.key, 'openai'),
+      });
+    }
+
     router.push('/onboarding/create-project');
   };
 
