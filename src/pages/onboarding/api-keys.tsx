@@ -11,17 +11,9 @@ import { CredentialService } from '@thumbcode/core';
 import { useCredentialStore } from '@thumbcode/state';
 import { useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
-import { CloseIcon, LightbulbIcon, SecurityIcon, SuccessIcon } from '@/components/icons';
+import { LightbulbIcon, SecurityIcon } from '@/components/icons';
 import { useAppRouter } from '@/hooks/useAppRouter';
-
-/** Spinner component for loading states */
-function Spinner({ className = '' }: { className?: string }) {
-  return (
-    <div
-      className={`w-4 h-4 border-2 border-teal-500 border-t-transparent rounded-full animate-spin ${className}`}
-    />
-  );
-}
+import { APIKeyInput } from './components/APIKeyInput';
 
 interface APIKeyState {
   key: string;
@@ -156,66 +148,30 @@ export default function ApiKeysPage() {
         </div>
 
         {/* Anthropic Key */}
-        <div className="flex flex-col gap-2 mb-6">
-          <div className="flex flex-row items-center">
-            <span className="font-body font-semibold text-white flex-1">Anthropic (Claude)</span>
-            {anthropicKey.isValidating && <Spinner />}
-            {anthropicKey.isValid === true && (
-              <SuccessIcon size={18} color="teal" turbulence={0.15} />
-            )}
-            {anthropicKey.isValid === false && (
-              <CloseIcon size={18} color="coral" turbulence={0.15} />
-            )}
-          </div>
-
-          <input
-            type="password"
-            placeholder="sk-ant-api03-..."
-            value={anthropicKey.key}
-            onChange={(e) => handleAnthropicChange(e.target.value)}
-            className={`w-full bg-white border-2 ${
-              anthropicKey.error ? 'border-coral-500' : 'border-neutral-200'
-            } px-4 py-3 font-body text-base text-neutral-900 rounded-organic-input placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-coral-500/40`}
-            data-testid="anthropic-key-input"
-          />
-
-          {anthropicKey.error && (
-            <span className="font-body text-sm text-coral-500">{anthropicKey.error}</span>
-          )}
-
-          <span className="font-body text-xs text-neutral-500">
-            Get your key at console.anthropic.com
-          </span>
-        </div>
+        <APIKeyInput
+          label="Anthropic (Claude)"
+          placeholder="sk-ant-api03-..."
+          value={anthropicKey.key}
+          onChange={handleAnthropicChange}
+          isValidating={anthropicKey.isValidating}
+          isValid={anthropicKey.isValid}
+          error={anthropicKey.error}
+          helperText="Get your key at console.anthropic.com"
+          testId="anthropic-key-input"
+        />
 
         {/* OpenAI Key */}
-        <div className="flex flex-col gap-2 mb-6">
-          <div className="flex flex-row items-center">
-            <span className="font-body font-semibold text-white flex-1">OpenAI (GPT-4)</span>
-            {openaiKey.isValidating && <Spinner />}
-            {openaiKey.isValid === true && <SuccessIcon size={18} color="teal" turbulence={0.15} />}
-            {openaiKey.isValid === false && <CloseIcon size={18} color="coral" turbulence={0.15} />}
-          </div>
-
-          <input
-            type="password"
-            placeholder="sk-proj-..."
-            value={openaiKey.key}
-            onChange={(e) => handleOpenAIChange(e.target.value)}
-            className={`w-full bg-white border-2 ${
-              openaiKey.error ? 'border-coral-500' : 'border-neutral-200'
-            } px-4 py-3 font-body text-base text-neutral-900 rounded-organic-input placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-coral-500/40`}
-            data-testid="openai-key-input"
-          />
-
-          {openaiKey.error && (
-            <span className="font-body text-sm text-coral-500">{openaiKey.error}</span>
-          )}
-
-          <span className="font-body text-xs text-neutral-500">
-            Get your key at platform.openai.com
-          </span>
-        </div>
+        <APIKeyInput
+          label="OpenAI (GPT-4)"
+          placeholder="sk-proj-..."
+          value={openaiKey.key}
+          onChange={handleOpenAIChange}
+          isValidating={openaiKey.isValidating}
+          isValid={openaiKey.isValid}
+          error={openaiKey.error}
+          helperText="Get your key at platform.openai.com"
+          testId="openai-key-input"
+        />
 
         {/* Tip */}
         <div className="bg-surface p-4 rounded-organic-card">
