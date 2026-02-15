@@ -49,8 +49,12 @@ export default function ApiKeysPage() {
   const validateAnthropicKey = async (
     key: string
   ): Promise<{ isValid: boolean; error?: string }> => {
-    const result = await CredentialService.validateCredential('anthropic', key);
-    return { isValid: result.isValid, error: result.message };
+    try {
+      const result = await CredentialService.validateCredential('anthropic', key);
+      return { isValid: result.isValid, error: result.message };
+    } catch (error) {
+      return { isValid: false, error: 'Validation failed. Please check your connection.' };
+    }
   };
 
   const validateOpenAIKey = async (key: string): Promise<{ isValid: boolean; error?: string }> => {
