@@ -50,7 +50,7 @@ export function FileTree({
     () =>
       createFileTreeStore({
         expandedPaths: new Set(defaultExpanded),
-        selectedPath,
+        selectedPath: selectedPath || '',
       }),
     [defaultExpanded, selectedPath]
   );
