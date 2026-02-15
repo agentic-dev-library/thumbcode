@@ -70,7 +70,7 @@ export class OrchestrationStateManager {
     };
 
     const nodes = this.buildDependencyGraph();
-    const taskMap = new Map(this.state.taskQueue.map((t) => [t.id, t]));
+    const taskMap = new Map([...this.state.taskQueue, ...this.state.completedTasks].map((t) => [t.id, t]));
 
     for (const [taskId, node] of nodes) {
       if (node.status === 'complete') continue;
