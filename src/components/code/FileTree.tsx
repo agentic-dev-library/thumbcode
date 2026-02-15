@@ -65,7 +65,7 @@ export function FileTree({
           return a.name.localeCompare(b.name);
         })
         .map((node) => {
-          if (node.children && node.children.length > 0) {
+          if (node.children?.length) {
             return {
               ...node,
               children: sortNodes(node.children),
