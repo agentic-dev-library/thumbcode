@@ -123,14 +123,20 @@ export default function ApiKeysPage() {
 
     // Store OpenAI key if valid
     if (openaiKey.isValid && openaiKey.key) {
-      await CredentialService.store('openai', openaiKey.key);
-      addCredential({
-        provider: 'openai',
-        name: 'OpenAI',
-        secureStoreKey: 'openai',
-        lastValidatedAt: new Date().toISOString(),
-        maskedValue: CredentialService.maskSecret(openaiKey.key, 'openai'),
-      });
+      try {
+        await CredentialService.store('openai', openaiKey.key);
+        addCredential({
+          provider: 'openai',
+          name: 'OpenAI',
+          secureStoreKey: 'openai',
+          status: 'valid',
+          lastValidatedAt: new Date().toISOString(),
+          maskedValue: CredentialService.maskSecret(openaiKey.key, 'openai'),
+        });
+      } catch (error) {
+        console.error('Failed to store OpenAI key:', error);
+        // Continue to allow user to proceed even if storage fails
+      }
     }
 
     router.push('/onboarding/create-project');
