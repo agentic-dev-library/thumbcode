@@ -8,7 +8,7 @@ export interface FileTreeState {
 
 export interface FileTreeActions {
   toggleExpanded: (path: string) => void;
-  setSelectedPath: (path: string) => void;
+  setSelectedPath: (path?: string) => void;
   setExpandedPaths: (paths: Set<string>) => void;
 }
 

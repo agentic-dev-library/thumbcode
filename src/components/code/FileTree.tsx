@@ -50,13 +50,13 @@ export function FileTree({
     () =>
       createFileTreeStore({
         expandedPaths: new Set(defaultExpanded),
-        selectedPath: selectedPath || '',
+        selectedPath,
       }),
-    [defaultExpanded, selectedPath]
+    []
   );
 
   useEffect(() => {
-    store.getState().setSelectedPath(selectedPath);
+    store.getState().setSelectedPath(selectedPath || '');
   }, [selectedPath, store]);
 
   // Sort nodes: folders first, then alphabetically
@@ -79,7 +79,7 @@ export function FileTree({
 
   const contextValue = useMemo(
     () => ({ store, onSelectFile, showStatus }),
-    [store, onSelectFile, showStatus]
+    [onSelectFile, showStatus]
   );
 
   return (
