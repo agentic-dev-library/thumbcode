@@ -70,6 +70,7 @@ export class OrchestrationStateManager {
     };
 
     const nodes = this.buildDependencyGraph();
+    const taskMap = new Map(this.state.taskQueue.map((t) => [t.id, t]));
 
     for (const [taskId, node] of nodes) {
       if (node.status === 'complete') continue;
@@ -85,14 +86,14 @@ export class OrchestrationStateManager {
 
       if (pendingDeps.length === 0) {
         // Check if task has an assignee
-        const task = this.state.taskQueue.find((t) => t.id === taskId);
+        const task = taskMap.get(taskId);
         if (task?.assignee) {
           plan.ready.push(taskId);
         }
       } else {
         // Check for failed dependencies
         const failedDeps = pendingDeps.filter((depId) => {
-          const task = this.state.taskQueue.find((t) => t.id === depId);
+          const task = taskMap.get(depId);
           return task?.status === 'cancelled';
         });
 
