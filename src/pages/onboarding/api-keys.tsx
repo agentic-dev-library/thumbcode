@@ -102,7 +102,6 @@ export default function ApiKeysPage() {
         provider: 'anthropic',
         name: 'Anthropic',
         secureStoreKey: 'anthropic',
-        status: 'valid',
         lastValidatedAt: new Date().toISOString(),
         maskedValue: CredentialService.maskSecret(anthropicKey.key, 'anthropic'),
       });
@@ -115,7 +114,6 @@ export default function ApiKeysPage() {
         provider: 'openai',
         name: 'OpenAI',
         secureStoreKey: 'openai',
-        status: 'valid',
         lastValidatedAt: new Date().toISOString(),
         maskedValue: CredentialService.maskSecret(openaiKey.key, 'openai'),
       });
