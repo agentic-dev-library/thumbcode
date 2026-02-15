@@ -3,6 +3,8 @@
  *
  * Handles secure credential storage and retrieval using Capacitor Secure Storage
  * with hardware-backed encryption. Includes biometric authentication support.
+ *
+ * Falls back to localStorage for web environments.
  */
 
 import { BiometricAuth, type BiometryType } from '@aparajita/capacitor-biometric-auth';
@@ -30,6 +32,22 @@ const SECURE_STORE_KEYS: Record<CredentialType, string> = {
   mcp_signing_secret: 'thumbcode_cred_mcp_signing_secret',
 };
 
+declare global {
+  interface Window {
+    Capacitor?: {
+      isNativePlatform: () => boolean;
+    };
+  }
+}
+
+// Helper to check for native platform
+function isNativePlatform(): boolean {
+  if (typeof window !== 'undefined' && window.Capacitor?.isNativePlatform) {
+    return window.Capacitor.isNativePlatform();
+  }
+  return false;
+}
+
 export class KeyStorage {
   constructor(private validator: KeyValidator) {}
 
@@ -37,6 +55,9 @@ export class KeyStorage {
    * Check if biometric authentication is available on the device
    */
   async isBiometricAvailable(): Promise<boolean> {
+    if (!isNativePlatform()) {
+      return false;
+    }
     const result = await BiometricAuth.checkBiometry();
     return result.isAvailable;
   }
@@ -45,6 +66,9 @@ export class KeyStorage {
    * Get the available biometric authentication types
    */
   async getBiometricTypes(): Promise<BiometryType[]> {
+    if (!isNativePlatform()) {
+      return [];
+    }
     const result = await BiometricAuth.checkBiometry();
     // Return array with the detected biometry type, or empty if none
     return result.isAvailable ? [result.biometryType] : [];
@@ -56,6 +80,10 @@ export class KeyStorage {
   async authenticateWithBiometrics(
     promptMessage = 'Authenticate to access your credentials'
   ): Promise<BiometricResult> {
+    if (!isNativePlatform()) {
+      return { success: true };
+    }
+
     try {
       await BiometricAuth.authenticate({
         reason: promptMessage,
@@ -103,16 +131,20 @@ export class KeyStorage {
       }
     }
 
-    // Store the secret in Capacitor Secure Storage
     const key = SECURE_STORE_KEYS[type];
-    try {
-      const payload: SecureCredential = {
-        secret,
-        storedAt: new Date().toISOString(),
-        type,
-      };
+    const payload: SecureCredential = {
+      secret,
+      storedAt: new Date().toISOString(),
+      type,
+    };
+    const value = JSON.stringify(payload);
 
-      await SecureStoragePlugin.set({ key, value: JSON.stringify(payload) });
+    try {
+      if (isNativePlatform()) {
+        await SecureStoragePlugin.set({ key, value });
+      } else {
+        localStorage.setItem(key, value);
+      }
 
       return { isValid: true, message: 'Credential stored successfully' };
     } catch (error) {
@@ -139,8 +171,14 @@ export class KeyStorage {
 
     try {
       const key = SECURE_STORE_KEYS[type];
-      const result = await SecureStoragePlugin.get({ key });
-      const payload = result.value;
+      let payload: string | null = null;
+
+      if (isNativePlatform()) {
+        const result = await SecureStoragePlugin.get({ key });
+        payload = result.value;
+      } else {
+        payload = localStorage.getItem(key);
+      }
 
       if (!payload) {
         return { secret: null };
@@ -168,7 +206,11 @@ export class KeyStorage {
   async delete(type: CredentialType): Promise<boolean> {
     try {
       const key = SECURE_STORE_KEYS[type];
-      await SecureStoragePlugin.remove({ key });
+      if (isNativePlatform()) {
+        await SecureStoragePlugin.remove({ key });
+      } else {
+        localStorage.removeItem(key);
+      }
       return true;
     } catch (error) {
       console.error('Failed to delete credential:', error);
@@ -182,8 +224,12 @@ export class KeyStorage {
   async exists(type: CredentialType): Promise<boolean> {
     try {
       const key = SECURE_STORE_KEYS[type];
-      const result = await SecureStoragePlugin.get({ key });
-      return result.value !== null && result.value !== undefined;
+      if (isNativePlatform()) {
+        const result = await SecureStoragePlugin.get({ key });
+        return result.value !== null && result.value !== undefined;
+      } else {
+        return localStorage.getItem(key) !== null;
+      }
     } catch {
       // SecureStoragePlugin.get throws when key is not found
       return false;
