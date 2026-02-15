@@ -105,14 +105,20 @@ export default function ApiKeysPage() {
   const handleContinue = async () => {
     // Store Anthropic key if valid
     if (anthropicKey.isValid && anthropicKey.key) {
-      await CredentialService.store('anthropic', anthropicKey.key);
-      addCredential({
-        provider: 'anthropic',
-        name: 'Anthropic',
-        secureStoreKey: 'anthropic',
-        lastValidatedAt: new Date().toISOString(),
-        maskedValue: CredentialService.maskSecret(anthropicKey.key, 'anthropic'),
-      });
+      try {
+        await CredentialService.store('anthropic', anthropicKey.key);
+        addCredential({
+          provider: 'anthropic',
+          name: 'Anthropic',
+          secureStoreKey: 'anthropic',
+          status: 'valid',
+          lastValidatedAt: new Date().toISOString(),
+          maskedValue: CredentialService.maskSecret(anthropicKey.key, 'anthropic'),
+        });
+      } catch (error) {
+        console.error('Failed to store Anthropic key:', error);
+        // Continue to allow user to proceed even if storage fails
+      }
     }
 
     // Store OpenAI key if valid
