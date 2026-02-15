@@ -49,21 +49,13 @@ export default function ApiKeysPage() {
   const validateAnthropicKey = async (
     key: string
   ): Promise<{ isValid: boolean; error?: string }> => {
-    try {
-      const result = await CredentialService.validateCredential('anthropic', key);
-      return { isValid: result.isValid, error: result.message };
-    } catch (error) {
-      return { isValid: false, error: 'Validation failed. Please check your connection.' };
-    }
+    const result = await CredentialService.validateCredential('anthropic', key);
+    return { isValid: result.isValid, error: result.message };
   };
 
   const validateOpenAIKey = async (key: string): Promise<{ isValid: boolean; error?: string }> => {
-    try {
-      const result = await CredentialService.validateCredential('openai', key);
-      return { isValid: result.isValid, error: result.message };
-    } catch (error) {
-      return { isValid: false, error: 'Validation failed. Please check your connection.' };
-    }
+    const result = await CredentialService.validateCredential('openai', key);
+    return { isValid: result.isValid, error: result.message };
   };
 
   const handleAnthropicChange = async (value: string) => {
@@ -105,38 +97,26 @@ export default function ApiKeysPage() {
   const handleContinue = async () => {
     // Store Anthropic key if valid
     if (anthropicKey.isValid && anthropicKey.key) {
-      try {
-        await CredentialService.store('anthropic', anthropicKey.key);
-        addCredential({
-          provider: 'anthropic',
-          name: 'Anthropic',
-          secureStoreKey: 'anthropic',
-          status: 'valid',
-          lastValidatedAt: new Date().toISOString(),
-          maskedValue: CredentialService.maskSecret(anthropicKey.key, 'anthropic'),
-        });
-      } catch (error) {
-        console.error('Failed to store Anthropic key:', error);
-        // Continue to allow user to proceed even if storage fails
-      }
+      await CredentialService.store('anthropic', anthropicKey.key);
+      addCredential({
+        provider: 'anthropic',
+        name: 'Anthropic',
+        secureStoreKey: 'anthropic',
+        lastValidatedAt: new Date().toISOString(),
+        maskedValue: CredentialService.maskSecret(anthropicKey.key, 'anthropic'),
+      });
     }
 
     // Store OpenAI key if valid
     if (openaiKey.isValid && openaiKey.key) {
-      try {
-        await CredentialService.store('openai', openaiKey.key);
-        addCredential({
-          provider: 'openai',
-          name: 'OpenAI',
-          secureStoreKey: 'openai',
-          status: 'valid',
-          lastValidatedAt: new Date().toISOString(),
-          maskedValue: CredentialService.maskSecret(openaiKey.key, 'openai'),
-        });
-      } catch (error) {
-        console.error('Failed to store OpenAI key:', error);
-        // Continue to allow user to proceed even if storage fails
-      }
+      await CredentialService.store('openai', openaiKey.key);
+      addCredential({
+        provider: 'openai',
+        name: 'OpenAI',
+        secureStoreKey: 'openai',
+        lastValidatedAt: new Date().toISOString(),
+        maskedValue: CredentialService.maskSecret(openaiKey.key, 'openai'),
+      });
     }
 
     router.push('/onboarding/create-project');
