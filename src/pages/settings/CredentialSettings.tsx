@@ -10,6 +10,7 @@
  * in a future update.
  */
 
+import { CredentialService } from '@thumbcode/core';
 import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@thumbcode/state';
 import { ArrowLeft, Check, Link as LinkIcon, Loader2, Shield, X } from 'lucide-react';
 import { useState } from 'react';
@@ -91,6 +92,7 @@ export function CredentialSettings() {
   const anthropicCredential = useCredentialStore(selectCredentialByProvider('anthropic'));
   const openaiCredential = useCredentialStore(selectCredentialByProvider('openai'));
   const removeCredential = useCredentialStore((s) => s.removeCredential);
+  const addCredential = useCredentialStore((s) => s.addCredential);
 
   const setAuthenticated = useUserStore((s) => s.setAuthenticated);
   const setGitHubProfile = useUserStore((s) => s.setGitHubProfile);
@@ -122,11 +124,30 @@ export function CredentialSettings() {
     setSaveError(null);
 
     try {
-      // TODO: Wire to web-compatible credential validation and storage
-      // For now, just show feedback that saving is not yet supported on web.
-      throw new Error(
-        'Credential storage is not yet available on web. This will be enabled in a future update.'
-      );
+      const result = await CredentialService.store(type, trimmed);
+
+      if (!result.isValid) {
+        throw new Error(result.message || 'Validation failed');
+      }
+
+      // Add to store
+      const name = type === 'anthropic' ? 'Anthropic Key' : 'OpenAI Key';
+      const maskedValue = CredentialService.maskSecret(trimmed, type);
+
+      addCredential({
+        provider: type,
+        name,
+        secureStoreKey: `thumbcode_cred_${type}`,
+        status: 'valid',
+        maskedValue,
+        lastValidatedAt: new Date().toISOString(),
+        expiresAt: result.expiresAt ? result.expiresAt.toISOString() : undefined,
+        metadata: result.metadata as any,
+      });
+
+      // Clear input on success
+      if (type === 'anthropic') setAnthropicKey('');
+      if (type === 'openai') setOpenaiKey('');
     } catch (error) {
       setSaveError({
         type,
