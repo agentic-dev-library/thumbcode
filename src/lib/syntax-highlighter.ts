@@ -191,7 +191,16 @@ function buildCommentPatterns(isJson: boolean, isBash: boolean, isPython: boolea
   return ['(?:\\/\\/[^\n]*)', '(?:\\/\\*[\\s\\S]*?\\*\\/)'];
 }
 
+const regexCache = new Map<string, RegExp>();
+
 function buildTokenRegex(isJson: boolean, isBash: boolean, isPython: boolean): RegExp {
+  const key = `${isJson}-${isBash}-${isPython}`;
+  const cached = regexCache.get(key);
+  if (cached) {
+    cached.lastIndex = 0;
+    return cached;
+  }
+
   const patterns: string[] = [
     ...buildCommentPatterns(isJson, isBash, isPython),
     '(?:`(?:[^`\\\\]|\\\\.)*`)',
@@ -203,7 +212,9 @@ function buildTokenRegex(isJson: boolean, isBash: boolean, isPython: boolean): R
     '(?:\\s+)',
     '(?:.)',
   ];
-  return new RegExp(patterns.join('|'), 'g');
+  const regex = new RegExp(patterns.join('|'), 'g');
+  regexCache.set(key, regex);
+  return regex;
 }
 
 function isQuotedString(value: string): boolean {
