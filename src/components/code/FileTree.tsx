@@ -63,7 +63,7 @@ export function FileTree({
           get().onSelectFile?.(path);
         },
       })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // biome-ignore lint/correctness/useExhaustiveDependencies: Store should be created once
     []
   );
 

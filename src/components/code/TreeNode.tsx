@@ -5,8 +5,8 @@
  * including the icon, label, status indicator, and recursive children.
  */
 
-import { memo } from 'react';
 import type React from 'react';
+import { memo } from 'react';
 import {
   ChevronDownIcon,
   FileCodeIcon,
@@ -22,8 +22,8 @@ import {
   type IconColor,
 } from '@/components/icons';
 import { Text } from '@/components/ui';
-import { useFileTreeStore } from './FileTreeContext';
 import type { FileNode } from './FileTree';
+import { useFileTreeStore } from './FileTreeContext';
 
 type FileIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 
@@ -208,12 +208,7 @@ export const TreeNode = memo(function TreeNode({
       {isFolder && isExpanded && hasChildren && (
         <div>
           {node.children?.map((child) => (
-            <TreeNode
-              key={child.path}
-              node={child}
-              depth={depth + 1}
-              showStatus={showStatus}
-            />
+            <TreeNode key={child.path} node={child} depth={depth + 1} showStatus={showStatus} />
           ))}
         </div>
       )}

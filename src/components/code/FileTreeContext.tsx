@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { useStore, type StoreApi } from 'zustand';
+import { type StoreApi, useStore } from 'zustand';
 
 interface FileTreeState {
   expandedPaths: Set<string>;
