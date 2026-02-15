@@ -6,9 +6,10 @@
  * Uses paint daube icons for brand consistency.
  */
 
-import { useMemo, useState } from 'react';
+import { useMemo, useEffect } from 'react';
 import { organicBorderRadius } from '@/lib/organic-styles';
 import { TreeNode } from './TreeNode';
+import { createFileTreeStore, FileTreeContext } from './FileTreeContext';
 
 export interface FileNode {
   name: string;
@@ -40,19 +41,18 @@ export function FileTree({
   defaultExpanded = [],
   showStatus = true,
 }: Readonly<FileTreeProps>) {
-  const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set(defaultExpanded));
+  const store = useMemo(
+    () =>
+      createFileTreeStore({
+        expandedPaths: new Set(defaultExpanded),
+        selectedPath,
+      }),
+    []
+  );
 
-  const toggleExpanded = (path: string) => {
-    setExpandedPaths((prev) => {
-      const next = new Set(prev);
-      if (next.has(path)) {
-        next.delete(path);
-      } else {
-        next.add(path);
-      }
-      return next;
-    });
-  };
+  useEffect(() => {
+    store.getState().setSelectedPath(selectedPath || '');
+  }, [selectedPath, store]);
 
   // Sort nodes: folders first, then alphabetically
   const sortedData = useMemo(() => {
@@ -72,24 +72,22 @@ export function FileTree({
     return sortNodes(data);
   }, [data]);
 
+  const contextValue = useMemo(
+    () => ({ store, onSelectFile, showStatus }),
+    [store, onSelectFile, showStatus]
+  );
+
   return (
-    <ul
-      aria-label="File tree"
-      className="bg-surface overflow-hidden list-none p-0 m-0"
-      style={organicBorderRadius.card}
-    >
-      {sortedData.map((node) => (
-        <TreeNode
-          key={node.path}
-          node={node}
-          depth={0}
-          onSelectFile={onSelectFile}
-          selectedPath={selectedPath}
-          expandedPaths={expandedPaths}
-          toggleExpanded={toggleExpanded}
-          showStatus={showStatus}
-        />
-      ))}
-    </ul>
+    <FileTreeContext.Provider value={contextValue}>
+      <ul
+        aria-label="File tree"
+        className="bg-surface overflow-hidden list-none p-0 m-0"
+        style={organicBorderRadius.card}
+      >
+        {sortedData.map((node) => (
+          <TreeNode key={node.path} node={node} depth={0} />
+        ))}
+      </ul>
+    </FileTreeContext.Provider>
   );
 }
