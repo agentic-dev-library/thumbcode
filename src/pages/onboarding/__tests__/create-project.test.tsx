@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { GitHubApiService } from '@thumbcode/core';
+import type { Repository } from '@thumbcode/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import CreateProjectPage from '../create-project';
 
@@ -29,7 +30,7 @@ describe('CreateProjectPage', () => {
   });
 
   it('fetches and displays repositories on mount', async () => {
-    const mockRepos = [
+    const mockRepos: Repository[] = [
       {
         provider: 'github',
         owner: 'user',
