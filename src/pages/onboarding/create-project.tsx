@@ -74,7 +74,17 @@ export default function CreateProjectPage() {
         }
       } catch (error) {
         if (!cancelled) {
-          setErrorMessage(error instanceof Error ? error.message : 'Failed to load repositories');
+          const message = error instanceof Error ? error.message : 'Failed to load repositories';
+          const isAuthError =
+            message.includes('401') ||
+            message.includes('Unauthorized') ||
+            message.includes('authentication') ||
+            message.includes('token');
+          setErrorMessage(
+            isAuthError
+              ? 'GitHub authentication failed. Please re-authenticate in Settings.'
+              : message
+          );
         }
       } finally {
         if (!cancelled) {

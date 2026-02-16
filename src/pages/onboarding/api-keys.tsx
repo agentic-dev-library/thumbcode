@@ -245,7 +245,7 @@ export default function ApiKeysPage() {
         />
 
         {/* Tip */}
-        <div className="bg-surface p-4 rounded-organic-card">
+        <div className="bg-surface p-4 rounded-organic-card shadow-organic-card">
           <div className="flex flex-row items-start">
             <span className="mr-2 mt-0.5">
               <LightbulbIcon size={16} color="gold" turbulence={0.2} />

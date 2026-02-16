@@ -147,7 +147,9 @@ export function AgentDetail() {
       <div className="px-6 py-6 border-b border-neutral-800">
         <div className="flex items-center gap-5">
           <div
-            className={`w-20 h-20 flex items-center justify-center ${getRoleColor(agent.role)} rounded-[28px_24px_32px_20px/20px_28px_24px_32px]`}
+            className={`w-20 h-20 flex items-center justify-center ${getRoleColor(agent.role)} rounded-organic-hero`}
+            role="img"
+            aria-label={`${agent.role} agent`}
           >
             <RoleIcon role={agent.role} size={40} />
           </div>
@@ -172,7 +174,7 @@ export function AgentDetail() {
       {/* Current Task */}
       {currentTask && (
         <div className="px-6 py-4 border-b border-neutral-800">
-          <div className="bg-surface p-4 rounded-organic-card">
+          <div className="bg-surface p-4 rounded-organic-card shadow-organic-card">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-neutral-400 font-body">Current Task</span>
               <span
@@ -188,9 +190,9 @@ export function AgentDetail() {
             <p className="text-white font-body mb-3">{currentTask.description}</p>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-neutral-500 font-body">Progress</span>
-              <span className="text-sm text-teal-400 font-body">{progress}%</span>
+              <span className="text-sm text-teal-400 font-body" role="status" aria-live="polite">{progress}%</span>
             </div>
-            <div className="w-full h-2 bg-neutral-700 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-neutral-700 rounded-full overflow-hidden" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label="Task progress">
               <div
                 className="h-full bg-teal-500 rounded-full transition-all duration-300"
                 style={{ width: `${progress}%` }}
@@ -225,15 +227,15 @@ export function AgentDetail() {
           <div className="space-y-4">
             {/* Agent Metrics */}
             <div className="grid grid-cols-3 gap-3">
-              <div className="bg-surface p-4 rounded-organic-card text-center">
+              <div className="bg-surface p-4 rounded-organic-card shadow-organic-card text-center">
                 <p className="text-2xl font-bold text-teal-400 font-body">{completed}</p>
                 <p className="text-xs text-neutral-400 font-body mt-1">Completed</p>
               </div>
-              <div className="bg-surface p-4 rounded-organic-card text-center">
+              <div className="bg-surface p-4 rounded-organic-card shadow-organic-card text-center">
                 <p className="text-2xl font-bold text-coral-500 font-body">{failed}</p>
                 <p className="text-xs text-neutral-400 font-body mt-1">Failed</p>
               </div>
-              <div className="bg-surface p-4 rounded-organic-card text-center">
+              <div className="bg-surface p-4 rounded-organic-card shadow-organic-card text-center">
                 <p className="text-2xl font-bold text-gold-400 font-body">
                   {successRate !== null ? `${successRate}%` : '--'}
                 </p>
@@ -242,7 +244,7 @@ export function AgentDetail() {
             </div>
 
             {/* Agent Actions */}
-            <div className="bg-surface p-4 rounded-organic-card">
+            <div className="bg-surface p-4 rounded-organic-card shadow-organic-card">
               <h3 className="text-sm font-semibold text-neutral-400 font-body mb-3">ACTIONS</h3>
               <div className="flex gap-3">
                 <button
@@ -273,7 +275,7 @@ export function AgentDetail() {
               tasks.map((task) => (
                 <div
                   key={task.id}
-                  className="bg-surface p-4 rounded-organic-card"
+                  className="bg-surface p-4 rounded-organic-card shadow-organic-card"
                   style={{ transform: 'rotate(-0.15deg)' }}
                 >
                   <div className="flex items-center justify-between mb-1">

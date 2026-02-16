@@ -87,8 +87,7 @@ export default function CompletePage() {
             }`}
           >
             <div
-              className="w-32 h-32 bg-teal-600/20 flex items-center justify-center"
-              style={{ borderRadius: '28px 24px 32px 20px' }}
+              className="w-32 h-32 bg-teal-600/20 flex items-center justify-center rounded-organic-hero"
             >
               <CelebrateIcon size={64} color="gold" turbulence={0.3} />
             </div>
@@ -117,7 +116,7 @@ export default function CompletePage() {
           {CAPABILITIES.map((cap) => (
             <div
               key={cap.title}
-              className="bg-surface p-4 flex flex-row items-center rounded-organic-button"
+              className="bg-surface p-4 flex flex-row items-center rounded-organic-button shadow-organic-card"
             >
               <div className="w-12 h-12 bg-charcoal flex items-center justify-center mr-4 rounded-organic-card">
                 <cap.Icon size={24} color={cap.iconColor} turbulence={0.2} />

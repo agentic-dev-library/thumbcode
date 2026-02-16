@@ -32,7 +32,7 @@ interface DiffViewerProps {
   showLineNumbers?: boolean;
 }
 
-function parseDiff(oldContent: string, newContent: string): DiffLine[] {
+export function parseDiff(oldContent: string, newContent: string): DiffLine[] {
   // Simple line-by-line diff (in production, use a proper diff library)
   const oldLines = oldContent.split('\n');
   const newLines = newContent.split('\n');
@@ -99,8 +99,15 @@ export function DiffViewer({
     () => diff || (oldContent && newContent ? parseDiff(oldContent, newContent) : []),
     [diff, oldContent, newContent]
   );
-  const additions = useMemo(() => lines.filter((l) => l.type === 'add').length, [lines]);
-  const deletions = useMemo(() => lines.filter((l) => l.type === 'remove').length, [lines]);
+  const [additions, deletions] = useMemo(() => {
+    let adds = 0;
+    let dels = 0;
+    for (const line of lines) {
+      if (line.type === 'add') adds++;
+      else if (line.type === 'remove') dels++;
+    }
+    return [adds, dels];
+  }, [lines]);
 
   const getLineStyle = (type: DiffLine['type']) => {
     switch (type) {

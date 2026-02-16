@@ -110,7 +110,7 @@ export default function GitHubAuthPage() {
             {!userCode ? (
               /* Initial state - start device flow */
               <div className="flex flex-col gap-6">
-                <div className="bg-surface p-6 rounded-organic-card">
+                <div className="bg-surface p-6 rounded-organic-card shadow-organic-card">
                   <div className="flex justify-center mb-4">
                     <LinkIcon size={40} color="teal" turbulence={0.25} />
                   </div>
@@ -146,7 +146,7 @@ export default function GitHubAuthPage() {
             ) : (
               /* Code displayed - waiting for user to enter on GitHub */
               <div className="flex flex-col gap-6">
-                <div className="bg-surface p-6 rounded-organic-card">
+                <div className="bg-surface p-6 rounded-organic-card shadow-organic-card">
                   <p className="font-body text-sm text-neutral-400 text-center mb-2">
                     Enter this code on GitHub:
                   </p>
