@@ -180,9 +180,12 @@ class GitHubApiServiceClass {
     const encodedPath = path ? `/${path.split('/').map(encodeURIComponent).join('/')}` : '';
     const refParam = ref ? `?ref=${encodeURIComponent(ref)}` : '';
 
-    const contents = await this.request<GitHubContentResponse[]>(
+    const response = await this.request<GitHubContentResponse | GitHubContentResponse[]>(
       `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents${encodedPath}${refParam}`
     );
+
+    // GitHub returns a single object for file paths, array for directories
+    const contents = Array.isArray(response) ? response : [response];
 
     return contents.map((c) => ({
       name: c.name,

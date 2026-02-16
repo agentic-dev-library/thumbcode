@@ -166,6 +166,29 @@ describe('GitHubApiService - getContents', () => {
     expect(url).toContain('ref=develop');
   });
 
+  it('handles single file response (non-array)', async () => {
+    const singleFile = {
+      name: 'index.ts',
+      path: 'src/index.ts',
+      type: 'file',
+      size: 256,
+      sha: 'single-sha',
+      html_url: 'https://github.com/owner/repo/blob/main/src/index.ts',
+      download_url: 'https://raw.githubusercontent.com/owner/repo/main/src/index.ts',
+    };
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(singleFile),
+    });
+
+    const result = await GitHubApiService.getContents('owner', 'repo', 'src/index.ts');
+
+    expect(result).toHaveLength(1);
+    expect(result[0].name).toBe('index.ts');
+    expect(result[0].type).toBe('file');
+  });
+
   it('throws on API error', async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: false,
