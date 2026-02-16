@@ -168,7 +168,10 @@ export default function HomePage() {
                     {agent.name}
                   </span>
                   <div className="flex items-center gap-1">
-                    <div className={`w-2 h-2 rounded-full ${getStatusColor(agent.status)}`} aria-hidden="true" />
+                    <div
+                      className={`w-2 h-2 rounded-full ${getStatusColor(agent.status)}`}
+                      aria-hidden="true"
+                    />
                     <span className="text-xs font-body text-neutral-400 capitalize">
                       {agent.status}
                     </span>

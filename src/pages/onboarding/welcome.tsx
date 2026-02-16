@@ -78,9 +78,7 @@ export default function WelcomePage() {
       <div className="flex-1 overflow-auto px-6 pb-32">
         {/* Hero */}
         <div className="flex flex-col items-center gap-4 mt-12 mb-10">
-          <div
-            className="w-24 h-24 bg-coral-500 flex items-center justify-center rounded-organic-hero"
-          >
+          <div className="w-24 h-24 bg-coral-500 flex items-center justify-center rounded-organic-hero">
             <ThumbIcon size={48} color="charcoal" turbulence={0.2} />
           </div>
 

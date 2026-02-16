@@ -59,12 +59,15 @@ describe('ApiKeysPage', () => {
     fireEvent.change(input, { target: { value: 'sk-ant-valid-key-123' } });
 
     // Wait for debounce and validation
-    await waitFor(() => {
-      expect(CredentialService.validateCredential).toHaveBeenCalledWith(
-        'anthropic',
-        'sk-ant-valid-key-123'
-      );
-    }, { timeout: 1000 });
+    await waitFor(
+      () => {
+        expect(CredentialService.validateCredential).toHaveBeenCalledWith(
+          'anthropic',
+          'sk-ant-valid-key-123'
+        );
+      },
+      { timeout: 1000 }
+    );
   });
 
   it('validates OpenAI key using CredentialService', async () => {
@@ -77,12 +80,15 @@ describe('ApiKeysPage', () => {
     const input = screen.getByTestId('openai-key-input');
     fireEvent.change(input, { target: { value: 'sk-proj-valid-key-123' } });
 
-    await waitFor(() => {
-      expect(CredentialService.validateCredential).toHaveBeenCalledWith(
-        'openai',
-        'sk-proj-valid-key-123'
-      );
-    }, { timeout: 1000 });
+    await waitFor(
+      () => {
+        expect(CredentialService.validateCredential).toHaveBeenCalledWith(
+          'openai',
+          'sk-proj-valid-key-123'
+        );
+      },
+      { timeout: 1000 }
+    );
   });
 
   it('navigates to create project when skipping', () => {
@@ -109,9 +115,12 @@ describe('ApiKeysPage', () => {
     const input = screen.getByTestId('anthropic-key-input');
     fireEvent.change(input, { target: { value: 'invalid-key' } });
 
-    await waitFor(() => {
-      expect(screen.getByText('Invalid API key format')).toBeInTheDocument();
-    }, { timeout: 1000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Invalid API key format')).toBeInTheDocument();
+      },
+      { timeout: 1000 }
+    );
   });
 
   it('stores valid keys and sets validation status on continue', async () => {
@@ -138,10 +147,9 @@ describe('ApiKeysPage', () => {
     fireEvent.change(openAiInput, { target: { value: 'sk-proj-valid-key-123' } });
 
     // Wait for validation to complete
-    await waitFor(
-      () => expect(CredentialService.validateCredential).toHaveBeenCalledTimes(2),
-      { timeout: 1500 },
-    );
+    await waitFor(() => expect(CredentialService.validateCredential).toHaveBeenCalledTimes(2), {
+      timeout: 1500,
+    });
 
     // Click continue
     const continueBtn = screen.getByTestId('continue-button');
@@ -159,7 +167,7 @@ describe('ApiKeysPage', () => {
       // Verify setValidationResult was called with the mock ID returned by addCredential
       expect(mockSetValidationResult).toHaveBeenCalledWith(
         'test-cred-id',
-        expect.objectContaining({ isValid: true }),
+        expect.objectContaining({ isValid: true })
       );
 
       expect(mockPush).toHaveBeenCalledWith('/onboarding/create-project');

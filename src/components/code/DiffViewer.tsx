@@ -6,16 +6,16 @@
  */
 
 import { useMemo, useState } from 'react';
+
 import { ChevronDownIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
-interface DiffLine {
-  type: 'add' | 'remove' | 'context';
-  content: string;
-  oldLineNumber?: number;
-  newLineNumber?: number;
-}
+import type { DiffLine } from './parse-diff';
+import { parseDiff } from './parse-diff';
+
+export type { DiffLine } from './parse-diff';
+export { parseDiff } from './parse-diff';
 
 interface DiffViewerProps {
   /** Old file content */
@@ -30,59 +30,6 @@ interface DiffViewerProps {
   viewMode?: 'unified' | 'split';
   /** Show line numbers */
   showLineNumbers?: boolean;
-}
-
-export function parseDiff(oldContent: string, newContent: string): DiffLine[] {
-  // Simple line-by-line diff (in production, use a proper diff library)
-  const oldLines = oldContent.split('\n');
-  const newLines = newContent.split('\n');
-  const result: DiffLine[] = [];
-
-  let oldIndex = 0;
-  let newIndex = 0;
-
-  while (oldIndex < oldLines.length || newIndex < newLines.length) {
-    if (oldIndex >= oldLines.length) {
-      result.push({
-        type: 'add',
-        content: newLines[newIndex],
-        newLineNumber: newIndex + 1,
-      });
-      newIndex++;
-    } else if (newIndex >= newLines.length) {
-      result.push({
-        type: 'remove',
-        content: oldLines[oldIndex],
-        oldLineNumber: oldIndex + 1,
-      });
-      oldIndex++;
-    } else if (oldLines[oldIndex] === newLines[newIndex]) {
-      result.push({
-        type: 'context',
-        content: oldLines[oldIndex],
-        oldLineNumber: oldIndex + 1,
-        newLineNumber: newIndex + 1,
-      });
-      oldIndex++;
-      newIndex++;
-    } else {
-      // Lines differ - emit both remove and add
-      result.push({
-        type: 'remove',
-        content: oldLines[oldIndex],
-        oldLineNumber: oldIndex + 1,
-      });
-      result.push({
-        type: 'add',
-        content: newLines[newIndex],
-        newLineNumber: newIndex + 1,
-      });
-      oldIndex++;
-      newIndex++;
-    }
-  }
-
-  return result;
 }
 
 export function DiffViewer({

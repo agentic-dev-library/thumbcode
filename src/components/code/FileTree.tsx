@@ -84,7 +84,7 @@ export function FileTree({
 
   const contextValue = useMemo(
     () => ({ store, onSelectFile, showStatus }),
-    [onSelectFile, showStatus]
+    [onSelectFile, showStatus, store]
   );
 
   return (

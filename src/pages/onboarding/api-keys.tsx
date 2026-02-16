@@ -59,53 +59,56 @@ export default function ApiKeysPage() {
     };
   }, []);
 
-  const validateKey = useCallback(async (
-    provider: 'anthropic' | 'openai',
-    key: string,
-    setKey: React.Dispatch<React.SetStateAction<APIKeyState>>,
-    abortRef: React.MutableRefObject<AbortController | null>
-  ) => {
-    // Cancel previous request
-    if (abortRef.current) {
-      abortRef.current.abort();
-    }
-
-    // Create new abort controller
-    const abortController = new AbortController();
-    abortRef.current = abortController;
-
-    setKey((prev) => ({ ...prev, isValidating: true, error: undefined }));
-
-    try {
-      // Simulate network request cancellation check (since CredentialService might not support signal yet)
-      if (abortController.signal.aborted) return;
-
-      const result = await CredentialService.validateCredential(provider, key);
-
-      if (abortController.signal.aborted) return;
-
-      setKey((prev) => ({
-        ...prev,
-        isValidating: false,
-        isValid: result.isValid,
-        error: result.message,
-      }));
-    } catch (error) {
-      if (abortController.signal.aborted) return;
-
-      console.error(`Error validating ${provider} key:`, error);
-      setKey((prev) => ({
-        ...prev,
-        isValidating: false,
-        isValid: false,
-        error: 'Validation failed due to network or service error',
-      }));
-    } finally {
-      if (abortRef.current === abortController) {
-        abortRef.current = null;
+  const validateKey = useCallback(
+    async (
+      provider: 'anthropic' | 'openai',
+      key: string,
+      setKey: React.Dispatch<React.SetStateAction<APIKeyState>>,
+      abortRef: React.MutableRefObject<AbortController | null>
+    ) => {
+      // Cancel previous request
+      if (abortRef.current) {
+        abortRef.current.abort();
       }
-    }
-  }, []);
+
+      // Create new abort controller
+      const abortController = new AbortController();
+      abortRef.current = abortController;
+
+      setKey((prev) => ({ ...prev, isValidating: true, error: undefined }));
+
+      try {
+        // Simulate network request cancellation check (since CredentialService might not support signal yet)
+        if (abortController.signal.aborted) return;
+
+        const result = await CredentialService.validateCredential(provider, key);
+
+        if (abortController.signal.aborted) return;
+
+        setKey((prev) => ({
+          ...prev,
+          isValidating: false,
+          isValid: result.isValid,
+          error: result.message,
+        }));
+      } catch (error) {
+        if (abortController.signal.aborted) return;
+
+        console.error(`Error validating ${provider} key:`, error);
+        setKey((prev) => ({
+          ...prev,
+          isValidating: false,
+          isValid: false,
+          error: 'Validation failed due to network or service error',
+        }));
+      } finally {
+        if (abortRef.current === abortController) {
+          abortRef.current = null;
+        }
+      }
+    },
+    []
+  );
 
   const handleKeyChange = (
     value: string,
@@ -127,7 +130,10 @@ export default function ApiKeysPage() {
     }
   };
 
-  const hasAtLeastOneKey = (anthropicKey.isValid || openaiKey.isValid) && !anthropicKey.isValidating && !openaiKey.isValidating;
+  const hasAtLeastOneKey =
+    (anthropicKey.isValid || openaiKey.isValid) &&
+    !anthropicKey.isValidating &&
+    !openaiKey.isValidating;
 
   const handleSkip = () => {
     router.push('/onboarding/create-project');
@@ -137,7 +143,7 @@ export default function ApiKeysPage() {
     provider: CredentialProvider,
     keyState: APIKeyState,
     name: string,
-    secureStoreKey: string,
+    secureStoreKey: string
   ) => {
     if (keyState.isValid && keyState.key) {
       try {
@@ -170,11 +176,11 @@ export default function ApiKeysPage() {
     try {
       await Promise.all([
         storeCredential('anthropic', anthropicKey, 'Anthropic', 'anthropic'),
-        storeCredential('openai', openaiKey, 'OpenAI', 'openai')
+        storeCredential('openai', openaiKey, 'OpenAI', 'openai'),
       ]);
 
       router.push('/onboarding/create-project');
-    } catch (error) {
+    } catch {
       setGlobalError('Failed to save credentials. Please try again.');
     }
   };
@@ -223,7 +229,15 @@ export default function ApiKeysPage() {
           label="Anthropic (Claude)"
           placeholder="sk-ant-api03-..."
           value={anthropicKey.key}
-          onChange={(val) => handleKeyChange(val, setAnthropicKey, anthropicTimeoutRef, 'anthropic', anthropicAbortRef)}
+          onChange={(val) =>
+            handleKeyChange(
+              val,
+              setAnthropicKey,
+              anthropicTimeoutRef,
+              'anthropic',
+              anthropicAbortRef
+            )
+          }
           isValidating={anthropicKey.isValidating}
           isValid={anthropicKey.isValid}
           error={anthropicKey.error}
@@ -236,7 +250,9 @@ export default function ApiKeysPage() {
           label="OpenAI (GPT-4)"
           placeholder="sk-proj-..."
           value={openaiKey.key}
-          onChange={(val) => handleKeyChange(val, setOpenaiKey, openaiTimeoutRef, 'openai', openaiAbortRef)}
+          onChange={(val) =>
+            handleKeyChange(val, setOpenaiKey, openaiTimeoutRef, 'openai', openaiAbortRef)
+          }
           isValidating={openaiKey.isValidating}
           isValid={openaiKey.isValid}
           error={openaiKey.error}

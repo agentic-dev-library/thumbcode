@@ -1,8 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import * as DiffViewerModule from '../DiffViewer';
-
-const { DiffViewer } = DiffViewerModule;
+import { DiffViewer } from '../DiffViewer';
+import * as ParseDiffModule from '../parse-diff';
 
 // Mock dependencies to isolate DiffViewer performance
 vi.mock('@/components/icons', () => ({
@@ -33,7 +32,7 @@ describe('DiffViewer Performance', () => {
     );
 
     // Spy on parseDiff to verify memoization
-    const parseDiffSpy = vi.spyOn(DiffViewerModule, 'parseDiff');
+    const parseDiffSpy = vi.spyOn(ParseDiffModule, 'parseDiff');
 
     // Initial render
     render(<DiffViewer oldContent={oldContent} newContent={newContent} filename="benchmark.ts" />);

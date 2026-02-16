@@ -175,10 +175,10 @@ export class KeyStorage {
 
       // If authenticate resolves without throwing, auth succeeded
       return { success: true };
-    } catch (error) {
+    } catch {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Authentication failed',
+        error: 'Biometric authentication failed',
       };
     }
   }
