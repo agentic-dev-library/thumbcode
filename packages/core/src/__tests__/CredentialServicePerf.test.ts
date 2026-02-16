@@ -1,6 +1,7 @@
 import { CredentialService } from '../credentials/CredentialService';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import { secureFetch } from '../api/api';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 
 // Mock secureFetch
 vi.mock('../api/api', () => ({
@@ -12,6 +13,13 @@ describe('CredentialService Performance', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Mock Native Environment for perf test
+    vi.stubGlobal('window', {
+      Capacitor: {
+        isNativePlatform: () => true,
+      },
+    });
 
     // Mock SecureStoragePlugin to return items for specific keys
     (SecureStoragePlugin.get as Mock).mockImplementation(async ({ key }: { key: string }) => {
@@ -37,6 +45,10 @@ describe('CredentialService Performance', () => {
         headers: { get: () => null },
       };
     });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('measures validateAllStored performance', async () => {

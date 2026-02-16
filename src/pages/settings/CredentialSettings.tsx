@@ -10,9 +10,11 @@
  * in a future update.
  */
 
+import { CredentialService } from '@thumbcode/core';
+import type { CredentialMetadata } from '@thumbcode/state';
 import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@thumbcode/state';
 import { ArrowLeft, Check, Link as LinkIcon, Loader2, Shield, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface ApiKeyInputProps {
@@ -84,6 +86,14 @@ function Divider() {
   return <div className="border-t border-neutral-700" />;
 }
 
+declare global {
+  interface Window {
+    Capacitor?: {
+      isNativePlatform: () => boolean;
+    };
+  }
+}
+
 export function CredentialSettings() {
   const navigate = useNavigate();
 
@@ -91,6 +101,8 @@ export function CredentialSettings() {
   const anthropicCredential = useCredentialStore(selectCredentialByProvider('anthropic'));
   const openaiCredential = useCredentialStore(selectCredentialByProvider('openai'));
   const removeCredential = useCredentialStore((s) => s.removeCredential);
+  const addCredential = useCredentialStore((s) => s.addCredential);
+  const setCredentialStatus = useCredentialStore((s) => s.setCredentialStatus);
 
   const setAuthenticated = useUserStore((s) => s.setAuthenticated);
   const setGitHubProfile = useUserStore((s) => s.setGitHubProfile);
@@ -99,6 +111,11 @@ export function CredentialSettings() {
   const [openaiKey, setOpenaiKey] = useState('');
   const [savingType, setSavingType] = useState<'anthropic' | 'openai' | null>(null);
   const [saveError, setSaveError] = useState<{ type: string; message: string } | null>(null);
+  const [isNative, setIsNative] = useState(false);
+
+  useEffect(() => {
+    setIsNative(window.Capacitor?.isNativePlatform() ?? false);
+  }, []);
 
   const handleGitHubConnect = () => {
     navigate('/onboarding/github-auth');
@@ -122,11 +139,32 @@ export function CredentialSettings() {
     setSaveError(null);
 
     try {
-      // TODO: Wire to web-compatible credential validation and storage
-      // For now, just show feedback that saving is not yet supported on web.
-      throw new Error(
-        'Credential storage is not yet available on web. This will be enabled in a future update.'
-      );
+      const result = await CredentialService.store(type, trimmed);
+
+      if (!result.isValid) {
+        throw new Error(result.message || 'Validation failed');
+      }
+
+      // Add to store
+      const name = type === 'anthropic' ? 'Anthropic Key' : 'OpenAI Key';
+      const maskedValue = CredentialService.maskSecret(trimmed, type);
+
+      const credId = addCredential({
+        provider: type,
+        name,
+        secureStoreKey: `thumbcode_cred_${type}`,
+        maskedValue,
+        lastValidatedAt: new Date().toISOString(),
+        expiresAt: result.expiresAt ? result.expiresAt.toISOString() : undefined,
+        metadata: result.metadata as CredentialMetadata['metadata'],
+      });
+
+      // Explicitly set status to valid since addCredential defaults to 'unknown'
+      setCredentialStatus(credId, 'valid');
+
+      // Clear input on success
+      if (type === 'anthropic') setAnthropicKey('');
+      if (type === 'openai') setOpenaiKey('');
     } catch (error) {
       setSaveError({
         type,
@@ -252,10 +290,13 @@ export function CredentialSettings() {
               <Shield size={18} className="text-teal-400" />
             </div>
             <div className="flex-1">
-              <p className="text-teal-400 font-semibold font-body">Secure Storage</p>
+              <p className="text-teal-400 font-semibold font-body">
+                {isNative ? 'Secure Storage' : 'Encrypted Session Storage'}
+              </p>
               <p className="text-sm text-teal-400/80 font-body mt-1">
-                Your API keys are stored securely on your device using hardware-backed encryption.
-                They are never sent to our servers.
+                {isNative
+                  ? 'Your API keys are stored securely on your device using hardware-backed encryption. They are never sent to our servers.'
+                  : 'Your API keys are encrypted and stored in your browser session. They will be cleared when you close the tab. For maximum security, use the mobile app.'}
               </p>
             </div>
           </div>
