@@ -2,6 +2,48 @@ import { API_URLS } from '@thumbcode/config';
 import type { Repository } from '@thumbcode/types';
 import { CredentialService } from '../credentials';
 
+interface GitHubCommitResponse {
+  sha: string;
+  commit: {
+    message: string;
+    author: {
+      name: string;
+      email: string;
+      date: string;
+    };
+  };
+  html_url: string;
+}
+
+interface GitHubContentResponse {
+  name: string;
+  path: string;
+  type: 'file' | 'dir' | 'symlink' | 'submodule';
+  size: number;
+  sha: string;
+  html_url: string;
+  download_url: string | null;
+}
+
+export interface GitHubCommit {
+  sha: string;
+  message: string;
+  authorName: string;
+  authorEmail: string;
+  date: string;
+  url: string;
+}
+
+export interface GitHubContent {
+  name: string;
+  path: string;
+  type: 'file' | 'dir';
+  size: number;
+  sha: string;
+  url: string;
+  downloadUrl: string | null;
+}
+
 interface GitHubRepoResponse {
   id: number;
   name: string;
@@ -105,6 +147,52 @@ class GitHubApiServiceClass {
       forks: repo.forks_count,
       updatedAt: repo.updated_at,
     };
+  }
+
+  async listCommits(
+    owner: string,
+    repo: string,
+    options?: { perPage?: number; sha?: string }
+  ): Promise<GitHubCommit[]> {
+    const perPage = options?.perPage ?? 30;
+    const shaParam = options?.sha ? `&sha=${encodeURIComponent(options.sha)}` : '';
+
+    const commits = await this.request<GitHubCommitResponse[]>(
+      `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/commits?per_page=${perPage}${shaParam}`
+    );
+
+    return commits.map((c) => ({
+      sha: c.sha,
+      message: c.commit.message,
+      authorName: c.commit.author.name,
+      authorEmail: c.commit.author.email,
+      date: c.commit.author.date,
+      url: c.html_url,
+    }));
+  }
+
+  async getContents(
+    owner: string,
+    repo: string,
+    path?: string,
+    ref?: string
+  ): Promise<GitHubContent[]> {
+    const encodedPath = path ? `/${path.split('/').map(encodeURIComponent).join('/')}` : '';
+    const refParam = ref ? `?ref=${encodeURIComponent(ref)}` : '';
+
+    const contents = await this.request<GitHubContentResponse[]>(
+      `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents${encodedPath}${refParam}`
+    );
+
+    return contents.map((c) => ({
+      name: c.name,
+      path: c.path,
+      type: c.type === 'dir' ? 'dir' : 'file',
+      size: c.size,
+      sha: c.sha,
+      url: c.html_url,
+      downloadUrl: c.download_url,
+    }));
   }
 }
 

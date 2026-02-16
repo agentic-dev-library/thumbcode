@@ -7,7 +7,9 @@
  * Migrated from React Native: app/(onboarding)/github-auth.tsx
  */
 
-import { useState } from 'react';
+import { GitHubAuthService } from '@thumbcode/core';
+import { env, GITHUB_OAUTH } from '@thumbcode/config';
+import { useEffect, useRef, useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
 import { LinkIcon, SuccessIcon } from '@/components/icons';
 import { useAppRouter } from '@/hooks/useAppRouter';
@@ -23,6 +25,7 @@ function Spinner({ className = '' }: { className?: string }) {
 
 export default function GitHubAuthPage() {
   const router = useAppRouter();
+  const cancelledRef = useRef(false);
 
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [userCode, setUserCode] = useState<string | null>(null);
@@ -31,26 +34,47 @@ export default function GitHubAuthPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [pollStatus, setPollStatus] = useState<{ attempt: number; max: number } | null>(null);
 
+  useEffect(() => {
+    return () => {
+      cancelledRef.current = true;
+      GitHubAuthService.cancel();
+    };
+  }, []);
+
   const startDeviceFlow = async () => {
     setIsAuthenticating(true);
     setErrorMessage(null);
     setPollStatus(null);
 
     try {
-      // In the web version, we import the service dynamically to avoid
-      // hard dependency on @thumbcode/core which may not be available yet.
-      // For now, simulate the device flow start with a placeholder.
-      // TODO: Wire up GitHubAuthService.startDeviceFlow when core package is web-ready
-      const mockCode = 'ABCD-1234';
-      setUserCode(mockCode);
-      setVerificationUri('https://github.com/login/device');
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to start device flow');
-      setIsAuthenticating(false);
-      return;
-    }
+      const result = await GitHubAuthService.startDeviceFlow({
+        clientId: env.githubClientId,
+        scopes: GITHUB_OAUTH.scopes,
+        onStateChange: () => {},
+        onError: (error) => {
+          if (!cancelledRef.current) {
+            setErrorMessage(error);
+          }
+        },
+      });
 
-    setIsAuthenticating(false);
+      if (cancelledRef.current) return;
+
+      if (result.success && result.data) {
+        setUserCode(result.data.user_code);
+        setVerificationUri(result.data.verification_uri);
+      } else {
+        setErrorMessage(result.error ?? 'Failed to start device flow');
+      }
+    } catch (err) {
+      if (!cancelledRef.current) {
+        setErrorMessage(err instanceof Error ? err.message : 'Failed to start device flow');
+      }
+    } finally {
+      if (!cancelledRef.current) {
+        setIsAuthenticating(false);
+      }
+    }
   };
 
   const openGitHub = () => {
@@ -62,19 +86,36 @@ export default function GitHubAuthPage() {
     setErrorMessage(null);
 
     try {
-      // TODO: Wire up GitHubAuthService.pollForToken when core package is web-ready
-      // Simulate polling
-      for (let i = 1; i <= 5; i++) {
-        setPollStatus({ attempt: i, max: 10 });
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      }
+      const result = await GitHubAuthService.pollForToken({
+        clientId: env.githubClientId,
+        scopes: GITHUB_OAUTH.scopes,
+        onPollAttempt: (attempt, maxAttempts) => {
+          if (!cancelledRef.current) {
+            setPollStatus({ attempt, max: maxAttempts });
+          }
+        },
+        onError: (error) => {
+          if (!cancelledRef.current) {
+            setErrorMessage(error);
+          }
+        },
+      });
 
-      // Simulated success - in production this would validate the token
-      setIsConnected(true);
+      if (cancelledRef.current) return;
+
+      if (result.authorized) {
+        setIsConnected(true);
+      } else if (result.error) {
+        setErrorMessage(result.error);
+      }
     } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Authentication failed');
+      if (!cancelledRef.current) {
+        setErrorMessage(err instanceof Error ? err.message : 'Authentication failed');
+      }
     } finally {
-      setIsAuthenticating(false);
+      if (!cancelledRef.current) {
+        setIsAuthenticating(false);
+      }
     }
   };
 
