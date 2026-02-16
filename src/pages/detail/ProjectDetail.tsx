@@ -24,7 +24,7 @@ import {
   Loader2,
   Users,
 } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 type Tab = 'files' | 'commits' | 'tasks' | 'agents';
@@ -172,10 +172,12 @@ function FilesTab({ repoInfo, branch }: RepoInfoProps) {
   const [currentPath, setCurrentPath] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
 
   const fetchContents = useCallback(
     async (path: string) => {
       if (!repoInfo) return;
+      const requestId = ++requestIdRef.current;
       setIsLoading(true);
       setError(null);
       try {
@@ -185,12 +187,17 @@ function FilesTab({ repoInfo, branch }: RepoInfoProps) {
           path || undefined,
           branch
         );
+        // Only update state if this is still the latest request
+        if (requestId !== requestIdRef.current) return;
         setContents(data);
         setCurrentPath(path);
       } catch (err) {
+        if (requestId !== requestIdRef.current) return;
         setError(err instanceof Error ? err.message : 'Failed to load files');
       } finally {
-        setIsLoading(false);
+        if (requestId === requestIdRef.current) {
+          setIsLoading(false);
+        }
       }
     },
     [repoInfo, branch]
