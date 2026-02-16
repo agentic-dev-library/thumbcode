@@ -84,4 +84,41 @@ describe('FileTree', () => {
     expect(screen.getByRole('list')).toBeTruthy();
     expect(screen.getByLabelText('File tree')).toBeTruthy();
   });
+
+  it('selects file path when updated via props', () => {
+    const { rerender } = render(
+      <FileTree data={mockData} selectedPath="src/App.tsx" defaultExpanded={['src']} />
+    );
+
+    // Check if App.tsx is selected (has text-teal-300 class applied to text)
+    const appNode = screen.getByText('App.tsx');
+    expect(appNode.className).toContain('text-teal-300');
+
+    // Update selectedPath
+    rerender(<FileTree data={mockData} selectedPath="README.md" defaultExpanded={['src']} />);
+
+    const readmeNode = screen.getByText('README.md');
+    expect(readmeNode.className).toContain('text-teal-300');
+    expect(appNode.className).not.toContain('text-teal-300');
+  });
+
+  it('toggles folder expansion on click', () => {
+    render(<FileTree data={mockData} />);
+
+    // Initially hidden
+    expect(screen.queryByText('App.tsx')).toBeNull();
+
+    // Click src folder
+    const srcFolder = screen.getByText('src');
+    fireEvent.click(srcFolder);
+
+    // Should show children
+    expect(screen.getByText('App.tsx')).toBeTruthy();
+
+    // Click src folder again
+    fireEvent.click(srcFolder);
+
+    // Should hide children
+    expect(screen.queryByText('App.tsx')).toBeNull();
+  });
 });

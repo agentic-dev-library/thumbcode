@@ -6,8 +6,9 @@
  * Uses paint daube icons for brand consistency.
  */
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { organicBorderRadius } from '@/lib/organic-styles';
+import { createFileTreeStore, FileTreeContext } from './FileTreeContext';
 import { TreeNode } from './TreeNode';
 
 export interface FileNode {
@@ -40,19 +41,23 @@ export function FileTree({
   defaultExpanded = [],
   showStatus = true,
 }: Readonly<FileTreeProps>) {
-  const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set(defaultExpanded));
+  // Create a singleton store instance for this component.
+  // We intentionally ignore dependency updates because:
+  // 1. defaultExpanded is only used for initialization
+  // 2. selectedPath updates are synced via useEffect
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Store should be stable
+  const store = useMemo(
+    () =>
+      createFileTreeStore({
+        expandedPaths: new Set(defaultExpanded),
+        selectedPath,
+      }),
+    []
+  );
 
-  const toggleExpanded = (path: string) => {
-    setExpandedPaths((prev) => {
-      const next = new Set(prev);
-      if (next.has(path)) {
-        next.delete(path);
-      } else {
-        next.add(path);
-      }
-      return next;
-    });
-  };
+  useEffect(() => {
+    store.getState().setSelectedPath(selectedPath || '');
+  }, [selectedPath, store]);
 
   // Sort nodes: folders first, then alphabetically
   const sortedData = useMemo(() => {
@@ -77,24 +82,22 @@ export function FileTree({
     return sortNodes(data);
   }, [data]);
 
+  const contextValue = useMemo(
+    () => ({ store, onSelectFile, showStatus }),
+    [onSelectFile, showStatus]
+  );
+
   return (
-    <ul
-      aria-label="File tree"
-      className="bg-surface overflow-hidden list-none p-0 m-0"
-      style={organicBorderRadius.card}
-    >
-      {sortedData.map((node) => (
-        <TreeNode
-          key={node.path}
-          node={node}
-          depth={0}
-          onSelectFile={onSelectFile}
-          selectedPath={selectedPath}
-          expandedPaths={expandedPaths}
-          toggleExpanded={toggleExpanded}
-          showStatus={showStatus}
-        />
-      ))}
-    </ul>
+    <FileTreeContext.Provider value={contextValue}>
+      <ul
+        aria-label="File tree"
+        className="bg-surface overflow-hidden list-none p-0 m-0"
+        style={organicBorderRadius.card}
+      >
+        {sortedData.map((node) => (
+          <TreeNode key={node.path} node={node} depth={0} />
+        ))}
+      </ul>
+    </FileTreeContext.Provider>
   );
 }

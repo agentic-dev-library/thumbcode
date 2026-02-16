@@ -6,6 +6,8 @@
  */
 
 import type React from 'react';
+import { memo, useContext } from 'react';
+import { useStore } from 'zustand';
 import {
   ChevronDownIcon,
   FileCodeIcon,
@@ -22,6 +24,7 @@ import {
 } from '@/components/icons';
 import { Text } from '@/components/ui';
 import type { FileNode } from './FileTree';
+import { FileTreeContext } from './FileTreeContext';
 
 type FileIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 
@@ -150,31 +153,24 @@ function FileTreeNodeRow({
 export interface TreeNodeProps {
   node: FileNode;
   depth: number;
-  onSelectFile?: (path: string) => void;
-  selectedPath?: string;
-  expandedPaths: Set<string>;
-  toggleExpanded: (path: string) => void;
-  showStatus?: boolean;
 }
 
-export function TreeNode({
-  node,
-  depth,
-  onSelectFile,
-  selectedPath,
-  expandedPaths,
-  toggleExpanded,
-  showStatus,
-}: Readonly<TreeNodeProps>) {
-  const isExpanded = expandedPaths.has(node.path);
-  const isSelected = selectedPath === node.path;
+export const TreeNode = memo(function TreeNode({ node, depth }: Readonly<TreeNodeProps>) {
+  const context = useContext(FileTreeContext);
+  if (!context) {
+    throw new Error('TreeNode must be used within a FileTreeContext.Provider');
+  }
+  const { store, onSelectFile, showStatus } = context;
+
+  const isExpanded = useStore(store, (s) => s.expandedPaths.has(node.path));
+  const isSelected = useStore(store, (s) => s.selectedPath === node.path);
   const isFolder = node.type === 'folder';
   const hasChildren = Boolean(node.children?.length);
   const statusColor = getStatusColor(node);
 
   const handlePress = () => {
     if (isFolder && hasChildren) {
-      toggleExpanded(node.path);
+      store.getState().toggleExpanded(node.path);
     } else if (!isFolder) {
       onSelectFile?.(node.path);
     }
@@ -211,19 +207,10 @@ export function TreeNode({
       {isFolder && isExpanded && hasChildren && (
         <div>
           {node.children?.map((child) => (
-            <TreeNode
-              key={child.path}
-              node={child}
-              depth={depth + 1}
-              onSelectFile={onSelectFile}
-              selectedPath={selectedPath}
-              expandedPaths={expandedPaths}
-              toggleExpanded={toggleExpanded}
-              showStatus={showStatus}
-            />
+            <TreeNode key={child.path} node={child} depth={depth + 1} />
           ))}
         </div>
       )}
     </div>
   );
-}
+});
