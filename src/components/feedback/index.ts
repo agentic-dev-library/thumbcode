@@ -5,7 +5,8 @@
  */
 
 export { ActionSheet, BottomSheet } from './BottomSheet';
-export { LoadingOverlay, Skeleton, Spinner } from './Loading';
+export { LoadingOverlay, Skeleton, SkeletonCard, SkeletonText, Spinner } from './Loading';
 export { ConfirmDialog, Modal } from './Modal';
+export { Pagination } from './Pagination';
 export { ProgressBar, ProgressCircle, StepsProgress } from './Progress';
 export { Toast } from './Toast';

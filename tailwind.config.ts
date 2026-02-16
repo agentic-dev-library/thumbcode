@@ -88,6 +88,11 @@ const config: Config = {
         'organic-button': '0.5rem 0.75rem 0.625rem 0.875rem',
         'organic-badge': '0.375rem 0.5rem 0.625rem 0.25rem',
         'organic-input': '0.5rem 0.625rem 0.5rem 0.75rem',
+        'organic-hero': '1.75rem 1.5rem 2rem 1.25rem',
+        'organic-cta': '0.875rem 1rem 0.75rem 1.125rem',
+        'organic-modal': '1.125rem 1rem 1.25rem 0.875rem',
+        'organic-toast': '0.875rem 0.75rem 1rem 0.625rem',
+        'organic-code': '0.75rem 0.625rem 0.75rem 0.5rem',
       },
       boxShadow: {
         'organic-card': '2px 4px 8px -2px rgb(0 0 0 / 0.08), -1px 2px 4px -1px rgb(0 0 0 / 0.04)',

@@ -111,6 +111,8 @@ function ThreadItem({ thread, onSelect }: Readonly<ThreadItemProps>) {
                 <div
                   key={participant}
                   className={`w-2 h-2 rounded-full ${getParticipantColor(participant)} ${index > 0 ? 'ml-1' : ''}`}
+                  aria-hidden="true"
+                  title={participant}
                 />
               ))}
             {thread.participants.length > 4 && (
@@ -494,7 +496,7 @@ export default function ChatPage() {
 
           {/* Typing indicator */}
           {typingLabel && (
-            <div className="px-4 py-2">
+            <div className="px-4 py-2" role="status" aria-live="polite">
               <span className="text-sm font-body text-neutral-500">{typingLabel}</span>
             </div>
           )}

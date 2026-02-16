@@ -52,9 +52,10 @@ export default function ProjectsPage() {
       {/* Search */}
       <div className="p-4">
         <div className="bg-surface flex items-center px-4 py-3 rounded-organic-card">
-          <Search size={20} className="text-neutral-400 mr-3" />
+          <Search size={20} className="text-neutral-400 mr-3" aria-hidden="true" />
           <input
             type="text"
+            aria-label="Search projects"
             placeholder="Search projects..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

@@ -16,7 +16,7 @@ export function NotFoundPage() {
       <div className="max-w-sm w-full">
         <div className="flex flex-col items-center space-y-6">
           {/* Icon */}
-          <div className="w-24 h-24 bg-surface flex items-center justify-center rounded-[28px_24px_32px_20px/20px_28px_24px_32px]">
+          <div className="w-24 h-24 bg-surface flex items-center justify-center rounded-organic-hero">
             <Search size={48} className="text-neutral-500" />
           </div>
 
@@ -32,7 +32,7 @@ export function NotFoundPage() {
           <div className="w-full space-y-3">
             <Link
               to="/"
-              className="block w-full py-4 px-8 bg-coral-500 text-center text-white font-semibold font-body rounded-[14px_16px_12px_18px/12px_14px_16px_10px] hover:bg-coral-600 transition-colors"
+              className="block w-full py-4 px-8 bg-coral-500 text-center text-white font-semibold font-body rounded-organic-cta hover:bg-coral-600 transition-colors"
             >
               Go Home
             </Link>
@@ -40,7 +40,7 @@ export function NotFoundPage() {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="block w-full py-4 px-8 bg-surface text-center text-white font-body rounded-[14px_16px_12px_18px/12px_14px_16px_10px] hover:bg-neutral-700 transition-colors"
+              className="block w-full py-4 px-8 bg-surface text-center text-white font-body rounded-organic-cta hover:bg-neutral-700 transition-colors"
             >
               Go Back
             </button>

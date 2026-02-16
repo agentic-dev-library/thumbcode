@@ -108,7 +108,7 @@ function SettingsSectionGroup({
   children,
 }: Readonly<{ title: string; children: React.ReactNode }>) {
   return (
-    <div className="bg-surface rounded-organic-card overflow-hidden mb-6">
+    <div className="bg-surface rounded-organic-card shadow-organic-card overflow-hidden mb-6">
       <div className="px-4 py-3 border-b border-neutral-700">
         <span className="text-sm font-body font-semibold text-neutral-400">{title}</span>
       </div>

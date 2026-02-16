@@ -66,6 +66,40 @@ export function Skeleton({
   );
 }
 
+/** Pre-composed skeleton for a text block with multiple lines */
+export function SkeletonText({
+  lines = 3,
+  lastLineWidth = '60%',
+}: Readonly<{ lines?: number; lastLineWidth?: string | number }>) {
+  return (
+    <div className="flex flex-col gap-2">
+      {Array.from({ length: lines }, (_, i) => (
+        <Skeleton
+          key={`skel-line-${i}`}
+          width={i === lines - 1 ? lastLineWidth : '100%'}
+          height={14}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** Pre-composed skeleton for a card layout (avatar + text) */
+export function SkeletonCard() {
+  return (
+    <div className="bg-surface p-4 rounded-organic-card animate-pulse">
+      <div className="flex items-center gap-3 mb-3">
+        <Skeleton circle height={40} />
+        <div className="flex-1 flex flex-col gap-2">
+          <Skeleton width="50%" height={14} />
+          <Skeleton width="30%" height={12} />
+        </div>
+      </div>
+      <SkeletonText lines={2} />
+    </div>
+  );
+}
+
 interface LoadingOverlayProps {
   /** Whether the overlay is visible */
   visible: boolean;
@@ -80,7 +114,7 @@ export function LoadingOverlay({ visible, message }: Readonly<LoadingOverlayProp
     <div className="absolute inset-0 bg-charcoal/80 flex items-center justify-center z-50">
       <div
         className="bg-surface-elevated p-6 flex flex-col items-center"
-        style={{ borderRadius: '16px 12px 20px 8px' }}
+        style={{ borderRadius: '1rem 0.75rem 1.25rem 0.5rem' }}
       >
         <Spinner size="lg" />
         {message && <span className="font-body text-white mt-4 text-center">{message}</span>}

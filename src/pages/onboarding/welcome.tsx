@@ -79,8 +79,7 @@ export default function WelcomePage() {
         {/* Hero */}
         <div className="flex flex-col items-center gap-4 mt-12 mb-10">
           <div
-            className="w-24 h-24 bg-coral-500 flex items-center justify-center"
-            style={{ borderRadius: '28px 24px 32px 20px' }}
+            className="w-24 h-24 bg-coral-500 flex items-center justify-center rounded-organic-hero"
           >
             <ThumbIcon size={48} color="charcoal" turbulence={0.2} />
           </div>
@@ -97,7 +96,7 @@ export default function WelcomePage() {
           {FEATURES.map((feature) => (
             <div
               key={feature.title}
-              className="bg-surface p-4 flex flex-row items-start rounded-organic-card"
+              className="bg-surface p-4 flex flex-row items-start rounded-organic-card shadow-organic-card"
             >
               <div className="mr-4">
                 <FeatureIcon variant={feature.icon} color={feature.color} />

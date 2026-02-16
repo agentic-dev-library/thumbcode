@@ -157,7 +157,7 @@ function FilesTab() {
         <FolderOpen size={16} />
         <span>File Explorer</span>
       </div>
-      <div className="bg-surface rounded-organic-card p-6 text-center">
+      <div className="bg-surface rounded-organic-card shadow-organic-card p-6 text-center">
         <Folder size={32} className="text-neutral-600 mx-auto mb-3" />
         <p className="text-neutral-500 font-body text-sm">
           File system access is not yet available on web. Clone operations and file browsing will be
@@ -176,7 +176,7 @@ function CommitsTab() {
         <GitCommitHorizontal size={16} />
         <span>Recent Commits</span>
       </div>
-      <div className="bg-surface rounded-organic-card p-6 text-center">
+      <div className="bg-surface rounded-organic-card shadow-organic-card p-6 text-center">
         <GitCommitHorizontal size={32} className="text-neutral-600 mx-auto mb-3" />
         <p className="text-neutral-500 font-body text-sm">
           Commit history will be available once web-compatible Git services are integrated.
@@ -201,7 +201,7 @@ function TasksTab({ tasks }: { tasks: AgentTask[] }) {
       {tasks.map((task) => (
         <div
           key={task.id}
-          className="bg-surface p-4 rounded-organic-card"
+          className="bg-surface p-4 rounded-organic-card shadow-organic-card"
           style={{ transform: 'rotate(-0.15deg)' }}
         >
           <div className="flex items-center justify-between mb-1">
@@ -244,7 +244,7 @@ function AgentsTab({
           type="button"
           key={agent.id}
           onClick={() => onAgentPress(agent.id)}
-          className="w-full bg-surface p-4 rounded-organic-card flex items-center justify-between hover:bg-surface-elevated transition-colors text-left"
+          className="w-full bg-surface p-4 rounded-organic-card shadow-organic-card flex items-center justify-between hover:bg-surface-elevated transition-colors text-left"
           style={{ transform: 'rotate(0.15deg)' }}
           data-testid={`agent-${agent.id}`}
         >
