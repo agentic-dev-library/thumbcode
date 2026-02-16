@@ -4,7 +4,7 @@
  * Handles secure credential storage and retrieval using Capacitor Secure Storage
  * with hardware-backed encryption. Includes biometric authentication support.
  *
- * Falls back to encrypted localStorage for web environments.
+ * Falls back to encrypted sessionStorage for web environments with short TTL.
  */
 
 import { BiometricAuth, type BiometryType } from '@aparajita/capacitor-biometric-auth';
@@ -53,8 +53,7 @@ function isNativePlatform(): boolean {
  *
  * Provides a minimal layer of obfuscation/encryption for web storage.
  * Note: This is NOT fully secure against a determined attacker with local access,
- * as the key is also stored in localStorage. However, it prevents casual inspection
- * and satisfies static analysis requirements by not storing plain text.
+ * as the key is also stored in the browser. However, it prevents casual inspection.
  */
 class WebEncryption {
   private static readonly KEY_STORAGE_KEY = 'thumbcode_web_ek';
@@ -62,7 +61,7 @@ class WebEncryption {
   private static readonly KEY_LENGTH = 256;
 
   private static async getKey(): Promise<CryptoKey> {
-    const storedKey = localStorage.getItem(this.KEY_STORAGE_KEY);
+    const storedKey = sessionStorage.getItem(this.KEY_STORAGE_KEY);
 
     if (storedKey) {
       // Import existing key
@@ -85,7 +84,7 @@ class WebEncryption {
 
     // Export and store key
     const exportedKey = await crypto.subtle.exportKey('jwk', key);
-    localStorage.setItem(this.KEY_STORAGE_KEY, JSON.stringify(exportedKey));
+    sessionStorage.setItem(this.KEY_STORAGE_KEY, JSON.stringify(exportedKey));
 
     return key;
   }
@@ -164,7 +163,7 @@ export class KeyStorage {
     promptMessage = 'Authenticate to access your credentials'
   ): Promise<BiometricResult> {
     if (!isNativePlatform()) {
-      return { success: true };
+      return { success: false, error: 'Biometric authentication is not supported on web' };
     }
 
     try {
@@ -199,10 +198,14 @@ export class KeyStorage {
     }
 
     // Biometric check if required
+    // On web, if requireBiometric is true, this will fail because authenticateWithBiometrics returns false
     if (requireBiometric) {
       const biometricResult = await this.authenticateWithBiometrics();
       if (!biometricResult.success) {
-        return { isValid: false, message: 'Biometric authentication failed' };
+        return {
+          isValid: false,
+          message: biometricResult.error || 'Biometric authentication failed'
+        };
       }
     }
 
@@ -226,9 +229,17 @@ export class KeyStorage {
       if (isNativePlatform()) {
         await SecureStoragePlugin.set({ key, value });
       } else {
-        // Encrypt before storing in localStorage
-        const encryptedValue = await WebEncryption.encrypt(value);
-        localStorage.setItem(key, encryptedValue);
+        // Encrypt before storing in sessionStorage
+        try {
+          const encryptedValue = await WebEncryption.encrypt(value);
+          sessionStorage.setItem(key, encryptedValue);
+        } catch (e) {
+          // Handle quota exceeded or private mode restrictions
+          return {
+            isValid: false,
+            message: 'Failed to store in session storage (Storage full or restricted)',
+          };
+        }
       }
 
       return { isValid: true, message: 'Credential stored successfully' };
@@ -262,9 +273,14 @@ export class KeyStorage {
         const result = await SecureStoragePlugin.get({ key });
         payload = result.value;
       } else {
-        const encryptedValue = localStorage.getItem(key);
-        if (encryptedValue) {
-          payload = await WebEncryption.decrypt(encryptedValue);
+        try {
+          const encryptedValue = sessionStorage.getItem(key);
+          if (encryptedValue) {
+            payload = await WebEncryption.decrypt(encryptedValue);
+          }
+        } catch (e) {
+          console.error('Failed to access session storage:', e);
+          return { secret: null };
         }
       }
 
@@ -297,7 +313,12 @@ export class KeyStorage {
       if (isNativePlatform()) {
         await SecureStoragePlugin.remove({ key });
       } else {
-        localStorage.removeItem(key);
+        try {
+          sessionStorage.removeItem(key);
+        } catch (e) {
+          console.error('Failed to remove from session storage:', e);
+          return false;
+        }
       }
       return true;
     } catch (error) {
@@ -316,7 +337,11 @@ export class KeyStorage {
         const result = await SecureStoragePlugin.get({ key });
         return result.value !== null && result.value !== undefined;
       } else {
-        return localStorage.getItem(key) !== null;
+        try {
+          return sessionStorage.getItem(key) !== null;
+        } catch {
+          return false;
+        }
       }
     } catch {
       // SecureStoragePlugin.get throws when key is not found
