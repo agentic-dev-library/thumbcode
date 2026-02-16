@@ -3,6 +3,8 @@
  *
  * Handles secure credential storage and retrieval using Capacitor Secure Storage
  * with hardware-backed encryption. Includes biometric authentication support.
+ *
+ * Falls back to encrypted sessionStorage for web environments with short TTL.
  */
 
 import { BiometricAuth, type BiometryType } from '@aparajita/capacitor-biometric-auth';
@@ -30,6 +32,104 @@ const SECURE_STORE_KEYS: Record<CredentialType, string> = {
   mcp_signing_secret: 'thumbcode_cred_mcp_signing_secret',
 };
 
+declare global {
+  interface Window {
+    Capacitor?: {
+      isNativePlatform: () => boolean;
+    };
+  }
+}
+
+// Helper to check for native platform
+function isNativePlatform(): boolean {
+  if (typeof window !== 'undefined' && window.Capacitor?.isNativePlatform) {
+    return window.Capacitor.isNativePlatform();
+  }
+  return false;
+}
+
+/**
+ * Web Encryption Implementation (AES-GCM)
+ *
+ * Provides a minimal layer of obfuscation/encryption for web storage.
+ * Note: This is NOT fully secure against a determined attacker with local access,
+ * as the key is also stored in the browser. However, it prevents casual inspection.
+ */
+class WebEncryption {
+  private static readonly KEY_STORAGE_KEY = 'thumbcode_web_ek';
+  private static readonly ALGORITHM = 'AES-GCM';
+  private static readonly KEY_LENGTH = 256;
+
+  private static async getKey(): Promise<CryptoKey> {
+    const storedKey = sessionStorage.getItem(this.KEY_STORAGE_KEY);
+
+    if (storedKey) {
+      // Import existing key
+      const keyData = JSON.parse(storedKey);
+      return crypto.subtle.importKey(
+        'jwk',
+        keyData,
+        { name: this.ALGORITHM, length: this.KEY_LENGTH },
+        true,
+        ['encrypt', 'decrypt']
+      );
+    }
+
+    // Generate new key
+    const key = await crypto.subtle.generateKey(
+      { name: this.ALGORITHM, length: this.KEY_LENGTH },
+      true,
+      ['encrypt', 'decrypt']
+    );
+
+    // Export and store key
+    const exportedKey = await crypto.subtle.exportKey('jwk', key);
+    sessionStorage.setItem(this.KEY_STORAGE_KEY, JSON.stringify(exportedKey));
+
+    return key;
+  }
+
+  static async encrypt(data: string): Promise<string> {
+    const key = await this.getKey();
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const encoder = new TextEncoder();
+    const encodedData = encoder.encode(data);
+
+    const encryptedContent = await crypto.subtle.encrypt(
+      { name: this.ALGORITHM, iv },
+      key,
+      encodedData
+    );
+
+    const encryptedArray = Array.from(new Uint8Array(encryptedContent));
+    const ivArray = Array.from(iv);
+
+    return JSON.stringify({
+      iv: ivArray,
+      data: encryptedArray,
+    });
+  }
+
+  static async decrypt(encryptedString: string): Promise<string | null> {
+    try {
+      const { iv, data } = JSON.parse(encryptedString);
+      const key = await this.getKey();
+
+      const decryptedContent = await crypto.subtle.decrypt(
+        { name: this.ALGORITHM, iv: new Uint8Array(iv) },
+        key,
+        new Uint8Array(data)
+      );
+
+      const decoder = new TextDecoder();
+      return decoder.decode(decryptedContent);
+    } catch (error) {
+      console.error('Decryption failed:', error);
+      return null;
+    }
+  }
+}
+
 export class KeyStorage {
   constructor(private validator: KeyValidator) {}
 
@@ -37,6 +137,9 @@ export class KeyStorage {
    * Check if biometric authentication is available on the device
    */
   async isBiometricAvailable(): Promise<boolean> {
+    if (!isNativePlatform()) {
+      return false;
+    }
     const result = await BiometricAuth.checkBiometry();
     return result.isAvailable;
   }
@@ -45,6 +148,9 @@ export class KeyStorage {
    * Get the available biometric authentication types
    */
   async getBiometricTypes(): Promise<BiometryType[]> {
+    if (!isNativePlatform()) {
+      return [];
+    }
     const result = await BiometricAuth.checkBiometry();
     // Return array with the detected biometry type, or empty if none
     return result.isAvailable ? [result.biometryType] : [];
@@ -56,6 +162,10 @@ export class KeyStorage {
   async authenticateWithBiometrics(
     promptMessage = 'Authenticate to access your credentials'
   ): Promise<BiometricResult> {
+    if (!isNativePlatform()) {
+      return { success: false, error: 'Biometric authentication is not supported on web' };
+    }
+
     try {
       await BiometricAuth.authenticate({
         reason: promptMessage,
@@ -88,10 +198,14 @@ export class KeyStorage {
     }
 
     // Biometric check if required
+    // On web, if requireBiometric is true, this will fail because authenticateWithBiometrics returns false
     if (requireBiometric) {
       const biometricResult = await this.authenticateWithBiometrics();
       if (!biometricResult.success) {
-        return { isValid: false, message: 'Biometric authentication failed' };
+        return {
+          isValid: false,
+          message: biometricResult.error || 'Biometric authentication failed'
+        };
       }
     }
 
@@ -103,16 +217,30 @@ export class KeyStorage {
       }
     }
 
-    // Store the secret in Capacitor Secure Storage
     const key = SECURE_STORE_KEYS[type];
-    try {
-      const payload: SecureCredential = {
-        secret,
-        storedAt: new Date().toISOString(),
-        type,
-      };
+    const payload: SecureCredential = {
+      secret,
+      storedAt: new Date().toISOString(),
+      type,
+    };
+    const value = JSON.stringify(payload);
 
-      await SecureStoragePlugin.set({ key, value: JSON.stringify(payload) });
+    try {
+      if (isNativePlatform()) {
+        await SecureStoragePlugin.set({ key, value });
+      } else {
+        // Encrypt before storing in sessionStorage
+        try {
+          const encryptedValue = await WebEncryption.encrypt(value);
+          sessionStorage.setItem(key, encryptedValue);
+        } catch (e) {
+          // Handle quota exceeded or private mode restrictions
+          return {
+            isValid: false,
+            message: 'Failed to store in session storage (Storage full or restricted)',
+          };
+        }
+      }
 
       return { isValid: true, message: 'Credential stored successfully' };
     } catch (error) {
@@ -139,8 +267,22 @@ export class KeyStorage {
 
     try {
       const key = SECURE_STORE_KEYS[type];
-      const result = await SecureStoragePlugin.get({ key });
-      const payload = result.value;
+      let payload: string | null = null;
+
+      if (isNativePlatform()) {
+        const result = await SecureStoragePlugin.get({ key });
+        payload = result.value;
+      } else {
+        try {
+          const encryptedValue = sessionStorage.getItem(key);
+          if (encryptedValue) {
+            payload = await WebEncryption.decrypt(encryptedValue);
+          }
+        } catch (e) {
+          console.error('Failed to access session storage:', e);
+          return { secret: null };
+        }
+      }
 
       if (!payload) {
         return { secret: null };
@@ -168,7 +310,16 @@ export class KeyStorage {
   async delete(type: CredentialType): Promise<boolean> {
     try {
       const key = SECURE_STORE_KEYS[type];
-      await SecureStoragePlugin.remove({ key });
+      if (isNativePlatform()) {
+        await SecureStoragePlugin.remove({ key });
+      } else {
+        try {
+          sessionStorage.removeItem(key);
+        } catch (e) {
+          console.error('Failed to remove from session storage:', e);
+          return false;
+        }
+      }
       return true;
     } catch (error) {
       console.error('Failed to delete credential:', error);
@@ -182,8 +333,16 @@ export class KeyStorage {
   async exists(type: CredentialType): Promise<boolean> {
     try {
       const key = SECURE_STORE_KEYS[type];
-      const result = await SecureStoragePlugin.get({ key });
-      return result.value !== null && result.value !== undefined;
+      if (isNativePlatform()) {
+        const result = await SecureStoragePlugin.get({ key });
+        return result.value !== null && result.value !== undefined;
+      } else {
+        try {
+          return sessionStorage.getItem(key) !== null;
+        } catch {
+          return false;
+        }
+      }
     } catch {
       // SecureStoragePlugin.get throws when key is not found
       return false;
