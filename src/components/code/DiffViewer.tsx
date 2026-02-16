@@ -5,7 +5,7 @@
  * Supports unified and split view modes.
  */
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ChevronDownIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
 import { organicBorderRadius } from '@/lib/organic-styles';
@@ -95,9 +95,12 @@ export function DiffViewer({
 }: Readonly<DiffViewerProps>) {
   const [collapsed, setCollapsed] = useState(false);
 
-  const lines = diff || (oldContent && newContent ? parseDiff(oldContent, newContent) : []);
-  const additions = lines.filter((l) => l.type === 'add').length;
-  const deletions = lines.filter((l) => l.type === 'remove').length;
+  const lines = useMemo(
+    () => diff || (oldContent && newContent ? parseDiff(oldContent, newContent) : []),
+    [diff, oldContent, newContent]
+  );
+  const additions = useMemo(() => lines.filter((l) => l.type === 'add').length, [lines]);
+  const deletions = useMemo(() => lines.filter((l) => l.type === 'remove').length, [lines]);
 
   const getLineStyle = (type: DiffLine['type']) => {
     switch (type) {
