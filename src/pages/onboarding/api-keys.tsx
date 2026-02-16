@@ -137,17 +137,19 @@ export default function ApiKeysPage() {
     provider: CredentialProvider,
     keyState: APIKeyState,
     name: string,
-    secureStoreKey: string
+    secureStoreKey: string,
   ) => {
     if (keyState.isValid && keyState.key) {
       try {
-        await CredentialService.store(provider as any, keyState.key);
+        // Cast provider to the store/mask API type ('anthropic' | 'openai')
+        const apiProvider = provider as 'anthropic' | 'openai';
+        await CredentialService.store(apiProvider, keyState.key);
 
         const credId = addCredential({
           provider,
           name,
           secureStoreKey,
-          maskedValue: CredentialService.maskSecret(keyState.key, provider as any),
+          maskedValue: CredentialService.maskSecret(keyState.key, apiProvider),
         });
 
         // Explicitly set validation result as valid since we just stored it

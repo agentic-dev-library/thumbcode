@@ -138,9 +138,10 @@ describe('ApiKeysPage', () => {
     fireEvent.change(openAiInput, { target: { value: 'sk-proj-valid-key-123' } });
 
     // Wait for validation to complete
-    await waitFor(() =>
-      expect(CredentialService.validateCredential).toHaveBeenCalledTimes(2)
-    , { timeout: 1500 });
+    await waitFor(
+      () => expect(CredentialService.validateCredential).toHaveBeenCalledTimes(2),
+      { timeout: 1500 },
+    );
 
     // Click continue
     const continueBtn = screen.getByTestId('continue-button');
@@ -149,14 +150,8 @@ describe('ApiKeysPage', () => {
 
     await waitFor(() => {
       // Check storage
-      expect(CredentialService.store).toHaveBeenCalledWith(
-        'anthropic',
-        'sk-ant-valid-key-123'
-      );
-      expect(CredentialService.store).toHaveBeenCalledWith(
-        'openai',
-        'sk-proj-valid-key-123'
-      );
+      expect(CredentialService.store).toHaveBeenCalledWith('anthropic', 'sk-ant-valid-key-123');
+      expect(CredentialService.store).toHaveBeenCalledWith('openai', 'sk-proj-valid-key-123');
 
       // Check state updates
       expect(mockAddCredential).toHaveBeenCalledTimes(2);
@@ -164,7 +159,7 @@ describe('ApiKeysPage', () => {
       // Verify setValidationResult was called with the mock ID returned by addCredential
       expect(mockSetValidationResult).toHaveBeenCalledWith(
         'test-cred-id',
-        expect.objectContaining({ isValid: true })
+        expect.objectContaining({ isValid: true }),
       );
 
       expect(mockPush).toHaveBeenCalledWith('/onboarding/create-project');
