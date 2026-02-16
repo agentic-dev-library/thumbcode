@@ -11,9 +11,21 @@ vi.mock('@thumbcode/core', async () => {
     ...actual,
     GitHubApiService: {
       listRepositories: vi.fn(),
+      createRepository: vi.fn(),
     },
   };
 });
+
+// Mock useProjectStore
+const mockAddProject = vi.fn(() => 'project-123');
+
+vi.mock('@thumbcode/state', () => ({
+  useProjectStore: vi.fn((selector) => {
+    const state = { addProject: mockAddProject };
+    if (typeof selector === 'function') return selector(state);
+    return state;
+  }),
+}));
 
 // Mock useAppRouter
 vi.mock('@/hooks/useAppRouter', () => ({

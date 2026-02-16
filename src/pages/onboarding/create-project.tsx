@@ -8,6 +8,7 @@
  */
 
 import { GitHubApiService } from '@thumbcode/core';
+import { useProjectStore } from '@thumbcode/state';
 import { useEffect, useMemo, useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
 import { FolderIcon, SecurityIcon, StarIcon, SuccessIcon } from '@/components/icons';
@@ -35,6 +36,7 @@ interface RepoListItem {
 
 export default function CreateProjectPage() {
   const router = useAppRouter();
+  const addProject = useProjectStore((s) => s.addProject);
 
   const [projectName, setProjectName] = useState('');
   const [selectedRepo, setSelectedRepo] = useState<RepoListItem | null>(null);
@@ -119,15 +121,21 @@ export default function CreateProjectPage() {
     setIsCreatingRepo(true);
     setErrorMessage(null);
     try {
-      // TODO: Wire up GitHubApiService.createRepository when core package is web-ready
-      const repoItem: RepoListItem = {
-        key: `user/${trimmedName}`,
+      const repo = await GitHubApiService.createRepository({
         name: trimmedName,
-        fullName: `user/${trimmedName}`,
-        description: newRepoDescription.trim() || null,
-        cloneUrl: `https://github.com/user/${trimmedName}.git`,
-        defaultBranch: 'main',
+        description: newRepoDescription.trim() || undefined,
         isPrivate: newRepoPrivate,
+      });
+
+      const repoItem: RepoListItem = {
+        key: repo.fullName,
+        name: repo.name,
+        fullName: repo.fullName,
+        description: repo.description ?? null,
+        cloneUrl: repo.cloneUrl,
+        defaultBranch: repo.defaultBranch,
+        isPrivate: repo.isPrivate,
+        stars: repo.stars,
       };
 
       setRepos((prev) => [repoItem, ...prev]);
@@ -151,9 +159,13 @@ export default function CreateProjectPage() {
     setIsLoading(true);
     setErrorMessage(null);
     try {
-      // TODO: Wire up CredentialService, GitCloneService, useProjectStore when packages are web-ready
-      // For now navigate to complete
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      addProject({
+        name: projectName.trim(),
+        repoUrl: selectedRepo.cloneUrl,
+        localPath: `/${selectedRepo.fullName}`,
+        defaultBranch: selectedRepo.defaultBranch,
+      });
+
       router.replace('/onboarding/complete');
     } catch (error) {
       console.error('Failed to create project:', error);
