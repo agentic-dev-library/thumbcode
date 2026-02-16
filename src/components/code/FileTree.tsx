@@ -64,10 +64,15 @@ export function FileTree({
           }
           return a.name.localeCompare(b.name);
         })
-        .map((node) => ({
-          ...node,
-          children: node.children ? sortNodes(node.children) : undefined,
-        }));
+        .map((node) => {
+          if (node.children?.length) {
+            return {
+              ...node,
+              children: sortNodes(node.children),
+            };
+          }
+          return node;
+        });
     };
     return sortNodes(data);
   }, [data]);
