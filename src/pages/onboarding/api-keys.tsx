@@ -8,8 +8,8 @@
  */
 
 import { CredentialService } from '@thumbcode/core';
-import { useCredentialStore } from '@thumbcode/state';
-import { useState } from 'react';
+import { type CredentialProvider, useCredentialStore } from '@thumbcode/state';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
 import { LightbulbIcon, SecurityIcon } from '@/components/icons';
 import { useAppRouter } from '@/hooks/useAppRouter';
@@ -25,6 +25,7 @@ interface APIKeyState {
 export default function ApiKeysPage() {
   const router = useAppRouter();
   const addCredential = useCredentialStore((state) => state.addCredential);
+  const setValidationResult = useCredentialStore((state) => state.setValidationResult);
 
   const [anthropicKey, setAnthropicKey] = useState<APIKeyState>({
     key: '',
@@ -38,80 +39,142 @@ export default function ApiKeysPage() {
     isValid: null,
   });
 
-  const validateAnthropicKey = async (
-    key: string
-  ): Promise<{ isValid: boolean; error?: string }> => {
-    const result = await CredentialService.validateCredential('anthropic', key);
-    return { isValid: result.isValid, error: result.message };
-  };
+  const [globalError, setGlobalError] = useState<string | null>(null);
 
-  const validateOpenAIKey = async (key: string): Promise<{ isValid: boolean; error?: string }> => {
-    const result = await CredentialService.validateCredential('openai', key);
-    return { isValid: result.isValid, error: result.message };
-  };
+  // Debounce refs
+  const anthropicTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const openaiTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleAnthropicChange = async (value: string) => {
-    setAnthropicKey({ key: value, isValidating: false, isValid: null });
+  // Abort controller refs to cancel in-flight requests
+  const anthropicAbortRef = useRef<AbortController | null>(null);
+  const openaiAbortRef = useRef<AbortController | null>(null);
 
-    if (value.length > 10) {
-      setAnthropicKey((prev) => ({ ...prev, isValidating: true }));
-      const result = await validateAnthropicKey(value);
-      setAnthropicKey((prev) => ({
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (anthropicTimeoutRef.current) clearTimeout(anthropicTimeoutRef.current);
+      if (openaiTimeoutRef.current) clearTimeout(openaiTimeoutRef.current);
+      if (anthropicAbortRef.current) anthropicAbortRef.current.abort();
+      if (openaiAbortRef.current) openaiAbortRef.current.abort();
+    };
+  }, []);
+
+  const validateKey = useCallback(async (
+    provider: 'anthropic' | 'openai',
+    key: string,
+    setKey: React.Dispatch<React.SetStateAction<APIKeyState>>,
+    abortRef: React.MutableRefObject<AbortController | null>
+  ) => {
+    // Cancel previous request
+    if (abortRef.current) {
+      abortRef.current.abort();
+    }
+
+    // Create new abort controller
+    const abortController = new AbortController();
+    abortRef.current = abortController;
+
+    setKey((prev) => ({ ...prev, isValidating: true, error: undefined }));
+
+    try {
+      // Simulate network request cancellation check (since CredentialService might not support signal yet)
+      if (abortController.signal.aborted) return;
+
+      const result = await CredentialService.validateCredential(provider, key);
+
+      if (abortController.signal.aborted) return;
+
+      setKey((prev) => ({
         ...prev,
         isValidating: false,
         isValid: result.isValid,
-        error: result.error,
+        error: result.message,
       }));
-    }
-  };
+    } catch (error) {
+      if (abortController.signal.aborted) return;
 
-  const handleOpenAIChange = async (value: string) => {
-    setOpenaiKey({ key: value, isValidating: false, isValid: null });
-
-    if (value.length > 10) {
-      setOpenaiKey((prev) => ({ ...prev, isValidating: true }));
-      const result = await validateOpenAIKey(value);
-      setOpenaiKey((prev) => ({
+      console.error(`Error validating ${provider} key:`, error);
+      setKey((prev) => ({
         ...prev,
         isValidating: false,
-        isValid: result.isValid,
-        error: result.error,
+        isValid: false,
+        error: 'Validation failed due to network or service error',
       }));
+    } finally {
+      if (abortRef.current === abortController) {
+        abortRef.current = null;
+      }
+    }
+  }, []);
+
+  const handleKeyChange = (
+    value: string,
+    setKey: React.Dispatch<React.SetStateAction<APIKeyState>>,
+    timeoutRef: React.MutableRefObject<NodeJS.Timeout | null>,
+    provider: 'anthropic' | 'openai',
+    abortRef: React.MutableRefObject<AbortController | null>
+  ) => {
+    setKey((prev) => ({ ...prev, key: value, isValid: null, error: undefined }));
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    if (value.length > 10) {
+      timeoutRef.current = setTimeout(() => {
+        validateKey(provider, value, setKey, abortRef);
+      }, 500); // 500ms debounce
     }
   };
 
-  const hasAtLeastOneKey = anthropicKey.isValid || openaiKey.isValid;
+  const hasAtLeastOneKey = (anthropicKey.isValid || openaiKey.isValid) && !anthropicKey.isValidating && !openaiKey.isValidating;
 
   const handleSkip = () => {
     router.push('/onboarding/create-project');
   };
 
+  const storeCredential = async (
+    provider: CredentialProvider,
+    keyState: APIKeyState,
+    name: string,
+    secureStoreKey: string
+  ) => {
+    if (keyState.isValid && keyState.key) {
+      try {
+        await CredentialService.store(provider as any, keyState.key);
+
+        const credId = addCredential({
+          provider,
+          name,
+          secureStoreKey,
+          maskedValue: CredentialService.maskSecret(keyState.key, provider as any),
+        });
+
+        // Explicitly set validation result as valid since we just stored it
+        setValidationResult(credId, {
+          isValid: true,
+          expiresAt: undefined,
+        });
+      } catch (error) {
+        console.error(`Failed to store ${provider} credential:`, error);
+        throw new Error(`Failed to save ${name} key`);
+      }
+    }
+  };
+
   const handleContinue = async () => {
-    // Store Anthropic key if valid
-    if (anthropicKey.isValid && anthropicKey.key) {
-      await CredentialService.store('anthropic', anthropicKey.key);
-      addCredential({
-        provider: 'anthropic',
-        name: 'Anthropic',
-        secureStoreKey: 'anthropic',
-        lastValidatedAt: new Date().toISOString(),
-        maskedValue: CredentialService.maskSecret(anthropicKey.key, 'anthropic'),
-      });
-    }
+    setGlobalError(null);
 
-    // Store OpenAI key if valid
-    if (openaiKey.isValid && openaiKey.key) {
-      await CredentialService.store('openai', openaiKey.key);
-      addCredential({
-        provider: 'openai',
-        name: 'OpenAI',
-        secureStoreKey: 'openai',
-        lastValidatedAt: new Date().toISOString(),
-        maskedValue: CredentialService.maskSecret(openaiKey.key, 'openai'),
-      });
-    }
+    try {
+      await Promise.all([
+        storeCredential('anthropic', anthropicKey, 'Anthropic', 'anthropic'),
+        storeCredential('openai', openaiKey, 'OpenAI', 'openai')
+      ]);
 
-    router.push('/onboarding/create-project');
+      router.push('/onboarding/create-project');
+    } catch (error) {
+      setGlobalError('Failed to save credentials. Please try again.');
+    }
   };
 
   return (
@@ -147,12 +210,18 @@ export default function ApiKeysPage() {
           </p>
         </div>
 
+        {globalError && (
+          <div className="bg-coral-500/10 border border-coral-500/20 p-4 mb-6 rounded-organic-card">
+            <p className="font-body text-sm text-coral-500">{globalError}</p>
+          </div>
+        )}
+
         {/* Anthropic Key */}
         <APIKeyInput
           label="Anthropic (Claude)"
           placeholder="sk-ant-api03-..."
           value={anthropicKey.key}
-          onChange={handleAnthropicChange}
+          onChange={(val) => handleKeyChange(val, setAnthropicKey, anthropicTimeoutRef, 'anthropic', anthropicAbortRef)}
           isValidating={anthropicKey.isValidating}
           isValid={anthropicKey.isValid}
           error={anthropicKey.error}
@@ -165,7 +234,7 @@ export default function ApiKeysPage() {
           label="OpenAI (GPT-4)"
           placeholder="sk-proj-..."
           value={openaiKey.key}
-          onChange={handleOpenAIChange}
+          onChange={(val) => handleKeyChange(val, setOpenaiKey, openaiTimeoutRef, 'openai', openaiAbortRef)}
           isValidating={openaiKey.isValidating}
           isValid={openaiKey.isValid}
           error={openaiKey.error}

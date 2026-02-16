@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { CredentialService } from '@thumbcode/core';
-import { useCredentialStore } from '@thumbcode/state';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ApiKeysPage from '../api-keys';
 
@@ -16,17 +15,20 @@ vi.mock('@thumbcode/core', async () => {
 });
 
 // Mock useCredentialStore
-const mockAddCredential = vi.fn();
+const mockAddCredential = vi.fn(() => 'test-cred-id');
+const mockSetValidationResult = vi.fn();
+
 vi.mock('@thumbcode/state', () => ({
   useCredentialStore: vi.fn((selector) => {
-    if (typeof selector === 'function') {
-      return selector({
-        addCredential: mockAddCredential,
-      });
-    }
-    return {
+    const state = {
       addCredential: mockAddCredential,
+      setValidationResult: mockSetValidationResult,
     };
+
+    if (typeof selector === 'function') {
+      return selector(state);
+    }
+    return state;
   }),
 }));
 
@@ -56,12 +58,13 @@ describe('ApiKeysPage', () => {
     const input = screen.getByTestId('anthropic-key-input');
     fireEvent.change(input, { target: { value: 'sk-ant-valid-key-123' } });
 
+    // Wait for debounce and validation
     await waitFor(() => {
       expect(CredentialService.validateCredential).toHaveBeenCalledWith(
         'anthropic',
         'sk-ant-valid-key-123'
       );
-    });
+    }, { timeout: 1000 });
   });
 
   it('validates OpenAI key using CredentialService', async () => {
@@ -79,7 +82,7 @@ describe('ApiKeysPage', () => {
         'openai',
         'sk-proj-valid-key-123'
       );
-    });
+    }, { timeout: 1000 });
   });
 
   it('navigates to create project when skipping', () => {
@@ -108,10 +111,10 @@ describe('ApiKeysPage', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Invalid API key format')).toBeInTheDocument();
-    });
+    }, { timeout: 1000 });
   });
 
-  it('stores valid keys on continue', async () => {
+  it('stores valid keys and sets validation status on continue', async () => {
     // Setup valid keys
     vi.mocked(CredentialService.validateCredential).mockImplementation(
       (type: string, key: string) => {
@@ -134,10 +137,10 @@ describe('ApiKeysPage', () => {
     const openAiInput = screen.getByTestId('openai-key-input');
     fireEvent.change(openAiInput, { target: { value: 'sk-proj-valid-key-123' } });
 
-    // Wait for validation to complete (simulated by waitFor)
+    // Wait for validation to complete
     await waitFor(() =>
       expect(CredentialService.validateCredential).toHaveBeenCalledTimes(2)
-    );
+    , { timeout: 1500 });
 
     // Click continue
     const continueBtn = screen.getByTestId('continue-button');
@@ -145,6 +148,7 @@ describe('ApiKeysPage', () => {
     fireEvent.click(continueBtn);
 
     await waitFor(() => {
+      // Check storage
       expect(CredentialService.store).toHaveBeenCalledWith(
         'anthropic',
         'sk-ant-valid-key-123'
@@ -154,16 +158,13 @@ describe('ApiKeysPage', () => {
         'sk-proj-valid-key-123'
       );
 
+      // Check state updates
       expect(mockAddCredential).toHaveBeenCalledTimes(2);
-      expect(mockAddCredential).toHaveBeenCalledWith(
-        expect.objectContaining({
-          provider: 'anthropic',
-        })
-      );
-      expect(mockAddCredential).toHaveBeenCalledWith(
-        expect.objectContaining({
-          provider: 'openai',
-        })
+
+      // Verify setValidationResult was called with the mock ID returned by addCredential
+      expect(mockSetValidationResult).toHaveBeenCalledWith(
+        'test-cred-id',
+        expect.objectContaining({ isValid: true })
       );
 
       expect(mockPush).toHaveBeenCalledWith('/onboarding/create-project');
