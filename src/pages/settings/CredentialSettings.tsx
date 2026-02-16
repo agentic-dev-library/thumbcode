@@ -13,7 +13,7 @@
 import { CredentialService } from '@thumbcode/core';
 import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@thumbcode/state';
 import { ArrowLeft, Check, Link as LinkIcon, Loader2, Shield, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface ApiKeyInputProps {
@@ -85,6 +85,14 @@ function Divider() {
   return <div className="border-t border-neutral-700" />;
 }
 
+declare global {
+  interface Window {
+    Capacitor?: {
+      isNativePlatform: () => boolean;
+    };
+  }
+}
+
 export function CredentialSettings() {
   const navigate = useNavigate();
 
@@ -101,6 +109,11 @@ export function CredentialSettings() {
   const [openaiKey, setOpenaiKey] = useState('');
   const [savingType, setSavingType] = useState<'anthropic' | 'openai' | null>(null);
   const [saveError, setSaveError] = useState<{ type: string; message: string } | null>(null);
+  const [isNative, setIsNative] = useState(false);
+
+  useEffect(() => {
+    setIsNative(window.Capacitor?.isNativePlatform() ?? false);
+  }, []);
 
   const handleGitHubConnect = () => {
     navigate('/onboarding/github-auth');
@@ -272,10 +285,13 @@ export function CredentialSettings() {
               <Shield size={18} className="text-teal-400" />
             </div>
             <div className="flex-1">
-              <p className="text-teal-400 font-semibold font-body">Secure Storage</p>
+              <p className="text-teal-400 font-semibold font-body">
+                {isNative ? 'Secure Storage' : 'Encrypted Session Storage'}
+              </p>
               <p className="text-sm text-teal-400/80 font-body mt-1">
-                Your API keys are stored securely on your device using hardware-backed encryption.
-                They are never sent to our servers.
+                {isNative
+                  ? 'Your API keys are stored securely on your device using hardware-backed encryption. They are never sent to our servers.'
+                  : 'Your API keys are encrypted and stored in your browser session. They will be cleared when you close the tab. For maximum security, use the mobile app.'}
               </p>
             </div>
           </div>
