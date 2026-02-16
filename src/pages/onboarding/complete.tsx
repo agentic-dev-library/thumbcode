@@ -86,9 +86,7 @@ export default function CompletePage() {
               isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
             }`}
           >
-            <div
-              className="w-32 h-32 bg-teal-600/20 flex items-center justify-center rounded-organic-hero"
-            >
+            <div className="w-32 h-32 bg-teal-600/20 flex items-center justify-center rounded-organic-hero">
               <CelebrateIcon size={64} color="gold" turbulence={0.3} />
             </div>
           </div>

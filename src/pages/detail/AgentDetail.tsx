@@ -190,9 +190,18 @@ export function AgentDetail() {
             <p className="text-white font-body mb-3">{currentTask.description}</p>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-neutral-500 font-body">Progress</span>
-              <span className="text-sm text-teal-400 font-body" role="status" aria-live="polite">{progress}%</span>
+              <output className="text-sm text-teal-400 font-body" aria-live="polite">
+                {progress}%
+              </output>
             </div>
-            <div className="w-full h-2 bg-neutral-700 rounded-full overflow-hidden" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label="Task progress">
+            <div
+              className="w-full h-2 bg-neutral-700 rounded-full overflow-hidden"
+              role="progressbar"
+              aria-valuenow={progress}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Task progress"
+            >
               <div
                 className="h-full bg-teal-500 rounded-full transition-all duration-300"
                 style={{ width: `${progress}%` }}

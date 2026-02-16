@@ -7,8 +7,8 @@
  * Migrated from React Native: app/(onboarding)/github-auth.tsx
  */
 
-import { GitHubAuthService } from '@thumbcode/core';
 import { env, GITHUB_OAUTH } from '@thumbcode/config';
+import { GitHubAuthService } from '@thumbcode/core';
 import { useEffect, useRef, useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
 import { LinkIcon, SuccessIcon } from '@/components/icons';

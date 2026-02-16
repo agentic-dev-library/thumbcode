@@ -147,12 +147,8 @@ export function ProjectDetail() {
 
       {/* Content */}
       <div className="overflow-y-auto flex-1 px-6 py-6">
-        {activeTab === 'files' && (
-          <FilesTab repoInfo={repoInfo} branch={currentBranch} />
-        )}
-        {activeTab === 'commits' && (
-          <CommitsTab repoInfo={repoInfo} branch={currentBranch} />
-        )}
+        {activeTab === 'files' && <FilesTab repoInfo={repoInfo} branch={currentBranch} />}
+        {activeTab === 'commits' && <CommitsTab repoInfo={repoInfo} branch={currentBranch} />}
         {activeTab === 'tasks' && <TasksTab tasks={scopedTasks} />}
         {activeTab === 'agents' && (
           <AgentsTab agents={agents} onAgentPress={(agentId) => navigate(`/agent/${agentId}`)} />
@@ -267,9 +263,7 @@ function FilesTab({ repoInfo, branch }: RepoInfoProps) {
                 if (item.type === 'dir') fetchContents(item.path);
               }}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-organic-card transition-colors text-left ${
-                item.type === 'dir'
-                  ? 'hover:bg-surface-elevated cursor-pointer'
-                  : 'cursor-default'
+                item.type === 'dir' ? 'hover:bg-surface-elevated cursor-pointer' : 'cursor-default'
               }`}
             >
               {item.type === 'dir' ? (
@@ -280,9 +274,7 @@ function FilesTab({ repoInfo, branch }: RepoInfoProps) {
               <span className="font-body text-sm text-white truncate">{item.name}</span>
               {item.type === 'file' && item.size > 0 && (
                 <span className="font-mono text-xs text-neutral-600 ml-auto shrink-0">
-                  {item.size > 1024
-                    ? `${(item.size / 1024).toFixed(1)}KB`
-                    : `${item.size}B`}
+                  {item.size > 1024 ? `${(item.size / 1024).toFixed(1)}KB` : `${item.size}B`}
                 </span>
               )}
             </button>

@@ -496,9 +496,9 @@ export default function ChatPage() {
 
           {/* Typing indicator */}
           {typingLabel && (
-            <div className="px-4 py-2" role="status" aria-live="polite">
+            <output className="px-4 py-2 block" aria-live="polite">
               <span className="text-sm font-body text-neutral-500">{typingLabel}</span>
-            </div>
+            </output>
           )}
 
           {/* Input */}
