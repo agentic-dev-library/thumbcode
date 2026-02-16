@@ -85,14 +85,14 @@ export class OrchestrationStateManager {
 
       if (pendingDeps.length === 0) {
         // Check if task has an assignee
-        const task = this.state.taskQueue.find((t) => t.id === taskId);
+        const task = this.getTask(taskId);
         if (task?.assignee) {
           plan.ready.push(taskId);
         }
       } else {
-        // Check for failed dependencies
+        // Check for failed dependencies (use getTask to search both taskQueue and completedTasks)
         const failedDeps = pendingDeps.filter((depId) => {
-          const task = this.state.taskQueue.find((t) => t.id === depId);
+          const task = this.getTask(depId);
           return task?.status === 'cancelled';
         });
 
