@@ -11,6 +11,7 @@
  */
 
 import { CredentialService } from '@thumbcode/core';
+import type { CredentialMetadata } from '@thumbcode/state';
 import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@thumbcode/state';
 import { ArrowLeft, Check, Link as LinkIcon, Loader2, Shield, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -101,6 +102,7 @@ export function CredentialSettings() {
   const openaiCredential = useCredentialStore(selectCredentialByProvider('openai'));
   const removeCredential = useCredentialStore((s) => s.removeCredential);
   const addCredential = useCredentialStore((s) => s.addCredential);
+  const setCredentialStatus = useCredentialStore((s) => s.setCredentialStatus);
 
   const setAuthenticated = useUserStore((s) => s.setAuthenticated);
   const setGitHubProfile = useUserStore((s) => s.setGitHubProfile);
@@ -147,15 +149,18 @@ export function CredentialSettings() {
       const name = type === 'anthropic' ? 'Anthropic Key' : 'OpenAI Key';
       const maskedValue = CredentialService.maskSecret(trimmed, type);
 
-      addCredential({
+      const credId = addCredential({
         provider: type,
         name,
         secureStoreKey: `thumbcode_cred_${type}`,
         maskedValue,
         lastValidatedAt: new Date().toISOString(),
         expiresAt: result.expiresAt ? result.expiresAt.toISOString() : undefined,
-        metadata: result.metadata as any,
+        metadata: result.metadata as CredentialMetadata['metadata'],
       });
+
+      // Explicitly set status to valid since addCredential defaults to 'unknown'
+      setCredentialStatus(credId, 'valid');
 
       // Clear input on success
       if (type === 'anthropic') setAnthropicKey('');
