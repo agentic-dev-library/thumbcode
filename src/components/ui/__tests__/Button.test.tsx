@@ -1,14 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { Button } from '../Button';
 
-vi.mock('@/lib/organic-styles', () => ({
-  organicBorderRadius: { button: {} },
-}));
-
-vi.mock('@/utils/design-tokens', () => ({
-  getColor: vi.fn(() => '#000000'),
-}));
-
 describe('Button', () => {
   it('renders correctly with default props', () => {
     render(<Button>Test Button</Button>);

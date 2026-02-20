@@ -20,6 +20,10 @@ export interface TextProps {
   style?: CSSProperties;
   /** Accessibility role mapped to HTML role attribute */
   accessibilityRole?: string;
+  /** Accessibility label (mapped to aria-label) */
+  accessibilityLabel?: string;
+  /** Accessibility elements hidden (mapped to aria-hidden) */
+  accessibilityElementsHidden?: boolean;
   /** Test identifier, mapped to data-testid */
   testID?: string;
   /** Number of lines to truncate to (applies CSS line-clamp) */
@@ -71,6 +75,8 @@ export function Text({
   className = '',
   style,
   accessibilityRole,
+  accessibilityLabel,
+  accessibilityElementsHidden,
   testID,
   numberOfLines,
   children,
@@ -92,7 +98,9 @@ export function Text({
     <span
       className={`${variantClass} ${sizeClass} ${weightClass} ${className}`}
       style={{ ...truncateStyle, ...style }}
-      role={accessibilityRole}
+      role={accessibilityRole as React.AriaRole}
+      aria-label={accessibilityLabel}
+      aria-hidden={accessibilityElementsHidden}
       data-testid={testID}
     >
       {children}

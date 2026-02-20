@@ -1,5 +1,5 @@
 import { Text } from '../primitives/Text';
-import { themeTokens } from '../theme/ThemeProvider';
+import { organicBorderRadius } from '../theme/organicStyles';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -10,16 +10,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 /**
- * Render a styled Pressable button supporting variants, sizes, and a loading state.
+ * Render a styled button supporting variants, sizes, and a loading state.
  * Uses ThumbCode's organic P3 "Warm Technical" styling with asymmetric border-radius.
- *
- * @param variant - Visual style of the button: 'primary', 'secondary', 'outline', or 'ghost' (default 'primary')
- * @param size - Size of the button: 'sm', 'md', or 'lg' (default 'md')
- * @param loading - When true, shows a spinner instead of the label and disables interaction
- * @param disabled - When true, disables interaction and reduces opacity
- * @param className - Additional class names appended to the computed button classes
- * @param children - Button label or content rendered when not loading
- * @returns A Pressable element styled with organic border-radius and brand colors
  */
 export function Button({
   variant = 'primary',
@@ -27,9 +19,10 @@ export function Button({
   loading = false,
   disabled,
   className = '',
+  style,
   children,
   ...props
-}: ButtonProps) {
+}: Readonly<ButtonProps>) {
   const variantClasses = {
     primary: 'bg-coral-500 active:bg-coral-700',
     secondary: 'bg-teal-600 active:bg-teal-800',
@@ -44,26 +37,30 @@ export function Button({
   }[size];
 
   const textColorClass = variant === 'outline' || variant === 'ghost' ? 'text-neutral-800' : 'text-white';
+  const spinnerBorder = variant === 'outline' || variant === 'ghost' ? 'border-neutral-800' : 'border-white';
 
   return (
-    <button type="button"
-      role="button"
+    <button
+      type="button"
       disabled={disabled || loading}
       className={`
         ${variantClasses}
         ${sizeClasses}
-        rounded-[0.5rem_0.75rem_0.625rem_0.875rem]
         shadow-md
         ${disabled || loading ? 'opacity-50' : 'opacity-100'}
         ${className}
       `}
       style={{
-        transform: 'rotate(-0.2deg)',
+        ...organicBorderRadius.button,
+        ...style,
       }}
       {...props}
     >
       {loading ? (
-        <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
+        <div
+          data-testid="activity-indicator"
+          className={`w-5 h-5 border-2 ${spinnerBorder} border-t-transparent rounded-full animate-spin mx-auto`}
+        />
       ) : (
         <Text className={`${textColorClass} text-center font-semibold`}>{children}</Text>
       )}

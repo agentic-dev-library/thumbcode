@@ -6,6 +6,11 @@
  */
 
 // Primitives
+export { Box } from './primitives/Box';
+export { Image } from './primitives/Image';
+export { List } from './primitives/List';
+export { ScrollArea } from './primitives/ScrollArea';
+export { Switch } from './primitives/Switch';
 export { Text } from './primitives/Text';
 
 // Form components

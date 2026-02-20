@@ -31,7 +31,7 @@ export function Header({ title, onBack, rightElement }: HeaderProps) {
           </button>
         )}
       </div>
-      <Text variant="display" size="2xl" className="text-white" role="header">
+      <Text variant="display" size="2xl" className="text-white" accessibilityRole="heading">
         {title}
       </Text>
       <div className="w-10">{rightElement}</div>

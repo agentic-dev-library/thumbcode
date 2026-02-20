@@ -25,6 +25,12 @@ export const organicBorderRadius = {
     borderBottomRightRadius: 10,
     borderBottomLeftRadius: 4,
   } as React.CSSProperties,
+  input: {
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 8,
+    borderBottomLeftRadius: 12,
+  } as React.CSSProperties,
 } as const;
 
 export const organicShadow = {
