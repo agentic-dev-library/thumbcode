@@ -95,11 +95,12 @@ export function Text({
     : undefined;
 
   return (
+    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: aria-label is conditionally applied only when an explicit role is set
     <span
       className={`${variantClass} ${sizeClass} ${weightClass} ${className}`}
       style={{ ...truncateStyle, ...style }}
       role={accessibilityRole as React.AriaRole}
-      aria-label={accessibilityLabel}
+      aria-label={accessibilityRole ? accessibilityLabel : undefined}
       aria-hidden={accessibilityElementsHidden}
       data-testid={testID}
     >

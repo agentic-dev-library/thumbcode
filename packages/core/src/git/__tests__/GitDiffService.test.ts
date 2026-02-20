@@ -34,9 +34,7 @@ vi.mock('../git-fs', () => ({
 
 // Mock diff module
 vi.mock('diff', () => ({
-  createPatch: vi.fn().mockReturnValue(
-    '--- old\n+++ new\n@@ -1,1 +1,1 @@\n-old line\n+new line\n'
-  ),
+  createPatch: vi.fn().mockReturnValue('--- old\n+++ new\n@@ -1,1 +1,1 @@\n-old line\n+new line\n'),
 }));
 
 const mockGit = git as Mocked<typeof git>;
@@ -49,10 +47,10 @@ describe('GitDiffService', () => {
   describe('status', () => {
     it('should return file statuses excluding unmodified files', async () => {
       mockGit.statusMatrix.mockResolvedValue([
-        ['src/index.ts', 1, 2, 1],     // modified (unstaged)
-        ['src/new.ts', 0, 2, 0],        // untracked
-        ['src/staged.ts', 0, 2, 2],     // added (staged)
-        ['src/unchanged.ts', 1, 1, 1],  // unmodified
+        ['src/index.ts', 1, 2, 1], // modified (unstaged)
+        ['src/new.ts', 0, 2, 0], // untracked
+        ['src/staged.ts', 0, 2, 2], // added (staged)
+        ['src/unchanged.ts', 1, 1, 1], // unmodified
       ]);
 
       const result = await GitDiffService.status('/mock/repos/repo');
@@ -68,8 +66,8 @@ describe('GitDiffService', () => {
 
     it('should detect deleted files', async () => {
       mockGit.statusMatrix.mockResolvedValue([
-        ['deleted.ts', 1, 0, 0],    // deleted (unstaged)
-        ['deleted2.ts', 1, 0, 3],   // deleted (staged)
+        ['deleted.ts', 1, 0, 0], // deleted (unstaged)
+        ['deleted2.ts', 1, 0, 3], // deleted (staged)
       ]);
 
       const result = await GitDiffService.status('/mock/repos/repo');
@@ -83,13 +81,13 @@ describe('GitDiffService', () => {
 
     it('should detect staged modified files', async () => {
       mockGit.statusMatrix.mockResolvedValue([
-        ['modified.ts', 1, 2, 2],  // modified and staged
+        ['modified.ts', 1, 2, 2], // modified and staged
       ]);
 
       const result = await GitDiffService.status('/mock/repos/repo');
 
       expect(result.success).toBe(true);
-      expect(result.data![0]).toEqual({
+      expect(result.data?.[0]).toEqual({
         path: 'modified.ts',
         status: 'modified',
         staged: true,
@@ -97,9 +95,7 @@ describe('GitDiffService', () => {
     });
 
     it('should return empty array for clean repository', async () => {
-      mockGit.statusMatrix.mockResolvedValue([
-        ['file.ts', 1, 1, 1],
-      ]);
+      mockGit.statusMatrix.mockResolvedValue([['file.ts', 1, 1, 1]]);
 
       const result = await GitDiffService.status('/mock/repos/repo');
 
@@ -118,31 +114,41 @@ describe('GitDiffService', () => {
 
     it('should handle unknown status combinations as modified', async () => {
       mockGit.statusMatrix.mockResolvedValue([
-        ['weird.ts', 1, 2, 3],  // unusual combination
+        ['weird.ts', 1, 2, 3], // unusual combination
       ]);
 
       const result = await GitDiffService.status('/mock/repos/repo');
 
       expect(result.success).toBe(true);
-      expect(result.data![0].status).toBe('modified');
+      expect(result.data?.[0].status).toBe('modified');
     });
   });
 
   describe('diff', () => {
     it('should compute diff between two commits', async () => {
-      mockGit.resolveRef
-        .mockResolvedValueOnce('oid-a')
-        .mockResolvedValueOnce('oid-b');
+      mockGit.resolveRef.mockResolvedValueOnce('oid-a').mockResolvedValueOnce('oid-b');
 
       mockGit.readCommit
         .mockResolvedValueOnce({
           oid: 'oid-a',
-          commit: { tree: 'tree-a', parent: [], message: '', author: {} as any, committer: {} as any },
+          commit: {
+            tree: 'tree-a',
+            parent: [],
+            message: '',
+            author: {} as any,
+            committer: {} as any,
+          },
           payload: '',
         })
         .mockResolvedValueOnce({
           oid: 'oid-b',
-          commit: { tree: 'tree-b', parent: ['oid-a'], message: '', author: {} as any, committer: {} as any },
+          commit: {
+            tree: 'tree-b',
+            parent: ['oid-a'],
+            message: '',
+            author: {} as any,
+            committer: {} as any,
+          },
           payload: '',
         });
 
@@ -150,9 +156,7 @@ describe('GitDiffService', () => {
       mockGit.readTree
         .mockResolvedValueOnce({
           oid: 'tree-a',
-          tree: [
-            { mode: '100644', path: 'file.ts', oid: 'blob-a1', type: 'blob' },
-          ],
+          tree: [{ mode: '100644', path: 'file.ts', oid: 'blob-a1', type: 'blob' }],
         })
         .mockResolvedValueOnce({
           oid: 'tree-b',
@@ -172,24 +176,34 @@ describe('GitDiffService', () => {
       const result = await GitDiffService.diff('/mock/repos/repo', 'HEAD~1', 'HEAD');
 
       expect(result.success).toBe(true);
-      expect(result.data!.files).toHaveLength(2);
-      expect(result.data!.stats.filesChanged).toBe(2);
+      expect(result.data?.files).toHaveLength(2);
+      expect(result.data?.stats.filesChanged).toBe(2);
     });
 
     it('should detect deleted files in diff', async () => {
-      mockGit.resolveRef
-        .mockResolvedValueOnce('oid-a')
-        .mockResolvedValueOnce('oid-b');
+      mockGit.resolveRef.mockResolvedValueOnce('oid-a').mockResolvedValueOnce('oid-b');
 
       mockGit.readCommit
         .mockResolvedValueOnce({
           oid: 'oid-a',
-          commit: { tree: 'tree-a', parent: [], message: '', author: {} as any, committer: {} as any },
+          commit: {
+            tree: 'tree-a',
+            parent: [],
+            message: '',
+            author: {} as any,
+            committer: {} as any,
+          },
           payload: '',
         })
         .mockResolvedValueOnce({
           oid: 'oid-b',
-          commit: { tree: 'tree-b', parent: ['oid-a'], message: '', author: {} as any, committer: {} as any },
+          commit: {
+            tree: 'tree-b',
+            parent: ['oid-a'],
+            message: '',
+            author: {} as any,
+            committer: {} as any,
+          },
           payload: '',
         });
 
@@ -197,9 +211,7 @@ describe('GitDiffService', () => {
       mockGit.readTree
         .mockResolvedValueOnce({
           oid: 'tree-a',
-          tree: [
-            { mode: '100644', path: 'removed.ts', oid: 'blob-a1', type: 'blob' },
-          ],
+          tree: [{ mode: '100644', path: 'removed.ts', oid: 'blob-a1', type: 'blob' }],
         })
         .mockResolvedValueOnce({
           oid: 'tree-b',
@@ -214,23 +226,33 @@ describe('GitDiffService', () => {
       const result = await GitDiffService.diff('/mock/repos/repo', 'HEAD~1', 'HEAD');
 
       expect(result.success).toBe(true);
-      expect(result.data!.files[0].type).toBe('delete');
+      expect(result.data?.files[0].type).toBe('delete');
     });
 
     it('should skip unchanged files (same blob OID)', async () => {
-      mockGit.resolveRef
-        .mockResolvedValueOnce('oid-a')
-        .mockResolvedValueOnce('oid-b');
+      mockGit.resolveRef.mockResolvedValueOnce('oid-a').mockResolvedValueOnce('oid-b');
 
       mockGit.readCommit
         .mockResolvedValueOnce({
           oid: 'oid-a',
-          commit: { tree: 'tree-a', parent: [], message: '', author: {} as any, committer: {} as any },
+          commit: {
+            tree: 'tree-a',
+            parent: [],
+            message: '',
+            author: {} as any,
+            committer: {} as any,
+          },
           payload: '',
         })
         .mockResolvedValueOnce({
           oid: 'oid-b',
-          commit: { tree: 'tree-b', parent: ['oid-a'], message: '', author: {} as any, committer: {} as any },
+          commit: {
+            tree: 'tree-b',
+            parent: ['oid-a'],
+            message: '',
+            author: {} as any,
+            committer: {} as any,
+          },
           payload: '',
         });
 
@@ -238,22 +260,18 @@ describe('GitDiffService', () => {
       mockGit.readTree
         .mockResolvedValueOnce({
           oid: 'tree-a',
-          tree: [
-            { mode: '100644', path: 'same.ts', oid: 'same-blob', type: 'blob' },
-          ],
+          tree: [{ mode: '100644', path: 'same.ts', oid: 'same-blob', type: 'blob' }],
         })
         .mockResolvedValueOnce({
           oid: 'tree-b',
-          tree: [
-            { mode: '100644', path: 'same.ts', oid: 'same-blob', type: 'blob' },
-          ],
+          tree: [{ mode: '100644', path: 'same.ts', oid: 'same-blob', type: 'blob' }],
         });
 
       const result = await GitDiffService.diff('/mock/repos/repo', 'HEAD~1', 'HEAD');
 
       expect(result.success).toBe(true);
-      expect(result.data!.files).toHaveLength(0);
-      expect(result.data!.stats.filesChanged).toBe(0);
+      expect(result.data?.files).toHaveLength(0);
+      expect(result.data?.stats.filesChanged).toBe(0);
     });
 
     it('should return error on failure', async () => {
@@ -271,8 +289,8 @@ describe('GitDiffService', () => {
       const { Filesystem } = await import('@capacitor/filesystem');
 
       mockGit.statusMatrix.mockResolvedValue([
-        ['modified.ts', 1, 2, 1],  // modified
-        ['new.ts', 0, 2, 0],       // new untracked
+        ['modified.ts', 1, 2, 1], // modified
+        ['new.ts', 0, 2, 0], // new untracked
         ['unchanged.ts', 1, 1, 1], // unchanged (skipped)
       ]);
 
@@ -292,13 +310,13 @@ describe('GitDiffService', () => {
       const result = await GitDiffService.diffWorkingDir('/mock/repos/repo');
 
       expect(result.success).toBe(true);
-      expect(result.data!.files).toHaveLength(2);
-      expect(result.data!.stats.filesChanged).toBe(2);
+      expect(result.data?.files).toHaveLength(2);
+      expect(result.data?.stats.filesChanged).toBe(2);
     });
 
     it('should handle deleted files in working directory', async () => {
       mockGit.statusMatrix.mockResolvedValue([
-        ['deleted.ts', 1, 0, 0],  // deleted
+        ['deleted.ts', 1, 0, 0], // deleted
       ]);
 
       mockGit.resolveRef.mockResolvedValue('head-oid');
@@ -311,22 +329,20 @@ describe('GitDiffService', () => {
       const result = await GitDiffService.diffWorkingDir('/mock/repos/repo');
 
       expect(result.success).toBe(true);
-      expect(result.data!.files).toHaveLength(1);
-      expect(result.data!.files[0].type).toBe('delete');
+      expect(result.data?.files).toHaveLength(1);
+      expect(result.data?.files[0].type).toBe('delete');
     });
 
     it('should return empty diff for clean working directory', async () => {
-      mockGit.statusMatrix.mockResolvedValue([
-        ['clean.ts', 1, 1, 1],
-      ]);
+      mockGit.statusMatrix.mockResolvedValue([['clean.ts', 1, 1, 1]]);
 
       mockGit.resolveRef.mockResolvedValue('head-oid');
 
       const result = await GitDiffService.diffWorkingDir('/mock/repos/repo');
 
       expect(result.success).toBe(true);
-      expect(result.data!.files).toHaveLength(0);
-      expect(result.data!.stats.filesChanged).toBe(0);
+      expect(result.data?.files).toHaveLength(0);
+      expect(result.data?.stats.filesChanged).toBe(0);
     });
 
     it('should return error on failure', async () => {

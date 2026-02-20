@@ -19,8 +19,8 @@ vi.mock('../credentials', () => ({
   },
 }));
 
-import { GitHubApiService } from '../github/GitHubApiService';
 import { CredentialService } from '../credentials';
+import { GitHubApiService } from '../github/GitHubApiService';
 
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
@@ -227,9 +227,9 @@ describe('GitHubApiService', () => {
         text: () => Promise.resolve('Repository creation failed: name already exists'),
       });
 
-      await expect(
-        GitHubApiService.createRepository({ name: 'existing-repo' })
-      ).rejects.toThrow('GitHub API error: 422');
+      await expect(GitHubApiService.createRepository({ name: 'existing-repo' })).rejects.toThrow(
+        'GitHub API error: 422'
+      );
     });
 
     it('should default description to empty string', async () => {

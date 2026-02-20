@@ -167,7 +167,8 @@ export class OrchestrationStateManager {
       totalTasksCompleted: completedResults.length,
       totalTasksFailed: failedResults.length,
       totalTokensUsed: totalTokens,
-      averageTaskDuration: completedResults.length > 0 ? totalDuration / completedResults.length : 0,
+      averageTaskDuration:
+        completedResults.length > 0 ? totalDuration / completedResults.length : 0,
       agentMetrics,
       uptime: Date.now() - this.startTime,
     };

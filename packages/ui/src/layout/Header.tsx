@@ -20,10 +20,10 @@ export function Header({ title, onBack, rightElement }: HeaderProps) {
     <div className="flex-row items-center justify-between pb-4">
       <div className="w-10">
         {onBack && (
-          <button type="button"
+          <button
+            type="button"
             onClick={onBack}
             className="p-2"
-            role="button"
             aria-label="Back"
             aria-description="Go to previous screen"
           >

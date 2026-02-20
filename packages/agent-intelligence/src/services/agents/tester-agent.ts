@@ -6,7 +6,7 @@
 
 import type { Agent, AgentCapability } from '@thumbcode/types';
 import type { ToolDefinition } from '../ai';
-import { BaseAgent, type AgentContext } from './base-agent';
+import { type AgentContext, BaseAgent } from './base-agent';
 
 /**
  * Tester agent for test generation and execution

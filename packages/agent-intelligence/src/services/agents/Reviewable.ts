@@ -24,7 +24,11 @@ export interface ExecutionCallbacks {
   onThinking: (thought: string) => void;
   onError: (error: string) => void;
   onComplete: (result: AgentExecutionResult) => void;
-  executeTool: (name: string, input: Record<string, unknown>, context: AgentContext) => Promise<string>;
+  executeTool: (
+    name: string,
+    input: Record<string, unknown>,
+    context: AgentContext
+  ) => Promise<string>;
 }
 
 /**
@@ -84,7 +88,11 @@ export async function executeTask(
           toolUseBlocks.map(async (block) => {
             callbacks.onToolUse(block.name || '', block.input);
 
-            const output = await callbacks.executeTool(block.name || '', block.input || {}, context);
+            const output = await callbacks.executeTool(
+              block.name || '',
+              block.input || {},
+              context
+            );
 
             callbacks.onToolUse(block.name || '', undefined, output);
 
@@ -186,11 +194,7 @@ export async function executeTaskStream(
         stream: true,
       };
 
-      const response = await aiClient.completeStream(
-        conversationHistory,
-        options,
-        onStream
-      );
+      const response = await aiClient.completeStream(conversationHistory, options, onStream);
       totalTokens += response.usage.totalTokens;
 
       const assistantMessage: Message = {
@@ -206,7 +210,11 @@ export async function executeTaskStream(
 
         const toolResults = await Promise.all(
           toolUseBlocks.map(async (block) => {
-            const output = await callbacks.executeTool(block.name || '', block.input || {}, context);
+            const output = await callbacks.executeTool(
+              block.name || '',
+              block.input || {},
+              context
+            );
             return {
               type: 'tool_result' as const,
               tool_use_id: block.id,

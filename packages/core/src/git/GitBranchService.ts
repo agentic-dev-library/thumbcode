@@ -7,12 +7,7 @@
 import git from 'isomorphic-git';
 
 import { fs } from './git-fs';
-import type {
-  BranchInfo,
-  BranchOptions,
-  CheckoutOptions,
-  GitResult,
-} from './types';
+import type { BranchInfo, BranchOptions, CheckoutOptions, GitResult } from './types';
 
 class GitBranchServiceClass {
   /**

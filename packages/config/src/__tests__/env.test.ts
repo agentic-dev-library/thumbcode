@@ -53,9 +53,7 @@ describe('Environment Configuration', () => {
     it('warns about missing GitHub client ID', () => {
       const result = validateEnvironment();
       // In test env, githubClientId is empty, so there should be a warning
-      expect(
-        result.warnings.some((w) => w.includes('GITHUB_CLIENT_ID'))
-      ).toBe(true);
+      expect(result.warnings.some((w) => w.includes('GITHUB_CLIENT_ID'))).toBe(true);
     });
   });
 });

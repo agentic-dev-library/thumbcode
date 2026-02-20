@@ -77,7 +77,11 @@ export class PollingService {
           this.consecutiveErrors = 0;
 
           if (this.isCancelled) {
-            resolve({ authorized: false, shouldContinue: false, error: 'Authorization cancelled.' });
+            resolve({
+              authorized: false,
+              shouldContinue: false,
+              error: 'Authorization cancelled.',
+            });
             return;
           }
 
@@ -117,7 +121,9 @@ export class PollingService {
           const maxConsecutiveErrors = 3;
 
           if (this.consecutiveErrors < maxConsecutiveErrors) {
-            console.warn(`Poll attempt failed (${this.consecutiveErrors}/${maxConsecutiveErrors}). Retrying...`);
+            console.warn(
+              `Poll attempt failed (${this.consecutiveErrors}/${maxConsecutiveErrors}). Retrying...`
+            );
             this.pollTimeoutId = setTimeout(poll, this.pollInterval);
             return;
           }

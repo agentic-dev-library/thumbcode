@@ -5,32 +5,18 @@
  * Provides stores for agents, chat, credentials, projects, and user settings.
  */
 
+export type { Agent, AgentConfig, AgentRole, AgentStatus, AgentTask } from './agentStore';
 // Agent store
 export {
-  useAgentStore,
-  selectAgents,
   selectActiveAgent,
+  selectAgents,
   selectAgentsByRole,
   selectAgentsByStatus,
-  selectWorkingAgents,
-  selectPendingTasks,
   selectAgentTasks,
+  selectPendingTasks,
+  selectWorkingAgents,
+  useAgentStore,
 } from './agentStore';
-export type { Agent, AgentConfig, AgentRole, AgentStatus, AgentTask } from './agentStore';
-
-// Chat store
-export {
-  useChatStore,
-  selectThreads,
-  selectActiveThread,
-  selectActiveThreadMessages,
-  selectThreadMessages,
-  selectUnreadCount,
-  selectPinnedThreads,
-  selectRecentThreads,
-  selectTypingIndicators,
-  selectPendingApprovals,
-} from './chatStore';
 export type {
   ApprovalMessage,
   ChatThread,
@@ -40,56 +26,59 @@ export type {
   MessageSender,
   MessageStatus,
 } from './chatStore';
-
-// Credential store
+// Chat store
 export {
-  useCredentialStore,
-  selectCredentials,
-  selectCredentialByProvider,
-  selectValidCredentials,
-  selectInvalidCredentials,
-  selectIsValidating,
-  selectHasGitHubCredential,
-  selectHasAICredential,
-  selectCredentialsNeedingValidation,
-} from './credentialStore';
+  selectActiveThread,
+  selectActiveThreadMessages,
+  selectPendingApprovals,
+  selectPinnedThreads,
+  selectRecentThreads,
+  selectThreadMessages,
+  selectThreads,
+  selectTypingIndicators,
+  selectUnreadCount,
+  useChatStore,
+} from './chatStore';
 export type {
   CredentialMetadata,
   CredentialProvider,
   CredentialStatus,
   ValidationResult,
 } from './credentialStore';
-
+// Credential store
+export {
+  selectCredentialByProvider,
+  selectCredentials,
+  selectCredentialsNeedingValidation,
+  selectHasAICredential,
+  selectHasGitHubCredential,
+  selectInvalidCredentials,
+  selectIsValidating,
+  selectValidCredentials,
+  useCredentialStore,
+} from './credentialStore';
+export type {
+  Branch,
+  Commit,
+  FileNode,
+  LocalProjectStatus,
+  Project,
+  Workspace,
+} from './projectStore';
 // Project store
 export {
-  useProjectStore,
-  selectProjects,
+  selectActiveFile,
   selectActiveProject,
-  selectWorkspace,
-  selectFileTree,
   selectBranches,
   selectCurrentBranch,
-  selectOpenFiles,
-  selectActiveFile,
+  selectFileTree,
   selectHasUnsavedChanges,
+  selectOpenFiles,
+  selectProjects,
   selectRecentProjects,
+  selectWorkspace,
+  useProjectStore,
 } from './projectStore';
-export type { Branch, Commit, FileNode, LocalProjectStatus, Project, Workspace } from './projectStore';
-
-// User store
-export {
-  useUserStore,
-  selectIsAuthenticated,
-  selectIsOnboarded,
-  selectGitHubProfile,
-  selectSettings,
-  selectTheme,
-  selectEditorPreferences,
-  selectNotificationPreferences,
-  selectAgentPreferences,
-  selectIsNewUser,
-  selectNeedsSetup,
-} from './userStore';
 export type {
   AgentPreferences,
   EditorPreferences,
@@ -97,4 +86,18 @@ export type {
   NotificationPreferences,
   ThemeMode,
   UserSettings,
+} from './userStore';
+// User store
+export {
+  selectAgentPreferences,
+  selectEditorPreferences,
+  selectGitHubProfile,
+  selectIsAuthenticated,
+  selectIsNewUser,
+  selectIsOnboarded,
+  selectNeedsSetup,
+  selectNotificationPreferences,
+  selectSettings,
+  selectTheme,
+  useUserStore,
 } from './userStore';

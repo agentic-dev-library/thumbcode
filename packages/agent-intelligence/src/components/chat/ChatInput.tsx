@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { useChatStore } from '@thumbcode/state';
+import { useState } from 'react';
 import { organicBorderRadius } from '../../theme/organic-styles';
 
 const ChatInput = () => {
@@ -9,10 +9,10 @@ const ChatInput = () => {
   const handleSend = () => {
     if (text.trim()) {
       addMessage({
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
-        text,
+        threadId: '',
+        content: text,
+        contentType: 'text',
         sender: 'user',
-        timestamp: new Date(),
       });
       setText('');
     }
@@ -20,15 +20,15 @@ const ChatInput = () => {
 
   return (
     <div className="flex-row p-2 border-t border-neutral-200 bg-surface">
-      <spanInput
+      <input
         className="flex-1 border border-neutral-300 bg-neutral-800 text-white font-body px-3 mr-2"
         style={organicBorderRadius.input}
         value={text}
-        onChangeText={setText}
+        onChange={(e) => setText(e.target.value)}
         placeholder="Type a message..."
-        placeholderTextColor="#94A3B8"
       />
       <button
+        type="button"
         className="bg-coral-500 px-4 justify-center active:bg-coral-700"
         style={organicBorderRadius.button}
         onClick={handleSend}

@@ -5,8 +5,6 @@
  * and authentication flows.
  */
 
-// Auth service
-export { GitHubAuthService } from './auth';
 export type {
   AccessTokenResponse,
   DeviceCodeResponse,
@@ -18,9 +16,19 @@ export type {
   StartFlowResult,
   TokenErrorResponse,
 } from './auth';
-
-// Git services
-export { GitBranchService, GitCloneService, GitCommitService, GitDiffService } from './git';
+// Auth service
+export { GitHubAuthService } from './auth';
+export type {
+  BiometricResult,
+  CredentialType,
+  RetrieveOptions,
+  RetrieveResult,
+  SecureCredential,
+  StoreOptions,
+  ValidationResult,
+} from './credentials';
+// Credential service
+export { CredentialService, validateAnthropicKey, validateGitHubToken } from './credentials';
 export type {
   BranchInfo,
   BranchOptions,
@@ -45,22 +53,16 @@ export type {
   RepositoryStatus,
   StageOptions,
 } from './git';
-
-// Credential service
-export { CredentialService, validateAnthropicKey, validateGitHubToken } from './credentials';
-export type {
-  BiometricResult,
-  CredentialType,
-  RetrieveOptions,
-  RetrieveResult,
-  SecureCredential,
-  StoreOptions,
-  ValidationResult,
-} from './credentials';
+// Git services
+export { GitBranchService, GitCloneService, GitCommitService, GitDiffService } from './git';
 
 // GitHub API
 export { GitHubApiService } from './github';
 export type { GitHubCommit, GitHubContent } from './github/GitHubApiService';
 
 // Security
-export { certificatePinningService, requestSigningService, runtimeSecurityService } from './security';
+export {
+  certificatePinningService,
+  requestSigningService,
+  runtimeSecurityService,
+} from './security';

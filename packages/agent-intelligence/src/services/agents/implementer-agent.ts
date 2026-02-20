@@ -6,7 +6,7 @@
 
 import type { Agent, AgentCapability } from '@thumbcode/types';
 import type { ToolDefinition } from '../ai';
-import { BaseAgent, type AgentContext } from './base-agent';
+import { type AgentContext, BaseAgent } from './base-agent';
 
 /**
  * Implementer agent for code generation
@@ -217,7 +217,7 @@ Always:
             args: {
               type: 'array',
               description: 'Command arguments',
-              items: { type: 'string' },
+              items: { type: 'string', description: 'A command argument' },
             },
           },
           required: ['command'],

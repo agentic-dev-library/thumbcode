@@ -6,7 +6,7 @@
 
 import type { Agent, AgentCapability } from '@thumbcode/types';
 import type { ToolDefinition } from '../ai';
-import { BaseAgent, type AgentContext } from './base-agent';
+import { type AgentContext, BaseAgent } from './base-agent';
 
 /**
  * Architect agent for system design and planning
@@ -187,12 +187,12 @@ Always provide actionable recommendations that other agents can implement.`;
             acceptance_criteria: {
               type: 'array',
               description: 'List of acceptance criteria',
-              items: { type: 'string' },
+              items: { type: 'string', description: 'An acceptance criterion' },
             },
             depends_on: {
               type: 'array',
               description: 'Task IDs this task depends on',
-              items: { type: 'string' },
+              items: { type: 'string', description: 'A task ID dependency' },
             },
           },
           required: ['title', 'description', 'type', 'assignee_role', 'acceptance_criteria'],

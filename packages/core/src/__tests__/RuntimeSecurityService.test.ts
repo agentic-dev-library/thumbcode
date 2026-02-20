@@ -1,5 +1,5 @@
-import { runtimeSecurityService } from '../security/RuntimeSecurityService';
 import { Device } from '@capacitor/device';
+import { runtimeSecurityService } from '../security/RuntimeSecurityService';
 
 // @capacitor/device is mocked in vitest.setup.ts
 

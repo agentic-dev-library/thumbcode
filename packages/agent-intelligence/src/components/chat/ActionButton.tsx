@@ -8,6 +8,7 @@ interface ActionButtonProps {
 const ActionButton = ({ title, onPress }: ActionButtonProps) => {
   return (
     <button
+      type="button"
       className="bg-gold-400 py-2 px-3 mx-1 active:bg-gold-600"
       style={organicBorderRadius.badge}
       onClick={onPress}

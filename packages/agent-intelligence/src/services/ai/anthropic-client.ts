@@ -195,9 +195,7 @@ function filterConversationMessages(messages: Message[]): Message[] {
 /**
  * Format content blocks for Anthropic API
  */
-function formatContentBlocks(
-  blocks: ContentBlock[]
-): Anthropic.Messages.ContentBlockParam[] {
+function formatContentBlocks(blocks: ContentBlock[]): (Anthropic.Messages.TextBlockParam | Anthropic.Messages.ToolUseBlockParam | Anthropic.Messages.ToolResultBlockParam)[] {
   return blocks.map((block) => {
     if (block.type === 'text') {
       return { type: 'text' as const, text: block.text || '' };

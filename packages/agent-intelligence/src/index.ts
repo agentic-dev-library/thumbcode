@@ -6,11 +6,10 @@
  * and orchestration for coordinated task execution.
  */
 
-// AI Services
-export * from './services/ai';
-
 // Specialized Agents
 export * from './services/agents';
+// AI Services
+export * from './services/ai';
 
 // Orchestrator
 export * from './services/orchestrator';

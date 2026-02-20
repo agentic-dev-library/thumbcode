@@ -20,45 +20,17 @@ export type {
   TaskStatus,
   TaskType,
 } from './agents';
-
-// Projects
+// API
 export type {
-  BranchProtectionRule,
-  CreateProjectOptions,
-  GitProvider,
-  Project,
-  ProjectSettings,
-  ProjectStatus,
-  Repository,
-} from './projects';
-
-// Workspaces
-export type {
-  BranchInfo,
-  CommitAuthor,
-  CommitInfo,
-  DiffHunk,
-  FileChange,
-  FileStatusType,
-  Workspace,
-  WorkspaceFile,
-  WorkspaceStatus,
-} from './workspaces';
-
-// Credentials
-export type {
-  AnthropicCredentialMeta,
-  Credential,
-  CredentialMeta,
-  CredentialProvider,
-  CredentialStatus,
-  CredentialType,
-  CredentialValidationResult,
-  GitHubCredentialMeta,
-  MCPServerCredentialMeta,
-  OpenAICredentialMeta,
-} from './credentials';
-
+  Anthropic,
+  ApiError,
+  ApiMeta,
+  ApiResponse,
+  GitHub,
+  PaginationInfo,
+  PaginationParams,
+  RateLimitInfo,
+} from './api';
 // Chat
 export type {
   ActionContent,
@@ -78,39 +50,19 @@ export type {
   UserAction,
 } from './chat';
 
-// User
+// Credentials
 export type {
-  AgentPreferences,
-  EditorPreferences,
-  GitHubProfile,
-  NotificationPreferences,
-  ThemeMode,
-  User,
-  UserPreferences,
-} from './user';
-
-// Navigation
-export type {
-  AgentDetailRoutes,
-  OnboardingStackParamList,
-  ProjectDetailRoutes,
-  RootStackParamList,
-  TabParamList,
-  WorkspaceDetailRoutes,
-} from './navigation';
-
-// API
-export type {
-  Anthropic,
-  ApiError,
-  ApiMeta,
-  ApiResponse,
-  GitHub,
-  PaginationInfo,
-  PaginationParams,
-  RateLimitInfo,
-} from './api';
-
+  AnthropicCredentialMeta,
+  Credential,
+  CredentialMeta,
+  CredentialProvider,
+  CredentialStatus,
+  CredentialType,
+  CredentialValidationResult,
+  GitHubCredentialMeta,
+  MCPServerCredentialMeta,
+  OpenAICredentialMeta,
+} from './credentials';
 // Events
 export type {
   AgentEvent,
@@ -129,3 +81,44 @@ export type {
   WorkspaceEvent,
   WorkspaceEventAction,
 } from './events';
+// Navigation
+export type {
+  AgentDetailRoutes,
+  OnboardingStackParamList,
+  ProjectDetailRoutes,
+  RootStackParamList,
+  TabParamList,
+  WorkspaceDetailRoutes,
+} from './navigation';
+// Projects
+export type {
+  BranchProtectionRule,
+  CreateProjectOptions,
+  GitProvider,
+  Project,
+  ProjectSettings,
+  ProjectStatus,
+  Repository,
+} from './projects';
+// User
+export type {
+  AgentPreferences,
+  EditorPreferences,
+  GitHubProfile,
+  NotificationPreferences,
+  ThemeMode,
+  User,
+  UserPreferences,
+} from './user';
+// Workspaces
+export type {
+  BranchInfo,
+  CommitAuthor,
+  CommitInfo,
+  DiffHunk,
+  FileChange,
+  FileStatusType,
+  Workspace,
+  WorkspaceFile,
+  WorkspaceStatus,
+} from './workspaces';

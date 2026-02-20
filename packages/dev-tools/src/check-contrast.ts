@@ -1,4 +1,3 @@
-
 import { colorContrastRatioCalculator } from '@mdhnpm/color-contrast-ratio-calculator';
 import tokens from '../../../design-system/tokens.json';
 
@@ -7,12 +6,13 @@ const { colors } = tokens;
 const allColors: { name: string; hex: string }[] = [];
 
 Object.entries(colors).forEach(([name, color]) => {
-  if (color.values) {
-    Object.entries(color.values).forEach(([shade, value]) => {
+  const colorEntry = color as Record<string, unknown>;
+  if (colorEntry.values) {
+    Object.entries(colorEntry.values as Record<string, { hex: string }>).forEach(([shade, value]) => {
       allColors.push({ name: `${name}-${shade}`, hex: value.hex });
     });
   } else {
-    allColors.push({ name, hex: color.hex });
+    allColors.push({ name, hex: (colorEntry as { hex: string }).hex });
   }
 });
 

@@ -19,7 +19,8 @@
  */
 
 export { CredentialService } from './CredentialService';
-
+export { KeyStorage } from './KeyStorage';
+export { KeyValidator } from './KeyValidator';
 // Types
 export type {
   BiometricResult,
@@ -30,9 +31,5 @@ export type {
   StoreOptions,
   ValidationResult,
 } from './types';
-
 // Validation utilities
 export { validateAnthropicKey, validateGitHubToken } from './validation';
-
-export { KeyValidator } from './KeyValidator';
-export { KeyStorage } from './KeyStorage';

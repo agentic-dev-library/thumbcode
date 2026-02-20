@@ -50,7 +50,11 @@ function createDefaultAgents(): Agent[] {
       role: 'architect',
       name: 'Architect',
       status: 'idle',
-      config: { provider: 'anthropic', model: AGENT_CONFIG.defaultModel, maxTokens: AGENT_CONFIG.defaultMaxTokens },
+      config: {
+        provider: 'anthropic',
+        model: AGENT_CONFIG.defaultModel,
+        maxTokens: AGENT_CONFIG.defaultMaxTokens,
+      },
       lastActiveAt: now,
     },
     {
@@ -58,7 +62,11 @@ function createDefaultAgents(): Agent[] {
       role: 'implementer',
       name: 'Implementer',
       status: 'idle',
-      config: { provider: 'anthropic', model: AGENT_CONFIG.defaultModel, maxTokens: AGENT_CONFIG.defaultMaxTokens },
+      config: {
+        provider: 'anthropic',
+        model: AGENT_CONFIG.defaultModel,
+        maxTokens: AGENT_CONFIG.defaultMaxTokens,
+      },
       lastActiveAt: now,
     },
     {
@@ -66,7 +74,11 @@ function createDefaultAgents(): Agent[] {
       role: 'reviewer',
       name: 'Reviewer',
       status: 'idle',
-      config: { provider: 'anthropic', model: AGENT_CONFIG.defaultModel, maxTokens: AGENT_CONFIG.defaultMaxTokens },
+      config: {
+        provider: 'anthropic',
+        model: AGENT_CONFIG.defaultModel,
+        maxTokens: AGENT_CONFIG.defaultMaxTokens,
+      },
       lastActiveAt: now,
     },
     {
@@ -74,7 +86,11 @@ function createDefaultAgents(): Agent[] {
       role: 'tester',
       name: 'Tester',
       status: 'idle',
-      config: { provider: 'anthropic', model: AGENT_CONFIG.defaultModel, maxTokens: AGENT_CONFIG.defaultMaxTokens },
+      config: {
+        provider: 'anthropic',
+        model: AGENT_CONFIG.defaultModel,
+        maxTokens: AGENT_CONFIG.defaultMaxTokens,
+      },
       lastActiveAt: now,
     },
   ];

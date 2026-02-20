@@ -16,7 +16,7 @@ const ChatBubble = ({ message }: ChatBubbleProps) => {
       `}
       style={isUser ? organicBorderRadius.chatBubbleUser : organicBorderRadius.chatBubbleAgent}
     >
-      <span className="text-white font-body">{message.text}</span>
+      <span className="text-white font-body">{message.content}</span>
     </div>
   );
 };
