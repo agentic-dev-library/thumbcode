@@ -1,9 +1,9 @@
 /**
  * Project Components
  *
- * Components for project cards, repository info, and project detail views.
+ * Components for project detail views: header, file explorer, and action tabs.
  */
 
 export { ProjectAgents, ProjectCommits, ProjectTasks } from './ProjectActions';
-export { ProjectFileExplorer } from './ProjectFileExplorer';
+export { ProjectFileExplorer, ProjectFileExplorerEmpty } from './ProjectFileExplorer';
 export { ProjectHeader } from './ProjectHeader';
