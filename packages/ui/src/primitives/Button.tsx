@@ -67,7 +67,13 @@ export function Button({
     }
   };
 
+  const supportsChecked =
+    accessibilityRole === 'checkbox' ||
+    accessibilityRole === 'switch' ||
+    accessibilityRole === 'radio';
+
   return (
+    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: aria-checked is conditionally applied only for checkbox/switch/radio roles
     <button
       type={type}
       className={className}
@@ -76,7 +82,7 @@ export function Button({
       role={accessibilityRole}
       aria-label={accessibilityLabel}
       aria-description={accessibilityHint}
-      aria-checked={accessibilityState?.checked}
+      aria-checked={supportsChecked ? accessibilityState?.checked : undefined}
       aria-expanded={accessibilityState?.expanded}
       aria-selected={accessibilityState?.selected}
       aria-disabled={accessibilityState?.disabled}

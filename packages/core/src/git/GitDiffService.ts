@@ -4,27 +4,17 @@
  * Handles diff and status operations: diff, diffWorkingDir, status.
  */
 
+import { Directory, Encoding, Filesystem } from '@capacitor/filesystem';
 import * as Diff from 'diff';
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import git from 'isomorphic-git';
 
 import { fs } from './git-fs';
-import type {
-  DiffResult,
-  DiffStats,
-  FileDiff,
-  FileStatus,
-  GitResult,
-} from './types';
+import type { DiffResult, DiffStats, FileDiff, FileStatus, GitResult } from './types';
 
 /**
  * Helper to read file content from a tree at specific commit
  */
-async function readBlobContent(
-  dir: string,
-  oid: string,
-  filepath: string
-): Promise<string | null> {
+async function readBlobContent(dir: string, oid: string, filepath: string): Promise<string | null> {
   try {
     const { blob } = await git.readBlob({
       fs,

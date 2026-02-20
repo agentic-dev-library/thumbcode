@@ -7,12 +7,7 @@
 import git from 'isomorphic-git';
 
 import { fs } from './git-fs';
-import type {
-  CommitInfo,
-  CommitOptions,
-  GitResult,
-  StageOptions,
-} from './types';
+import type { CommitInfo, CommitOptions, GitResult, StageOptions } from './types';
 
 class GitCommitServiceClass {
   /**

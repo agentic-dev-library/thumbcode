@@ -4,13 +4,13 @@
  * Unified interface for AI providers (Anthropic, OpenAI).
  */
 
-export * from './types';
 export * from './anthropic-client';
 export * from './openai-client';
+export * from './types';
 
-import type { AIClient, AIProvider } from './types';
-import { createAnthropicClient, ANTHROPIC_MODELS } from './anthropic-client';
+import { ANTHROPIC_MODELS, createAnthropicClient } from './anthropic-client';
 import { createOpenAIClient, OPENAI_MODELS } from './openai-client';
+import type { AIClient, AIProvider } from './types';
 
 /**
  * Create an AI client for the specified provider

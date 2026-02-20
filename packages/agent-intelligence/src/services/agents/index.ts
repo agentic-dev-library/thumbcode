@@ -4,21 +4,20 @@
  * Specialized AI agents for ThumbCode.
  */
 
-export * from './types';
-export * from './base-agent';
 export * from './architect-agent';
+export * from './base-agent';
+export { parseExecutionResult } from './Committable';
 export * from './implementer-agent';
+export { formatTaskMessage } from './Promptable';
+export { executeTask, executeTaskStream } from './Reviewable';
 export * from './reviewer-agent';
 export * from './tester-agent';
-
-export { formatTaskMessage } from './Promptable';
-export { parseExecutionResult } from './Committable';
-export { executeTask, executeTaskStream } from './Reviewable';
+export * from './types';
 
 import type { AgentRole } from '@thumbcode/types';
 import type { AIClient } from '../ai';
 import { ArchitectAgent } from './architect-agent';
-import { BaseAgent } from './base-agent';
+import type { BaseAgent } from './base-agent';
 import { ImplementerAgent } from './implementer-agent';
 import { ReviewerAgent } from './reviewer-agent';
 import { TesterAgent } from './tester-agent';

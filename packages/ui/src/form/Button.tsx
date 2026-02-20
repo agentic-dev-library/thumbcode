@@ -36,8 +36,10 @@ export function Button({
     lg: 'px-6 py-4',
   }[size];
 
-  const textColorClass = variant === 'outline' || variant === 'ghost' ? 'text-neutral-800' : 'text-white';
-  const spinnerBorder = variant === 'outline' || variant === 'ghost' ? 'border-neutral-800' : 'border-white';
+  const textColorClass =
+    variant === 'outline' || variant === 'ghost' ? 'text-neutral-800' : 'text-white';
+  const spinnerBorder =
+    variant === 'outline' || variant === 'ghost' ? 'border-neutral-800' : 'border-white';
 
   return (
     <button

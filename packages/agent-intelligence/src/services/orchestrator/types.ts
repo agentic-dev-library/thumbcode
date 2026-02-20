@@ -13,8 +13,8 @@ import type {
   TaskStatus,
   TaskType,
 } from '@thumbcode/types';
-import type { AIProvider } from '../ai';
 import type { AgentContext, AgentEvent, AgentExecutionResult } from '../agents/base-agent';
+import type { AIProvider } from '../ai';
 
 /**
  * Orchestrator configuration

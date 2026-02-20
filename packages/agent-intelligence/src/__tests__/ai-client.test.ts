@@ -2,7 +2,13 @@
  * AI Client Tests
  */
 
-import { createAIClient, getDefaultModel, getAvailableModels, ANTHROPIC_MODELS, OPENAI_MODELS } from '../services/ai';
+import {
+  ANTHROPIC_MODELS,
+  createAIClient,
+  getAvailableModels,
+  getDefaultModel,
+  OPENAI_MODELS,
+} from '../services/ai';
 
 // Helper to create async iterator from array
 function mockCreateAsyncIterator<T>(items: T[]) {
@@ -186,15 +192,10 @@ describe('Anthropic Client', () => {
   it('should complete a message', async () => {
     const client = createAIClient('anthropic', 'sk-ant-test');
 
-    const response = await client.complete(
-      [
-        { role: 'user', content: 'Hello' },
-      ],
-      {
-        model: 'claude-3-5-sonnet-20241022',
-        maxTokens: 1024,
-      }
-    );
+    const response = await client.complete([{ role: 'user', content: 'Hello' }], {
+      model: 'claude-3-5-sonnet-20241022',
+      maxTokens: 1024,
+    });
 
     expect(response.id).toBe('msg_123');
     expect(response.content).toHaveLength(1);
@@ -226,10 +227,10 @@ describe('OpenAI Client', () => {
   it('should complete a message', async () => {
     const client = createAIClient('openai', 'sk-test');
 
-    const response = await client.complete(
-      [{ role: 'user', content: 'Hello' }],
-      { model: 'gpt-4o', maxTokens: 1024 }
-    );
+    const response = await client.complete([{ role: 'user', content: 'Hello' }], {
+      model: 'gpt-4o',
+      maxTokens: 1024,
+    });
 
     expect(response.id).toBe('chatcmpl-123');
     expect(response.content).toHaveLength(1);

@@ -46,11 +46,11 @@ describe('validation', () => {
 
   describe('validateGitHubToken', () => {
     it('should accept classic PAT (ghp_ prefix with 36 chars)', () => {
-      expect(validateGitHubToken('ghp_' + 'a'.repeat(36))).toBe(true);
+      expect(validateGitHubToken(`ghp_${'a'.repeat(36)}`)).toBe(true);
     });
 
     it('should reject classic PAT with wrong length', () => {
-      expect(validateGitHubToken('ghp_' + 'a'.repeat(10))).toBe(false);
+      expect(validateGitHubToken(`ghp_${'a'.repeat(10)}`)).toBe(false);
     });
 
     it('should accept fine-grained PAT (github_pat_ prefix)', () => {
@@ -90,7 +90,7 @@ describe('validation', () => {
     });
 
     it('should validate github credentials', () => {
-      expect(validate('github', 'ghp_' + 'a'.repeat(36))).toBe(true);
+      expect(validate('github', `ghp_${'a'.repeat(36)}`)).toBe(true);
       expect(validate('github', 'invalid')).toBe(false);
     });
 

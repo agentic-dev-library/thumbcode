@@ -44,7 +44,7 @@ class CertificatePinningService {
     // Log the configuration for debugging purposes.
     console.debug(
       'CertificatePinningService: Web platform detected. ' +
-      `TLS pinning managed by browser for ${Object.keys(PINNING_CONFIG).length} domains.`
+        `TLS pinning managed by browser for ${Object.keys(PINNING_CONFIG).length} domains.`
     );
     this.isInitialized = true;
   }

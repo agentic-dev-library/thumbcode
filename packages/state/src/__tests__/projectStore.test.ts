@@ -137,7 +137,7 @@ describe('ProjectStore', () => {
         });
       });
 
-      const initialOpenedAt = result.current.projects[0].lastOpenedAt;
+      const _initialOpenedAt = result.current.projects[0].lastOpenedAt;
 
       // Small delay to ensure time difference
       act(() => {
@@ -232,7 +232,15 @@ describe('ProjectStore', () => {
       act(() => {
         result.current.initWorkspace('proj-1', 'main');
         result.current.setBranches([{ name: 'main', isRemote: false, isCurrent: true }]);
-        result.current.setRecentCommits([{ sha: 'abc', message: 'init', author: 'dev', authorEmail: 'dev@test.com', date: '2025-01-01' }]);
+        result.current.setRecentCommits([
+          {
+            sha: 'abc',
+            message: 'init',
+            author: 'dev',
+            authorEmail: 'dev@test.com',
+            date: '2025-01-01',
+          },
+        ]);
       });
 
       expect(result.current.workspace).not.toBeNull();
@@ -255,8 +263,8 @@ describe('ProjectStore', () => {
         result.current.openFile('src/index.ts');
       });
 
-      expect(result.current.workspace!.openFiles).toEqual(['src/index.ts']);
-      expect(result.current.workspace!.activeFile).toBe('src/index.ts');
+      expect(result.current.workspace?.openFiles).toEqual(['src/index.ts']);
+      expect(result.current.workspace?.activeFile).toBe('src/index.ts');
     });
 
     it('should not duplicate already open files', () => {
@@ -268,7 +276,7 @@ describe('ProjectStore', () => {
         result.current.openFile('src/index.ts');
       });
 
-      expect(result.current.workspace!.openFiles).toHaveLength(1);
+      expect(result.current.workspace?.openFiles).toHaveLength(1);
     });
 
     it('should close a file and set next file as active', () => {
@@ -284,8 +292,8 @@ describe('ProjectStore', () => {
         result.current.closeFile('src/b.ts');
       });
 
-      expect(result.current.workspace!.openFiles).toEqual(['src/a.ts']);
-      expect(result.current.workspace!.activeFile).toBe('src/a.ts');
+      expect(result.current.workspace?.openFiles).toEqual(['src/a.ts']);
+      expect(result.current.workspace?.activeFile).toBe('src/a.ts');
     });
 
     it('should clear unsaved changes when closing a file', () => {
@@ -297,13 +305,13 @@ describe('ProjectStore', () => {
         result.current.saveFileChange('src/a.ts', 'modified content');
       });
 
-      expect(result.current.workspace!.unsavedChanges['src/a.ts']).toBe('modified content');
+      expect(result.current.workspace?.unsavedChanges['src/a.ts']).toBe('modified content');
 
       act(() => {
         result.current.closeFile('src/a.ts');
       });
 
-      expect(result.current.workspace!.unsavedChanges['src/a.ts']).toBeUndefined();
+      expect(result.current.workspace?.unsavedChanges['src/a.ts']).toBeUndefined();
     });
 
     it('should track unsaved changes and set git status to modified', () => {
@@ -314,8 +322,8 @@ describe('ProjectStore', () => {
         result.current.saveFileChange('src/index.ts', 'new content');
       });
 
-      expect(result.current.workspace!.unsavedChanges['src/index.ts']).toBe('new content');
-      expect(result.current.workspace!.gitStatus).toBe('modified');
+      expect(result.current.workspace?.unsavedChanges['src/index.ts']).toBe('new content');
+      expect(result.current.workspace?.gitStatus).toBe('modified');
     });
 
     it('should revert git status to clean when all unsaved changes cleared', () => {
@@ -326,13 +334,13 @@ describe('ProjectStore', () => {
         result.current.saveFileChange('src/index.ts', 'changed');
       });
 
-      expect(result.current.workspace!.gitStatus).toBe('modified');
+      expect(result.current.workspace?.gitStatus).toBe('modified');
 
       act(() => {
         result.current.clearUnsavedChange('src/index.ts');
       });
 
-      expect(result.current.workspace!.gitStatus).toBe('clean');
+      expect(result.current.workspace?.gitStatus).toBe('clean');
     });
   });
 
@@ -369,7 +377,7 @@ describe('ProjectStore', () => {
         result.current.setCurrentBranch('develop');
       });
 
-      expect(result.current.workspace!.currentBranch).toBe('develop');
+      expect(result.current.workspace?.currentBranch).toBe('develop');
     });
 
     it('should set git status in workspace', () => {
@@ -380,7 +388,7 @@ describe('ProjectStore', () => {
         result.current.setGitStatus('staged');
       });
 
-      expect(result.current.workspace!.gitStatus).toBe('staged');
+      expect(result.current.workspace?.gitStatus).toBe('staged');
     });
   });
 
@@ -456,7 +464,7 @@ describe('ProjectStore', () => {
         result.current.setActiveProject(id);
       });
 
-      expect(selectActiveProject(result.current)!.name).toBe('Active');
+      expect(selectActiveProject(result.current)?.name).toBe('Active');
     });
 
     it('selectWorkspace should return workspace or null', () => {

@@ -5,26 +5,19 @@
  * All primitives use standard HTML elements with no react-native dependency.
  */
 
-export { Box } from './Box';
 export type { BoxProps } from './Box';
-
-export { Text } from './Text';
-export type { TextProps } from './Text';
-
-export { Button } from './Button';
+export { Box } from './Box';
 export type { ButtonProps } from './Button';
-
-export { ScrollArea } from './ScrollArea';
-export type { ScrollAreaProps } from './ScrollArea';
-
-export { List } from './List';
-export type { ListProps } from './List';
-
-export { Image } from './Image';
+export { Button } from './Button';
 export type { ImageProps } from './Image';
-
-export { TextInput } from './TextInput';
-export type { TextInputProps } from './TextInput';
-
-export { Switch } from './Switch';
+export { Image } from './Image';
+export type { ListProps } from './List';
+export { List } from './List';
+export type { ScrollAreaProps } from './ScrollArea';
+export { ScrollArea } from './ScrollArea';
 export type { SwitchProps } from './Switch';
+export { Switch } from './Switch';
+export type { TextProps } from './Text';
+export { Text } from './Text';
+export type { TextInputProps } from './TextInput';
+export { TextInput } from './TextInput';

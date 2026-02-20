@@ -1,4 +1,3 @@
-
 /**
  * Organic Style Constants (agent-intelligence)
  *
@@ -53,4 +52,3 @@ export const organicBorderRadius = {
     borderBottomLeftRadius: 8,
   } as React.CSSProperties,
 } as const;
-

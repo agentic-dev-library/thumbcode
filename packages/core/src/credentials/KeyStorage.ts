@@ -9,6 +9,7 @@
 
 import { BiometricAuth, type BiometryType } from '@aparajita/capacitor-biometric-auth';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+import type { KeyValidator } from './KeyValidator';
 import type {
   BiometricResult,
   CredentialType,
@@ -19,7 +20,6 @@ import type {
   ValidationResult,
 } from './types';
 import { validate } from './validation';
-import type { KeyValidator } from './KeyValidator';
 
 // SecureStore key prefixes for different credential types
 const SECURE_STORE_KEYS: Record<CredentialType, string> = {
@@ -61,7 +61,7 @@ class WebEncryption {
   private static readonly KEY_LENGTH = 256;
 
   private static async getKey(): Promise<CryptoKey> {
-    const storedKey = sessionStorage.getItem(this.KEY_STORAGE_KEY);
+    const storedKey = sessionStorage.getItem(WebEncryption.KEY_STORAGE_KEY);
 
     if (storedKey) {
       // Import existing key
@@ -69,7 +69,7 @@ class WebEncryption {
       return crypto.subtle.importKey(
         'jwk',
         keyData,
-        { name: this.ALGORITHM, length: this.KEY_LENGTH },
+        { name: WebEncryption.ALGORITHM, length: WebEncryption.KEY_LENGTH },
         true,
         ['encrypt', 'decrypt']
       );
@@ -77,26 +77,26 @@ class WebEncryption {
 
     // Generate new key
     const key = await crypto.subtle.generateKey(
-      { name: this.ALGORITHM, length: this.KEY_LENGTH },
+      { name: WebEncryption.ALGORITHM, length: WebEncryption.KEY_LENGTH },
       true,
       ['encrypt', 'decrypt']
     );
 
     // Export and store key
     const exportedKey = await crypto.subtle.exportKey('jwk', key);
-    sessionStorage.setItem(this.KEY_STORAGE_KEY, JSON.stringify(exportedKey));
+    sessionStorage.setItem(WebEncryption.KEY_STORAGE_KEY, JSON.stringify(exportedKey));
 
     return key;
   }
 
   static async encrypt(data: string): Promise<string> {
-    const key = await this.getKey();
+    const key = await WebEncryption.getKey();
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const encoder = new TextEncoder();
     const encodedData = encoder.encode(data);
 
     const encryptedContent = await crypto.subtle.encrypt(
-      { name: this.ALGORITHM, iv },
+      { name: WebEncryption.ALGORITHM, iv },
       key,
       encodedData
     );
@@ -113,10 +113,10 @@ class WebEncryption {
   static async decrypt(encryptedString: string): Promise<string | null> {
     try {
       const { iv, data } = JSON.parse(encryptedString);
-      const key = await this.getKey();
+      const key = await WebEncryption.getKey();
 
       const decryptedContent = await crypto.subtle.decrypt(
-        { name: this.ALGORITHM, iv: new Uint8Array(iv) },
+        { name: WebEncryption.ALGORITHM, iv: new Uint8Array(iv) },
         key,
         new Uint8Array(data)
       );
@@ -204,7 +204,7 @@ export class KeyStorage {
       if (!biometricResult.success) {
         return {
           isValid: false,
-          message: biometricResult.error || 'Biometric authentication failed'
+          message: biometricResult.error || 'Biometric authentication failed',
         };
       }
     }
@@ -233,7 +233,7 @@ export class KeyStorage {
         try {
           const encryptedValue = await WebEncryption.encrypt(value);
           sessionStorage.setItem(key, encryptedValue);
-        } catch (e) {
+        } catch (_e) {
           // Handle quota exceeded or private mode restrictions
           return {
             isValid: false,

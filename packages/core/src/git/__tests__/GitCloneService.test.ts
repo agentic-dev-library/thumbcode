@@ -80,7 +80,7 @@ describe('GitCloneService', () => {
 
       const callArgs = mockGit.clone.mock.calls[0][0];
       expect(callArgs.onAuth).toBeDefined();
-      const auth = callArgs.onAuth!('https://github.com', {});
+      const auth = callArgs.onAuth?.('https://github.com', {});
       expect(auth).toEqual({
         username: 'x-access-token',
         password: 'ghp_token123',
@@ -97,7 +97,7 @@ describe('GitCloneService', () => {
       });
 
       const callArgs = mockGit.clone.mock.calls[0][0];
-      const auth = callArgs.onAuth!('https://github.com', {});
+      const auth = callArgs.onAuth?.('https://github.com', {});
       expect(auth).toEqual({
         username: 'myuser',
         password: 'ghp_token123',
@@ -268,9 +268,7 @@ describe('GitCloneService', () => {
         force: true,
       });
 
-      expect(mockGit.push).toHaveBeenCalledWith(
-        expect.objectContaining({ force: true })
-      );
+      expect(mockGit.push).toHaveBeenCalledWith(expect.objectContaining({ force: true }));
     });
 
     it('should return error on push failure', async () => {

@@ -280,17 +280,15 @@ describe('GitHubAuthService', () => {
       });
 
       // Mock network error followed by success
-      mockFetch
-        .mockRejectedValueOnce(new Error('Network error'))
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () =>
-            Promise.resolve({
-              access_token: 'test-access-token',
-              token_type: 'bearer',
-              scope: 'repo,user',
-            }),
-        });
+      mockFetch.mockRejectedValueOnce(new Error('Network error')).mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            access_token: 'test-access-token',
+            token_type: 'bearer',
+            scope: 'repo,user',
+          }),
+      });
 
       const onPollAttempt = vi.fn();
       const result = await GitHubAuthService.pollForToken({

@@ -5,7 +5,7 @@
  * Shared across all Git service modules.
  */
 
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Directory, Encoding, Filesystem } from '@capacitor/filesystem';
 import type { HttpClient } from 'isomorphic-git';
 import { gitHttpClient } from './GitHttpClient';
 
@@ -24,10 +24,7 @@ export const fs = {
       const result = await Filesystem.readFile({
         path: filepath,
         directory: Directory.Documents,
-        encoding:
-          options?.encoding === 'utf8'
-            ? Encoding.UTF8
-            : undefined, // undefined = base64 in Capacitor
+        encoding: options?.encoding === 'utf8' ? Encoding.UTF8 : undefined, // undefined = base64 in Capacitor
       });
       if (options?.encoding === 'utf8') {
         return result.data as string;

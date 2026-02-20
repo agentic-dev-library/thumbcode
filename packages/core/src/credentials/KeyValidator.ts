@@ -182,11 +182,7 @@ export class KeyValidator {
 
     switch (type) {
       case 'github':
-        if (
-          secret.startsWith('ghp_') ||
-          secret.startsWith('gho_') ||
-          secret.startsWith('ghs_')
-        ) {
+        if (secret.startsWith('ghp_') || secret.startsWith('gho_') || secret.startsWith('ghs_')) {
           return `${secret.slice(0, 7)}...${secret.slice(-4)}`;
         }
         return `${secret.slice(0, 4)}...${secret.slice(-4)}`;

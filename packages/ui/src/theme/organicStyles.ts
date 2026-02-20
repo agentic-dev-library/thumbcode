@@ -1,4 +1,3 @@
-
 /**
  * Organic styling helpers for @thumbcode/ui.
  *
@@ -41,4 +40,3 @@ export const organicShadow = {
     boxShadow: '4px 8px 16px rgba(21, 24, 32, 0.12)',
   } as React.CSSProperties,
 } as const;
-

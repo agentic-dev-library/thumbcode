@@ -4,9 +4,9 @@
  * Tests for agent lifecycle, creation, removal, and execution coordination.
  */
 
-import type { Agent, TaskAssignment } from '@thumbcode/types';
-import { OrchestrationStateManager } from '../OrchestrationState';
+import type { TaskAssignment } from '@thumbcode/types';
 import { AgentCoordinator } from '../AgentCoordinator';
+import { OrchestrationStateManager } from '../OrchestrationState';
 import type { OrchestratorConfig } from '../types';
 
 // Helper to create async iterator from array
@@ -181,9 +181,7 @@ describe('AgentCoordinator', () => {
       const agentId = await coordinator.createAgent('implementer');
       stateManager.state.activeTasks.set('task-1', agentId);
 
-      await expect(coordinator.removeAgent(agentId)).rejects.toThrow(
-        'Cannot remove agent'
-      );
+      await expect(coordinator.removeAgent(agentId)).rejects.toThrow('Cannot remove agent');
     });
   });
 
@@ -201,7 +199,7 @@ describe('AgentCoordinator', () => {
         type: 'feature',
         title: 'Build feature',
         description: 'Implement a new feature',
-        assignee: implementer!.id,
+        assignee: implementer?.id ?? '',
         dependsOn: [],
         status: 'pending',
         priority: 'medium',

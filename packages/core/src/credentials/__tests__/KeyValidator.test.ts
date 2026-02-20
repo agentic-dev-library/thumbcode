@@ -8,8 +8,8 @@ vi.mock('../../api/api', () => ({
   secureFetch: vi.fn(),
 }));
 
-import { KeyValidator } from '../KeyValidator';
 import { secureFetch } from '../../api/api';
+import { KeyValidator } from '../KeyValidator';
 
 const mockSecureFetch = secureFetch as Mock;
 
@@ -45,12 +45,13 @@ describe('KeyValidator', () => {
   });
 
   describe('GitHub token validation', () => {
-    const validToken = 'ghp_' + 'a'.repeat(36);
+    const validToken = `ghp_${'a'.repeat(36)}`;
 
     it('should validate a valid GitHub token', async () => {
       mockSecureFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ login: 'testuser', avatar_url: 'https://avatar.url', name: 'Test' }),
+        json: () =>
+          Promise.resolve({ login: 'testuser', avatar_url: 'https://avatar.url', name: 'Test' }),
         headers: new Headers({
           'github-authentication-token-expiration': '2025-12-31T00:00:00Z',
           'x-oauth-scopes': 'repo, user',

@@ -48,12 +48,7 @@ export interface Project {
 /**
  * Project status
  */
-export type ProjectStatus =
-  | 'initializing'
-  | 'ready'
-  | 'syncing'
-  | 'error'
-  | 'archived';
+export type ProjectStatus = 'initializing' | 'ready' | 'syncing' | 'error' | 'archived';
 
 /**
  * Project settings

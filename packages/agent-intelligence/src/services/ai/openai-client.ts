@@ -6,7 +6,11 @@
 
 import OpenAI from 'openai';
 import { formatMessagesForOpenAI, mapOpenAIStopReason, parseOpenAIContent } from './openai-helpers';
-import { createStreamParserState, finalizeStream, processStreamChunk } from './openai-stream-parser';
+import {
+  createStreamParserState,
+  finalizeStream,
+  processStreamChunk,
+} from './openai-stream-parser';
 import type {
   AIClient,
   CompletionOptions,
