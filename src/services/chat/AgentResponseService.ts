@@ -1,15 +1,17 @@
 /**
  * Agent Response Service
  *
- * Handles agent response orchestration using real AI clients and approval workflows.
+ * Handles agent response orchestration using @thumbcode/agent-intelligence
+ * AI clients (with tool calling, token tracking, rich streaming events)
+ * and approval workflows.
  */
 
+import type { Message as AIMessage, AIProvider, StreamEvent } from '@thumbcode/agent-intelligence';
+import { createAIClient, getDefaultModel } from '@thumbcode/agent-intelligence';
 import type { Message, MessageSender } from '@thumbcode/state';
 import { useChatStore, useCredentialStore } from '@thumbcode/state';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
-import { getAgentSystemPrompt } from '../ai/AgentPrompts';
-import { createAIClient } from '../ai/AIClientFactory';
-import type { AIMessage, AIProvider } from '../ai/types';
+import { getAgentSystemPrompt } from './AgentPrompts';
 import type { MessageStore } from './MessageStore';
 import type { StreamHandler } from './StreamHandler';
 
@@ -27,7 +29,7 @@ export class AgentResponseService {
     _triggerMessageId: string,
     agent: MessageSender
   ): Promise<void> {
-    const abortController = this.streamHandler.registerAbort(threadId);
+    this.streamHandler.registerAbort(threadId);
 
     // Set typing indicator
     useChatStore.getState().setTyping(threadId, agent, true);
@@ -46,7 +48,7 @@ export class AgentResponseService {
           threadId,
           sender: agent,
           content:
-            'No AI API key configured. Please add your Anthropic or OpenAI API key in Settings → Credentials.',
+            'No AI API key configured. Please add your Anthropic or OpenAI API key in Settings \u2192 Credentials.',
           contentType: 'text',
         });
         return;
@@ -74,25 +76,31 @@ export class AgentResponseService {
 
       let currentContent = '';
 
-      // Stream the AI response
-      await aiClient.streamMessage(
+      // Stream the AI response using the rich streaming interface
+      await aiClient.completeStream(
         aiMessages,
-        systemPrompt,
-        (chunk) => {
-          currentContent += chunk.text;
-
-          // Update message content via store action
-          useChatStore.getState().updateMessageContent(messageId, threadId, currentContent);
-
-          this.streamHandler.emit({
-            type: 'message_delta',
-            threadId,
-            messageId,
-            delta: chunk.text,
-            sender: agent,
-          });
+        {
+          model: getDefaultModel(provider),
+          maxTokens: 4096,
+          systemPrompt,
         },
-        abortController.signal
+        (event: StreamEvent) => {
+          // Extract text deltas from content_block_delta events
+          if (event.type === 'content_block_delta' && event.delta?.text) {
+            currentContent += event.delta.text;
+
+            // Update message content via store action
+            useChatStore.getState().updateMessageContent(messageId, threadId, currentContent);
+
+            this.streamHandler.emit({
+              type: 'message_delta',
+              threadId,
+              messageId,
+              delta: event.delta.text,
+              sender: agent,
+            });
+          }
+        }
       );
 
       // Mark message as delivered
