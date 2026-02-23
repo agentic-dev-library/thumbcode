@@ -13,12 +13,13 @@ import type {
   Message as AIMessage,
   AIProvider,
   OrchestratorConfig,
+  Pipeline,
   StreamEvent,
 } from '@thumbcode/agent-intelligence';
 import { createAIClient, getDefaultModel } from '@thumbcode/agent-intelligence';
-import type { AgentRole } from '@thumbcode/types';
 import type { Message, MessageSender } from '@thumbcode/state';
-import { useChatStore, useCredentialStore } from '@thumbcode/state';
+import { useAgentStore, useChatStore, useCredentialStore } from '@thumbcode/state';
+import type { AgentRole } from '@thumbcode/types';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import { getAgentSystemPrompt } from './AgentPrompts';
 import type { MessageStore } from './MessageStore';
@@ -35,9 +36,20 @@ const DEFAULT_PROJECT_CONTEXT: AgentContext = {
   availableFiles: [],
 };
 
+/**
+ * Keywords that indicate a multi-step pipeline request vs a simple question.
+ */
+const PIPELINE_TRIGGER_PATTERNS = [
+  /\b(build|create|implement|develop|make)\b.*\b(app|feature|page|screen|component|module)\b/i,
+  /\b(add|set\s*up)\b.*\b(authentication|login|signup|dashboard|navigation)\b/i,
+  /\bfull\s+(pipeline|workflow|stack)\b/i,
+  /\b(end.to.end|start.to.finish|from.scratch)\b/i,
+];
+
 export class AgentResponseService {
   private orchestrator: AgentOrchestrator | null = null;
   private orchestratorProvider: AIProvider | null = null;
+  private activePipelines: Map<string, Pipeline> = new Map();
 
   constructor(
     private streamHandler: StreamHandler,
@@ -314,5 +326,222 @@ export class AgentResponseService {
       threadId,
       messageId,
     });
+  }
+
+  /**
+   * Detect whether a user message is a multi-step pipeline request
+   */
+  isMultiStepRequest(content: string): boolean {
+    return PIPELINE_TRIGGER_PATTERNS.some((pattern) => pattern.test(content));
+  }
+
+  /**
+   * Request a multi-agent pipeline response.
+   * Creates a pipeline in the orchestrator, then executes each stage
+   * sequentially with approval gates and system messages for handoffs.
+   */
+  async requestPipelineResponse(threadId: string, userMessage: string): Promise<Pipeline | null> {
+    // Resolve credentials
+    const credentials = await this.resolveAICredentials();
+    if (!credentials) {
+      useChatStore.getState().addMessage({
+        threadId,
+        sender: 'system',
+        content:
+          'No AI API key configured. Please add your Anthropic or OpenAI API key in Settings > Credentials.',
+        contentType: 'text',
+      });
+      return null;
+    }
+
+    const { provider, apiKey } = credentials;
+    let orchestrator: AgentOrchestrator | null = null;
+
+    try {
+      orchestrator = await this.ensureOrchestrator(provider, apiKey);
+    } catch {
+      useChatStore.getState().addMessage({
+        threadId,
+        sender: 'system',
+        content: 'Failed to initialize agent orchestrator. Please try again.',
+        contentType: 'text',
+      });
+      return null;
+    }
+
+    if (!orchestrator) return null;
+
+    // Post system message: pipeline starting
+    useChatStore.getState().addMessage({
+      threadId,
+      sender: 'system',
+      content: `Starting multi-agent pipeline for: "${userMessage}"`,
+      contentType: 'text',
+    });
+
+    // Create the pipeline in the orchestrator
+    const pipeline = orchestrator.createPipeline({
+      name: userMessage.slice(0, 80),
+      description: userMessage,
+    });
+
+    // Track the pipeline
+    this.activePipelines.set(pipeline.id, pipeline);
+
+    // Create tasks in the agent store for UI visibility
+    const agentStore = useAgentStore.getState();
+    for (let i = 0; i < pipeline.stages.length; i++) {
+      const stage = pipeline.stages[i];
+      const agentId = `agent-${stage.role}`;
+      agentStore.addTask({
+        agentId,
+        description: `[Pipeline] ${stage.title}: ${stage.description}`,
+        status: i === 0 ? 'in_progress' : 'pending',
+      });
+    }
+
+    // Execute the first stage
+    await this.executePipelineStage(threadId, pipeline, 0, userMessage);
+
+    return pipeline;
+  }
+
+  /**
+   * Execute a specific pipeline stage: run the agent, post handoff messages,
+   * and handle approval gates.
+   */
+  private async executePipelineStage(
+    threadId: string,
+    pipeline: Pipeline,
+    stageIndex: number,
+    userMessage: string
+  ): Promise<void> {
+    if (stageIndex >= pipeline.stages.length) {
+      // Pipeline complete
+      pipeline.status = 'completed';
+      pipeline.completedAt = new Date().toISOString();
+      useChatStore.getState().addMessage({
+        threadId,
+        sender: 'system',
+        content: 'Pipeline complete. All agents have finished their work.',
+        contentType: 'text',
+      });
+      return;
+    }
+
+    const stage = pipeline.stages[stageIndex];
+    pipeline.currentStageIndex = stageIndex;
+    pipeline.status = 'running';
+    pipeline.updatedAt = new Date().toISOString();
+
+    // Post handoff system message
+    if (stageIndex > 0) {
+      const prevStage = pipeline.stages[stageIndex - 1];
+      useChatStore.getState().addMessage({
+        threadId,
+        sender: 'system',
+        content: `${prevStage.role.charAt(0).toUpperCase() + prevStage.role.slice(1)} finished. Handing off to ${stage.role.charAt(0).toUpperCase() + stage.role.slice(1)}.`,
+        contentType: 'text',
+      });
+    } else {
+      useChatStore.getState().addMessage({
+        threadId,
+        sender: 'system',
+        content: `Stage ${stageIndex + 1}/${pipeline.stages.length}: ${stage.role.charAt(0).toUpperCase() + stage.role.slice(1)} is starting — ${stage.title}`,
+        contentType: 'text',
+      });
+    }
+
+    // Update agent status in agent store
+    useAgentStore.getState().updateAgentStatus(`agent-${stage.role}`, 'working');
+
+    // Execute the agent response for this stage
+    try {
+      await this.requestAgentResponse(threadId, `pipeline-stage-${stageIndex}`, stage.role);
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      pipeline.status = 'failed';
+      pipeline.error = errorMsg;
+      pipeline.updatedAt = new Date().toISOString();
+
+      useChatStore.getState().addMessage({
+        threadId,
+        sender: 'system',
+        content: `Pipeline failed at stage ${stageIndex + 1} (${stage.role}): ${errorMsg}`,
+        contentType: 'text',
+      });
+
+      useAgentStore.getState().updateAgentStatus(`agent-${stage.role}`, 'error', errorMsg);
+      return;
+    }
+
+    // Update agent status back to idle
+    useAgentStore.getState().updateAgentStatus(`agent-${stage.role}`, 'idle');
+
+    // Check if this stage requires approval before proceeding
+    if (stage.requiresApproval && stageIndex < pipeline.stages.length - 1) {
+      pipeline.status = 'awaiting_approval';
+      pipeline.updatedAt = new Date().toISOString();
+
+      const nextStage = pipeline.stages[stageIndex + 1];
+
+      // Post an approval request
+      const approvalMessageId = this.requestApproval({
+        threadId,
+        sender: stage.role,
+        actionType: 'file_change',
+        actionDescription: `Approve ${stage.title} and proceed to ${nextStage.title} (${nextStage.role})?`,
+      });
+
+      // Store pipeline context on the approval message for later resolution
+      this.activePipelines.set(pipeline.id, {
+        ...pipeline,
+        // Store additional context needed for continuation
+      });
+
+      // Listen for approval response
+      const unsubscribe = this.streamHandler.onEvent((event) => {
+        if (event.type === 'approval_response' && event.messageId === approvalMessageId) {
+          unsubscribe();
+
+          const messages = useChatStore.getState().messages[threadId] || [];
+          const approvalMsg = messages.find((m) => m.id === approvalMessageId);
+          const approved = approvalMsg?.metadata?.approved === true;
+
+          if (approved) {
+            // Continue pipeline
+            this.executePipelineStage(threadId, pipeline, stageIndex + 1, userMessage);
+          } else {
+            // Cancel pipeline
+            pipeline.status = 'cancelled';
+            pipeline.updatedAt = new Date().toISOString();
+
+            useChatStore.getState().addMessage({
+              threadId,
+              sender: 'system',
+              content: `Pipeline cancelled by user at stage ${stageIndex + 1} (${stage.role}).`,
+              contentType: 'text',
+            });
+          }
+        }
+      });
+    } else {
+      // No approval needed, auto-advance
+      await this.executePipelineStage(threadId, pipeline, stageIndex + 1, userMessage);
+    }
+  }
+
+  /**
+   * Get active pipeline for a thread (if any)
+   */
+  getActivePipeline(pipelineId: string): Pipeline | undefined {
+    return this.activePipelines.get(pipelineId);
+  }
+
+  /**
+   * Get all active pipelines
+   */
+  getActivePipelines(): Pipeline[] {
+    return Array.from(this.activePipelines.values());
   }
 }

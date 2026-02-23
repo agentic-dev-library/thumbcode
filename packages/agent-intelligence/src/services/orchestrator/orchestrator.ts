@@ -18,6 +18,8 @@ import type {
   OrchestratorEventCallback,
   OrchestratorMetrics,
   OrchestratorState,
+  Pipeline,
+  PipelineStage,
 } from './types';
 
 export class AgentOrchestrator {
@@ -111,6 +113,225 @@ export class AgentOrchestrator {
 
   getMetrics(): OrchestratorMetrics {
     return this.stateManager.getMetrics();
+  }
+
+  // Pipeline management
+
+  /**
+   * Default pipeline stages: Architect -> Implementer -> Reviewer -> Tester.
+   * Each transition requires user approval.
+   */
+  static readonly DEFAULT_PIPELINE_STAGES: PipelineStage[] = [
+    {
+      role: 'architect',
+      taskType: 'feature',
+      title: 'Architecture Design',
+      description: 'Design system architecture and plan implementation',
+      requiresApproval: true,
+    },
+    {
+      role: 'implementer',
+      taskType: 'feature',
+      title: 'Implementation',
+      description: 'Implement the planned architecture',
+      requiresApproval: true,
+    },
+    {
+      role: 'reviewer',
+      taskType: 'review',
+      title: 'Code Review',
+      description: 'Review implementation for quality and correctness',
+      requiresApproval: true,
+    },
+    {
+      role: 'tester',
+      taskType: 'test',
+      title: 'Testing',
+      description: 'Write and run tests to verify implementation',
+      requiresApproval: false,
+    },
+  ];
+
+  /**
+   * Create a multi-agent pipeline.
+   * Each stage creates a task with a dependency on the previous stage.
+   * Stages with requiresApproval pause the pipeline until approved.
+   */
+  createPipeline(options: {
+    name: string;
+    description: string;
+    stages?: PipelineStage[];
+  }): Pipeline {
+    const stages = options.stages ?? AgentOrchestrator.DEFAULT_PIPELINE_STAGES;
+    const pipelineId = `pipeline-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const now = new Date().toISOString();
+
+    const taskIds: string[] = [];
+
+    for (let i = 0; i < stages.length; i++) {
+      const stage = stages[i];
+      const dependsOn = i > 0 ? [taskIds[i - 1]] : [];
+
+      const taskId = this.taskAssigner.createTask({
+        title: `[${stage.role}] ${stage.title}`,
+        description: `${stage.description}\n\nPipeline: ${options.name}\nStage ${i + 1} of ${stages.length}: ${options.description}`,
+        type: stage.taskType,
+        priority: 'high',
+        acceptanceCriteria: [`${stage.title} completed by ${stage.role}`],
+        dependsOn,
+        assigneeRole: stage.role,
+      });
+
+      taskIds.push(taskId);
+    }
+
+    const pipeline: Pipeline = {
+      id: pipelineId,
+      name: options.name,
+      description: options.description,
+      stages,
+      taskIds,
+      currentStageIndex: 0,
+      status: 'pending',
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    this.stateManager.state.pipelines.set(pipelineId, pipeline);
+    this.stateManager.emitEvent({
+      type: 'pipeline_created',
+      data: { pipeline },
+    });
+
+    return pipeline;
+  }
+
+  /**
+   * Get a pipeline by ID
+   */
+  getPipeline(pipelineId: string): Pipeline | undefined {
+    return this.stateManager.state.pipelines.get(pipelineId);
+  }
+
+  /**
+   * Get all pipelines
+   */
+  getPipelines(): Pipeline[] {
+    return Array.from(this.stateManager.state.pipelines.values());
+  }
+
+  /**
+   * Advance a pipeline to the next stage.
+   * Called after user approval or when a non-approval stage completes.
+   */
+  advancePipeline(pipelineId: string): void {
+    const pipeline = this.stateManager.state.pipelines.get(pipelineId);
+    if (!pipeline || pipeline.status === 'completed' || pipeline.status === 'failed') {
+      return;
+    }
+
+    const now = new Date().toISOString();
+    const currentIndex = pipeline.currentStageIndex;
+
+    // Mark current stage as completed
+    this.stateManager.emitEvent({
+      type: 'pipeline_stage_completed',
+      data: { pipeline, stageIndex: currentIndex },
+    });
+
+    const nextIndex = currentIndex + 1;
+
+    if (nextIndex >= pipeline.stages.length) {
+      // Pipeline complete
+      pipeline.status = 'completed';
+      pipeline.completedAt = now;
+      pipeline.updatedAt = now;
+      this.stateManager.emitEvent({
+        type: 'pipeline_completed',
+        data: { pipeline },
+      });
+      return;
+    }
+
+    // Move to next stage
+    pipeline.currentStageIndex = nextIndex;
+    pipeline.updatedAt = now;
+
+    const nextStage = pipeline.stages[nextIndex];
+
+    if (nextStage.requiresApproval) {
+      // Pause and wait for approval
+      pipeline.status = 'awaiting_approval';
+      this.stateManager.emitEvent({
+        type: 'pipeline_awaiting_approval',
+        data: { pipeline, stageIndex: nextIndex },
+      });
+    } else {
+      // Auto-advance
+      pipeline.status = 'running';
+      this.stateManager.emitEvent({
+        type: 'pipeline_stage_started',
+        data: { pipeline, stageIndex: nextIndex },
+      });
+    }
+  }
+
+  /**
+   * Approve a pipeline stage, allowing it to proceed.
+   */
+  approvePipelineStage(pipelineId: string): void {
+    const pipeline = this.stateManager.state.pipelines.get(pipelineId);
+    if (!pipeline || pipeline.status !== 'awaiting_approval') {
+      return;
+    }
+
+    pipeline.status = 'running';
+    pipeline.updatedAt = new Date().toISOString();
+
+    this.stateManager.emitEvent({
+      type: 'pipeline_approval_received',
+      data: { pipeline, stageIndex: pipeline.currentStageIndex },
+    });
+
+    this.stateManager.emitEvent({
+      type: 'pipeline_stage_started',
+      data: { pipeline, stageIndex: pipeline.currentStageIndex },
+    });
+  }
+
+  /**
+   * Cancel a pipeline.
+   */
+  cancelPipeline(pipelineId: string): void {
+    const pipeline = this.stateManager.state.pipelines.get(pipelineId);
+    if (!pipeline || pipeline.status === 'completed' || pipeline.status === 'failed') {
+      return;
+    }
+
+    pipeline.status = 'cancelled';
+    pipeline.updatedAt = new Date().toISOString();
+
+    this.stateManager.emitEvent({
+      type: 'pipeline_cancelled',
+      data: { pipeline },
+    });
+  }
+
+  /**
+   * Fail a pipeline with an error.
+   */
+  failPipeline(pipelineId: string, error: string): void {
+    const pipeline = this.stateManager.state.pipelines.get(pipelineId);
+    if (!pipeline) return;
+
+    pipeline.status = 'failed';
+    pipeline.error = error;
+    pipeline.updatedAt = new Date().toISOString();
+
+    this.stateManager.emitEvent({
+      type: 'pipeline_failed',
+      data: { pipeline, error },
+    });
   }
 
   /**

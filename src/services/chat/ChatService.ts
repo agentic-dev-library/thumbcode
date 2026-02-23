@@ -55,6 +55,14 @@ class ChatServiceImpl {
 
     const messageId = this.messageStore.sendUserMessage(options);
 
+    // Detect pipeline requests when no specific agent is targeted
+    if (!targetAgent || targetAgent === 'user') {
+      if (this.agentResponseService.isMultiStepRequest(options.content)) {
+        await this.agentResponseService.requestPipelineResponse(options.threadId, options.content);
+        return messageId;
+      }
+    }
+
     // If targeting a specific agent, request a response
     if (targetAgent && targetAgent !== 'user' && targetAgent !== 'system') {
       await this.agentResponseService.requestAgentResponse(
@@ -113,6 +121,15 @@ class ChatServiceImpl {
 
   respondToApproval(threadId: string, messageId: string, approved: boolean): void {
     this.agentResponseService.respondToApproval(threadId, messageId, approved);
+  }
+
+  // Pipeline methods (delegated to AgentResponseService)
+  isMultiStepRequest(content: string): boolean {
+    return this.agentResponseService.isMultiStepRequest(content);
+  }
+
+  async requestPipelineResponse(threadId: string, userMessage: string) {
+    return this.agentResponseService.requestPipelineResponse(threadId, userMessage);
   }
 }
 

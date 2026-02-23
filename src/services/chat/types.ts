@@ -14,6 +14,9 @@ export type ChatEventType =
   | 'typing_end'
   | 'approval_request'
   | 'approval_response'
+  | 'pipeline_started'
+  | 'pipeline_stage_change'
+  | 'pipeline_completed'
   | 'error';
 
 export interface ChatEvent {

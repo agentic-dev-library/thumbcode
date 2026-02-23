@@ -32,6 +32,7 @@ export class OrchestrationStateManager {
       taskQueue: [],
       activeTasks: new Map(),
       completedTasks: [],
+      pipelines: new Map(),
     };
   }
 

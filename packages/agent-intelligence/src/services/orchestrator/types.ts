@@ -48,6 +48,8 @@ export interface OrchestratorState {
   activeTasks: Map<string, string>; // taskId -> agentId
   /** Completed tasks */
   completedTasks: TaskAssignment[];
+  /** Active pipelines */
+  pipelines: Map<string, Pipeline>;
   /** Error message if status is error */
   error?: string;
 }
@@ -93,7 +95,8 @@ export interface OrchestratorEvent {
     | 'task_completed'
     | 'task_failed'
     | 'agent_event'
-    | 'error';
+    | 'error'
+    | PipelineEventType;
   timestamp: string;
   data?: {
     status?: OrchestratorState['status'];
@@ -102,6 +105,8 @@ export interface OrchestratorEvent {
     result?: TaskResult;
     agentEvent?: AgentEvent;
     error?: string;
+    pipeline?: Pipeline;
+    stageIndex?: number;
   };
 }
 
@@ -133,6 +138,58 @@ export interface ExecutionPlan {
   /** Blocked tasks (circular dependencies or failed dependencies) */
   blocked: string[];
 }
+
+/**
+ * Pipeline stage definition
+ */
+export interface PipelineStage {
+  role: AgentRole;
+  taskType: TaskType;
+  title: string;
+  description: string;
+  requiresApproval: boolean;
+}
+
+/**
+ * Pipeline status
+ */
+export type PipelineStatus =
+  | 'pending'
+  | 'running'
+  | 'awaiting_approval'
+  | 'completed'
+  | 'failed'
+  | 'cancelled';
+
+/**
+ * Pipeline definition for multi-agent orchestration
+ */
+export interface Pipeline {
+  id: string;
+  name: string;
+  description: string;
+  stages: PipelineStage[];
+  taskIds: string[];
+  currentStageIndex: number;
+  status: PipelineStatus;
+  createdAt: string;
+  updatedAt: string;
+  completedAt?: string;
+  error?: string;
+}
+
+/**
+ * Pipeline event types
+ */
+export type PipelineEventType =
+  | 'pipeline_created'
+  | 'pipeline_stage_started'
+  | 'pipeline_stage_completed'
+  | 'pipeline_awaiting_approval'
+  | 'pipeline_approval_received'
+  | 'pipeline_completed'
+  | 'pipeline_failed'
+  | 'pipeline_cancelled';
 
 /**
  * Agent metrics summary
