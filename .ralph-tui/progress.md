@@ -8,6 +8,9 @@
 - **Many docs reference outdated Expo stack** — `ARCHITECTURE.md`, `DECISIONS.md`, `PROJECT-STATUS.md`, `CLAUDE.md` all reference Expo SDK 52, NativeWind, expo-router, Jest, Maestro. The actual stack is React 18 + Vite 7 + Capacitor 8 + React Router DOM 7 + Tailwind CSS + Vitest + Playwright
 - **pnpm workspaces** — monorepo with root app + packages/ (agent-intelligence, core, config, state, types, ui, dev-tools) + docs-site
 
+### Page Refactoring Pattern: Hook + Decomposed Components
+For large page components, extract a `useXxx` hook (in `src/hooks/`) that owns all form state and side effects. Service functions go in `src/services/<domain>/`. The page becomes a thin composition layer (~100 lines) that wires the hook's return values into decomposed components from `src/components/`. The `RepoListItem` type is canonical from `src/components/onboarding/RepoSelector.tsx` (extends `Repository` from `@thumbcode/types`).
+
 ---
 
 ## 2026-02-20 - US-014
@@ -24,4 +27,28 @@
   - The `docs/memory-bank/` directory already existed with `DECISIONS-OLD.md` and `DEVELOPMENT-LOG.md` (historical reference files from the Expo era).
   - Fresh git worktrees don't have `node_modules` — `pnpm install` is needed before typecheck/lint can run.
   - All 22 lint warnings are pre-existing in source code (not caused by this change).
+---
+
+## 2026-02-20 - US-009
+- Extracted form logic from `create-project.tsx` (411→103 lines) into service layer and custom hook
+- Created `src/services/repository/repository-service.ts` — fetchRepositories, createRepository, filterRepositories, classifyError
+- Created `src/services/repository/validation.ts` — canCreateProject, canCreateRepo
+- Created `src/hooks/useCreateProject.ts` — orchestrates all form state and side effects
+- Rewrote `src/pages/onboarding/create-project.tsx` to compose `RepoSelector`, `ProjectFormHeader`, `ProjectFormActions` from `src/components/onboarding/`
+- Updated existing test to match `RepoSelector`'s Unicode ellipsis (`…` not `...`)
+- Added 25 new unit tests across repository-service.test.ts and validation.test.ts
+- Files changed:
+  - `src/services/repository/repository-service.ts` (new)
+  - `src/services/repository/validation.ts` (new)
+  - `src/services/repository/index.ts` (new)
+  - `src/hooks/useCreateProject.ts` (new)
+  - `src/pages/onboarding/create-project.tsx` (rewritten, 411→103 lines)
+  - `src/pages/onboarding/__tests__/create-project.test.tsx` (updated ellipsis)
+  - `src/services/repository/__tests__/repository-service.test.ts` (new, 16 tests)
+  - `src/services/repository/__tests__/validation.test.ts` (new, 9 tests)
+- **Learnings:**
+  - `RepoSelector` uses Unicode ellipsis `…` in "Loading repositories…" while old inline code used `...` — watch for text mismatches when swapping to decomposed components
+  - `RepoListItem` in `src/components/onboarding/RepoSelector.tsx` extends `Repository` from `@thumbcode/types` — it needs `provider`, `owner`, and other fields the old local interface omitted
+  - Biome `--write` auto-fixes formatting but skips "unsafe" fixes (like unused imports) — use `--write --unsafe` for those
+  - The existing 20 Biome warnings (down from 22 after prior fixes) are all pre-existing `noExplicitAny` issues
 ---

@@ -75,8 +75,8 @@ describe('CreateProjectPage', () => {
 
     render(<CreateProjectPage />);
 
-    // Check loading state initially
-    expect(screen.getByText('Loading repositories...')).toBeInTheDocument();
+    // Check loading state initially (RepoSelector uses Unicode ellipsis)
+    expect(screen.getByText('Loading repositories\u2026')).toBeInTheDocument();
 
     // Wait for repos to be displayed
     await waitFor(() => {
