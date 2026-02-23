@@ -34,6 +34,13 @@ export interface SendMessageOptions {
   contentType?: MessageContentType;
   metadata?: Record<string, unknown>;
   targetAgent?: MessageSender;
+  /** When true, generates multiple variant responses instead of a single response */
+  variantMode?: boolean;
+  /** Configuration for variant generation */
+  variantOptions?: {
+    variantCount?: number;
+    diversityMode?: 'same_provider' | 'multi_provider';
+  };
 }
 
 export interface StreamingResponse {

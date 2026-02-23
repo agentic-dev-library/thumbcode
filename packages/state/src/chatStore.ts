@@ -29,7 +29,9 @@ export type MessageContentType =
   | 'image'
   | 'mixed_media'
   | 'voice_transcript'
-  | 'document';
+  | 'document'
+  | 'document_output'
+  | 'variant_set';
 
 // Media attachment for multimedia messages
 export interface MediaAttachment {
@@ -97,12 +99,43 @@ export interface DocumentMessage extends Message {
   };
 }
 
+// Agent-generated document output (docx, pptx, xlsx, pdf)
+export interface DocumentOutputMessage extends Message {
+  contentType: 'document_output';
+  metadata: {
+    filename: string;
+    format: 'docx' | 'pptx' | 'xlsx' | 'pdf';
+    size: number;
+    blobUrl: string;
+    title: string;
+  };
+}
+
 // Voice transcript message
 export interface VoiceMessage extends Message {
   contentType: 'voice_transcript';
   metadata: {
     audioUrl?: string;
     duration?: number;
+  };
+}
+
+// Variant set message for multi-variant generation
+export interface VariantSetMessage extends Message {
+  contentType: 'variant_set';
+  metadata: {
+    requestId: string;
+    variants: Array<{
+      id: string;
+      name: string;
+      description: string;
+      content: string;
+      provider: string;
+      model: string;
+      tokensUsed: number;
+    }>;
+    selectedVariantId?: string;
+    selectedAt?: string;
   };
 }
 

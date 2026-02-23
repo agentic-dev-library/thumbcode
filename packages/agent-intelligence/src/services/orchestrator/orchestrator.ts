@@ -9,6 +9,8 @@
 
 import type { AgentRole, TaskAssignment, TaskStatus } from '@thumbcode/types';
 import type { DEFAULT_AGENT_CONFIGS } from '../agents';
+import type { AIProvider, CompletionResponse } from '../ai';
+import { createAIClient, getDefaultModel } from '../ai';
 import { AgentCoordinator } from './AgentCoordinator';
 import { OrchestrationStateManager } from './OrchestrationState';
 import { TaskAssigner } from './TaskAssigner';
@@ -20,16 +22,53 @@ import type {
   OrchestratorState,
   Pipeline,
   PipelineStage,
+  Variant,
+  VariantRequest,
+  VariantResult,
 } from './types';
+
+/**
+ * System prompt variations for generating diverse variants.
+ * Each variation encourages a different approach to the same problem.
+ */
+const VARIANT_SYSTEM_PROMPTS = [
+  {
+    name: 'Approach A: Minimal',
+    description: 'A concise, minimal approach focusing on simplicity and essential elements.',
+    instruction:
+      'Be concise and minimal. Focus on the simplest solution that meets the requirements. Prefer fewer abstractions, less code, and more direct approaches. Avoid over-engineering.',
+  },
+  {
+    name: 'Approach B: Comprehensive',
+    description: 'A thorough, detailed approach with full coverage and robust error handling.',
+    instruction:
+      'Be thorough and comprehensive. Cover edge cases, add proper error handling, include documentation, and consider scalability. Provide a production-ready solution.',
+  },
+  {
+    name: 'Approach C: Creative',
+    description: 'An innovative approach using creative patterns or unconventional solutions.',
+    instruction:
+      'Be creative and innovative. Explore unconventional approaches, clever patterns, or novel solutions. Think outside the box while still meeting the requirements.',
+  },
+  {
+    name: 'Approach D: Practical',
+    description: 'A pragmatic approach optimized for maintainability and team collaboration.',
+    instruction:
+      'Be pragmatic and practical. Focus on maintainability, readability, and ease of collaboration. Use well-known patterns, clear naming, and structures that other developers can easily understand and extend.',
+  },
+];
 
 export class AgentOrchestrator {
   private readonly stateManager: OrchestrationStateManager;
   private readonly coordinator: AgentCoordinator;
   private readonly taskAssigner: TaskAssigner;
   private readonly config: OrchestratorConfig;
+  private readonly apiKey: string;
+  private variantResults: Map<string, VariantResult> = new Map();
 
   constructor(config: OrchestratorConfig, apiKey: string) {
     this.config = config;
+    this.apiKey = apiKey;
     this.stateManager = new OrchestrationStateManager(config);
     this.coordinator = new AgentCoordinator(config, this.stateManager, apiKey);
     this.taskAssigner = new TaskAssigner(this.stateManager, config.autoAssign);
@@ -113,6 +152,126 @@ export class AgentOrchestrator {
 
   getMetrics(): OrchestratorMetrics {
     return this.stateManager.getMetrics();
+  }
+
+  // Variant generation
+
+  /**
+   * Generate multiple variant responses for a single prompt.
+   * In 'same_provider' mode, uses the configured provider with different system
+   * prompt variations. In 'multi_provider' mode, distributes variants across
+   * available providers.
+   */
+  async generateVariants(
+    request: VariantRequest,
+    availableProviders?: Array<{ provider: AIProvider; apiKey: string }>
+  ): Promise<VariantResult> {
+    const count = Math.min(request.variantCount, VARIANT_SYSTEM_PROMPTS.length);
+    const requestId = `variant-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const prompts = VARIANT_SYSTEM_PROMPTS.slice(0, count);
+
+    const variantPromises = prompts.map(async (promptVariation, index) => {
+      let provider: AIProvider;
+      let apiKey: string;
+      let model: string;
+
+      if (
+        request.diversityMode === 'multi_provider' &&
+        availableProviders &&
+        availableProviders.length > 1
+      ) {
+        const providerEntry = availableProviders[index % availableProviders.length];
+        provider = providerEntry.provider;
+        apiKey = providerEntry.apiKey;
+        model = getDefaultModel(provider);
+      } else {
+        provider = this.config.provider;
+        apiKey = this.apiKey;
+        model = this.config.model || getDefaultModel(provider);
+      }
+
+      const client = createAIClient(provider, apiKey);
+      const systemPrompt = `${promptVariation.instruction}\n\nRespond to the user's request with this approach in mind.`;
+
+      let response: CompletionResponse;
+      try {
+        response = await client.complete([{ role: 'user', content: request.prompt }], {
+          model,
+          maxTokens: 4096,
+          systemPrompt,
+        });
+      } catch {
+        // If a provider fails, return an error variant
+        return {
+          id: `variant-${requestId}-${index}`,
+          name: promptVariation.name,
+          description: promptVariation.description,
+          content: `[Generation failed for this variant]`,
+          provider,
+          model,
+          tokensUsed: 0,
+          generatedAt: new Date().toISOString(),
+        } satisfies Variant;
+      }
+
+      const textContent =
+        response.content
+          .filter((block) => block.type === 'text')
+          .map((block) => block.text ?? '')
+          .join('') || '';
+
+      return {
+        id: `variant-${requestId}-${index}`,
+        name: promptVariation.name,
+        description: promptVariation.description,
+        content: textContent,
+        provider,
+        model: response.model,
+        tokensUsed: response.usage.totalTokens,
+        estimatedCost: this.estimateCost(provider, response.usage.totalTokens),
+        generatedAt: new Date().toISOString(),
+      } satisfies Variant;
+    });
+
+    const variants = await Promise.all(variantPromises);
+
+    const result: VariantResult = {
+      requestId,
+      variants,
+    };
+
+    this.variantResults.set(requestId, result);
+    return result;
+  }
+
+  /**
+   * Mark a variant as selected by the user.
+   */
+  selectVariant(resultId: string, variantId: string): void {
+    const result = this.variantResults.get(resultId);
+    if (result) {
+      result.selectedVariantId = variantId;
+    }
+  }
+
+  /**
+   * Get a variant result by request ID.
+   */
+  getVariantResult(resultId: string): VariantResult | undefined {
+    return this.variantResults.get(resultId);
+  }
+
+  /**
+   * Rough cost estimate in cents based on provider and token count.
+   */
+  private estimateCost(provider: AIProvider, tokens: number): number {
+    // Approximate cost per 1K tokens (blended input/output)
+    const costPer1K: Record<string, number> = {
+      anthropic: 0.8, // ~$3/M input + $15/M output blended
+      openai: 0.6, // ~$2.50/M input + $10/M output blended
+    };
+    const rate = costPer1K[provider] ?? 0.5;
+    return Math.round((tokens / 1000) * rate * 100) / 100;
   }
 
   // Pipeline management

@@ -17,6 +17,56 @@ import type { AgentContext, AgentEvent, AgentExecutionResult } from '../agents/b
 import type { AIProvider } from '../ai';
 
 /**
+ * Variant generation request
+ */
+export interface VariantRequest {
+  /** The user's prompt to generate variants for */
+  prompt: string;
+  /** Number of variants to generate (default 3) */
+  variantCount: number;
+  /** Whether to use the same provider or distribute across multiple providers */
+  diversityMode: 'same_provider' | 'multi_provider';
+  /** Optional: which agent type to use (or auto-detect) */
+  agentType?: string;
+}
+
+/**
+ * A single generated variant
+ */
+export interface Variant {
+  /** Unique variant identifier */
+  id: string;
+  /** Human-readable name (e.g. "Approach A: Minimal") */
+  name: string;
+  /** 1-2 sentence summary of this variant's approach */
+  description: string;
+  /** Full response content */
+  content: string;
+  /** Which AI provider generated this */
+  provider: string;
+  /** Which model was used */
+  model: string;
+  /** Tokens consumed */
+  tokensUsed: number;
+  /** Estimated cost in cents */
+  estimatedCost?: number;
+  /** ISO timestamp of generation */
+  generatedAt: string;
+}
+
+/**
+ * Result of variant generation
+ */
+export interface VariantResult {
+  /** Unique request identifier */
+  requestId: string;
+  /** Generated variants */
+  variants: Variant[];
+  /** ID of the variant the user selected */
+  selectedVariantId?: string;
+}
+
+/**
  * Orchestrator configuration
  */
 export interface OrchestratorConfig {

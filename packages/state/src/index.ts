@@ -22,6 +22,7 @@ export type {
   ChatThread,
   CodeMessage,
   DocumentMessage,
+  DocumentOutputMessage,
   ImageMessage,
   MediaAttachment,
   Message,

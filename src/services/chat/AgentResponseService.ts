@@ -15,6 +15,7 @@ import type {
   OrchestratorConfig,
   Pipeline,
   StreamEvent,
+  VariantResult,
 } from '@thumbcode/agent-intelligence';
 import {
   createAIClient,
@@ -608,6 +609,169 @@ export class AgentResponseService {
       // No approval needed, auto-advance
       await this.executePipelineStage(threadId, pipeline, stageIndex + 1, userMessage);
     }
+  }
+
+  /**
+   * Request a variant response: generates multiple variants for a single prompt.
+   * Posts a system message, calls orchestrator.generateVariants(), and posts
+   * a variant_set message to the chat thread.
+   */
+  async requestVariantResponse(
+    threadId: string,
+    prompt: string,
+    options?: { variantCount?: number; diversityMode?: 'same_provider' | 'multi_provider' }
+  ): Promise<VariantResult | null> {
+    const variantCount = options?.variantCount ?? 3;
+    const diversityMode = options?.diversityMode ?? 'same_provider';
+
+    // Post system message: generating variants
+    useChatStore.getState().addMessage({
+      threadId,
+      sender: 'system',
+      content: `Generating ${variantCount} variants...`,
+      contentType: 'text',
+    });
+
+    // Resolve credentials
+    const credentials = await this.resolveAICredentials();
+    if (!credentials) {
+      useChatStore.getState().addMessage({
+        threadId,
+        sender: 'system',
+        content:
+          'No AI API key configured. Please add your Anthropic or OpenAI API key in Settings > Credentials.',
+        contentType: 'text',
+      });
+      return null;
+    }
+
+    const { provider, apiKey } = credentials;
+
+    let orchestrator: AgentOrchestrator | null = null;
+    try {
+      orchestrator = await this.ensureOrchestrator(provider, apiKey);
+    } catch {
+      useChatStore.getState().addMessage({
+        threadId,
+        sender: 'system',
+        content: 'Failed to initialize agent orchestrator for variant generation.',
+        contentType: 'text',
+      });
+      return null;
+    }
+
+    if (!orchestrator) return null;
+
+    // Gather available providers for multi_provider mode
+    let availableProviders: Array<{ provider: AIProvider; apiKey: string }> | undefined;
+    if (diversityMode === 'multi_provider') {
+      availableProviders = await this.resolveAllAICredentials();
+    }
+
+    try {
+      const result = await orchestrator.generateVariants(
+        { prompt, variantCount, diversityMode },
+        availableProviders
+      );
+
+      // Post variant_set message to the chat
+      useChatStore.getState().addMessage({
+        threadId,
+        sender: 'system',
+        content: `Generated ${result.variants.length} variants. Select one to continue.`,
+        contentType: 'variant_set',
+        metadata: {
+          requestId: result.requestId,
+          variants: result.variants.map((v) => ({
+            id: v.id,
+            name: v.name,
+            description: v.description,
+            content: v.content,
+            provider: v.provider,
+            model: v.model,
+            tokensUsed: v.tokensUsed,
+          })),
+        },
+      });
+
+      return result;
+    } catch {
+      useChatStore.getState().addMessage({
+        threadId,
+        sender: 'system',
+        content: 'Variant generation failed. Please try again.',
+        contentType: 'text',
+      });
+      return null;
+    }
+  }
+
+  /**
+   * Handle variant selection: posts the selected variant as the canonical response.
+   */
+  selectVariant(threadId: string, messageId: string, variantId: string): void {
+    const messages = useChatStore.getState().messages[threadId] || [];
+    const variantMsg = messages.find((m) => m.id === messageId);
+
+    if (!variantMsg || variantMsg.contentType !== 'variant_set') return;
+
+    const metadata = variantMsg.metadata as {
+      requestId: string;
+      variants: Array<{ id: string; name: string; content: string; provider: string }>;
+    };
+
+    const variant = metadata.variants.find((v) => v.id === variantId);
+    if (!variant) return;
+
+    // Update the variant_set message with the selection
+    useChatStore.getState().updateMessageContent(messageId, threadId, variantMsg.content);
+
+    // Post the selected variant as the canonical response
+    useChatStore.getState().addMessage({
+      threadId,
+      sender: 'system',
+      content: variant.content,
+      contentType: 'text',
+      metadata: {
+        selectedFromVariant: variantId,
+        variantName: variant.name,
+        variantProvider: variant.provider,
+      },
+    });
+
+    // Update the orchestrator if available
+    if (this.orchestrator) {
+      this.orchestrator.selectVariant(metadata.requestId, variantId);
+    }
+  }
+
+  /**
+   * Resolve ALL available AI credentials (for multi_provider mode)
+   */
+  private async resolveAllAICredentials(): Promise<
+    Array<{ provider: AIProvider; apiKey: string }>
+  > {
+    const credState = useCredentialStore.getState();
+    const metadata = credState.credentials;
+    const results: Array<{ provider: AIProvider; apiKey: string }> = [];
+
+    const aiProviders: AIProvider[] = ['anthropic', 'openai'];
+
+    for (const providerName of aiProviders) {
+      const cred = metadata.find((c) => c.provider === providerName && c.status === 'valid');
+      if (cred) {
+        try {
+          const result = await SecureStoragePlugin.get({ key: cred.secureStoreKey });
+          if (result.value) {
+            results.push({ provider: providerName, apiKey: result.value });
+          }
+        } catch {
+          // Key not found, skip
+        }
+      }
+    }
+
+    return results;
   }
 
   /**

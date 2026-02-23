@@ -10,4 +10,6 @@ export { ChatInput } from './ChatInput';
 export { ChatMessage } from './ChatMessage';
 export { ChatThread } from './ChatThread';
 export { CodeBlock } from './CodeBlock';
+export { DocumentCard } from './DocumentCard';
 export { ThreadList } from './ThreadList';
+export { VariantSelector } from './VariantSelector';

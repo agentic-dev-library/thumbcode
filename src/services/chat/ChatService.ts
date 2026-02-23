@@ -56,6 +56,16 @@ class ChatServiceImpl {
 
     const messageId = this.messageStore.sendUserMessage(options);
 
+    // Variant mode: generate multiple variant responses
+    if (options.variantMode) {
+      await this.agentResponseService.requestVariantResponse(
+        options.threadId,
+        options.content,
+        options.variantOptions
+      );
+      return messageId;
+    }
+
     // Detect pipeline requests when no specific agent is targeted
     if (!targetAgent || targetAgent === 'user') {
       if (this.agentResponseService.isMultiStepRequest(options.content)) {
@@ -136,6 +146,19 @@ class ChatServiceImpl {
 
   async requestPipelineResponse(threadId: string, userMessage: string) {
     return this.agentResponseService.requestPipelineResponse(threadId, userMessage);
+  }
+
+  // Variant methods (delegated to AgentResponseService)
+  async requestVariantResponse(
+    threadId: string,
+    prompt: string,
+    options?: { variantCount?: number; diversityMode?: 'same_provider' | 'multi_provider' }
+  ) {
+    return this.agentResponseService.requestVariantResponse(threadId, prompt, options);
+  }
+
+  selectVariant(threadId: string, messageId: string, variantId: string): void {
+    this.agentResponseService.selectVariant(threadId, messageId, variantId);
   }
 }
 
