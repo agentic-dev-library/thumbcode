@@ -13,3 +13,6 @@ export * from './services/ai';
 
 // Orchestrator
 export * from './services/orchestrator';
+
+// Tool Execution Bridge
+export * from './services/tools';
