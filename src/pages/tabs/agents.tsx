@@ -82,7 +82,7 @@ const RoleFilterButton = memo(({ role, isSelected, onPress }: Readonly<RoleFilte
     type="button"
     data-testid={`role-filter-${role}`}
     onClick={() => onPress(role)}
-    className={`px-4 py-2 capitalize font-body transition-colors ${
+    className={`shrink-0 px-4 py-2 capitalize font-body transition-colors ${
       isSelected
         ? 'bg-coral-500 text-white'
         : 'bg-surface text-neutral-400 hover:bg-surface-elevated'
@@ -141,12 +141,12 @@ export default function AgentsPage() {
         </div>
 
         {/* Role Filter */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
+        <div className="flex flex-nowrap gap-2 mb-6 overflow-x-auto pb-1">
           <button
             type="button"
             data-testid="role-filter-all"
             onClick={handleAllPress}
-            className={`px-4 py-2 font-body transition-colors ${
+            className={`shrink-0 px-4 py-2 font-body transition-colors ${
               !selectedRole
                 ? 'bg-coral-500 text-white'
                 : 'bg-surface text-neutral-400 hover:bg-surface-elevated'

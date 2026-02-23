@@ -7,6 +7,7 @@
 
 import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@thumbcode/state';
 import { useCallback, useEffect, useRef } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { Text } from '@/components/ui';
 import { ChatService } from '@/services/chat';
 import { ChatMessage } from './ChatMessage';
@@ -51,8 +52,8 @@ export function ChatThread({ threadId }: Readonly<ChatThreadProps>) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Subscribe to messages and typing indicators
-  const messages = useChatStore(selectThreadMessages(threadId));
-  const typingSenders = useChatStore(selectTypingIndicators(threadId));
+  const messages = useChatStore(useShallow(selectThreadMessages(threadId)));
+  const typingSenders = useChatStore(useShallow(selectTypingIndicators(threadId)));
 
   // Handle approval responses
   const handleApprovalResponse = useCallback(
@@ -73,7 +74,7 @@ export function ChatThread({ threadId }: Readonly<ChatThreadProps>) {
 
   if (messages.length === 0) {
     return (
-      <div className="flex-1 items-center justify-center p-4">
+      <div className="flex-1 flex flex-col items-center justify-center p-4">
         <Text className="font-display text-lg text-neutral-400 text-center mb-2">
           Start the conversation
         </Text>

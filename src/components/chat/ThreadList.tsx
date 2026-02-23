@@ -11,6 +11,7 @@ import {
   selectRecentThreads,
   useChatStore,
 } from '@thumbcode/state';
+import { useShallow } from 'zustand/react/shallow';
 import { Badge } from '@/components/display';
 import { Text } from '@/components/ui';
 import { formatRelativeTime, getParticipantColor } from '@/lib/chat-utils';
@@ -109,14 +110,14 @@ function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
 }
 
 export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadListProps>) {
-  const pinnedThreads = useChatStore(selectPinnedThreads);
-  const recentThreads = useChatStore(selectRecentThreads);
+  const pinnedThreads = useChatStore(useShallow(selectPinnedThreads));
+  const recentThreads = useChatStore(useShallow(selectRecentThreads));
 
   const allThreads = [...pinnedThreads, ...recentThreads];
 
   if (allThreads.length === 0) {
     return (
-      <div className="flex-1 items-center justify-center p-6">
+      <div className="flex-1 flex flex-col items-center justify-center p-6">
         <Text variant="display" size="lg" className="text-neutral-400 text-center mb-2">
           No conversations yet
         </Text>
