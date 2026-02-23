@@ -75,8 +75,7 @@ test.describe('Tab Navigation', () => {
     await expect(page).toHaveURL(/\/agents/);
   });
 
-  // Chat page crashes on web with error boundary; skip until fixed
-  test.skip('should navigate to Chat tab', async ({ page }) => {
+  test('should navigate to Chat tab', async ({ page }) => {
     await clickTab(page, 'Chat');
     await expect(page).toHaveURL(/\/chat/);
   });
