@@ -20,7 +20,6 @@
       "@/components/*": ["src/components/*"],
       "@/hooks/*": ["src/hooks/*"],
       "@/services/*": ["src/services/*"],
-      "@/types/*": ["src/types/*"],
       "@/utils/*": ["src/utils/*"],
       "@/design-system/*": ["design-system/*"]
     }
