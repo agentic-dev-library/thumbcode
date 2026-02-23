@@ -8,7 +8,6 @@
 import type { ReactNode } from 'react';
 import { useCallback, useRef, useState } from 'react';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
@@ -95,9 +94,8 @@ export function Tooltip({
 
       {visible && (
         <div
-          className="absolute z-50 bg-neutral-800 px-3 py-2"
+          className="absolute z-50 bg-neutral-800 px-3 py-2 rounded-organic-badge"
           style={{
-            ...organicBorderRadius.badge,
             ...getTooltipStyle(),
             opacity: visible ? 1 : 0,
             transition: 'opacity 0.15s ease',

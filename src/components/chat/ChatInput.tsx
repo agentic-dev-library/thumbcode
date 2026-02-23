@@ -8,7 +8,6 @@
 import type { MessageSender } from '@thumbcode/state';
 import { useCallback, useState } from 'react';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 import { ChatService } from '@/services/chat';
 
 /** Props for the ChatInput component */
@@ -60,8 +59,8 @@ export function ChatInput({
     <div className="flex-row items-end p-3 border-t border-neutral-700 bg-surface">
       <input
         aria-label="Message input"
-        className="flex-1 bg-neutral-800 text-white font-body px-4 py-3 mr-2"
-        style={{ ...organicBorderRadius.textInput, minHeight: 44, maxHeight: 120 }}
+        className="flex-1 bg-neutral-800 text-white font-body px-4 py-3 mr-2 rounded-organic-input"
+        style={{ minHeight: 44, maxHeight: 120 }}
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder={placeholder}
@@ -71,8 +70,7 @@ export function ChatInput({
         type="button"
         onClick={handleSend}
         disabled={!canSend}
-        className={`px-4 py-3 ${canSend ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}
-        style={organicBorderRadius.button}
+        className={`px-4 py-3 rounded-organic-button ${canSend ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}
         aria-label="Send"
         aria-description="Send the message"
       >

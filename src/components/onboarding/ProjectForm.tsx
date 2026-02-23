@@ -6,7 +6,6 @@
 
 import { VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface ProjectFormHeaderProps {
   projectName: string;
@@ -54,8 +53,7 @@ export function ProjectFormActions({
       <button
         type="button"
         onClick={onSkip}
-        className="flex-1 bg-neutral-800 py-4 active:bg-neutral-700"
-        style={organicBorderRadius.cta}
+        className="flex-1 bg-neutral-800 py-4 active:bg-neutral-700 rounded-organic-cta"
       >
         <Text className="text-neutral-300 text-center">Skip for Now</Text>
       </button>
@@ -64,8 +62,7 @@ export function ProjectFormActions({
         type="button"
         onClick={onCreate}
         disabled={!canCreate || isLoading}
-        className={`flex-1 py-4 ${canCreate && !isLoading ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}
-        style={organicBorderRadius.cta}
+        className={`flex-1 py-4 rounded-organic-cta ${canCreate && !isLoading ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}
       >
         {isLoading ? (
           <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />

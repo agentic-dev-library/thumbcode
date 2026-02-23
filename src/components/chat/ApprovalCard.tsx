@@ -18,7 +18,6 @@ import {
   LightningIcon,
 } from '@/components/icons';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 import { getColor } from '@/utils/design-tokens';
 
 /** Action icon component type */
@@ -67,7 +66,6 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
 
   const cardStyle = useMemo(
     () => ({
-      ...organicBorderRadius.card,
       borderLeftWidth: 4,
       borderLeftColor: isPending
         ? getColor('gold', '400') // Gold for pending
@@ -79,7 +77,7 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
   );
 
   return (
-    <div className="bg-surface-elevated p-4 max-w-[90%]" style={cardStyle}>
+    <div className="bg-surface-elevated p-4 max-w-[90%] rounded-organic-card" style={cardStyle}>
       {/* Header */}
       <div className="flex-row items-center mb-2">
         <div className="mr-2">
@@ -90,8 +88,7 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
         </Text>
         {!isPending && (
           <div
-            className={`px-2 py-0.5 ${wasApproved ? 'bg-teal-600' : 'bg-coral-500'}`}
-            style={organicBorderRadius.badge}
+            className={`px-2 py-0.5 rounded-organic-badge ${wasApproved ? 'bg-teal-600' : 'bg-coral-500'}`}
           >
             <Text className="text-xs font-body text-white">
               {wasApproved ? 'Approved' : 'Rejected'}
@@ -111,8 +108,7 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
           <button
             type="button"
             onClick={onReject}
-            className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
-            style={organicBorderRadius.button}
+            className="px-4 py-2 bg-neutral-700 active:bg-neutral-600 rounded-organic-button"
             aria-label="Reject"
             aria-description="Reject this action"
           >
@@ -121,8 +117,7 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
           <button
             type="button"
             onClick={onApprove}
-            className="px-4 py-2 bg-teal-600 active:bg-teal-700 ml-2"
-            style={organicBorderRadius.button}
+            className="px-4 py-2 bg-teal-600 active:bg-teal-700 ml-2 rounded-organic-button"
             aria-label="Approve"
             aria-description="Approve this action"
           >

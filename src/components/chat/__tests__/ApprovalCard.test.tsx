@@ -10,10 +10,6 @@ vi.mock('@/components/icons', () => ({
   LightningIcon: () => 'LightningIcon',
 }));
 
-vi.mock('@/lib/organic-styles', () => ({
-  organicBorderRadius: { card: {}, badge: {}, button: {} },
-}));
-
 vi.mock('@/utils/design-tokens', () => ({
   getColor: vi.fn((_color: string, _shade?: string) => '#000000'),
 }));

@@ -1,5 +1,4 @@
 import type { Message } from '@thumbcode/state';
-import { organicBorderRadius } from '../../theme/organic-styles';
 
 interface ChatBubbleProps {
   message: Message;
@@ -12,9 +11,8 @@ const ChatBubble = ({ message }: ChatBubbleProps) => {
     <div
       className={`
         p-3 my-1 max-w-[80%]
-        ${isUser ? 'bg-teal-600 self-end' : 'bg-coral-500 self-start'}
+        ${isUser ? 'bg-teal-600 self-end rounded-organic-chat-user' : 'bg-coral-500 self-start rounded-organic-chat-agent'}
       `}
-      style={isUser ? organicBorderRadius.chatBubbleUser : organicBorderRadius.chatBubbleAgent}
     >
       <span className="text-white font-body">{message.content}</span>
     </div>

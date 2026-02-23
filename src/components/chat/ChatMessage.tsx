@@ -8,7 +8,6 @@
 import type { ApprovalMessage, Message } from '@thumbcode/state';
 import { Text } from '@/components/ui';
 import { formatTime, getSenderInfo } from '@/lib/chat-utils';
-import { organicBorderRadius } from '@/lib/organic-styles';
 import { ApprovalCard } from './ApprovalCard';
 import { CodeBlock } from './CodeBlock';
 
@@ -45,7 +44,7 @@ export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessag
       <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
         <div className="max-w-[90%]">
           <div className="flex-row items-center mb-1">
-            <div className={`px-2 py-0.5 ${senderInfo.bgColor}`} style={organicBorderRadius.pill}>
+            <div className={`px-2 py-0.5 ${senderInfo.bgColor} rounded-organic-input`}>
               <Text size="xs" className={senderInfo.textColor}>
                 {senderInfo.name}
               </Text>
@@ -68,7 +67,7 @@ export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessag
       <div className="max-w-[80%]">
         {!isUser && (
           <div className="flex-row items-center mb-1">
-            <div className={`px-2 py-0.5 ${senderInfo.bgColor}`} style={organicBorderRadius.pill}>
+            <div className={`px-2 py-0.5 ${senderInfo.bgColor} rounded-organic-input`}>
               <Text size="xs" className={senderInfo.textColor}>
                 {senderInfo.name}
               </Text>
@@ -76,8 +75,7 @@ export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessag
           </div>
         )}
         <div
-          className={`p-3 ${isUser ? 'bg-teal-600' : 'bg-surface-elevated'}`}
-          style={isUser ? organicBorderRadius.chatBubbleUser : organicBorderRadius.chatBubbleAgent}
+          className={`p-3 ${isUser ? 'bg-teal-600 rounded-organic-chat-user' : 'bg-surface-elevated rounded-organic-chat-agent'}`}
         >
           <Text className={isUser ? 'text-white' : 'text-neutral-200'}>{message.content}</Text>
         </div>

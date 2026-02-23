@@ -93,6 +93,8 @@ const config: Config = {
         'organic-modal': '1.125rem 1rem 1.25rem 0.875rem',
         'organic-toast': '0.875rem 0.75rem 1rem 0.625rem',
         'organic-code': '0.75rem 0.625rem 0.75rem 0.5rem',
+        'organic-chat-user': '1rem 0.375rem 1rem 0.875rem',
+        'organic-chat-agent': '0.375rem 1rem 1rem 0.875rem',
       },
       boxShadow: {
         'organic-card': '2px 4px 8px -2px rgb(0 0 0 / 0.08), -1px 2px 4px -1px rgb(0 0 0 / 0.04)',

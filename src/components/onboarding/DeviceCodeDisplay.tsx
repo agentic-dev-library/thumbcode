@@ -8,7 +8,6 @@
 import { LinkIcon } from '@/components/icons';
 import { VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface DeviceCodeDisplayProps {
   userCode: string | null;
@@ -28,7 +27,7 @@ export function DeviceCodeDisplay({
   if (!userCode) {
     return (
       <VStack spacing="lg">
-        <div className="bg-surface p-6" style={organicBorderRadius.card}>
+        <div className="bg-surface p-6 rounded-organic-card">
           <div className="items-center mb-4">
             <LinkIcon size={40} color="teal" turbulence={0.25} />
           </div>
@@ -44,8 +43,7 @@ export function DeviceCodeDisplay({
           type="button"
           onClick={onStartDeviceFlow}
           disabled={isAuthenticating}
-          className={`bg-neutral-800 py-4 ${isAuthenticating ? 'opacity-70' : 'active:bg-neutral-700'}`}
-          style={organicBorderRadius.cta}
+          className={`bg-neutral-800 py-4 rounded-organic-cta ${isAuthenticating ? 'opacity-70' : 'active:bg-neutral-700'}`}
         >
           {isAuthenticating ? (
             <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
@@ -61,7 +59,7 @@ export function DeviceCodeDisplay({
 
   return (
     <VStack spacing="lg">
-      <div className="bg-surface p-6" style={organicBorderRadius.card}>
+      <div className="bg-surface p-6 rounded-organic-card">
         <Text size="sm" className="text-neutral-400 text-center mb-2">
           Enter this code on GitHub:
         </Text>
@@ -78,8 +76,7 @@ export function DeviceCodeDisplay({
       <button
         type="button"
         onClick={onOpenGitHub}
-        className="bg-neutral-800 py-4 active:bg-neutral-700"
-        style={organicBorderRadius.cta}
+        className="bg-neutral-800 py-4 active:bg-neutral-700 rounded-organic-cta"
       >
         <Text weight="semibold" className="text-white text-center">
           Open GitHub →
@@ -90,8 +87,7 @@ export function DeviceCodeDisplay({
         type="button"
         onClick={onCheckAuth}
         disabled={isAuthenticating}
-        className={`bg-teal-600 py-4 ${isAuthenticating ? 'opacity-70' : 'active:bg-teal-700'}`}
-        style={organicBorderRadius.cta}
+        className={`bg-teal-600 py-4 rounded-organic-cta ${isAuthenticating ? 'opacity-70' : 'active:bg-teal-700'}`}
       >
         {isAuthenticating ? (
           <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />

@@ -1,5 +1,4 @@
 import { Text } from '../primitives/Text';
-import { organicBorderRadius } from '../theme/organicStyles';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -36,9 +35,10 @@ export function Input({
           px-4 py-3
           font-body text-base text-neutral-900
           w-full
+          rounded-organic-input
           ${className}
         `}
-        style={{ ...organicBorderRadius.input, ...style }}
+        style={style}
         onChange={handleChange}
         {...props}
       />

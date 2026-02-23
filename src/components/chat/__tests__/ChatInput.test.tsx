@@ -7,10 +7,6 @@ vi.mock('@/components/ui', () => ({
   ),
 }));
 
-vi.mock('@/lib/organic-styles', () => ({
-  organicBorderRadius: { textInput: {}, button: {} },
-}));
-
 vi.mock('@/utils/design-tokens', () => ({
   getColor: vi.fn(() => '#9CA3AF'),
 }));

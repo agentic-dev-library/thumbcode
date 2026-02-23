@@ -13,10 +13,6 @@ vi.mock('@/components/ui', () => ({
   Text: ({ children, ...props }: any) => <span {...props}>{children}</span>,
 }));
 
-vi.mock('@/lib/organic-styles', () => ({
-  organicBorderRadius: { card: {} },
-}));
-
 describe('DiffViewer Performance', () => {
   beforeEach(() => {
     vi.restoreAllMocks();

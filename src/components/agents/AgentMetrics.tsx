@@ -6,7 +6,7 @@
 
 import { HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
+
 
 interface AgentMetricsProps {
   completed: number;
@@ -16,7 +16,7 @@ interface AgentMetricsProps {
 
 export function AgentMetrics({ completed, failed, successRate }: Readonly<AgentMetricsProps>) {
   return (
-    <div className="bg-surface p-4" style={organicBorderRadius.card}>
+    <div className="bg-surface p-4 rounded-organic-card">
       <Text weight="semibold" className="text-white mb-3">
         Metrics
       </Text>

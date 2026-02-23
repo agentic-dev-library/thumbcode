@@ -7,10 +7,6 @@ vi.mock('@/components/icons', () => ({
   SearchIcon: () => <span data-testid="search-icon">SearchIcon</span>,
 }));
 
-vi.mock('@/lib/organic-styles', () => ({
-  organicBorderRadius: { button: {} },
-}));
-
 describe('EmptyState', () => {
   it('renders title', () => {
     render(<EmptyState title="No projects yet" />);

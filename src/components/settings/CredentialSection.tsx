@@ -11,7 +11,6 @@ import { Badge } from '@/components/display';
 import type { IconColor } from '@/components/icons';
 import { HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 
 type CredentialIconComponent = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 
@@ -40,8 +39,7 @@ export function CredentialItem({
     <div className="py-4">
       <HStack align="start">
         <div
-          className="w-12 h-12 bg-surface-elevated items-center justify-center mr-4"
-          style={organicBorderRadius.badge}
+          className="w-12 h-12 bg-surface-elevated items-center justify-center mr-4 rounded-organic-badge"
         >
           <Icon size={24} color={iconColor} turbulence={0.2} />
         </div>
@@ -70,8 +68,7 @@ export function CredentialItem({
         <button
           type="button"
           onClick={isConnected ? onDisconnect : onConnect}
-          className={`px-4 py-2 ${isConnected ? 'bg-coral-500/20' : 'bg-teal-500/20'}`}
-          style={organicBorderRadius.button}
+          className={`px-4 py-2 rounded-organic-button ${isConnected ? 'bg-coral-500/20' : 'bg-teal-500/20'}`}
         >
           <Text className={isConnected ? 'text-coral-500' : 'text-teal-500'}>
             {isConnected ? 'Remove' : 'Connect'}
@@ -127,8 +124,7 @@ export function ApiKeyInput({
       {isEditing || !isSet ? (
         <VStack spacing="sm">
           <div
-            className={`bg-charcoal border px-4 py-3 ${error ? 'border-coral-500' : 'border-neutral-700'}`}
-            style={organicBorderRadius.input}
+            className={`bg-charcoal border px-4 py-3 rounded-organic-input ${error ? 'border-coral-500' : 'border-neutral-700'}`}
           >
             <input
               placeholder={placeholder}
@@ -149,8 +145,7 @@ export function ApiKeyInput({
               type="button"
               onClick={handleSave}
               disabled={!canSave}
-              className={`flex-1 py-3 ${canSave ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}
-              style={organicBorderRadius.button}
+              className={`flex-1 py-3 rounded-organic-button ${canSave ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}
             >
               {isSaving ? (
                 <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />
@@ -170,8 +165,7 @@ export function ApiKeyInput({
                   onChange('');
                 }}
                 disabled={isSaving}
-                className="flex-1 bg-surface py-3 active:bg-neutral-700"
-                style={organicBorderRadius.button}
+                className="flex-1 bg-surface py-3 active:bg-neutral-700 rounded-organic-button"
               >
                 <Text className="text-center text-white">Cancel</Text>
               </button>
@@ -182,8 +176,7 @@ export function ApiKeyInput({
         <button
           type="button"
           onClick={() => setIsEditing(true)}
-          className="bg-charcoal border border-neutral-700 px-4 py-3"
-          style={organicBorderRadius.input}
+          className="bg-charcoal border border-neutral-700 px-4 py-3 rounded-organic-input"
         >
           <Text className="text-neutral-500">••••••••••••••••</Text>
         </button>

@@ -1,5 +1,4 @@
 import { Text } from '../primitives/Text';
-import { organicBorderRadius } from '../theme/organicStyles';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -49,13 +48,11 @@ export function Button({
         ${variantClasses}
         ${sizeClasses}
         shadow-md
+        rounded-organic-button
         ${disabled || loading ? 'opacity-50' : 'opacity-100'}
         ${className}
       `}
-      style={{
-        ...organicBorderRadius.button,
-        ...style,
-      }}
+      style={style}
       {...props}
     >
       {loading ? (

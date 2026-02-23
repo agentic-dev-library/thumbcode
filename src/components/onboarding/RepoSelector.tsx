@@ -8,7 +8,6 @@ import type { Repository } from '@thumbcode/types';
 import { FolderIcon, SecurityIcon, StarIcon, SuccessIcon } from '@/components/icons';
 import { VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 
 export interface RepoListItem extends Repository {
   /** Stable key for list rendering */
@@ -94,8 +93,7 @@ export function RepoSelector({
               type="button"
               key={repo.key}
               onClick={() => onSelectRepo(repo)}
-              className={`p-4 ${selectedRepo?.key === repo.key ? 'bg-teal-600/20 border-teal-600' : 'bg-surface border-transparent'} border`}
-              style={organicBorderRadius.card}
+              className={`p-4 rounded-organic-card ${selectedRepo?.key === repo.key ? 'bg-teal-600/20 border-teal-600' : 'bg-surface border-transparent'} border`}
             >
               <div className="flex-row items-center mb-2">
                 <div className="mr-2">
@@ -138,8 +136,7 @@ export function RepoSelector({
         <button
           type="button"
           onClick={() => onModeChange('create')}
-          className="mt-4 p-4 border border-dashed border-teal-600/50 active:bg-teal-600/10"
-          style={organicBorderRadius.card}
+          className="mt-4 p-4 border border-dashed border-teal-600/50 active:bg-teal-600/10 rounded-organic-card"
         >
           <div className="flex-row items-center justify-center">
             <Text className="text-teal-400">+ Create new repository</Text>
@@ -148,8 +145,7 @@ export function RepoSelector({
       ) : (
         <VStack
           spacing="sm"
-          className="mt-4 p-4 bg-surface border border-teal-600/30"
-          style={organicBorderRadius.card}
+          className="mt-4 p-4 bg-surface border border-teal-600/30 rounded-organic-card"
         >
           <div className="flex-row items-center justify-between mb-2">
             <Text weight="semibold" className="text-white">
@@ -193,8 +189,7 @@ export function RepoSelector({
             type="button"
             onClick={onCreateNewRepo}
             disabled={!newRepoName.trim() || isCreatingRepo}
-            className={`py-3 ${newRepoName.trim() && !isCreatingRepo ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}
-            style={organicBorderRadius.button}
+            className={`py-3 rounded-organic-button ${newRepoName.trim() && !isCreatingRepo ? 'bg-teal-600 active:bg-teal-700' : 'bg-neutral-700'}`}
           >
             {isCreatingRepo ? (
               <div className="w-6 h-6 border-2 border-coral-500 border-t-transparent rounded-full animate-spin" />

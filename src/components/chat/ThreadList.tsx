@@ -14,7 +14,6 @@ import {
 import { Badge } from '@/components/display';
 import { Text } from '@/components/ui';
 import { formatRelativeTime, getParticipantColor } from '@/lib/chat-utils';
-import { organicBorderRadius } from '@/lib/organic-styles';
 
 /** Props for the ThreadList component */
 interface ThreadListProps {
@@ -42,10 +41,10 @@ function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
     <button
       type="button"
       onClick={onPress}
-      className="bg-surface-elevated p-4 mb-2 active:bg-neutral-700"
+      className="bg-surface-elevated p-4 mb-2 active:bg-neutral-700 rounded-organic-card"
       aria-label={accessibilityLabel}
       aria-description="Open this thread"
-      style={{ ...organicBorderRadius.card, transform: 'rotate(-0.2deg)' }}
+      style={{ transform: 'rotate(-0.2deg)' }}
     >
       <div className="flex-row items-start justify-between">
         <div className="flex-1 mr-3">
@@ -97,8 +96,7 @@ function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
         {/* Unread badge */}
         {hasUnread && (
           <div
-            className="bg-coral-500 px-2 py-0.5 min-w-[20px] items-center"
-            style={organicBorderRadius.pill}
+            className="bg-coral-500 px-2 py-0.5 min-w-[20px] items-center rounded-organic-input"
           >
             <Text size="xs" weight="semibold" className="text-white">
               {thread.unreadCount > 99 ? '99+' : thread.unreadCount}
@@ -129,8 +127,7 @@ export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadLi
           <button
             type="button"
             onClick={onCreateThread}
-            className="bg-coral-500 px-6 py-3 active:bg-coral-600"
-            style={organicBorderRadius.button}
+            className="bg-coral-500 px-6 py-3 active:bg-coral-600 rounded-organic-button"
             aria-label="New Thread"
             aria-description="Create a new chat thread"
           >
@@ -154,8 +151,7 @@ export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadLi
           <button
             type="button"
             onClick={onCreateThread}
-            className="bg-teal-600 px-3 py-1.5 active:bg-teal-700"
-            style={organicBorderRadius.button}
+            className="bg-teal-600 px-3 py-1.5 active:bg-teal-700 rounded-organic-button"
             aria-label="New Thread"
             aria-description="Create a new chat thread"
           >
