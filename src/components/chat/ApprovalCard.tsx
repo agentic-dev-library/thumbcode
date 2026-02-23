@@ -79,7 +79,7 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
   return (
     <div className="bg-surface-elevated p-4 max-w-[90%] rounded-organic-card" style={cardStyle}>
       {/* Header */}
-      <div className="flex-row items-center mb-2">
+      <div className="flex flex-rowitems-center mb-2">
         <div className="mr-2">
           <actionInfo.Icon size={20} color={actionInfo.iconColor} turbulence={0.2} />
         </div>
@@ -104,7 +104,7 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
 
       {/* Action buttons - only shown when pending */}
       {isPending && (
-        <div className="flex-row justify-end space-x-2 pt-2 border-t border-neutral-700">
+        <div className="flex flex-rowjustify-end space-x-2 pt-2 border-t border-neutral-700">
           <button
             type="button"
             onClick={onReject}

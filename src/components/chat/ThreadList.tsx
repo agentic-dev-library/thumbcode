@@ -47,10 +47,10 @@ function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
       aria-description="Open this thread"
       style={{ transform: 'rotate(-0.2deg)' }}
     >
-      <div className="flex-row items-start justify-between">
+      <div className="flex flex-rowitems-start justify-between">
         <div className="flex-1 mr-3">
           {/* Title with unread indicator */}
-          <div className="flex-row items-center mb-1">
+          <div className="flex flex-rowitems-center mb-1">
             {thread.isPinned && (
               <div className="mr-2">
                 <Badge variant="warning" size="sm">
@@ -69,7 +69,7 @@ function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
           </div>
 
           {/* Participants */}
-          <div className="flex-row items-center mb-1">
+          <div className="flex flex-rowitems-center mb-1">
             {thread.participants
               .filter((p) => p !== 'user')
               .slice(0, 3)
@@ -97,7 +97,7 @@ function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
         {/* Unread badge */}
         {hasUnread && (
           <div
-            className="bg-coral-500 px-2 py-0.5 min-w-[20px] items-center rounded-organic-input"
+            className="bg-coral-500 px-2 py-0.5 min-w-[20px] flex items-center justify-center rounded-organic-input"
           >
             <Text size="xs" weight="semibold" className="text-white">
               {thread.unreadCount > 99 ? '99+' : thread.unreadCount}
@@ -144,7 +144,7 @@ export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadLi
   return (
     <div className="flex-1">
       {/* Header with new thread button */}
-      <div className="flex-row justify-between items-center px-4 py-3 border-b border-neutral-700">
+      <div className="flex flex-rowjustify-between items-center px-4 py-3 border-b border-neutral-700">
         <Text variant="display" size="lg" className="text-white">
           Conversations
         </Text>

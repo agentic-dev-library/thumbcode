@@ -297,6 +297,9 @@ export const useProjectStore = create<ProjectState>()(
   )
 );
 
+// Stable empty arrays to prevent infinite re-renders from ?? [] creating new references
+const EMPTY_FILES: string[] = [];
+
 // Selectors for optimal re-renders
 export const selectProjects = (state: ProjectState) => state.projects;
 export const selectActiveProject = (state: ProjectState) =>
@@ -305,7 +308,7 @@ export const selectWorkspace = (state: ProjectState) => state.workspace;
 export const selectFileTree = (state: ProjectState) => state.fileTree;
 export const selectBranches = (state: ProjectState) => state.branches;
 export const selectCurrentBranch = (state: ProjectState) => state.workspace?.currentBranch ?? null;
-export const selectOpenFiles = (state: ProjectState) => state.workspace?.openFiles ?? [];
+export const selectOpenFiles = (state: ProjectState) => state.workspace?.openFiles ?? EMPTY_FILES;
 export const selectActiveFile = (state: ProjectState) => state.workspace?.activeFile ?? null;
 export const selectHasUnsavedChanges = (state: ProjectState) =>
   Object.keys(state.workspace?.unsavedChanges ?? {}).length > 0;

@@ -93,12 +93,12 @@ export function DiffViewer({
       <button
         type="button"
         onClick={() => setCollapsed(!collapsed)}
-        className="flex-row items-center justify-between px-3 py-2 bg-neutral-800 border-b border-neutral-700"
+        className="flex flex-rowitems-center justify-between px-3 py-2 bg-neutral-800 border-b border-neutral-700"
         aria-label={`${filename || 'file'}, ${additions} additions, ${deletions} deletions`}
         aria-description={collapsed ? 'Expand the diff' : 'Collapse the diff'}
         aria-expanded={!collapsed}
       >
-        <div className="flex-row items-center flex-1">
+        <div className="flex flex-rowitems-center flex-1">
           <div className="mr-2" style={{ transform: `rotate(${collapsed ? '-90deg' : '0deg'})` }}>
             <ChevronDownIcon size={14} color="warmGray" turbulence={0.12} />
           </div>
@@ -108,7 +108,7 @@ export function DiffViewer({
             </Text>
           )}
         </div>
-        <div className="flex-row items-center gap-2">
+        <div className="flex flex-rowitems-center gap-2">
           {additions > 0 && <Text className="font-mono text-xs text-teal-400">+{additions}</Text>}
           {deletions > 0 && <Text className="font-mono text-xs text-coral-400">-{deletions}</Text>}
         </div>

@@ -56,7 +56,7 @@ export function ChatInput({
   const canSend = text.trim().length > 0 && !disabled && !isSending;
 
   return (
-    <div className="flex-row items-end p-3 border-t border-neutral-700 bg-surface">
+    <div className="flex flex-rowitems-end p-3 border-t border-neutral-700 bg-surface">
       <input
         aria-label="Message input"
         className="flex-1 bg-neutral-800 text-white font-body px-4 py-3 mr-2 rounded-organic-input"

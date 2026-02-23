@@ -43,7 +43,7 @@ export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessag
     return (
       <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
         <div className="max-w-[90%]">
-          <div className="flex-row items-center mb-1">
+          <div className="flex flex-rowitems-center mb-1">
             <div className={`px-2 py-0.5 ${senderInfo.bgColor} rounded-organic-input`}>
               <Text size="xs" className={senderInfo.textColor}>
                 {senderInfo.name}
@@ -66,7 +66,7 @@ export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessag
     <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
       <div className="max-w-[80%]">
         {!isUser && (
-          <div className="flex-row items-center mb-1">
+          <div className="flex flex-rowitems-center mb-1">
             <div className={`px-2 py-0.5 ${senderInfo.bgColor} rounded-organic-input`}>
               <Text size="xs" className={senderInfo.textColor}>
                 {senderInfo.name}

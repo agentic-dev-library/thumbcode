@@ -58,7 +58,7 @@ export function ErrorFallback({
         <VStack spacing="lg" align="center">
           {/* Error Icon */}
           <div
-            className="w-20 h-20 bg-coral-500/20 items-center justify-center rounded-organic-hero"
+            className="w-20 h-20 flex items-center justify-center bg-coral-500/20 rounded-organic-hero"
           >
             <ErrorIcon size={40} color="coral" turbulence={0.25} />
           </div>

@@ -39,7 +39,7 @@ export function CredentialItem({
     <div className="py-4">
       <HStack align="start">
         <div
-          className="w-12 h-12 bg-surface-elevated items-center justify-center mr-4 rounded-organic-badge"
+          className="w-12 h-12 flex items-center justify-center bg-surface-elevated mr-4 rounded-organic-badge"
         >
           <Icon size={24} color={iconColor} turbulence={0.2} />
         </div>

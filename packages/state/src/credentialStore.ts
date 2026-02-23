@@ -188,6 +188,9 @@ export const useCredentialStore = create<CredentialState>()(
   )
 );
 
+// Stable empty arrays to prevent infinite re-renders from .filter() creating new references
+const EMPTY_CREDENTIALS: CredentialMetadata[] = [];
+
 // Selectors for optimal re-renders
 export const selectCredentials = (state: CredentialState) => state.credentials;
 export const selectCredentialByProvider =

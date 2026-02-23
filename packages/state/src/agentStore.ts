@@ -10,6 +10,10 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
+// Stable empty arrays to prevent infinite re-renders from ?? [] or .filter() creating new references
+const EMPTY_AGENTS: Agent[] = [];
+const EMPTY_TASKS: AgentTask[] = [];
+
 // Agent role types matching ThumbCode's multi-agent system
 export type AgentRole = 'architect' | 'implementer' | 'reviewer' | 'tester';
 

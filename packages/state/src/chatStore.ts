@@ -9,6 +9,10 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
+// Stable empty arrays to prevent infinite re-renders from ?? [] creating new references
+const EMPTY_MESSAGES: Message[] = [];
+const EMPTY_STRINGS: string[] = [];
+
 // Message sender types
 export type MessageSender = 'user' | 'architect' | 'implementer' | 'reviewer' | 'tester' | 'system';
 
@@ -285,9 +289,9 @@ export const selectThreads = (state: ChatState) => state.threads;
 export const selectActiveThread = (state: ChatState) =>
   state.threads.find((t) => t.id === state.activeThreadId) ?? null;
 export const selectActiveThreadMessages = (state: ChatState) =>
-  state.activeThreadId ? (state.messages[state.activeThreadId] ?? []) : [];
+  state.activeThreadId ? (state.messages[state.activeThreadId] ?? EMPTY_MESSAGES) : EMPTY_MESSAGES;
 export const selectThreadMessages = (threadId: string) => (state: ChatState) =>
-  state.messages[threadId] ?? [];
+  state.messages[threadId] ?? EMPTY_MESSAGES;
 export const selectUnreadCount = (state: ChatState) =>
   state.threads.reduce((sum, t) => sum + t.unreadCount, 0);
 export const selectPinnedThreads = (state: ChatState) => state.threads.filter((t) => t.isPinned);
@@ -296,7 +300,7 @@ export const selectRecentThreads = (state: ChatState) =>
     .filter((t) => !t.isPinned)
     .sort((a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime());
 export const selectTypingIndicators = (threadId: string) => (state: ChatState) =>
-  state.isTyping[threadId] ?? [];
+  state.isTyping[threadId] ?? EMPTY_STRINGS;
 export const selectPendingApprovals = (state: ChatState) =>
   Object.values(state.messages)
     .flat()
