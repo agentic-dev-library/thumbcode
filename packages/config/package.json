@@ -8,11 +8,11 @@
     ".": "./src/index.ts",
     "./env": "./src/env.ts",
     "./constants": "./src/constants.ts",
-    "./features": "./src/features.ts"
+    "./features": "./src/features.ts",
+    "./provider-registry": "./src/provider-registry.ts"
   },
   "dependencies": {},
   "peerDependencies": {
-    "react": ">=18.0.0",
-    "react-native": ">=0.70.0"
+    "react": ">=18.0.0"
   }
 }

@@ -37,3 +37,16 @@ export {
   isFeatureEnabledWithOverrides,
   overrideFeature,
 } from './features';
+
+// Provider Registry
+export {
+  type CapabilitySupport,
+  getProvider,
+  getProvidersWithCapability,
+  getProviderTier,
+  PROVIDER_REGISTRY,
+  type ProviderCapability,
+  type ProviderCapabilityEntry,
+  supportsCapability,
+  validateProviderForTask,
+} from './provider-registry';
