@@ -28,6 +28,7 @@ export type {
   MessageContentType,
   MessageSender,
   MessageStatus,
+  VariantSetMessage,
   VoiceMessage,
 } from './chatStore';
 // Chat store

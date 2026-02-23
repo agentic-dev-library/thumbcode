@@ -24,6 +24,7 @@ import {
   Link,
   LogOut,
   Palette,
+  Plug,
   Scale,
   Smartphone,
   Users,
@@ -271,6 +272,14 @@ export default function SettingsPage() {
             title="Branch Protection"
             subtitle="Protected branches and rules"
             onClick={() => navigate('/settings/agents')}
+          />
+          <HorizontalDivider />
+          <SettingsItemRow
+            Icon={Plug}
+            iconClassName="text-teal-500"
+            title="MCP Servers"
+            subtitle="Extend agent capabilities"
+            onClick={() => navigate('/settings/mcp')}
           />
         </SettingsSectionGroup>
 
