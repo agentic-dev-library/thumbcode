@@ -7,6 +7,7 @@
 
 import type { ApprovalMessage, Message } from '@thumbcode/state';
 import { Text } from '@/components/ui';
+import { formatTime, getSenderInfo } from '@/lib/chat-utils';
 import { organicBorderRadius } from '@/lib/organic-styles';
 import { ApprovalCard } from './ApprovalCard';
 import { CodeBlock } from './CodeBlock';
@@ -17,30 +18,6 @@ interface ChatMessageProps {
   message: Message;
   /** Called when the user responds to an approval request */
   onApprovalResponse?: (messageId: string, approved: boolean) => void;
-}
-
-/**
- * Get sender display name and color
- */
-function getSenderInfo(sender: Message['sender']) {
-  const senderMap: Record<Message['sender'], { name: string; bgColor: string; textColor: string }> =
-    {
-      user: { name: 'You', bgColor: 'bg-teal-600', textColor: 'text-white' },
-      architect: { name: 'Architect', bgColor: 'bg-coral-500', textColor: 'text-white' },
-      implementer: { name: 'Implementer', bgColor: 'bg-gold-500', textColor: 'text-charcoal' },
-      reviewer: { name: 'Reviewer', bgColor: 'bg-teal-500', textColor: 'text-white' },
-      tester: { name: 'Tester', bgColor: 'bg-neutral-600', textColor: 'text-white' },
-      system: { name: 'System', bgColor: 'bg-neutral-700', textColor: 'text-neutral-300' },
-    };
-  return senderMap[sender] || senderMap.system;
-}
-
-/**
- * Format timestamp for display
- */
-function formatTime(timestamp: string): string {
-  const date = new Date(timestamp);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
 export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessageProps>) {

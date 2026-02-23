@@ -13,6 +13,7 @@ import {
 } from '@thumbcode/state';
 import { Badge } from '@/components/display';
 import { Text } from '@/components/ui';
+import { formatRelativeTime, getParticipantColor } from '@/lib/chat-utils';
 import { organicBorderRadius } from '@/lib/organic-styles';
 
 /** Props for the ThreadList component */
@@ -29,38 +30,6 @@ interface ThreadItemProps {
   thread: ChatThread;
   /** Called when the thread item is pressed */
   onPress: () => void;
-}
-
-/**
- * Format relative time for thread
- */
-function formatRelativeTime(timestamp: string): string {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-
-  if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  if (days < 7) return `${days}d ago`;
-  return date.toLocaleDateString();
-}
-
-/**
- * Get participant badge colors
- */
-function getParticipantBadge(participant: ChatThread['participants'][number]) {
-  const colorMap: Record<string, string> = {
-    architect: 'bg-coral-500',
-    implementer: 'bg-gold-500',
-    reviewer: 'bg-teal-500',
-    tester: 'bg-neutral-500',
-  };
-  return colorMap[participant] || 'bg-neutral-600';
 }
 
 function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
@@ -107,7 +76,7 @@ function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
               .map((participant, index) => (
                 <div
                   key={participant}
-                  className={`w-2 h-2 rounded-full ${getParticipantBadge(participant)} ${
+                  className={`w-2 h-2 rounded-full ${getParticipantColor(participant)} ${
                     index > 0 ? 'ml-1' : ''
                   }`}
                 />
