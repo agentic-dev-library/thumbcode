@@ -95,6 +95,41 @@ Use the \`list_components\` tool to discover available components, then read the
 - Dark/light mode variants`;
 
 /**
+ * Built-in variant style presets for multi-variant generation.
+ * Each preset defines a visual approach while remaining brand-compliant.
+ */
+const VARIANT_PRESETS: Record<string, { label: string; description: string; styleHints: string }> =
+  {
+    minimal: {
+      label: 'Minimal',
+      description:
+        'Clean, spacious layout with subtle accents. Emphasis on whitespace and typography.',
+      styleHints:
+        'Use teal-600 for a single accent line or icon. Large padding (p-6). Fraunces display text only for the primary label. No shadows, just a thin border-teal-100 border. Muted color usage.',
+    },
+    rich: {
+      label: 'Rich',
+      description:
+        'Full-featured layout with coral accents, gold highlights, and layered organic shadows.',
+      styleHints:
+        'Coral-500 primary button, gold-400 highlight badge/indicator, teal-600 secondary text. Multi-layer shadow-organic. Subtle card rotation. All three brand colors visible.',
+    },
+    compact: {
+      label: 'Compact',
+      description: 'Dense, information-rich layout optimized for small screens and lists.',
+      styleHints:
+        'Tight padding (p-2 or p-3). Smaller font sizes. Horizontal flex layout. Badge-style indicators. Mono font for data values. Minimal vertical spacing (gap-1).',
+    },
+    playful: {
+      label: 'Playful',
+      description:
+        'Expressive layout with bolder rotations, larger organic shapes, and warm gold accents.',
+      styleHints:
+        'Larger card rotation (rotate(-1deg)/rotate(1deg)). Gold-400 background accents. Coral-500 large icons. Exaggerated asymmetric border-radius. Fraunces display at larger sizes. Visible shadow-coral.',
+    },
+  };
+
+/**
  * Tool definitions for the FrontendSkill
  */
 const FRONTEND_TOOLS: SkillToolDefinition[] = [
@@ -189,6 +224,36 @@ const FRONTEND_TOOLS: SkillToolDefinition[] = [
       },
     },
   },
+  {
+    name: 'generate_variants',
+    description:
+      'Generate multiple design variants of a component (like 21st.dev). Each variant uses the same props but a different visual approach (minimal, rich, compact, playful). All variants comply with the ThumbCode P3 design system. Users pick their favorite.',
+    parameters: {
+      description: {
+        type: 'string',
+        description: 'What the component should do and display',
+        required: true,
+      },
+      name: {
+        type: 'string',
+        description: 'PascalCase component name (e.g., "AgentStatusCard")',
+        required: true,
+      },
+      variantCount: {
+        type: 'string',
+        description: 'Number of variants to generate (1-4, default 3)',
+      },
+      styleHints: {
+        type: 'string',
+        description:
+          'Comma-separated style hints to use instead of defaults (e.g., "minimal,rich,compact")',
+      },
+      props: {
+        type: 'string',
+        description: 'JSON string describing the props interface (shared across all variants)',
+      },
+    },
+  },
 ];
 
 /**
@@ -196,7 +261,7 @@ const FRONTEND_TOOLS: SkillToolDefinition[] = [
  *
  * Provides ThumbCode design system awareness to agents through:
  * - Tiered context injection for token budget management
- * - 5 frontend-specific tools for component work
+ * - 6 frontend-specific tools for component work
  */
 export class FrontendSkill implements AgentSkill {
   readonly id = 'frontend-skill';
@@ -238,6 +303,8 @@ export class FrontendSkill implements AgentSkill {
         return this.compareUI(params);
       case 'preview_component':
         return this.previewComponent(params);
+      case 'generate_variants':
+        return this.generateVariants(params);
       default:
         return { success: false, output: '', error: `Unknown tool: ${toolName}` };
     }
@@ -521,5 +588,245 @@ export function ${name}({ ...props }: ${name}Props) {
         2
       ),
     };
+  }
+
+  private async generateVariants(params: Record<string, unknown>): Promise<ToolResult> {
+    const description = params.description as string;
+    const name = params.name as string;
+    const variantCount = Math.min(4, Math.max(1, Number(params.variantCount) || 3));
+    const styleHintsParam = params.styleHints as string | undefined;
+    const propsJson = params.props as string | undefined;
+
+    if (!description || !name) {
+      return {
+        success: false,
+        output: '',
+        error: 'Both "description" and "name" parameters are required',
+      };
+    }
+
+    // Determine which variant styles to use
+    const presetKeys = Object.keys(VARIANT_PRESETS);
+    let selectedKeys: string[];
+    if (styleHintsParam) {
+      const requested = styleHintsParam.split(',').map((s) => s.trim().toLowerCase());
+      selectedKeys = requested.filter((k) => presetKeys.includes(k));
+      if (selectedKeys.length === 0) {
+        selectedKeys = presetKeys.slice(0, variantCount);
+      }
+    } else {
+      selectedKeys = presetKeys.slice(0, variantCount);
+    }
+
+    // Parse shared props
+    let propsInterface = '';
+    if (propsJson) {
+      try {
+        const props = JSON.parse(propsJson) as Record<string, string>;
+        const propLines = Object.entries(props)
+          .map(([propName, propType]) => `  ${propName}: ${propType};`)
+          .join('\n');
+        propsInterface = `interface ${name}Props {\n${propLines}\n}`;
+      } catch {
+        propsInterface = `interface ${name}Props {\n  // TODO: Define props\n}`;
+      }
+    } else {
+      propsInterface = `interface ${name}Props {\n  // TODO: Define props based on: ${description}\n}`;
+    }
+
+    const kebabName = name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+
+    // Generate each variant
+    const variants = selectedKeys.map((key) => {
+      const preset = VARIANT_PRESETS[key];
+      const variantSuffix = key.charAt(0).toUpperCase() + key.slice(1);
+
+      const code = this.buildVariantCode(name, variantSuffix, description, propsInterface, preset);
+
+      const previewHtml = this.buildVariantPreviewHtml(name, variantSuffix, code, preset);
+
+      return {
+        variantName: `${name}${variantSuffix}`,
+        variantKey: key,
+        label: preset.label,
+        description: preset.description,
+        styleHints: preset.styleHints,
+        fileName: `${kebabName}-${key}.tsx`,
+        code,
+        previewHtml,
+      };
+    });
+
+    return {
+      success: true,
+      output: JSON.stringify(
+        {
+          componentName: name,
+          description,
+          variantCount: variants.length,
+          sharedProps: propsInterface,
+          variants,
+        },
+        null,
+        2
+      ),
+    };
+  }
+
+  private buildVariantCode(
+    name: string,
+    suffix: string,
+    description: string,
+    propsInterface: string,
+    preset: { label: string; description: string; styleHints: string }
+  ): string {
+    // Each variant gets a unique visual approach based on the preset
+    const styleComment = `// Style: ${preset.label} - ${preset.description}`;
+    const componentName = `${name}${suffix}`;
+
+    // Generate style objects that differ per variant
+    const styles = this.getVariantStyles(suffix.toLowerCase());
+
+    return `/**
+ * ${componentName}
+ *
+ * ${description}
+ * Variant: ${preset.label} - ${preset.description}
+ *
+ * ${styleComment}
+ */
+
+import { Text, View } from 'react-native';
+
+${propsInterface}
+
+export function ${componentName}({ ...props }: ${name}Props) {
+  return (
+    <View
+      className="${styles.containerClasses}"
+      style={{
+        borderTopLeftRadius: ${styles.borderRadius[0]},
+        borderTopRightRadius: ${styles.borderRadius[1]},
+        borderBottomRightRadius: ${styles.borderRadius[2]},
+        borderBottomLeftRadius: ${styles.borderRadius[3]},
+        shadowColor: '${styles.shadowColor}',
+        shadowOffset: { width: 0, height: ${styles.shadowHeight} },
+        shadowOpacity: 1,
+        shadowRadius: ${styles.shadowRadius},
+        transform: [{ rotate: '${styles.rotation}' }],
+      }}
+    >
+      {/* TODO: Implement ${description} */}
+      {/* Style hints: ${preset.styleHints} */}
+    </View>
+  );
+}
+`;
+  }
+
+  private getVariantStyles(variantKey: string): {
+    containerClasses: string;
+    borderRadius: [number, number, number, number];
+    shadowColor: string;
+    shadowHeight: number;
+    shadowRadius: number;
+    rotation: string;
+  } {
+    switch (variantKey) {
+      case 'minimal':
+        return {
+          containerClasses: 'bg-surface p-6 border border-teal-100',
+          borderRadius: [16, 14, 18, 12],
+          shadowColor: 'transparent',
+          shadowHeight: 0,
+          shadowRadius: 0,
+          rotation: '0deg',
+        };
+      case 'rich':
+        return {
+          containerClasses: 'bg-surface-elevated p-5',
+          borderRadius: [20, 18, 22, 16],
+          shadowColor: 'rgba(13, 148, 136, 0.08)',
+          shadowHeight: 8,
+          shadowRadius: 24,
+          rotation: '-0.3deg',
+        };
+      case 'compact':
+        return {
+          containerClasses: 'bg-surface-elevated p-2 flex-row items-center gap-2',
+          borderRadius: [10, 8, 12, 8],
+          shadowColor: 'rgba(21, 24, 32, 0.08)',
+          shadowHeight: 2,
+          shadowRadius: 8,
+          rotation: '0deg',
+        };
+      case 'playful':
+        return {
+          containerClasses: 'bg-surface-elevated p-5',
+          borderRadius: [28, 22, 30, 20],
+          shadowColor: 'rgba(255, 112, 89, 0.2)',
+          shadowHeight: 10,
+          shadowRadius: 32,
+          rotation: '-1deg',
+        };
+      default:
+        return {
+          containerClasses: 'bg-surface-elevated p-4',
+          borderRadius: [20, 18, 22, 16],
+          shadowColor: 'rgba(13, 148, 136, 0.08)',
+          shadowHeight: 8,
+          shadowRadius: 24,
+          rotation: '-0.3deg',
+        };
+    }
+  }
+
+  private buildVariantPreviewHtml(
+    name: string,
+    suffix: string,
+    code: string,
+    preset: { label: string; description: string }
+  ): string {
+    const componentName = `${name}${suffix}`;
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${componentName} - ${preset.label} Variant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,100..900&family=Cabin:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            coral: { 500: '#FF7059', 600: '#E85A4F' },
+            teal: { 100: '#CCFBF1', 500: '#14B8A6', 600: '#0D9488' },
+            gold: { 400: '#F5D563' },
+            charcoal: '#151820',
+            surface: { DEFAULT: '#1E293B', elevated: '#334155' },
+          },
+          fontFamily: {
+            display: ['Fraunces', 'Georgia', 'serif'],
+            body: ['Cabin', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #151820; color: #F8FAFC; font-family: 'Cabin', system-ui, sans-serif; padding: 24px; margin: 0; }
+    .variant-label { font-family: 'Fraunces', Georgia, serif; color: #F5D563; font-size: 14px; margin-bottom: 8px; }
+    .variant-desc { color: #94A3B8; font-size: 12px; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div class="variant-label">${preset.label} Variant</div>
+  <div class="variant-desc">${preset.description}</div>
+  <pre style="font-family: 'JetBrains Mono', monospace; font-size: 11px; white-space: pre-wrap; color: #CBD5E1;">${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+</body>
+</html>`;
   }
 }

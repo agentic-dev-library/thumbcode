@@ -4,7 +4,7 @@
  * Verifies:
  * - AgentSkill interface compliance
  * - FrontendSkill context tier content
- * - Each of the 5 frontend tools
+ * - Each of the 6 frontend tools (including generate_variants)
  * - BaseAgent with skills attached
  * - System prompt includes skill extensions
  */
@@ -135,7 +135,7 @@ describe('AgentSkill interface compliance', () => {
   it('returns tool definitions with proper structure', () => {
     const skill = new FrontendSkill();
     const tools = skill.getTools();
-    expect(tools.length).toBe(5);
+    expect(tools.length).toBe(6);
 
     for (const tool of tools) {
       expect(typeof tool.name).toBe('string');
@@ -335,6 +335,191 @@ describe('FrontendSkill tools', () => {
     });
   });
 
+  describe('generate_variants', () => {
+    it('generates 3 variants by default', async () => {
+      const result = await skill.executeTool('generate_variants', {
+        name: 'StatusCard',
+        description: 'Displays agent status with health indicator',
+      });
+      expect(result.success).toBe(true);
+
+      const data = JSON.parse(result.output);
+      expect(data.componentName).toBe('StatusCard');
+      expect(data.variantCount).toBe(3);
+      expect(data.variants).toHaveLength(3);
+
+      // Each variant has required fields
+      for (const variant of data.variants) {
+        expect(variant.variantName).toBeDefined();
+        expect(variant.variantKey).toBeDefined();
+        expect(variant.label).toBeDefined();
+        expect(variant.description).toBeDefined();
+        expect(variant.code).toBeDefined();
+        expect(variant.previewHtml).toBeDefined();
+        expect(variant.fileName).toBeDefined();
+      }
+    });
+
+    it('generates the correct variant keys', async () => {
+      const result = await skill.executeTool('generate_variants', {
+        name: 'TestWidget',
+        description: 'A test widget',
+      });
+      const data = JSON.parse(result.output);
+
+      const keys = data.variants.map((v: { variantKey: string }) => v.variantKey);
+      expect(keys).toContain('minimal');
+      expect(keys).toContain('rich');
+      expect(keys).toContain('compact');
+    });
+
+    it('respects custom variant count', async () => {
+      const result = await skill.executeTool('generate_variants', {
+        name: 'Badge',
+        description: 'Status badge',
+        variantCount: '2',
+      });
+      const data = JSON.parse(result.output);
+      expect(data.variantCount).toBe(2);
+      expect(data.variants).toHaveLength(2);
+    });
+
+    it('caps variant count at 4', async () => {
+      const result = await skill.executeTool('generate_variants', {
+        name: 'Card',
+        description: 'A card',
+        variantCount: '10',
+      });
+      const data = JSON.parse(result.output);
+      expect(data.variantCount).toBe(4);
+      expect(data.variants).toHaveLength(4);
+    });
+
+    it('uses specified style hints', async () => {
+      const result = await skill.executeTool('generate_variants', {
+        name: 'Panel',
+        description: 'A panel',
+        styleHints: 'playful,compact',
+      });
+      const data = JSON.parse(result.output);
+
+      const keys = data.variants.map((v: { variantKey: string }) => v.variantKey);
+      expect(keys).toContain('playful');
+      expect(keys).toContain('compact');
+      expect(keys).not.toContain('minimal');
+    });
+
+    it('falls back to defaults for invalid style hints', async () => {
+      const result = await skill.executeTool('generate_variants', {
+        name: 'Widget',
+        description: 'A widget',
+        styleHints: 'neon,brutalist,glass',
+      });
+      const data = JSON.parse(result.output);
+      // Falls back to default first N presets
+      expect(data.variants.length).toBeGreaterThan(0);
+    });
+
+    it('all variants are brand-compliant (organic border-radius)', async () => {
+      const result = await skill.executeTool('generate_variants', {
+        name: 'InfoCard',
+        description: 'Information card',
+        variantCount: '4',
+      });
+      const data = JSON.parse(result.output);
+
+      for (const variant of data.variants) {
+        // All variants should have organic (asymmetric) border radius
+        expect(variant.code).toContain('borderTopLeftRadius');
+        expect(variant.code).toContain('borderBottomRightRadius');
+      }
+    });
+
+    it('includes shared props in all variants', async () => {
+      const result = await skill.executeTool('generate_variants', {
+        name: 'UserCard',
+        description: 'User profile card',
+        props: JSON.stringify({ username: 'string', avatarUrl: 'string' }),
+      });
+      const data = JSON.parse(result.output);
+
+      expect(data.sharedProps).toContain('username: string');
+      expect(data.sharedProps).toContain('avatarUrl: string');
+
+      for (const variant of data.variants) {
+        expect(variant.code).toContain('username: string');
+        expect(variant.code).toContain('avatarUrl: string');
+      }
+    });
+
+    it('generates unique file names per variant', async () => {
+      const result = await skill.executeTool('generate_variants', {
+        name: 'ActionButton',
+        description: 'Action button',
+      });
+      const data = JSON.parse(result.output);
+
+      const fileNames = data.variants.map((v: { fileName: string }) => v.fileName);
+      const unique = new Set(fileNames);
+      expect(unique.size).toBe(fileNames.length);
+
+      // File names follow kebab-case-variant pattern
+      for (const fileName of fileNames) {
+        expect(fileName).toMatch(/^action-button-.+\.tsx$/);
+      }
+    });
+
+    it('each variant has valid preview HTML', async () => {
+      const result = await skill.executeTool('generate_variants', {
+        name: 'Card',
+        description: 'A display card',
+        variantCount: '2',
+      });
+      const data = JSON.parse(result.output);
+
+      for (const variant of data.variants) {
+        expect(variant.previewHtml).toContain('<!DOCTYPE html>');
+        expect(variant.previewHtml).toContain('tailwindcss');
+        expect(variant.previewHtml).toContain('Fraunces');
+        expect(variant.previewHtml).toContain(variant.label);
+      }
+    });
+
+    it('fails without required params', async () => {
+      const result = await skill.executeTool('generate_variants', {});
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('required');
+    });
+
+    it('fails with only name', async () => {
+      const result = await skill.executeTool('generate_variants', { name: 'Test' });
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('required');
+    });
+
+    it('minimal variant has no shadow', async () => {
+      const result = await skill.executeTool('generate_variants', {
+        name: 'MinTest',
+        description: 'Test',
+        styleHints: 'minimal',
+      });
+      const data = JSON.parse(result.output);
+      const minimalVariant = data.variants[0];
+      expect(minimalVariant.code).toContain("shadowColor: 'transparent'");
+    });
+
+    it('playful variant has larger rotation', async () => {
+      const result = await skill.executeTool('generate_variants', {
+        name: 'PlayTest',
+        description: 'Test',
+        styleHints: 'playful',
+      });
+      const data = JSON.parse(result.output);
+      const playfulVariant = data.variants[0];
+      expect(playfulVariant.code).toContain("rotate: '-1deg'");
+    });
+  });
+
   describe('unknown tool', () => {
     it('returns error for unknown tool name', async () => {
       const result = await skill.executeTool('nonexistent_tool', {});
@@ -395,7 +580,7 @@ describe('BaseAgent with skills', () => {
 
     agent.addSkill(new FrontendSkill());
     const withSkillTools = agent.testGetToolsWithSkills();
-    expect(withSkillTools.length).toBe(6); // 1 base + 5 skill tools
+    expect(withSkillTools.length).toBe(7); // 1 base + 6 skill tools
 
     const toolNames = withSkillTools.map((t) => t.name);
     expect(toolNames).toContain('test_tool');
@@ -404,6 +589,7 @@ describe('BaseAgent with skills', () => {
     expect(toolNames).toContain('analyze_ui_screenshot');
     expect(toolNames).toContain('compare_ui');
     expect(toolNames).toContain('preview_component');
+    expect(toolNames).toContain('generate_variants');
   });
 
   it('skill tools have proper ToolDefinition shape', () => {
@@ -486,6 +672,7 @@ describe('ImplementerAgent has FrontendSkill by default', () => {
     const info = agent.getInfo();
     expect(info.config.tools).toContain('list_components');
     expect(info.config.tools).toContain('generate_component');
+    expect(info.config.tools).toContain('generate_variants');
     expect(info.config.tools).toContain('preview_component');
     // Also has base implementer tools
     expect(info.config.tools).toContain('read_file');
