@@ -7,6 +7,7 @@
  * - AgentResponseService: agent response simulation, approval workflows
  */
 
+import type { ToolExecutionBridge } from '@thumbcode/agent-intelligence';
 import type { ChatThread, Message, MessageSender } from '@thumbcode/state';
 import { AgentResponseService } from './AgentResponseService';
 import { MessageStore } from './MessageStore';
@@ -121,6 +122,11 @@ class ChatServiceImpl {
 
   respondToApproval(threadId: string, messageId: string, approved: boolean): void {
     this.agentResponseService.respondToApproval(threadId, messageId, approved);
+  }
+
+  // Tool bridge integration for approval-triggered commits
+  setToolBridge(bridge: ToolExecutionBridge, workspaceDir: string): void {
+    this.agentResponseService.setToolBridge(bridge, workspaceDir);
   }
 
   // Pipeline methods (delegated to AgentResponseService)

@@ -46,16 +46,32 @@ export interface CommitServiceLike {
     dir: string,
     depth?: number
   ): Promise<{ success: boolean; data?: CommitInfoLike[]; error?: string }>;
+  stage(options: {
+    dir: string;
+    filepath: string | string[];
+  }): Promise<{ success: boolean; error?: string }>;
+  unstage(options: {
+    dir: string;
+    filepath: string | string[];
+  }): Promise<{ success: boolean; error?: string }>;
+  commit(options: {
+    dir: string;
+    message: string;
+    author: { name: string; email: string; timestamp?: number };
+  }): Promise<{ success: boolean; data?: string; error?: string }>;
 }
 
 /**
- * File system adapter for reading workspace files.
+ * File system adapter for workspace files.
  * Allows injection of the Capacitor FS or a mock.
  */
 export interface FileSystemLike {
   readFile(path: string): Promise<string>;
   readDir(path: string): Promise<string[]>;
   stat(path: string): Promise<{ isFile: boolean; isDirectory: boolean }>;
+  writeFile(path: string, content: string): Promise<void>;
+  deleteFile(path: string): Promise<void>;
+  mkdir(path: string): Promise<void>;
 }
 
 /**
@@ -109,4 +125,24 @@ export interface CommitInfoLike {
   oid: string;
   message: string;
   author: { name: string; email: string; timestamp?: number };
+}
+
+/**
+ * Tracks a staged file change for the approval-commit flow.
+ */
+export interface StagedChange {
+  path: string;
+  type: 'write' | 'create' | 'delete';
+  agentRole?: string;
+  taskDescription?: string;
+}
+
+/**
+ * Result of a commit triggered by approval.
+ */
+export interface CommitResult {
+  success: boolean;
+  sha?: string;
+  filesChanged: number;
+  error?: string;
 }

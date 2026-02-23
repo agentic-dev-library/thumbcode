@@ -1,7 +1,8 @@
 /**
  * ToolExecutionBridge Tests
  *
- * Verifies the read-tool-to-git-service bridge.
+ * Verifies the read and write tool-to-git-service bridge,
+ * including staged change tracking and approval-triggered commits.
  * All git and file system operations are mocked.
  */
 
@@ -75,6 +76,9 @@ function createMockDeps(): ToolBridgeDependencies {
           },
         ],
       }),
+      stage: vi.fn().mockResolvedValue({ success: true }),
+      unstage: vi.fn().mockResolvedValue({ success: true }),
+      commit: vi.fn().mockResolvedValue({ success: true, data: 'def456' }),
     },
     fileSystem: {
       readFile: vi.fn().mockImplementation(async (path: string) => {
@@ -103,6 +107,9 @@ function createMockDeps(): ToolBridgeDependencies {
         }
         return { isFile: false, isDirectory: true };
       }),
+      writeFile: vi.fn().mockResolvedValue(undefined),
+      deleteFile: vi.fn().mockResolvedValue(undefined),
+      mkdir: vi.fn().mockResolvedValue(undefined),
     },
   };
 }
@@ -347,6 +354,334 @@ describe('ToolExecutionBridge', () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('Unknown tool: nonexistent_tool');
+    });
+  });
+
+  describe('write_file', () => {
+    it('should write file content and stage it', async () => {
+      const result = await bridge.execute(
+        'write_file',
+        { path: 'src/index.ts', content: 'new content' },
+        workspaceDir
+      );
+
+      expect(result.success).toBe(true);
+      expect(result.output).toContain('File written and staged');
+      expect(deps.fileSystem.writeFile).toHaveBeenCalledWith(
+        '/workspace/src/index.ts',
+        'new content'
+      );
+      expect(deps.commitService.stage).toHaveBeenCalledWith({
+        dir: workspaceDir,
+        filepath: 'src/index.ts',
+      });
+    });
+
+    it('should return error when path is missing', async () => {
+      const result = await bridge.execute('write_file', { content: 'data' }, workspaceDir);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('requires a "path" parameter');
+    });
+
+    it('should return error when content is missing', async () => {
+      const result = await bridge.execute('write_file', { path: 'src/index.ts' }, workspaceDir);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('requires a "content" parameter');
+    });
+
+    it('should return error when file does not exist', async () => {
+      vi.mocked(deps.fileSystem.stat).mockRejectedValueOnce(new Error('ENOENT'));
+
+      const result = await bridge.execute(
+        'write_file',
+        { path: 'nonexistent.ts', content: 'data' },
+        workspaceDir
+      );
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('File not found');
+      expect(result.error).toContain('Use create_file');
+    });
+
+    it('should return error when writeFile fails', async () => {
+      vi.mocked(deps.fileSystem.writeFile).mockRejectedValueOnce(new Error('Disk full'));
+
+      const result = await bridge.execute(
+        'write_file',
+        { path: 'src/index.ts', content: 'data' },
+        workspaceDir
+      );
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Disk full');
+    });
+
+    it('should track the change with agent context', async () => {
+      await bridge.execute(
+        'write_file',
+        {
+          path: 'src/index.ts',
+          content: 'new',
+          agent_role: 'implementer',
+          task_description: 'update logic',
+        },
+        workspaceDir
+      );
+
+      const staged = bridge.getStagedChanges(workspaceDir);
+      expect(staged).toHaveLength(1);
+      expect(staged[0]).toEqual({
+        path: 'src/index.ts',
+        type: 'write',
+        agentRole: 'implementer',
+        taskDescription: 'update logic',
+      });
+    });
+  });
+
+  describe('create_file', () => {
+    it('should create a new file and stage it', async () => {
+      // Mock stat to throw for new file (file doesn't exist yet)
+      vi.mocked(deps.fileSystem.stat).mockRejectedValueOnce(new Error('ENOENT'));
+
+      const result = await bridge.execute(
+        'create_file',
+        { path: 'src/new-component.ts', content: 'export default {}' },
+        workspaceDir
+      );
+
+      expect(result.success).toBe(true);
+      expect(result.output).toContain('File created and staged');
+      expect(deps.fileSystem.writeFile).toHaveBeenCalledWith(
+        '/workspace/src/new-component.ts',
+        'export default {}'
+      );
+      expect(deps.commitService.stage).toHaveBeenCalledWith({
+        dir: workspaceDir,
+        filepath: 'src/new-component.ts',
+      });
+    });
+
+    it('should return error when path is missing', async () => {
+      const result = await bridge.execute('create_file', { content: 'data' }, workspaceDir);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('requires a "path" parameter');
+    });
+
+    it('should return error when file already exists', async () => {
+      const result = await bridge.execute(
+        'create_file',
+        { path: 'src/index.ts', content: 'data' },
+        workspaceDir
+      );
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('File already exists');
+      expect(result.error).toContain('Use write_file');
+    });
+
+    it('should create file with empty content when content is omitted', async () => {
+      vi.mocked(deps.fileSystem.stat).mockRejectedValueOnce(new Error('ENOENT'));
+
+      const result = await bridge.execute(
+        'create_file',
+        { path: 'src/empty-file.ts' },
+        workspaceDir
+      );
+
+      expect(result.success).toBe(true);
+      expect(deps.fileSystem.writeFile).toHaveBeenCalledWith('/workspace/src/empty-file.ts', '');
+    });
+
+    it('should create parent directories', async () => {
+      vi.mocked(deps.fileSystem.stat).mockRejectedValueOnce(new Error('ENOENT'));
+
+      const result = await bridge.execute(
+        'create_file',
+        { path: 'src/deep/nested/file.ts', content: 'data' },
+        workspaceDir
+      );
+
+      expect(result.success).toBe(true);
+      expect(deps.fileSystem.mkdir).toHaveBeenCalledWith('/workspace/src/deep/nested');
+    });
+
+    it('should return error when writeFile fails', async () => {
+      vi.mocked(deps.fileSystem.stat).mockRejectedValueOnce(new Error('ENOENT'));
+      vi.mocked(deps.fileSystem.writeFile).mockRejectedValueOnce(new Error('Permission denied'));
+
+      const result = await bridge.execute(
+        'create_file',
+        { path: 'src/new-file.ts', content: 'data' },
+        workspaceDir
+      );
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Permission denied');
+    });
+  });
+
+  describe('delete_file', () => {
+    it('should delete a file and stage the deletion', async () => {
+      const result = await bridge.execute('delete_file', { path: 'src/index.ts' }, workspaceDir);
+
+      expect(result.success).toBe(true);
+      expect(result.output).toContain('File deleted and staged');
+      expect(deps.fileSystem.deleteFile).toHaveBeenCalledWith('/workspace/src/index.ts');
+      expect(deps.commitService.stage).toHaveBeenCalledWith({
+        dir: workspaceDir,
+        filepath: 'src/index.ts',
+      });
+    });
+
+    it('should return error when path is missing', async () => {
+      const result = await bridge.execute('delete_file', {}, workspaceDir);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('requires a "path" parameter');
+    });
+
+    it('should return error when file does not exist', async () => {
+      vi.mocked(deps.fileSystem.stat).mockRejectedValueOnce(new Error('ENOENT'));
+
+      const result = await bridge.execute('delete_file', { path: 'nonexistent.ts' }, workspaceDir);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('File not found');
+    });
+
+    it('should return error when deleteFile fails', async () => {
+      vi.mocked(deps.fileSystem.deleteFile).mockRejectedValueOnce(new Error('In use'));
+
+      const result = await bridge.execute('delete_file', { path: 'src/index.ts' }, workspaceDir);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('In use');
+    });
+  });
+
+  describe('commitStagedChanges', () => {
+    const author = { name: 'Agent', email: 'agent@test.com' };
+
+    it('should commit staged changes and return SHA', async () => {
+      // Stage a change first
+      await bridge.execute(
+        'write_file',
+        { path: 'src/index.ts', content: 'updated', agent_role: 'implementer' },
+        workspaceDir
+      );
+
+      const result = await bridge.commitStagedChanges(workspaceDir, author);
+
+      expect(result.success).toBe(true);
+      expect(result.sha).toBe('def456');
+      expect(result.filesChanged).toBe(1);
+      expect(deps.commitService.commit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          dir: workspaceDir,
+          author,
+          message: expect.stringContaining('implementer'),
+        })
+      );
+    });
+
+    it('should include agent context in commit message', async () => {
+      await bridge.execute(
+        'write_file',
+        {
+          path: 'src/index.ts',
+          content: 'x',
+          agent_role: 'reviewer',
+          task_description: 'fix lint errors',
+        },
+        workspaceDir
+      );
+
+      await bridge.commitStagedChanges(workspaceDir, author);
+
+      const commitCall = vi.mocked(deps.commitService.commit).mock.calls[0][0];
+      expect(commitCall.message).toContain('reviewer');
+      expect(commitCall.message).toContain('fix lint errors');
+      expect(commitCall.message).toContain('src/index.ts');
+    });
+
+    it('should return error when no staged changes exist', async () => {
+      const result = await bridge.commitStagedChanges(workspaceDir, author);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('No staged changes');
+    });
+
+    it('should return error when commit fails', async () => {
+      await bridge.execute('write_file', { path: 'src/index.ts', content: 'x' }, workspaceDir);
+
+      vi.mocked(deps.commitService.commit).mockResolvedValueOnce({
+        success: false,
+        error: 'Nothing to commit',
+      });
+
+      const result = await bridge.commitStagedChanges(workspaceDir, author);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Nothing to commit');
+    });
+
+    it('should clear staged changes after successful commit', async () => {
+      await bridge.execute('write_file', { path: 'src/index.ts', content: 'x' }, workspaceDir);
+
+      await bridge.commitStagedChanges(workspaceDir, author);
+
+      expect(bridge.getStagedChanges(workspaceDir)).toHaveLength(0);
+    });
+
+    it('should handle commit throwing an error', async () => {
+      await bridge.execute('write_file', { path: 'src/index.ts', content: 'x' }, workspaceDir);
+
+      vi.mocked(deps.commitService.commit).mockRejectedValueOnce(new Error('Network error'));
+
+      const result = await bridge.commitStagedChanges(workspaceDir, author);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Network error');
+    });
+  });
+
+  describe('discardStagedChanges', () => {
+    it('should unstage all changes and clear tracking', async () => {
+      await bridge.execute('write_file', { path: 'src/index.ts', content: 'x' }, workspaceDir);
+      vi.mocked(deps.fileSystem.stat).mockRejectedValueOnce(new Error('ENOENT'));
+      await bridge.execute('create_file', { path: 'src/new-file.ts', content: 'y' }, workspaceDir);
+
+      const result = await bridge.discardStagedChanges(workspaceDir);
+
+      expect(result.success).toBe(true);
+      expect(result.output).toContain('2 staged change(s)');
+      expect(deps.commitService.unstage).toHaveBeenCalledWith({
+        dir: workspaceDir,
+        filepath: ['src/index.ts', 'src/new-file.ts'],
+      });
+      expect(bridge.getStagedChanges(workspaceDir)).toHaveLength(0);
+    });
+
+    it('should return success when no staged changes exist', async () => {
+      const result = await bridge.discardStagedChanges(workspaceDir);
+
+      expect(result.success).toBe(true);
+      expect(result.output).toContain('No staged changes');
+    });
+
+    it('should return error when unstage fails', async () => {
+      await bridge.execute('write_file', { path: 'src/index.ts', content: 'x' }, workspaceDir);
+
+      vi.mocked(deps.commitService.unstage).mockRejectedValueOnce(new Error('Unstage error'));
+
+      const result = await bridge.discardStagedChanges(workspaceDir);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Unstage error');
     });
   });
 

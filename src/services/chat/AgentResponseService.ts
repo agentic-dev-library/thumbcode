@@ -16,7 +16,11 @@ import type {
   Pipeline,
   StreamEvent,
 } from '@thumbcode/agent-intelligence';
-import { createAIClient, getDefaultModel } from '@thumbcode/agent-intelligence';
+import {
+  createAIClient,
+  getDefaultModel,
+  type ToolExecutionBridge,
+} from '@thumbcode/agent-intelligence';
 import type { Message, MessageSender } from '@thumbcode/state';
 import { useAgentStore, useChatStore, useCredentialStore } from '@thumbcode/state';
 import type { AgentRole } from '@thumbcode/types';
@@ -50,11 +54,21 @@ export class AgentResponseService {
   private orchestrator: AgentOrchestrator | null = null;
   private orchestratorProvider: AIProvider | null = null;
   private activePipelines: Map<string, Pipeline> = new Map();
+  private toolBridge: ToolExecutionBridge | null = null;
+  private workspaceDir: string = '';
 
   constructor(
     private streamHandler: StreamHandler,
     private messageStore: MessageStore
   ) {}
+
+  /**
+   * Set the tool bridge for approval-triggered commits.
+   */
+  setToolBridge(bridge: ToolExecutionBridge, workspaceDir: string): void {
+    this.toolBridge = bridge;
+    this.workspaceDir = workspaceDir;
+  }
 
   /**
    * Ensure the orchestrator is initialized with current credentials.
@@ -316,15 +330,80 @@ export class AgentResponseService {
   }
 
   /**
-   * Respond to an approval request
+   * Respond to an approval request.
+   * For commit/file_change actions, triggers git commit on approve or discard on reject.
    */
   respondToApproval(threadId: string, messageId: string, approved: boolean): void {
+    // Read the approval message metadata before updating
+    const messages = useChatStore.getState().messages[threadId] || [];
+    const approvalMsg = messages.find((m) => m.id === messageId);
+    const actionType = approvalMsg?.metadata?.actionType as string | undefined;
+
     useChatStore.getState().respondToApproval(messageId, threadId, approved);
 
     this.streamHandler.emit({
       type: 'approval_response',
       threadId,
       messageId,
+    });
+
+    // Handle commit/file_change actions via the tool bridge
+    if (
+      this.toolBridge &&
+      this.workspaceDir &&
+      (actionType === 'commit' || actionType === 'file_change')
+    ) {
+      if (approved) {
+        this.handleApprovedCommit(threadId);
+      } else {
+        this.handleRejectedCommit(threadId);
+      }
+    }
+  }
+
+  /**
+   * Handle an approved commit: commit staged changes and post confirmation.
+   */
+  private async handleApprovedCommit(threadId: string): Promise<void> {
+    if (!this.toolBridge || !this.workspaceDir) return;
+
+    const result = await this.toolBridge.commitStagedChanges(this.workspaceDir, {
+      name: 'ThumbCode Agent',
+      email: 'agent@thumbcode.app',
+    });
+
+    if (result.success) {
+      useChatStore.getState().addMessage({
+        threadId,
+        sender: 'system',
+        content: `Commit successful: ${result.sha ?? 'unknown'} (${result.filesChanged} file(s) changed)`,
+        contentType: 'text',
+      });
+    } else {
+      useChatStore.getState().addMessage({
+        threadId,
+        sender: 'system',
+        content: `Commit failed: ${result.error ?? 'Unknown error'}`,
+        contentType: 'text',
+      });
+    }
+  }
+
+  /**
+   * Handle a rejected commit: discard staged changes and post confirmation.
+   */
+  private async handleRejectedCommit(threadId: string): Promise<void> {
+    if (!this.toolBridge || !this.workspaceDir) return;
+
+    const result = await this.toolBridge.discardStagedChanges(this.workspaceDir);
+
+    useChatStore.getState().addMessage({
+      threadId,
+      sender: 'system',
+      content: result.success
+        ? `Changes rejected. ${result.output}`
+        : `Failed to discard changes: ${result.error ?? 'Unknown error'}`,
+      contentType: 'text',
     });
   }
 

@@ -5,14 +5,19 @@
  * Each tool name maps to a specific git service method. The bridge accepts
  * injectable dependencies so it can be tested without real git operations.
  *
- * Handles: read_file, list_directory, get_diff, search_code, run_tests,
- * get_coverage, analyze_test_results, and other read-oriented tools.
+ * Handles read tools: read_file, list_directory, get_diff, search_code,
+ * run_tests, get_coverage, analyze_test_results.
+ *
+ * Handles write tools: write_file, create_file, delete_file.
+ *
+ * Tracks staged changes for the approval-triggered commit flow.
  */
 
-import type { ToolBridgeDependencies, ToolResult } from './types';
+import type { CommitResult, StagedChange, ToolBridgeDependencies, ToolResult } from './types';
 
 export class ToolExecutionBridge {
   private deps: ToolBridgeDependencies;
+  private stagedChanges: Map<string, StagedChange[]> = new Map();
 
   constructor(deps: ToolBridgeDependencies) {
     this.deps = deps;
@@ -43,6 +48,12 @@ export class ToolExecutionBridge {
           return this.getCoverage(input, workspaceDir);
         case 'analyze_test_results':
           return this.analyzeTestResults(input, workspaceDir);
+        case 'write_file':
+          return this.writeFile(input, workspaceDir);
+        case 'create_file':
+          return this.createFile(input, workspaceDir);
+        case 'delete_file':
+          return this.deleteFile(input, workspaceDir);
         default:
           return { success: false, output: '', error: `Unknown tool: ${toolName}` };
       }
@@ -285,6 +296,242 @@ export class ToolExecutionBridge {
         success: false,
         output: '',
         error: `Test results not found at ${resultsPath}`,
+      };
+    }
+  }
+
+  /**
+   * write_file: Write content to an existing file and stage it.
+   */
+  private async writeFile(
+    input: Record<string, unknown>,
+    workspaceDir: string
+  ): Promise<ToolResult> {
+    const path = input.path as string | undefined;
+    const content = input.content as string | undefined;
+    if (!path) {
+      return { success: false, output: '', error: 'write_file requires a "path" parameter' };
+    }
+    if (content === undefined) {
+      return { success: false, output: '', error: 'write_file requires a "content" parameter' };
+    }
+
+    const fullPath = this.resolvePath(workspaceDir, path);
+
+    try {
+      // Verify file exists (write_file is for existing files)
+      await this.deps.fileSystem.stat(fullPath);
+    } catch {
+      return {
+        success: false,
+        output: '',
+        error: `File not found: ${path}. Use create_file for new files.`,
+      };
+    }
+
+    try {
+      await this.deps.fileSystem.writeFile(fullPath, content);
+      await this.deps.commitService.stage({ dir: workspaceDir, filepath: path });
+      this.trackChange(workspaceDir, {
+        path,
+        type: 'write',
+        agentRole: input.agent_role as string | undefined,
+        taskDescription: input.task_description as string | undefined,
+      });
+      return { success: true, output: `File written and staged: ${path}` };
+    } catch (error) {
+      return {
+        success: false,
+        output: '',
+        error: `Failed to write file: ${error instanceof Error ? error.message : path}`,
+      };
+    }
+  }
+
+  /**
+   * create_file: Create a new file and stage it.
+   */
+  private async createFile(
+    input: Record<string, unknown>,
+    workspaceDir: string
+  ): Promise<ToolResult> {
+    const path = input.path as string | undefined;
+    const content = (input.content as string | undefined) ?? '';
+    if (!path) {
+      return { success: false, output: '', error: 'create_file requires a "path" parameter' };
+    }
+
+    const fullPath = this.resolvePath(workspaceDir, path);
+
+    // Check if file already exists
+    try {
+      await this.deps.fileSystem.stat(fullPath);
+      return {
+        success: false,
+        output: '',
+        error: `File already exists: ${path}. Use write_file to modify.`,
+      };
+    } catch {
+      // Expected: file should not exist
+    }
+
+    try {
+      // Ensure parent directory exists
+      const parentDir = path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '';
+      if (parentDir) {
+        const fullParentDir = this.resolvePath(workspaceDir, parentDir);
+        try {
+          await this.deps.fileSystem.mkdir(fullParentDir);
+        } catch {
+          // Directory may already exist
+        }
+      }
+
+      await this.deps.fileSystem.writeFile(fullPath, content);
+      await this.deps.commitService.stage({ dir: workspaceDir, filepath: path });
+      this.trackChange(workspaceDir, {
+        path,
+        type: 'create',
+        agentRole: input.agent_role as string | undefined,
+        taskDescription: input.task_description as string | undefined,
+      });
+      return { success: true, output: `File created and staged: ${path}` };
+    } catch (error) {
+      return {
+        success: false,
+        output: '',
+        error: `Failed to create file: ${error instanceof Error ? error.message : path}`,
+      };
+    }
+  }
+
+  /**
+   * delete_file: Delete a file and stage the deletion.
+   */
+  private async deleteFile(
+    input: Record<string, unknown>,
+    workspaceDir: string
+  ): Promise<ToolResult> {
+    const path = input.path as string | undefined;
+    if (!path) {
+      return { success: false, output: '', error: 'delete_file requires a "path" parameter' };
+    }
+
+    const fullPath = this.resolvePath(workspaceDir, path);
+
+    try {
+      await this.deps.fileSystem.stat(fullPath);
+    } catch {
+      return { success: false, output: '', error: `File not found: ${path}` };
+    }
+
+    try {
+      await this.deps.fileSystem.deleteFile(fullPath);
+      await this.deps.commitService.stage({ dir: workspaceDir, filepath: path });
+      this.trackChange(workspaceDir, {
+        path,
+        type: 'delete',
+        agentRole: input.agent_role as string | undefined,
+        taskDescription: input.task_description as string | undefined,
+      });
+      return { success: true, output: `File deleted and staged: ${path}` };
+    } catch (error) {
+      return {
+        success: false,
+        output: '',
+        error: `Failed to delete file: ${error instanceof Error ? error.message : path}`,
+      };
+    }
+  }
+
+  /**
+   * Track a staged change for a workspace directory.
+   */
+  private trackChange(workspaceDir: string, change: StagedChange): void {
+    const existing = this.stagedChanges.get(workspaceDir) ?? [];
+    existing.push(change);
+    this.stagedChanges.set(workspaceDir, existing);
+  }
+
+  /**
+   * Get all staged changes for a workspace directory.
+   */
+  getStagedChanges(workspaceDir: string): StagedChange[] {
+    return this.stagedChanges.get(workspaceDir) ?? [];
+  }
+
+  /**
+   * Commit all staged changes for a workspace. Called when a user approves.
+   * Returns the commit SHA on success.
+   */
+  async commitStagedChanges(
+    workspaceDir: string,
+    author: { name: string; email: string }
+  ): Promise<CommitResult> {
+    const changes = this.stagedChanges.get(workspaceDir);
+    if (!changes || changes.length === 0) {
+      return { success: false, filesChanged: 0, error: 'No staged changes to commit' };
+    }
+
+    // Build a commit message from agent context
+    const agentRoles = [...new Set(changes.map((c) => c.agentRole).filter(Boolean))];
+    const tasks = [...new Set(changes.map((c) => c.taskDescription).filter(Boolean))];
+    const fileList = changes.map((c) => `  ${c.type}: ${c.path}`).join('\n');
+
+    const messageParts = ['Agent changes:'];
+    if (agentRoles.length > 0) {
+      messageParts.push(`Agents: ${agentRoles.join(', ')}`);
+    }
+    if (tasks.length > 0) {
+      messageParts.push(`Tasks: ${tasks.join('; ')}`);
+    }
+    messageParts.push('', `Files (${changes.length}):`, fileList);
+
+    const message = messageParts.join('\n');
+
+    try {
+      const result = await this.deps.commitService.commit({
+        dir: workspaceDir,
+        message,
+        author,
+      });
+
+      if (!result.success) {
+        return { success: false, filesChanged: 0, error: result.error ?? 'Commit failed' };
+      }
+
+      const filesChanged = changes.length;
+      this.stagedChanges.delete(workspaceDir);
+      return { success: true, sha: result.data, filesChanged };
+    } catch (error) {
+      return {
+        success: false,
+        filesChanged: 0,
+        error: error instanceof Error ? error.message : 'Commit failed',
+      };
+    }
+  }
+
+  /**
+   * Discard all staged changes for a workspace. Called when a user rejects.
+   */
+  async discardStagedChanges(workspaceDir: string): Promise<ToolResult> {
+    const changes = this.stagedChanges.get(workspaceDir);
+    if (!changes || changes.length === 0) {
+      return { success: true, output: 'No staged changes to discard' };
+    }
+
+    const paths = changes.map((c) => c.path);
+
+    try {
+      await this.deps.commitService.unstage({ dir: workspaceDir, filepath: paths });
+      this.stagedChanges.delete(workspaceDir);
+      return { success: true, output: `Discarded ${changes.length} staged change(s)` };
+    } catch (error) {
+      return {
+        success: false,
+        output: '',
+        error: error instanceof Error ? error.message : 'Failed to discard changes',
       };
     }
   }
