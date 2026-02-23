@@ -42,17 +42,15 @@ describe('PollingService', () => {
   describe('pollForToken', () => {
     it('should return authorized result on success', async () => {
       mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve({
-          access_token: 'ghp_testtoken',
-          token_type: 'bearer',
-          scope: 'repo user',
-        }),
+        json: () =>
+          Promise.resolve({
+            access_token: 'ghp_testtoken',
+            token_type: 'bearer',
+            scope: 'repo user',
+          }),
       });
 
-      const resultPromise = service.pollForToken(
-        'device-code',
-        { clientId: 'client-id' }
-      );
+      const resultPromise = service.pollForToken('device-code', { clientId: 'client-id' });
 
       // Let first poll execute
       await vi.advanceTimersByTimeAsync(0);
@@ -67,24 +65,26 @@ describe('PollingService', () => {
     it('should continue polling on authorization_pending', async () => {
       mockFetch
         .mockResolvedValueOnce({
-          json: () => Promise.resolve({
-            error: 'authorization_pending',
-            error_description: 'User has not yet authorized',
-          }),
+          json: () =>
+            Promise.resolve({
+              error: 'authorization_pending',
+              error_description: 'User has not yet authorized',
+            }),
         })
         .mockResolvedValueOnce({
-          json: () => Promise.resolve({
-            access_token: 'ghp_token',
-            token_type: 'bearer',
-            scope: 'repo',
-          }),
+          json: () =>
+            Promise.resolve({
+              access_token: 'ghp_token',
+              token_type: 'bearer',
+              scope: 'repo',
+            }),
         });
 
       const onPollAttempt = vi.fn();
-      const resultPromise = service.pollForToken(
-        'device-code',
-        { clientId: 'client-id', onPollAttempt }
-      );
+      const resultPromise = service.pollForToken('device-code', {
+        clientId: 'client-id',
+        onPollAttempt,
+      });
 
       // First poll - authorization_pending
       await vi.advanceTimersByTimeAsync(0);
@@ -99,17 +99,15 @@ describe('PollingService', () => {
 
     it('should stop on access_denied', async () => {
       mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve({
-          error: 'access_denied',
-          error_description: 'User denied access',
-        }),
+        json: () =>
+          Promise.resolve({
+            error: 'access_denied',
+            error_description: 'User denied access',
+          }),
       });
 
       const onError = vi.fn();
-      const resultPromise = service.pollForToken(
-        'device-code',
-        { clientId: 'client-id', onError }
-      );
+      const resultPromise = service.pollForToken('device-code', { clientId: 'client-id', onError });
 
       await vi.advanceTimersByTimeAsync(0);
       const result = await resultPromise;
@@ -122,16 +120,14 @@ describe('PollingService', () => {
 
     it('should stop on expired_token', async () => {
       mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve({
-          error: 'expired_token',
-          error_description: 'Device code expired',
-        }),
+        json: () =>
+          Promise.resolve({
+            error: 'expired_token',
+            error_description: 'Device code expired',
+          }),
       });
 
-      const resultPromise = service.pollForToken(
-        'device-code',
-        { clientId: 'client-id' }
-      );
+      const resultPromise = service.pollForToken('device-code', { clientId: 'client-id' });
 
       await vi.advanceTimersByTimeAsync(0);
       const result = await resultPromise;
@@ -143,23 +139,21 @@ describe('PollingService', () => {
     it('should time out after max poll attempts', async () => {
       // Always return authorization_pending
       mockFetch.mockResolvedValue({
-        json: () => Promise.resolve({
-          error: 'authorization_pending',
-          error_description: 'Pending',
-        }),
+        json: () =>
+          Promise.resolve({
+            error: 'authorization_pending',
+            error_description: 'Pending',
+          }),
       });
 
       const onError = vi.fn();
-      const resultPromise = service.pollForToken(
-        'device-code',
-        { clientId: 'client-id', onError }
-      );
+      const resultPromise = service.pollForToken('device-code', { clientId: 'client-id', onError });
 
       // maxPollAttempts is 3, so after 3 pending responses + 1 check we should time out
-      await vi.advanceTimersByTimeAsync(0);   // attempt 1
-      await vi.advanceTimersByTimeAsync(100);  // attempt 2
-      await vi.advanceTimersByTimeAsync(100);  // attempt 3
-      await vi.advanceTimersByTimeAsync(100);  // attempt 4 - exceeds max
+      await vi.advanceTimersByTimeAsync(0); // attempt 1
+      await vi.advanceTimersByTimeAsync(100); // attempt 2
+      await vi.advanceTimersByTimeAsync(100); // attempt 3
+      await vi.advanceTimersByTimeAsync(100); // attempt 4 - exceeds max
 
       const result = await resultPromise;
 
@@ -171,42 +165,36 @@ describe('PollingService', () => {
       const { CredentialService } = await import('../../credentials');
 
       mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve({
-          access_token: 'ghp_stored_token',
-          token_type: 'bearer',
-          scope: 'repo',
-        }),
+        json: () =>
+          Promise.resolve({
+            access_token: 'ghp_stored_token',
+            token_type: 'bearer',
+            scope: 'repo',
+          }),
       });
 
-      const resultPromise = service.pollForToken(
-        'device-code',
-        { clientId: 'client-id' }
-      );
+      const resultPromise = service.pollForToken('device-code', { clientId: 'client-id' });
 
       await vi.advanceTimersByTimeAsync(0);
       await resultPromise;
 
-      expect(CredentialService.store).toHaveBeenCalledWith(
-        'github',
-        'ghp_stored_token',
-        { skipValidation: false }
-      );
+      expect(CredentialService.store).toHaveBeenCalledWith('github', 'ghp_stored_token', {
+        skipValidation: false,
+      });
     });
   });
 
   describe('cancel', () => {
     it('should cancel ongoing polling', async () => {
       mockFetch.mockResolvedValue({
-        json: () => Promise.resolve({
-          error: 'authorization_pending',
-          error_description: 'Pending',
-        }),
+        json: () =>
+          Promise.resolve({
+            error: 'authorization_pending',
+            error_description: 'Pending',
+          }),
       });
 
-      const resultPromise = service.pollForToken(
-        'device-code',
-        { clientId: 'client-id' }
-      );
+      const resultPromise = service.pollForToken('device-code', { clientId: 'client-id' });
 
       await vi.advanceTimersByTimeAsync(0); // First poll
 

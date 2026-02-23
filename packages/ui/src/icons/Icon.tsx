@@ -5,13 +5,7 @@
  * Replaces the @expo/vector-icons Ionicons-based implementation.
  */
 
-import {
-  ArrowLeft,
-  CircleAlert,
-  CircleCheck,
-  Info,
-  TriangleAlert,
-} from 'lucide-react';
+import { ArrowLeft, CircleAlert, CircleCheck, Info, TriangleAlert } from 'lucide-react';
 import type { IconName } from './iconMap';
 
 const iconComponents = {

@@ -13,8 +13,8 @@ vi.mock('../../credentials/CredentialService', () => ({
   },
 }));
 
-import { TokenManager } from '../TokenManager';
 import { CredentialService } from '../../credentials/CredentialService';
+import { TokenManager } from '../TokenManager';
 
 const mockFetch = vi.fn();
 global.fetch = mockFetch;

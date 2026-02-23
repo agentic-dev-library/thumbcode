@@ -167,9 +167,7 @@ describe('GitBranchService', () => {
         force: true,
       });
 
-      expect(mockGit.checkout).toHaveBeenCalledWith(
-        expect.objectContaining({ force: true })
-      );
+      expect(mockGit.checkout).toHaveBeenCalledWith(expect.objectContaining({ force: true }));
     });
 
     it('should return error on checkout failure', async () => {
@@ -218,7 +216,8 @@ describe('GitBranchService', () => {
     it('should list local branches with current marker', async () => {
       mockGit.listBranches.mockResolvedValue(['main', 'develop', 'feature/x']);
       mockGit.currentBranch.mockResolvedValue('main');
-      mockGit.resolveRef.mockResolvedValueOnce('sha1')
+      mockGit.resolveRef
+        .mockResolvedValueOnce('sha1')
         .mockResolvedValueOnce('sha2')
         .mockResolvedValueOnce('sha3');
 
@@ -226,12 +225,12 @@ describe('GitBranchService', () => {
 
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(3);
-      expect(result.data![0]).toEqual({
+      expect(result.data?.[0]).toEqual({
         name: 'main',
         current: true,
         commit: 'sha1',
       });
-      expect(result.data![1]).toEqual({
+      expect(result.data?.[1]).toEqual({
         name: 'develop',
         current: false,
         commit: 'sha2',
@@ -241,16 +240,15 @@ describe('GitBranchService', () => {
     it('should list remote branches without current marker', async () => {
       mockGit.listBranches.mockResolvedValue(['main', 'develop']);
       mockGit.currentBranch.mockResolvedValue('main');
-      mockGit.resolveRef.mockResolvedValueOnce('sha1')
-        .mockResolvedValueOnce('sha2');
+      mockGit.resolveRef.mockResolvedValueOnce('sha1').mockResolvedValueOnce('sha2');
 
       const result = await GitBranchService.listBranches('/mock/repos/repo', 'origin');
 
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(2);
       // Remote branches should never be marked as current
-      expect(result.data![0].current).toBe(false);
-      expect(result.data![1].current).toBe(false);
+      expect(result.data?.[0].current).toBe(false);
+      expect(result.data?.[1].current).toBe(false);
     });
 
     it('should return error on failure', async () => {

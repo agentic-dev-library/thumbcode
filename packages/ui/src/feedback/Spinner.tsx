@@ -16,8 +16,12 @@ interface SpinnerProps {
  * @param label - Optional label to display below the spinner.
  * @returns A View element containing an ActivityIndicator and optional label.
  */
-export function Spinner({ size = 'large', color = themeTokens.colors.coral[500], label }: SpinnerProps) {
-  const accessibilityLabel = label || 'Loading...';
+export function Spinner({
+  size = 'large',
+  color = themeTokens.colors.coral[500],
+  label,
+}: SpinnerProps) {
+  const _accessibilityLabel = label || 'Loading...';
 
   return (
     <div className="items-center">

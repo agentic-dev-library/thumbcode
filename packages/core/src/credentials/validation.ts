@@ -20,7 +20,9 @@ const OpenAIKeySchema = z.string().startsWith('sk-');
 // other token types, this regex can be updated accordingly.
 const GitHubTokenSchema = z
   .string()
-  .regex(/^(ghp_[a-zA-Z0-9]{36}|github_pat_[a-zA-Z0-9_]+|gho_[a-zA-Z0-9]+|ghs_[a-zA-Z0-9]+|ghr_[a-zA-Z0-9]+)$/);
+  .regex(
+    /^(ghp_[a-zA-Z0-9]{36}|github_pat_[a-zA-Z0-9_]+|gho_[a-zA-Z0-9]+|ghs_[a-zA-Z0-9]+|ghr_[a-zA-Z0-9]+)$/
+  );
 
 /**
  * Validate an Anthropic API key format

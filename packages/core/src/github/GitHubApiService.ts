@@ -200,4 +200,3 @@ class GitHubApiServiceClass {
 }
 
 export const GitHubApiService = new GitHubApiServiceClass();
-

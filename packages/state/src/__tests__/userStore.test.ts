@@ -34,6 +34,7 @@ beforeEach(() => {
       notifications: {
         pushEnabled: true,
         soundEnabled: true,
+        hapticsEnabled: true,
         agentUpdates: true,
         prApprovals: true,
         chatMessages: true,

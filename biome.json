@@ -62,7 +62,6 @@
       "!**/coverage",
       "!**/*.generated.*",
       "!**/design-system/generated",
-      "!**/packages",
       "!index.html",
       "!**/playwright-report",
       "!**/test-results",

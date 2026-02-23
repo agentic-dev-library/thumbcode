@@ -25,7 +25,7 @@ export class DeviceFlowHandler {
     const { clientId, scopes = GITHUB_OAUTH.scopes, onError } = options;
 
     if (!clientId) {
-      const error = 'GitHub Client ID is required. Set EXPO_PUBLIC_GITHUB_CLIENT_ID in your environment.';
+      const error = 'GitHub Client ID is required. Set VITE_GITHUB_CLIENT_ID in your environment.';
       onError?.(error);
       return { success: false, error };
     }

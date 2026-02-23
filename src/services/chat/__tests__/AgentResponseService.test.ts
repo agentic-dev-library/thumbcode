@@ -13,18 +13,30 @@ import { AgentResponseService } from '../AgentResponseService';
 import { MessageStore } from '../MessageStore';
 import { StreamHandler } from '../StreamHandler';
 
-// Mock AI dependencies
-vi.mock('../../ai/AIClientFactory', () => ({
+// Mock AI dependencies from @thumbcode/agent-intelligence
+vi.mock('@thumbcode/agent-intelligence', () => ({
   createAIClient: vi.fn(),
+  getDefaultModel: vi.fn().mockReturnValue('claude-3-5-sonnet-20241022'),
 }));
 
-vi.mock('../../ai/AgentPrompts', () => ({
+vi.mock('../AgentPrompts', () => ({
   getAgentSystemPrompt: vi.fn().mockReturnValue('You are a helpful agent'),
 }));
 
-import { createAIClient } from '../../ai/AIClientFactory';
+import { createAIClient } from '@thumbcode/agent-intelligence';
 
 const mockCreateAIClient = createAIClient as Mock;
+
+/** Helper to create a mock CompletionResponse */
+function mockCompletionResponse(text = '') {
+  return {
+    id: 'msg-test',
+    content: [{ type: 'text' as const, text }],
+    model: 'claude-3-5-sonnet-20241022',
+    stopReason: 'end_turn' as const,
+    usage: { inputTokens: 10, outputTokens: 20, totalTokens: 30 },
+  };
+}
 
 describe('AgentResponseService', () => {
   let service: AgentResponseService;
@@ -88,7 +100,7 @@ describe('AgentResponseService', () => {
       (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-ant-test-key' });
 
       const mockClient = {
-        streamMessage: vi.fn().mockResolvedValue(undefined),
+        completeStream: vi.fn().mockResolvedValue(mockCompletionResponse()),
       };
       mockCreateAIClient.mockReturnValue(mockClient);
 
@@ -123,7 +135,7 @@ describe('AgentResponseService', () => {
       (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-test-openai-key' });
 
       const mockClient = {
-        streamMessage: vi.fn().mockResolvedValue(undefined),
+        completeStream: vi.fn().mockResolvedValue(mockCompletionResponse()),
       };
       mockCreateAIClient.mockReturnValue(mockClient);
 
@@ -210,12 +222,20 @@ describe('AgentResponseService', () => {
 
     it('should stream response and emit events', async () => {
       const mockClient = {
-        streamMessage: vi
-          .fn()
-          .mockImplementation(async (_msgs: any, _prompt: any, onChunk: any) => {
-            onChunk({ text: 'Hello', done: false });
-            onChunk({ text: ' world', done: true });
-          }),
+        completeStream: vi.fn().mockImplementation(async (_msgs: any, _opts: any, onEvent: any) => {
+          // Simulate streaming content_block_delta events
+          onEvent({
+            type: 'content_block_delta',
+            index: 0,
+            delta: { type: 'text', text: 'Hello' },
+          });
+          onEvent({
+            type: 'content_block_delta',
+            index: 0,
+            delta: { type: 'text', text: ' world' },
+          });
+          return mockCompletionResponse('Hello world');
+        }),
       };
       mockCreateAIClient.mockReturnValue(mockClient);
 
@@ -246,7 +266,7 @@ describe('AgentResponseService', () => {
 
     it('should clean up abort controller after completion', async () => {
       const mockClient = {
-        streamMessage: vi.fn().mockResolvedValue(undefined),
+        completeStream: vi.fn().mockResolvedValue(mockCompletionResponse()),
       };
       mockCreateAIClient.mockReturnValue(mockClient);
 
@@ -284,7 +304,7 @@ describe('AgentResponseService', () => {
     it('should not emit error event on AbortError', async () => {
       const abortError = new DOMException('Aborted', 'AbortError');
       const mockClient = {
-        streamMessage: vi.fn().mockRejectedValue(abortError),
+        completeStream: vi.fn().mockRejectedValue(abortError),
       };
       mockCreateAIClient.mockReturnValue(mockClient);
 
@@ -306,7 +326,7 @@ describe('AgentResponseService', () => {
     it('should emit error event for non-abort errors', async () => {
       const error = new Error('API rate limited');
       const mockClient = {
-        streamMessage: vi.fn().mockRejectedValue(error),
+        completeStream: vi.fn().mockRejectedValue(error),
       };
       mockCreateAIClient.mockReturnValue(mockClient);
 
@@ -329,7 +349,7 @@ describe('AgentResponseService', () => {
 
     it('should always clear typing state after error', async () => {
       const mockClient = {
-        streamMessage: vi.fn().mockRejectedValue(new Error('Failure')),
+        completeStream: vi.fn().mockRejectedValue(new Error('Failure')),
       };
       mockCreateAIClient.mockReturnValue(mockClient);
 

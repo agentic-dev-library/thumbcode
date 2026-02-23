@@ -13,12 +13,7 @@ import type { AIClient, Message, StreamEvent, ToolDefinition } from '../ai';
 import { parseExecutionResult } from './Committable';
 import { formatTaskMessage } from './Promptable';
 import { executeTask, executeTaskStream } from './Reviewable';
-import type {
-  AgentContext,
-  AgentEvent,
-  AgentEventCallback,
-  AgentExecutionResult,
-} from './types';
+import type { AgentContext, AgentEvent, AgentEventCallback, AgentExecutionResult } from './types';
 
 export type { AgentContext, AgentEvent, AgentEventCallback, AgentExecutionResult } from './types';
 
@@ -37,17 +32,15 @@ export abstract class BaseAgent {
   protected eventCallbacks: AgentEventCallback[] = [];
   protected conversationHistory: Message[] = [];
 
-  constructor(
-    config: {
-      id: string;
-      role: AgentRole;
-      name: string;
-      aiClient: AIClient;
-      model?: string;
-      maxTokens?: number;
-      temperature?: number;
-    }
-  ) {
+  constructor(config: {
+    id: string;
+    role: AgentRole;
+    name: string;
+    aiClient: AIClient;
+    model?: string;
+    maxTokens?: number;
+    temperature?: number;
+  }) {
     this.id = config.id;
     this.role = config.role;
     this.name = config.name;

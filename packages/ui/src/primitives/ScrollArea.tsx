@@ -24,11 +24,7 @@ export interface ScrollAreaProps {
  */
 export function ScrollArea({ className = '', style, testID, children }: Readonly<ScrollAreaProps>) {
   return (
-    <div
-      className={`overflow-auto ${className}`}
-      style={style}
-      data-testid={testID}
-    >
+    <div className={`overflow-auto ${className}`} style={style} data-testid={testID}>
       {children}
     </div>
   );

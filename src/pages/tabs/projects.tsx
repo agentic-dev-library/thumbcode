@@ -2,13 +2,12 @@
  * Projects Screen
  *
  * Lists all projects with search, quick actions, and status.
- * Migrated from React Native to web React with Tailwind CSS.
+ * All data logic lives in useProjectList; this file is layout only.
  */
 
-import { selectProjects, useProjectStore } from '@thumbcode/state';
 import { ClipboardList, FolderOpen, GitBranch, Github, Plus, Search, Users } from 'lucide-react';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useProjectList } from '@/hooks';
 
 function getStatusBadge(status: 'active' | 'idle' | 'error') {
   switch (status) {
@@ -37,15 +36,7 @@ function getStatusBadge(status: 'active' | 'idle' | 'error') {
 
 export default function ProjectsPage() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const projects = useProjectStore(selectProjects);
-
-  const filteredProjects = projects.filter(
-    (project) =>
-      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.repoUrl.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const { searchQuery, setSearchQuery, filteredProjects } = useProjectList();
 
   return (
     <div className="flex-1 flex flex-col bg-charcoal" data-testid="projects-screen">

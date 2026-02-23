@@ -34,6 +34,9 @@ importers:
       '@capacitor/ios':
         specifier: ^8.1.0
         version: 8.1.0(@capacitor/core@8.1.0)
+      '@thumbcode/agent-intelligence':
+        specifier: workspace:*
+        version: link:packages/agent-intelligence
       '@thumbcode/config':
         specifier: workspace:*
         version: link:packages/config

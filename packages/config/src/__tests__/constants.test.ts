@@ -155,9 +155,7 @@ describe('Constants', () => {
     });
 
     it('max diff size is smaller than max file size', () => {
-      expect(FILE_LIMITS.maxDiffSizeBytes).toBeLessThanOrEqual(
-        FILE_LIMITS.maxFileSizeBytes
-      );
+      expect(FILE_LIMITS.maxDiffSizeBytes).toBeLessThanOrEqual(FILE_LIMITS.maxFileSizeBytes);
     });
   });
 

@@ -91,14 +91,6 @@ print_status "Installing dependencies..."
 pnpm install
 print_success "Dependencies installed"
 
-# Check Expo CLI
-if ! command -v expo &> /dev/null; then
-  print_warning "Expo CLI not found globally"
-  print_status "You can run Expo commands using: pnpm expo"
-else
-  print_success "Expo CLI $(expo --version)"
-fi
-
 # Run type check
 print_status "Running type check..."
 if pnpm typecheck; then
@@ -114,33 +106,18 @@ echo -e "${GREEN}║${NC}                  ${GREEN}Setup Complete!${NC}         
 echo -e "${GREEN}╚══════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
-# Expo Go warning
-echo -e "${YELLOW}╔══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${YELLOW}║${NC}     ${RED}⚠️  IMPORTANT: ThumbCode does NOT work with Expo Go${NC}     ${YELLOW}║${NC}"
-echo -e "${YELLOW}╚══════════════════════════════════════════════════════════╝${NC}"
-echo ""
-echo "ThumbCode uses native security modules (SecureStore, SSL Pinning,"
-echo "Biometric Auth) that require a custom development build."
-echo ""
-echo -e "${BLUE}Build your development client first:${NC}"
-echo ""
-echo "  pnpm run build:dev --platform ios     # For iOS"
-echo "  pnpm run build:dev --platform android # For Android"
-echo ""
-
 echo "Next steps:"
 echo ""
 echo "  1. Edit .env.local with your configuration values"
-echo "     - Add EXPO_PUBLIC_GITHUB_CLIENT_ID for GitHub auth"
-echo "     - Add EXPO_PROJECT_ID for EAS builds"
+echo "     - Add VITE_GITHUB_CLIENT_ID for GitHub auth"
 echo ""
-echo "  2. Build a development client (required once):"
-echo "     pnpm run build:dev --platform ios"
-echo ""
-echo "  3. Start the development server:"
+echo "  2. Start the Vite development server:"
 echo "     pnpm dev"
 echo ""
-echo "  4. The dev server will connect to YOUR custom build, not Expo Go"
+echo "  3. Build for native platforms with Capacitor:"
+echo "     pnpm build && npx cap sync"
+echo "     npx cap open ios      # Open in Xcode"
+echo "     npx cap open android  # Open in Android Studio"
 echo ""
 echo "For more information, see:"
 echo "  - docs/development/SETUP.md - Build instructions & troubleshooting"

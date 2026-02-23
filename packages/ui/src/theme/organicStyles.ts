@@ -1,4 +1,3 @@
-
 /**
  * Organic styling helpers for @thumbcode/ui.
  *
@@ -25,6 +24,12 @@ export const organicBorderRadius = {
     borderBottomRightRadius: 10,
     borderBottomLeftRadius: 4,
   } as React.CSSProperties,
+  input: {
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 8,
+    borderBottomLeftRadius: 12,
+  } as React.CSSProperties,
 } as const;
 
 export const organicShadow = {
@@ -35,4 +40,3 @@ export const organicShadow = {
     boxShadow: '4px 8px 16px rgba(21, 24, 32, 0.12)',
   } as React.CSSProperties,
 } as const;
-

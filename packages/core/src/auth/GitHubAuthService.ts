@@ -100,10 +100,7 @@ class GitHubAuthServiceClass {
     return this.tokenManager.signOut();
   }
 
-  private setState(
-    state: DeviceFlowState,
-    callback?: (state: DeviceFlowState) => void
-  ): void {
+  private setState(state: DeviceFlowState, callback?: (state: DeviceFlowState) => void): void {
     this.state = state;
     callback?.(state);
   }

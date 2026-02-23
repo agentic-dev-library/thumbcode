@@ -4,7 +4,10 @@
  * OAuth and authentication flows for external services.
  */
 
+export { DeviceFlowHandler } from './DeviceFlowHandler';
 export { GitHubAuthService } from './GitHubAuthService';
+export { PollingService } from './PollingService';
+export { TokenManager } from './TokenManager';
 export type {
   AccessTokenResponse,
   DeviceCodeResponse,
@@ -16,7 +19,3 @@ export type {
   StartFlowResult,
   TokenErrorResponse,
 } from './types';
-
-export { DeviceFlowHandler } from './DeviceFlowHandler';
-export { PollingService } from './PollingService';
-export { TokenManager } from './TokenManager';

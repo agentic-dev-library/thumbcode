@@ -4,15 +4,6 @@
  * Application configuration, environment variables, constants, and feature flags.
  */
 
-// Environment
-export {
-  env,
-  validateEnvironment,
-  type AppEnvironment,
-  type EnvironmentConfig,
-  type ValidationResult,
-} from './env';
-
 // Constants
 export {
   AGENT_CONFIG,
@@ -24,17 +15,25 @@ export {
   SECURE_STORE_KEYS,
   STORAGE_KEYS,
   SUPPORTED_LANGUAGES,
-  UI_CONFIG,
   type SupportedLanguage,
+  UI_CONFIG,
 } from './constants';
+// Environment
+export {
+  type AppEnvironment,
+  type EnvironmentConfig,
+  env,
+  type ValidationResult,
+  validateEnvironment,
+} from './env';
 
 // Features
 export {
   clearFeatureOverrides,
+  type FeatureFlag,
   getEnabledFeatures,
   getFeatureConfig,
   isFeatureEnabled,
   isFeatureEnabledWithOverrides,
   overrideFeature,
-  type FeatureFlag,
 } from './features';

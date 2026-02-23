@@ -4,7 +4,7 @@
  * Tests for task creation, assignment, and query operations.
  */
 
-import type { Agent, TaskAssignment } from '@thumbcode/types';
+import type { Agent } from '@thumbcode/types';
 import { OrchestrationStateManager } from '../OrchestrationState';
 import { TaskAssigner } from '../TaskAssigner';
 import type { OrchestratorConfig } from '../types';
@@ -33,13 +33,22 @@ function createMockAgent(id: string, role: string, status = 'idle'): Agent {
     name: `${role} agent`,
     status: status as any,
     capabilities: [],
-    systemPrompt: '',
+    config: {
+      model: 'claude-3-5-sonnet-20241022',
+      temperature: 0.7,
+      maxTokens: 4096,
+      tools: [],
+    },
     metrics: {
       tasksCompleted: 0,
       tokensUsed: 0,
       averageTaskTime: 0,
       successRate: 1,
+      linesWritten: 0,
+      reviewsPerformed: 0,
     },
+    createdAt: new Date().toISOString(),
+    lastActiveAt: new Date().toISOString(),
   };
 }
 
@@ -64,9 +73,9 @@ describe('TaskAssigner', () => {
       expect(taskId).toContain('task');
       const task = assigner.getTask(taskId);
       expect(task).toBeDefined();
-      expect(task!.title).toBe('Implement feature');
-      expect(task!.status).toBe('pending');
-      expect(task!.priority).toBe('medium');
+      expect(task?.title).toBe('Implement feature');
+      expect(task?.status).toBe('pending');
+      expect(task?.priority).toBe('medium');
     });
 
     it('should set custom priority', () => {
@@ -79,7 +88,7 @@ describe('TaskAssigner', () => {
       });
 
       const task = assigner.getTask(taskId);
-      expect(task!.priority).toBe('high');
+      expect(task?.priority).toBe('high');
     });
 
     it('should set dependencies', () => {
@@ -92,7 +101,7 @@ describe('TaskAssigner', () => {
       });
 
       const task = assigner.getTask(taskId);
-      expect(task!.dependsOn).toEqual(['task-1', 'task-2']);
+      expect(task?.dependsOn).toEqual(['task-1', 'task-2']);
     });
 
     it('should emit task_created event', () => {
@@ -126,7 +135,7 @@ describe('TaskAssigner', () => {
 
       expect(events).toContain('task_assigned');
       const task = autoAssigner.getTask(taskId);
-      expect(task!.assignee).toBe('agent-1');
+      expect(task?.assignee).toBe('agent-1');
     });
 
     it('should not auto-assign when autoAssign is false', () => {
@@ -141,7 +150,7 @@ describe('TaskAssigner', () => {
       });
 
       const task = assigner.getTask(taskId);
-      expect(task!.assignee).toBe('');
+      expect(task?.assignee).toBe('');
     });
   });
 
@@ -159,7 +168,7 @@ describe('TaskAssigner', () => {
       assigner.assignTask(taskId, 'reviewer');
 
       const task = assigner.getTask(taskId);
-      expect(task!.assignee).toBe('agent-1');
+      expect(task?.assignee).toBe('agent-1');
     });
 
     it('should throw when task not found', () => {

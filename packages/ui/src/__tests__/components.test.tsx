@@ -6,30 +6,39 @@
  */
 
 import { render, screen } from '@testing-library/react';
-import React from 'react';
-import { Text } from '../primitives/Text';
+import { Alert } from '../feedback/Alert';
+import { Spinner } from '../feedback/Spinner';
 import { Button } from '../form/Button';
 import { Card } from '../layout/Card';
-import { Spinner } from '../feedback/Spinner';
-import { Alert } from '../feedback/Alert';
-import { ThemeProvider, themeTokens } from '../theme/ThemeProvider';
+import { Text } from '../primitives/Text';
 import { organicBorderRadius, organicShadow } from '../theme/organicStyles';
+import { themeTokens } from '../theme/ThemeProvider';
 
 vi.mock('lucide-react', () => ({
   ArrowLeft: ({ size, color, className }: any) => (
-    <span data-testid="icon-back" className={className}>back</span>
+    <span data-testid="icon-back" className={className}>
+      back
+    </span>
   ),
   CircleCheck: ({ size, color, className }: any) => (
-    <span data-testid="icon-alertSuccess" className={className}>alertSuccess</span>
+    <span data-testid="icon-alertSuccess" className={className}>
+      alertSuccess
+    </span>
   ),
   CircleAlert: ({ size, color, className }: any) => (
-    <span data-testid="icon-alertError" className={className}>alertError</span>
+    <span data-testid="icon-alertError" className={className}>
+      alertError
+    </span>
   ),
   TriangleAlert: ({ size, color, className }: any) => (
-    <span data-testid="icon-alertWarning" className={className}>alertWarning</span>
+    <span data-testid="icon-alertWarning" className={className}>
+      alertWarning
+    </span>
   ),
   Info: ({ size, color, className }: any) => (
-    <span data-testid="icon-alertInfo" className={className}>alertInfo</span>
+    <span data-testid="icon-alertInfo" className={className}>
+      alertInfo
+    </span>
   ),
 }));
 
@@ -116,13 +125,13 @@ describe('Card Component', () => {
     expect(screen.getByText('Elevated')).toBeTruthy();
   });
 
-  it('renders outlined variant', () => {
+  it('renders default variant', () => {
     render(
-      <Card variant="outlined">
-        <Text>Outlined</Text>
+      <Card variant="default">
+        <Text>Default</Text>
       </Card>
     );
-    expect(screen.getByText('Outlined')).toBeTruthy();
+    expect(screen.getByText('Default')).toBeTruthy();
   });
 });
 
@@ -231,8 +240,8 @@ describe('Theme', () => {
     it('elevated shadow has greater elevation than card', () => {
       expect(organicShadow.elevated.boxShadow).toBeDefined();
       // Elevated shadow string should be longer / contain larger values
-      expect(organicShadow.elevated.boxShadow!.length).toBeGreaterThan(
-        organicShadow.card.boxShadow!.length
+      expect(organicShadow.elevated.boxShadow?.length).toBeGreaterThan(
+        organicShadow.card.boxShadow?.length ?? 0
       );
     });
   });

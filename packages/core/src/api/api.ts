@@ -8,10 +8,7 @@ import { requestSigningService } from '../security/RequestSigningService';
 
 const MCP_SERVER_HOST = 'mcp.thumbcode.com'; // Replace with actual host
 
-export async function secureFetch(
-  input: RequestInfo | URL,
-  init?: RequestInit
-): Promise<Response> {
+export async function secureFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
   let url: string;
   if (typeof input === 'string') {
     url = input;
@@ -24,8 +21,7 @@ export async function secureFetch(
   // Securely validate the hostname to prevent subdomain attacks
   // Only match exact hostname OR legitimate subdomains (prefixed with '.')
   const hostname = new URL(url).hostname;
-  const isValidMcpHost =
-    hostname === MCP_SERVER_HOST || hostname.endsWith(`.${MCP_SERVER_HOST}`);
+  const isValidMcpHost = hostname === MCP_SERVER_HOST || hostname.endsWith(`.${MCP_SERVER_HOST}`);
 
   if (isValidMcpHost) {
     const method = init?.method?.toUpperCase() || 'GET';

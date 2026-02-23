@@ -4,7 +4,7 @@
  * Handles remote operations: clone, fetch, pull, push, init, cleanup.
  */
 
-import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Directory, Filesystem } from '@capacitor/filesystem';
 import git from 'isomorphic-git';
 
 import { fs, http } from './git-fs';

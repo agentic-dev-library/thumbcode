@@ -7,7 +7,7 @@
 
 import { BiometricAuth } from '@aparajita/capacitor-biometric-auth';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
-import { afterEach, beforeEach, describe, expect, it, vi, type Mocked } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type Mocked, vi } from 'vitest';
 
 import { KeyStorage } from '../KeyStorage';
 import type { KeyValidator } from '../KeyValidator';
@@ -27,7 +27,13 @@ const mockWebCrypto = {
     exportKey: vi.fn().mockResolvedValue({ k: 'mock-key', alg: 'A256GCM', ext: true, kty: 'oct' }),
     importKey: vi.fn().mockResolvedValue({} as CryptoKey),
     encrypt: vi.fn().mockResolvedValue(new Uint8Array([1, 2, 3]).buffer),
-    decrypt: vi.fn().mockResolvedValue(new TextEncoder().encode('{"secret":"sk-ant-test123","storedAt":"2025-01-01T00:00:00Z","type":"anthropic"}').buffer),
+    decrypt: vi
+      .fn()
+      .mockResolvedValue(
+        new TextEncoder().encode(
+          '{"secret":"sk-ant-test123","storedAt":"2025-01-01T00:00:00Z","type":"anthropic"}'
+        ).buffer
+      ),
   },
   getRandomValues: vi.fn().mockReturnValue(new Uint8Array(12)),
 };
@@ -108,7 +114,7 @@ describe('KeyStorage', () => {
           message: 'Valid',
         });
 
-        const result = await storage.store('github', 'ghp_' + 'a'.repeat(36), {
+        const result = await storage.store('github', `ghp_${'a'.repeat(36)}`, {
           requireBiometric: true,
         });
 
@@ -120,7 +126,7 @@ describe('KeyStorage', () => {
         // BiometricAuth.authenticate throws on failure
         mockBiometricAuth.authenticate.mockRejectedValue(new Error('user_cancel'));
 
-        const result = await storage.store('github', 'ghp_' + 'a'.repeat(36), {
+        const result = await storage.store('github', `ghp_${'a'.repeat(36)}`, {
           requireBiometric: true,
         });
 
@@ -335,7 +341,7 @@ describe('KeyStorage', () => {
           expect.any(String)
         );
         // Verify it's not storing plain text
-        const storedValue = sessionStorageStore['thumbcode_cred_anthropic'];
+        const storedValue = sessionStorageStore.thumbcode_cred_anthropic;
         expect(storedValue).not.toContain('sk-ant-test123');
       });
 
@@ -353,10 +359,10 @@ describe('KeyStorage', () => {
       it('should retrieve and decrypt credential from sessionStorage', async () => {
         // Mock a stored encrypted value
         const encryptedPayload = JSON.stringify({
-            iv: [1,2,3],
-            data: [4,5,6]
+          iv: [1, 2, 3],
+          data: [4, 5, 6],
         });
-        sessionStorageStore['thumbcode_cred_anthropic'] = encryptedPayload;
+        sessionStorageStore.thumbcode_cred_anthropic = encryptedPayload;
 
         // Mock decrypt to return the specific payload for this test
         const decryptedPayload = JSON.stringify({
@@ -366,7 +372,7 @@ describe('KeyStorage', () => {
         });
 
         mockWebCrypto.subtle.decrypt.mockResolvedValueOnce(
-            new TextEncoder().encode(decryptedPayload).buffer
+          new TextEncoder().encode(decryptedPayload).buffer
         );
 
         const result = await storage.retrieve('anthropic');

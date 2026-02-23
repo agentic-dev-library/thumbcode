@@ -222,8 +222,18 @@ describe('GitCommitService', () => {
             message: 'first commit',
             tree: 'tree1',
             parent: [],
-            author: { name: 'Dev', email: 'dev@test.com', timestamp: 1700000000, timezoneOffset: 0 },
-            committer: { name: 'Dev', email: 'dev@test.com', timestamp: 1700000000, timezoneOffset: 0 },
+            author: {
+              name: 'Dev',
+              email: 'dev@test.com',
+              timestamp: 1700000000,
+              timezoneOffset: 0,
+            },
+            committer: {
+              name: 'Dev',
+              email: 'dev@test.com',
+              timestamp: 1700000000,
+              timezoneOffset: 0,
+            },
           },
           payload: '',
         },
@@ -233,8 +243,18 @@ describe('GitCommitService', () => {
             message: 'second commit',
             tree: 'tree2',
             parent: ['sha1'],
-            author: { name: 'Dev', email: 'dev@test.com', timestamp: 1700000100, timezoneOffset: 0 },
-            committer: { name: 'Dev', email: 'dev@test.com', timestamp: 1700000100, timezoneOffset: 0 },
+            author: {
+              name: 'Dev',
+              email: 'dev@test.com',
+              timestamp: 1700000100,
+              timezoneOffset: 0,
+            },
+            committer: {
+              name: 'Dev',
+              email: 'dev@test.com',
+              timestamp: 1700000100,
+              timezoneOffset: 0,
+            },
           },
           payload: '',
         },
@@ -244,17 +264,15 @@ describe('GitCommitService', () => {
 
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(2);
-      expect(result.data![0]).toEqual({
+      expect(result.data?.[0]).toEqual({
         oid: 'sha1',
         message: 'first commit',
         author: { name: 'Dev', email: 'dev@test.com', timestamp: 1700000000 },
         committer: { name: 'Dev', email: 'dev@test.com', timestamp: 1700000000 },
         parents: [],
       });
-      expect(result.data![1].parents).toEqual(['sha1']);
-      expect(mockGit.log).toHaveBeenCalledWith(
-        expect.objectContaining({ depth: 20 })
-      );
+      expect(result.data?.[1].parents).toEqual(['sha1']);
+      expect(mockGit.log).toHaveBeenCalledWith(expect.objectContaining({ depth: 20 }));
     });
 
     it('should accept custom depth', async () => {
@@ -262,9 +280,7 @@ describe('GitCommitService', () => {
 
       await GitCommitService.log('/mock/repos/repo', 5);
 
-      expect(mockGit.log).toHaveBeenCalledWith(
-        expect.objectContaining({ depth: 5 })
-      );
+      expect(mockGit.log).toHaveBeenCalledWith(expect.objectContaining({ depth: 5 }));
     });
 
     it('should return error on log failure', async () => {

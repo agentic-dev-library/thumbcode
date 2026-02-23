@@ -5,13 +5,8 @@
  */
 
 import type { AgentRole } from '@thumbcode/types';
-import { createAIClient, getDefaultModel, type AIClient } from '../ai';
-import {
-  createAgent,
-  DEFAULT_AGENT_CONFIGS,
-  type AgentEvent,
-  type BaseAgent,
-} from '../agents';
+import { type AgentEvent, type BaseAgent, createAgent, DEFAULT_AGENT_CONFIGS } from '../agents';
+import { type AIClient, createAIClient, getDefaultModel } from '../ai';
 import type { OrchestrationStateManager } from './OrchestrationState';
 import type { OrchestratorConfig, TaskResult } from './types';
 
@@ -43,7 +38,10 @@ export class AgentCoordinator {
   /**
    * Create an agent
    */
-  async createAgent(role: AgentRole, customConfig?: Partial<typeof DEFAULT_AGENT_CONFIGS[AgentRole]>): Promise<string> {
+  async createAgent(
+    role: AgentRole,
+    customConfig?: Partial<(typeof DEFAULT_AGENT_CONFIGS)[AgentRole]>
+  ): Promise<string> {
     const defaultConfig = DEFAULT_AGENT_CONFIGS[role];
     const agentId = `${role}-${Date.now()}`;
 
@@ -139,7 +137,9 @@ export class AgentCoordinator {
       task.output = result.output;
 
       // Move to completed
-      this.stateManager.state.taskQueue = this.stateManager.state.taskQueue.filter((t) => t.id !== taskId);
+      this.stateManager.state.taskQueue = this.stateManager.state.taskQueue.filter(
+        (t) => t.id !== taskId
+      );
       this.stateManager.state.completedTasks.push(task);
       this.stateManager.state.activeTasks.delete(taskId);
 

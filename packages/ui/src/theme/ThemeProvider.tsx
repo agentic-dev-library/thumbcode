@@ -124,7 +124,10 @@ export function useTheme() {
  * @param shade - The shade key within a color group (defaults to `'500'`).
  * @returns The resolved color string (e.g., hex value). Returns `'#000000'` if the color or shade is not found.
  */
-export function useColor(colorName: keyof typeof themeTokens.colors, shade: string = '500'): string {
+export function useColor(
+  colorName: keyof typeof themeTokens.colors,
+  shade: string = '500'
+): string {
   const { colors } = useTheme();
   const color = colors[colorName];
 

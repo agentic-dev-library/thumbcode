@@ -1,5 +1,5 @@
-import { requestSigningService } from '../security/RequestSigningService';
 import { CredentialService } from '../credentials/CredentialService';
+import { requestSigningService } from '../security/RequestSigningService';
 
 vi.mock('../credentials/CredentialService');
 
@@ -11,13 +11,21 @@ describe('RequestSigningService', () => {
   describe('signRequest', () => {
     it('should return null if no signing secret is found', async () => {
       (CredentialService.retrieve as Mock).mockResolvedValue({ secret: null });
-      const headers = await requestSigningService.signRequest('https://mcp.thumbcode.com/test', 'POST', '{}');
+      const headers = await requestSigningService.signRequest(
+        'https://mcp.thumbcode.com/test',
+        'POST',
+        '{}'
+      );
       expect(headers).toBeNull();
     });
 
     it('should return the correct signing headers', async () => {
       (CredentialService.retrieve as Mock).mockResolvedValue({ secret: 'test-secret' });
-      const headers = await requestSigningService.signRequest('https://mcp.thumbcode.com/test', 'POST', '{}');
+      const headers = await requestSigningService.signRequest(
+        'https://mcp.thumbcode.com/test',
+        'POST',
+        '{}'
+      );
       expect(headers).toHaveProperty('X-Request-Timestamp');
       expect(headers).toHaveProperty('X-Request-Nonce');
       expect(headers).toHaveProperty('X-Request-Signature');

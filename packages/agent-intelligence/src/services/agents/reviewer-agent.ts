@@ -6,7 +6,7 @@
 
 import type { Agent, AgentCapability } from '@thumbcode/types';
 import type { ToolDefinition } from '../ai';
-import { BaseAgent, type AgentContext } from './base-agent';
+import { type AgentContext, BaseAgent } from './base-agent';
 
 /**
  * Reviewer agent for code review
@@ -200,7 +200,7 @@ When reviewing:
             conditions: {
               type: 'array',
               description: 'Any conditions for approval',
-              items: { type: 'string' },
+              items: { type: 'string', description: 'A condition for approval' },
             },
           },
           required: ['summary'],
@@ -219,7 +219,7 @@ When reviewing:
             blocking_issues: {
               type: 'array',
               description: 'List of issues that must be fixed',
-              items: { type: 'string' },
+              items: { type: 'string', description: 'A blocking issue' },
             },
           },
           required: ['summary', 'blocking_issues'],
@@ -246,9 +246,10 @@ When reviewing:
       case 'search_code':
         return `[Search results for pattern: ${input.pattern}]`;
 
-      case 'add_comment':
+      case 'add_comment': {
         const location = input.line ? `:${input.line}` : '';
         return `Added ${input.severity} comment on ${input.path}${location}: ${input.message}`;
+      }
 
       case 'approve_changes':
         return `Approved changes: ${input.summary}`;

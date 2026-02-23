@@ -2,25 +2,14 @@
  * Home Screen (Dashboard)
  *
  * Main dashboard showing overview of projects, agents, and recent activity.
- * Migrated from React Native to web React with Tailwind CSS.
+ * All data logic lives in useHomeDashboard; this file is layout only.
  */
 
-import { selectAgents, selectProjects, useAgentStore, useProjectStore } from '@thumbcode/state';
 import { Bell, CheckCircle, ClipboardList, FolderOpen, Pencil, Users } from 'lucide-react';
 import type React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProgressBar } from '@/components/feedback/Progress';
-
-function statusToActivityType(status: string): string {
-  switch (status) {
-    case 'completed':
-      return 'commit';
-    case 'failed':
-      return 'review';
-    default:
-      return 'task';
-  }
-}
+import { useHomeDashboard } from '@/hooks';
 
 function getStatusColor(status: string): string {
   switch (status) {
@@ -61,36 +50,7 @@ function getInitials(name: string): string {
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const projects = useProjectStore(selectProjects);
-  const agents = useAgentStore(selectAgents);
-  const tasks = useAgentStore((s) => s.tasks);
-
-  const runningAgents = agents.filter((a) => a.status !== 'idle').length;
-  const pendingTasks = tasks.filter(
-    (t) => t.status === 'pending' || t.status === 'in_progress'
-  ).length;
-  const completedToday = tasks.filter((t) => {
-    if (t.status !== 'completed' || !t.completedAt) return false;
-    const d = new Date(t.completedAt);
-    const now = new Date();
-    return d.toDateString() === now.toDateString();
-  }).length;
-
-  const recentActivity = tasks
-    .slice()
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 5)
-    .map((t) => {
-      const agent = agents.find((a) => a.id === t.agentId);
-      return {
-        id: t.id,
-        type: statusToActivityType(t.status),
-        agent: agent?.name || 'Agent',
-        message: t.description,
-        project: 'workspace',
-        time: new Date(t.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      };
-    });
+  const { stats, agents, recentActivity } = useHomeDashboard();
 
   return (
     <div className="flex-1 overflow-y-auto bg-charcoal" data-testid="home-screen">
@@ -110,7 +70,9 @@ export default function HomePage() {
             <div className="mb-2">
               <FolderOpen size={32} className="text-teal-500" />
             </div>
-            <span className="block text-2xl font-bold font-body text-white">{projects.length}</span>
+            <span className="block text-2xl font-bold font-body text-white">
+              {stats.projectCount}
+            </span>
             <span className="text-sm font-body text-neutral-400">Projects</span>
           </div>
 
@@ -121,7 +83,9 @@ export default function HomePage() {
             <div className="mb-2">
               <Users size={32} className="text-coral-500" />
             </div>
-            <span className="block text-2xl font-bold font-body text-white">{runningAgents}</span>
+            <span className="block text-2xl font-bold font-body text-white">
+              {stats.runningAgents}
+            </span>
             <span className="text-sm font-body text-neutral-400">Running Agents</span>
           </div>
 
@@ -132,7 +96,9 @@ export default function HomePage() {
             <div className="mb-2">
               <ClipboardList size={32} className="text-gold-400" />
             </div>
-            <span className="block text-2xl font-bold font-body text-white">{pendingTasks}</span>
+            <span className="block text-2xl font-bold font-body text-white">
+              {stats.pendingTasks}
+            </span>
             <span className="text-sm font-body text-neutral-400">Pending Tasks</span>
           </div>
         </div>
@@ -190,17 +156,10 @@ export default function HomePage() {
           <div className="flex justify-between items-center mb-3">
             <span className="font-body font-semibold text-white">Today&apos;s Progress</span>
             <span className="text-xs font-body font-medium text-teal-400 bg-teal-600/20 px-2 py-0.5 rounded-organic-badge">
-              {completedToday} done
+              {stats.completedToday} done
             </span>
           </div>
-          <ProgressBar
-            value={
-              completedToday + pendingTasks > 0
-                ? (completedToday / (completedToday + pendingTasks)) * 100
-                : 0
-            }
-            color="secondary"
-          />
+          <ProgressBar value={stats.progressPercent} color="secondary" />
         </div>
 
         {/* Recent Activity */}

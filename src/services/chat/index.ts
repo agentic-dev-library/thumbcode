@@ -4,6 +4,7 @@
  * Real-time chat interactions between users and AI agents.
  */
 
+export { getAgentSystemPrompt } from './AgentPrompts';
 export { AgentResponseService } from './AgentResponseService';
 export { ChatService } from './ChatService';
 export { MessageStore } from './MessageStore';

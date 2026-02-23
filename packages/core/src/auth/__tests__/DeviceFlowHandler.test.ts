@@ -86,10 +86,7 @@ describe('DeviceFlowHandler', () => {
         onUserCode,
       });
 
-      expect(onUserCode).toHaveBeenCalledWith(
-        'ABCD-1234',
-        'https://github.com/login/device'
-      );
+      expect(onUserCode).toHaveBeenCalledWith('ABCD-1234', 'https://github.com/login/device');
     });
 
     it('should call onSetState with state transitions', async () => {
@@ -99,11 +96,7 @@ describe('DeviceFlowHandler', () => {
       });
 
       const onSetState = vi.fn();
-      await handler.startDeviceFlow(
-        { clientId: 'test-client-id' },
-        undefined,
-        onSetState
-      );
+      await handler.startDeviceFlow({ clientId: 'test-client-id' }, undefined, onSetState);
 
       expect(onSetState).toHaveBeenCalledWith('requesting_code');
       expect(onSetState).toHaveBeenCalledWith('awaiting_user');

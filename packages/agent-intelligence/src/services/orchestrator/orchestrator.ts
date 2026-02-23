@@ -8,7 +8,7 @@
  */
 
 import type { AgentRole, TaskAssignment, TaskStatus } from '@thumbcode/types';
-import { DEFAULT_AGENT_CONFIGS } from '../agents';
+import type { DEFAULT_AGENT_CONFIGS } from '../agents';
 import { AgentCoordinator } from './AgentCoordinator';
 import { OrchestrationStateManager } from './OrchestrationState';
 import { TaskAssigner } from './TaskAssigner';
@@ -43,7 +43,10 @@ export class AgentOrchestrator {
     return this.coordinator.initialize();
   }
 
-  async createAgent(role: AgentRole, customConfig?: Partial<typeof DEFAULT_AGENT_CONFIGS[AgentRole]>): Promise<string> {
+  async createAgent(
+    role: AgentRole,
+    customConfig?: Partial<(typeof DEFAULT_AGENT_CONFIGS)[AgentRole]>
+  ): Promise<string> {
     return this.coordinator.createAgent(role, customConfig);
   }
 
@@ -57,7 +60,7 @@ export class AgentOrchestrator {
   }
 
   assignTask(taskId: string, role: AgentRole): void {
-    return this.taskAssigner.assignTask(taskId, role);
+    this.taskAssigner.assignTask(taskId, role);
   }
 
   getTask(taskId: string): TaskAssignment | undefined {
@@ -125,7 +128,8 @@ export class AgentOrchestrator {
       }
 
       // Start ready tasks up to concurrency limit
-      const availableSlots = this.config.maxConcurrentAgents - this.stateManager.state.activeTasks.size;
+      const availableSlots =
+        this.config.maxConcurrentAgents - this.stateManager.state.activeTasks.size;
       const tasksToStart = plan.ready.slice(0, availableSlots);
 
       if (this.config.enableParallelExecution && tasksToStart.length > 1) {

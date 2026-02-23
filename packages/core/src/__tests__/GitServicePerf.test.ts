@@ -1,6 +1,6 @@
-import fsNode from 'fs';
-import path from 'path';
-import os from 'os';
+import fsNode from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 
 // Mock @capacitor/filesystem before importing Git services
 const MOCK_DOC_DIR = path.join(os.tmpdir(), 'git-service-perf-root');
@@ -9,9 +9,9 @@ if (!fsNode.existsSync(MOCK_DOC_DIR)) {
 }
 
 vi.mock('@capacitor/filesystem', () => {
-  const fs = require('fs');
-  const path = require('path');
-  const os = require('os');
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const os = require('node:os');
 
   const MOCK_DOC_DIR = path.join(os.tmpdir(), 'git-service-perf-root');
   if (!fs.existsSync(MOCK_DOC_DIR)) {
@@ -48,7 +48,7 @@ vi.mock('@capacitor/filesystem', () => {
       }),
       readdir: vi.fn(async ({ path: dirpath }) => {
         const entries = await fs.promises.readdir(dirpath);
-        return { files: entries.map((name) => ({ name })) };
+        return { files: entries.map((name: string) => ({ name })) };
       }),
       mkdir: vi.fn(async ({ path: dirpath, recursive }) => {
         return fs.promises.mkdir(dirpath, { recursive });
@@ -70,13 +70,13 @@ vi.mock('@capacitor/filesystem', () => {
   };
 });
 
+import { Encoding, Filesystem } from '@capacitor/filesystem';
 import { GitCloneService } from '../git/GitCloneService';
 import { GitCommitService } from '../git/GitCommitService';
 import { GitDiffService } from '../git/GitDiffService';
-import { Filesystem, Encoding } from '@capacitor/filesystem';
 
 describe('Git Services Performance', () => {
-  const repoName = 'perf-repo-' + Date.now();
+  const repoName = `perf-repo-${Date.now()}`;
   const repoDir = path.join(MOCK_DOC_DIR, 'repos', repoName);
 
   beforeAll(async () => {
@@ -120,7 +120,11 @@ describe('Git Services Performance', () => {
     const commit1 = await GitCommitService.commit({
       dir: repoDir,
       message: 'Initial commit',
-      author: { name: 'Test User', email: 'test@example.com', timestamp: Math.floor(Date.now() / 1000) },
+      author: {
+        name: 'Test User',
+        email: 'test@example.com',
+        timestamp: Math.floor(Date.now() / 1000),
+      },
     });
     expect(commit1.success).toBe(true);
 
@@ -140,7 +144,11 @@ describe('Git Services Performance', () => {
     const commit2 = await GitCommitService.commit({
       dir: repoDir,
       message: 'Modify files',
-      author: { name: 'Test User', email: 'test@example.com', timestamp: Math.floor(Date.now() / 1000) },
+      author: {
+        name: 'Test User',
+        email: 'test@example.com',
+        timestamp: Math.floor(Date.now() / 1000),
+      },
     });
     expect(commit2.success).toBe(true);
 

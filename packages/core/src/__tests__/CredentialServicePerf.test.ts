@@ -1,7 +1,7 @@
-import { CredentialService } from '../credentials/CredentialService';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { secureFetch } from '../api/api';
-import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { CredentialService } from '../credentials/CredentialService';
 
 // Mock secureFetch
 vi.mock('../api/api', () => ({
@@ -24,13 +24,27 @@ describe('CredentialService Performance', () => {
     // Mock SecureStoragePlugin to return items for specific keys
     (SecureStoragePlugin.get as Mock).mockImplementation(async ({ key }: { key: string }) => {
       if (key.includes('github')) {
-        return { value: JSON.stringify({ secret: 'ghp_000000000000000000000000000000000000', storedAt: '2023-01-01', type: 'github' }) };
+        return {
+          value: JSON.stringify({
+            secret: 'ghp_000000000000000000000000000000000000',
+            storedAt: '2023-01-01',
+            type: 'github',
+          }),
+        };
       }
       if (key.includes('anthropic')) {
-        return { value: JSON.stringify({ secret: 'sk-ant-test', storedAt: '2023-01-01', type: 'anthropic' }) };
+        return {
+          value: JSON.stringify({
+            secret: 'sk-ant-test',
+            storedAt: '2023-01-01',
+            type: 'anthropic',
+          }),
+        };
       }
       if (key.includes('openai')) {
-        return { value: JSON.stringify({ secret: 'sk-test', storedAt: '2023-01-01', type: 'openai' }) };
+        return {
+          value: JSON.stringify({ secret: 'sk-test', storedAt: '2023-01-01', type: 'openai' }),
+        };
       }
       throw new Error('Key not found');
     });

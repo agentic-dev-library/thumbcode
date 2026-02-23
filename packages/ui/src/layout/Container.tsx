@@ -12,7 +12,12 @@ interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
  * @param className - Additional class names to append.
  * @returns A View element with appropriate layout styling.
  */
-export function Container({ variant = 'default', className = '', children, ...props }: ContainerProps) {
+export function Container({
+  variant = 'default',
+  className = '',
+  children,
+  ...props
+}: ContainerProps) {
   const variantClasses = {
     default: 'flex-1 bg-charcoal',
     padded: 'flex-1 bg-charcoal p-4',
