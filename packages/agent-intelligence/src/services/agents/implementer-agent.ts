@@ -4,14 +4,28 @@
  * Specializes in writing code and implementing features.
  */
 
-import type { Agent, AgentCapability } from '@thumbcode/types';
-import type { ToolDefinition } from '../ai';
+import type { Agent, AgentCapability, AgentRole } from '@thumbcode/types';
+import type { AIClient, ToolDefinition } from '../ai';
+import { FrontendSkill } from '../skills/FrontendSkill';
 import { type AgentContext, BaseAgent } from './base-agent';
 
 /**
  * Implementer agent for code generation
  */
 export class ImplementerAgent extends BaseAgent {
+  constructor(config: {
+    id: string;
+    role: AgentRole;
+    name: string;
+    aiClient: AIClient;
+    model?: string;
+    maxTokens?: number;
+    temperature?: number;
+  }) {
+    super(config);
+    this.addSkill(new FrontendSkill());
+  }
+
   protected getSystemPrompt(context: AgentContext): string {
     return `You are the Implementer Agent for ThumbCode, a mobile-first code editor.
 

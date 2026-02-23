@@ -10,6 +10,7 @@
 
 import type { Agent, AgentRole, AgentStatus, TaskAssignment } from '@thumbcode/types';
 import type { AIClient, Message, StreamEvent, ToolDefinition } from '../ai';
+import type { AgentSkill, SkillToolDefinition } from '../skills/types';
 import { parseExecutionResult } from './Committable';
 import { formatTaskMessage } from './Promptable';
 import { executeTask, executeTaskStream } from './Reviewable';
@@ -29,6 +30,7 @@ export abstract class BaseAgent {
   protected model: string;
   protected maxTokens: number;
   protected temperature: number;
+  protected skills: AgentSkill[] = [];
   protected eventCallbacks: AgentEventCallback[] = [];
   protected conversationHistory: Message[] = [];
 
@@ -73,7 +75,7 @@ export abstract class BaseAgent {
         model: this.model,
         temperature: this.temperature,
         maxTokens: this.maxTokens,
-        tools: this.getTools().map((t) => t.name),
+        tools: this.getToolsWithSkills().map((t) => t.name),
       },
       createdAt: new Date().toISOString(),
       lastActiveAt: new Date().toISOString(),
@@ -113,6 +115,105 @@ export abstract class BaseAgent {
   }
 
   /**
+   * Add a skill to this agent
+   */
+  addSkill(skill: AgentSkill): void {
+    this.skills.push(skill);
+  }
+
+  /**
+   * Get all attached skills
+   */
+  getSkills(): AgentSkill[] {
+    return [...this.skills];
+  }
+
+  /**
+   * Build system prompt with skill extensions appended
+   */
+  protected getSystemPromptWithSkills(context: AgentContext): string {
+    const basePrompt = this.getSystemPrompt(context);
+    if (this.skills.length === 0) {
+      return basePrompt;
+    }
+
+    const skillExtensions = this.skills
+      .map((skill) => skill.getSystemPromptExtension())
+      .filter((ext) => ext.length > 0);
+
+    if (skillExtensions.length === 0) {
+      return basePrompt;
+    }
+
+    return `${basePrompt}\n\n${skillExtensions.join('\n\n')}`;
+  }
+
+  /**
+   * Convert a SkillToolDefinition to a ToolDefinition
+   */
+  private skillToolToToolDefinition(skillTool: SkillToolDefinition): ToolDefinition {
+    const properties: Record<string, { type: string; description: string }> = {};
+    const required: string[] = [];
+
+    for (const [paramName, param] of Object.entries(skillTool.parameters)) {
+      properties[paramName] = {
+        type: param.type,
+        description: param.description,
+      };
+      if (param.required) {
+        required.push(paramName);
+      }
+    }
+
+    return {
+      name: skillTool.name,
+      description: skillTool.description,
+      input_schema: {
+        type: 'object',
+        properties,
+        required: required.length > 0 ? required : undefined,
+      },
+    };
+  }
+
+  /**
+   * Get all tools including skill-provided tools
+   */
+  protected getToolsWithSkills(): ToolDefinition[] {
+    const baseTools = this.getTools();
+    if (this.skills.length === 0) {
+      return baseTools;
+    }
+
+    const skillTools = this.skills.flatMap((skill) =>
+      skill.getTools().map((st) => this.skillToolToToolDefinition(st))
+    );
+
+    return [...baseTools, ...skillTools];
+  }
+
+  /**
+   * Execute a tool, routing to skills if the base agent doesn't handle it
+   */
+  protected async executeToolWithSkills(
+    name: string,
+    input: Record<string, unknown>,
+    context: AgentContext
+  ): Promise<string> {
+    // Check if any skill owns this tool
+    for (const skill of this.skills) {
+      const skillToolNames = skill.getTools().map((t) => t.name);
+      if (skillToolNames.includes(name)) {
+        const result = await skill.executeTool(name, input);
+        return result.output;
+      }
+    }
+
+    // Fall back to the agent's own tool execution
+    return this.executeTool(name, input, context);
+  }
+
+  /**
    * Get the system prompt for this agent
    */
   protected abstract getSystemPrompt(context: AgentContext): string;
@@ -143,8 +244,8 @@ export abstract class BaseAgent {
     return executeTask(
       task,
       context,
-      this.getSystemPrompt(context),
-      this.getTools(),
+      this.getSystemPromptWithSkills(context),
+      this.getToolsWithSkills(),
       this.aiClient,
       { model: this.model, maxTokens: this.maxTokens, temperature: this.temperature },
       {
@@ -159,7 +260,7 @@ export abstract class BaseAgent {
         onThinking: (thought) => this.emitEvent({ type: 'thinking', data: { thought } }),
         onError: (error) => this.emitEvent({ type: 'error', data: { error } }),
         onComplete: (result) => this.emitEvent({ type: 'complete', data: { result } }),
-        executeTool: (name, input, ctx) => this.executeTool(name, input, ctx),
+        executeTool: (name, input, ctx) => this.executeToolWithSkills(name, input, ctx),
       }
     );
   }
@@ -175,8 +276,8 @@ export abstract class BaseAgent {
     return executeTaskStream(
       task,
       context,
-      this.getSystemPrompt(context),
-      this.getTools(),
+      this.getSystemPromptWithSkills(context),
+      this.getToolsWithSkills(),
       this.aiClient,
       { model: this.model, maxTokens: this.maxTokens, temperature: this.temperature },
       {
@@ -191,7 +292,7 @@ export abstract class BaseAgent {
         onThinking: (thought) => this.emitEvent({ type: 'thinking', data: { thought } }),
         onError: (error) => this.emitEvent({ type: 'error', data: { error } }),
         onComplete: (result) => this.emitEvent({ type: 'complete', data: { result } }),
-        executeTool: (name, input, ctx) => this.executeTool(name, input, ctx),
+        executeTool: (name, input, ctx) => this.executeToolWithSkills(name, input, ctx),
       },
       onStream
     );

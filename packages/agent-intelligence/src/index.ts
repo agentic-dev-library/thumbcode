@@ -16,3 +16,6 @@ export * from './services/orchestrator';
 
 // Tool Execution Bridge
 export * from './services/tools';
+
+// Agent Skills
+export * from './services/skills';
