@@ -7,7 +7,6 @@
 
 import { useMemo, useState } from 'react';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 import { TOKEN_COLORS, tokenize } from '@/lib/syntax-highlighter';
 
 /** Props for the CodeBlock component */
@@ -33,7 +32,7 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
   };
 
   return (
-    <div className="bg-charcoal overflow-hidden" style={organicBorderRadius.codeBlock}>
+    <div className="bg-charcoal overflow-hidden rounded-organic-code">
       {/* Header with language and filename */}
       <div className="flex-row justify-between items-center px-3 py-2 bg-neutral-800 border-b border-neutral-700">
         <div className="flex-row items-center">
@@ -54,8 +53,7 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
         <button
           type="button"
           onClick={handleCopy}
-          className="px-2 py-1 active:bg-neutral-700"
-          style={organicBorderRadius.badge}
+          className="px-2 py-1 active:bg-neutral-700 rounded-organic-badge"
           aria-label="Copy code"
           aria-description="Copy the code to the clipboard"
         >

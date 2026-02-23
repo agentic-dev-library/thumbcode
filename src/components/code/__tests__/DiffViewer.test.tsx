@@ -16,10 +16,6 @@ vi.mock('@/components/ui', () => ({
   }) => <span {...props}>{children}</span>,
 }));
 
-vi.mock('@/lib/organic-styles', () => ({
-  organicBorderRadius: { card: {} },
-}));
-
 describe('DiffViewer', () => {
   const oldContent = 'line one\nline two\nline three';
   const newContent = 'line one\nline modified\nline three\nline four';

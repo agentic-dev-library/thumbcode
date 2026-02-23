@@ -8,7 +8,6 @@
 import type React from 'react';
 import { CloseIcon, type IconColor, InfoIcon, SuccessIcon, WarningIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 
 type BadgeVariant = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error';
 type BadgeSize = 'sm' | 'md' | 'lg';
@@ -79,8 +78,7 @@ export function Badge({
 
   return (
     <div
-      className={`flex-row items-center ${colors.bg} ${sizing.px} ${sizing.py}`}
-      style={organicBorderRadius.badge}
+      className={`flex-row items-center rounded-organic-badge ${colors.bg} ${sizing.px} ${sizing.py}`}
     >
       {Icon && (
         <div className="mr-1">

@@ -1,10 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { InfoTip, Tooltip } from '../Tooltip';
 
-vi.mock('@/lib/organic-styles', () => ({
-  organicBorderRadius: { badge: {} },
-}));
-
 describe('Tooltip', () => {
   it('renders children', () => {
     render(

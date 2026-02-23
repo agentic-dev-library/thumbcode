@@ -9,7 +9,6 @@ import { Badge } from '@/components/display';
 import type { IconColor } from '@/components/icons';
 import { HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 
 export interface SettingsItemProps {
   Icon: React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
@@ -46,8 +45,7 @@ export function SettingsItem({
     >
       <HStack align="center">
         <div
-          className="w-10 h-10 bg-surface-elevated items-center justify-center mr-4"
-          style={organicBorderRadius.badge}
+          className="w-10 h-10 bg-surface-elevated items-center justify-center mr-4 rounded-organic-badge"
         >
           <Icon size={22} color={iconColor} turbulence={0.2} />
         </div>

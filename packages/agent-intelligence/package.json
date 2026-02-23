@@ -10,9 +10,9 @@
     "./orchestrator": "./src/services/orchestrator/index.ts"
   },
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -21,14 +21,10 @@
     "@thumbcode/types": "workspace:*",
     "openai": "^4.73.0",
     "react": "18.3.1",
-    "react-native": "0.76.0",
     "zustand": "^5.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.0",
     "@types/react": "~18.3.0",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.2.0",
     "typescript": "^5.3.0"
   }
 }

@@ -1,4 +1,3 @@
-import { organicBorderRadius, organicShadow } from '../theme/organicStyles';
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'elevated';
@@ -26,13 +25,11 @@ export function Card({
         ${variantClasses}
         p-4
         border border-neutral-700
+        rounded-organic-card
+        ${variant === 'elevated' ? 'shadow-organic-elevated' : 'shadow-organic-card'}
         ${className}
       `}
-      style={{
-        ...organicBorderRadius.card,
-        ...(variant === 'elevated' ? organicShadow.elevated : organicShadow.card),
-        ...style,
-      }}
+      style={style}
       {...props}
     >
       {children}

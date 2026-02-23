@@ -15,10 +15,6 @@ vi.mock('@/components/icons', () => ({
   FolderOpenIcon: () => <span>FolderOpen</span>,
 }));
 
-vi.mock('@/lib/organic-styles', () => ({
-  organicBorderRadius: { card: {} },
-}));
-
 const mockData: FileNode[] = [
   {
     name: 'src',

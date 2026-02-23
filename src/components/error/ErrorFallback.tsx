@@ -9,7 +9,6 @@
 import { ErrorIcon } from '@/components/icons';
 import { Container, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 
 /** Props for the ErrorFallback component */
 interface ErrorFallbackProps {
@@ -59,8 +58,7 @@ export function ErrorFallback({
         <VStack spacing="lg" align="center">
           {/* Error Icon */}
           <div
-            className="w-20 h-20 bg-coral-500/20 items-center justify-center"
-            style={organicBorderRadius.hero}
+            className="w-20 h-20 bg-coral-500/20 items-center justify-center rounded-organic-hero"
           >
             <ErrorIcon size={40} color="coral" turbulence={0.25} />
           </div>
@@ -80,7 +78,7 @@ export function ErrorFallback({
 
           {/* Dev-only Error Details */}
           {isDev && error && (
-            <div className="bg-surface p-4 w-full max-w-sm" style={organicBorderRadius.card}>
+            <div className="bg-surface p-4 w-full max-w-sm rounded-organic-card">
               <Text size="sm" weight="semibold" className="text-coral-500 mb-2">
                 Debug Info
               </Text>
@@ -100,8 +98,7 @@ export function ErrorFallback({
             <button
               type="button"
               onClick={onRetry}
-              className="bg-coral-500 px-8 py-3 active:bg-coral-600"
-              style={organicBorderRadius.cta}
+              className="bg-coral-500 px-8 py-3 active:bg-coral-600 rounded-organic-cta"
             >
               <Text weight="semibold" className="text-white">
                 Try Again
@@ -139,7 +136,7 @@ export function CompactErrorFallback({
   onRetry,
 }: Readonly<CompactErrorFallbackProps>) {
   return (
-    <div className="bg-surface/50 p-4" style={organicBorderRadius.card}>
+    <div className="bg-surface/50 p-4 rounded-organic-card">
       <VStack spacing="sm" align="center">
         <Text size="sm" className="text-neutral-400">
           {message}

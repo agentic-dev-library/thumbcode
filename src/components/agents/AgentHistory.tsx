@@ -8,7 +8,6 @@ import type { AgentTask } from '@thumbcode/state';
 import { Badge } from '@/components/display';
 import { Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 
 function formatDateTime(value: string) {
   const d = new Date(value);
@@ -33,8 +32,7 @@ export function AgentHistory({ tasks }: Readonly<AgentHistoryProps>) {
   return (
     <VStack
       spacing="none"
-      className="bg-surface"
-      style={{ ...organicBorderRadius.card, overflow: 'hidden' }}
+      className="bg-surface rounded-organic-card overflow-hidden"
     >
       <div className="px-4 py-3 border-b border-neutral-700">
         <Text size="sm" weight="semibold" className="text-neutral-400">

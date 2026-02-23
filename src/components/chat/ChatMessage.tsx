@@ -7,7 +7,7 @@
 
 import type { ApprovalMessage, Message } from '@thumbcode/state';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
+import { formatTime, getSenderInfo } from '@/lib/chat-utils';
 import { ApprovalCard } from './ApprovalCard';
 import { CodeBlock } from './CodeBlock';
 
@@ -17,30 +17,6 @@ interface ChatMessageProps {
   message: Message;
   /** Called when the user responds to an approval request */
   onApprovalResponse?: (messageId: string, approved: boolean) => void;
-}
-
-/**
- * Get sender display name and color
- */
-function getSenderInfo(sender: Message['sender']) {
-  const senderMap: Record<Message['sender'], { name: string; bgColor: string; textColor: string }> =
-    {
-      user: { name: 'You', bgColor: 'bg-teal-600', textColor: 'text-white' },
-      architect: { name: 'Architect', bgColor: 'bg-coral-500', textColor: 'text-white' },
-      implementer: { name: 'Implementer', bgColor: 'bg-gold-500', textColor: 'text-charcoal' },
-      reviewer: { name: 'Reviewer', bgColor: 'bg-teal-500', textColor: 'text-white' },
-      tester: { name: 'Tester', bgColor: 'bg-neutral-600', textColor: 'text-white' },
-      system: { name: 'System', bgColor: 'bg-neutral-700', textColor: 'text-neutral-300' },
-    };
-  return senderMap[sender] || senderMap.system;
-}
-
-/**
- * Format timestamp for display
- */
-function formatTime(timestamp: string): string {
-  const date = new Date(timestamp);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
 export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessageProps>) {
@@ -68,7 +44,7 @@ export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessag
       <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
         <div className="max-w-[90%]">
           <div className="flex-row items-center mb-1">
-            <div className={`px-2 py-0.5 ${senderInfo.bgColor}`} style={organicBorderRadius.pill}>
+            <div className={`px-2 py-0.5 ${senderInfo.bgColor} rounded-organic-input`}>
               <Text size="xs" className={senderInfo.textColor}>
                 {senderInfo.name}
               </Text>
@@ -91,7 +67,7 @@ export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessag
       <div className="max-w-[80%]">
         {!isUser && (
           <div className="flex-row items-center mb-1">
-            <div className={`px-2 py-0.5 ${senderInfo.bgColor}`} style={organicBorderRadius.pill}>
+            <div className={`px-2 py-0.5 ${senderInfo.bgColor} rounded-organic-input`}>
               <Text size="xs" className={senderInfo.textColor}>
                 {senderInfo.name}
               </Text>
@@ -99,8 +75,7 @@ export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessag
           </div>
         )}
         <div
-          className={`p-3 ${isUser ? 'bg-teal-600' : 'bg-surface-elevated'}`}
-          style={isUser ? organicBorderRadius.chatBubbleUser : organicBorderRadius.chatBubbleAgent}
+          className={`p-3 ${isUser ? 'bg-teal-600 rounded-organic-chat-user' : 'bg-surface-elevated rounded-organic-chat-agent'}`}
         >
           <Text className={isUser ? 'text-white' : 'text-neutral-200'}>{message.content}</Text>
         </div>

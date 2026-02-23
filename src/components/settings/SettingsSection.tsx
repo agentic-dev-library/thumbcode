@@ -6,7 +6,6 @@
 
 import { VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 
 interface SettingsSectionProps {
   title: string;
@@ -22,8 +21,7 @@ export function SettingsSection({
   return (
     <VStack
       spacing="none"
-      className={`bg-surface ${className}`}
-      style={{ ...organicBorderRadius.card, overflow: 'hidden' }}
+      className={`bg-surface rounded-organic-card overflow-hidden ${className}`}
     >
       <div className="px-4 py-3 border-b border-neutral-700">
         <Text size="sm" weight="semibold" className="text-neutral-400">

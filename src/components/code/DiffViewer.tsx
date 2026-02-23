@@ -9,8 +9,6 @@ import { useMemo, useState } from 'react';
 
 import { ChevronDownIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
-
 import type { DiffLine } from './parse-diff';
 import { parseDiff } from './parse-diff';
 
@@ -90,7 +88,7 @@ export function DiffViewer({
   };
 
   return (
-    <div className="bg-charcoal overflow-hidden" style={organicBorderRadius.card}>
+    <div className="bg-charcoal overflow-hidden rounded-organic-card">
       {/* Header */}
       <button
         type="button"

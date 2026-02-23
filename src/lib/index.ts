@@ -70,5 +70,3 @@ export {
   retry,
   withRetry,
 } from './retry';
-// Note: organic-styles is exported separately to avoid native module dependency issues
-// Import directly: import { organicBorderRadius } from '@/lib/organic-styles';

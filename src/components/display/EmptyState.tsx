@@ -9,7 +9,6 @@
 import type { ReactNode } from 'react';
 import { ErrorIcon, type IconColor, InboxIcon, SearchIcon } from '@/components/icons';
 import { Text } from '@/components/ui';
-import { organicBorderRadius } from '@/lib/organic-styles';
 
 /** Icon component type for EmptyState */
 type EmptyStateIcon = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
@@ -83,8 +82,7 @@ export function EmptyState({
             <button
               type="button"
               onClick={secondaryAction.onPress}
-              className="px-4 py-2 bg-neutral-700 active:bg-neutral-600"
-              style={organicBorderRadius.button}
+              className="px-4 py-2 bg-neutral-700 active:bg-neutral-600 rounded-organic-button"
               aria-label={secondaryAction.label}
               aria-description={`Perform the action: ${secondaryAction.label}`}
             >
@@ -95,8 +93,7 @@ export function EmptyState({
             <button
               type="button"
               onClick={action.onPress}
-              className="px-4 py-2 bg-coral-500 active:bg-coral-600"
-              style={organicBorderRadius.button}
+              className="px-4 py-2 bg-coral-500 active:bg-coral-600 rounded-organic-button"
               aria-label={action.label}
               aria-description={`Perform the action: ${action.label}`}
             >

@@ -1,8 +1,8 @@
 /**
  * AgentResponseService Tests
  *
- * Tests for credential resolution, streaming with mocked AI client,
- * abort/cancel, and approval request/response workflows.
+ * Tests for credential resolution, orchestrator routing, streaming with
+ * mocked AI client, abort/cancel, and approval request/response workflows.
  */
 
 import { useChatStore, useCredentialStore } from '@thumbcode/state';
@@ -13,10 +13,37 @@ import { AgentResponseService } from '../AgentResponseService';
 import { MessageStore } from '../MessageStore';
 import { StreamHandler } from '../StreamHandler';
 
+// Use vi.hoisted so mock values are available inside vi.mock factory (which is hoisted)
+const { mockOrchestratorInstance, MockAgentOrchestrator } = vi.hoisted(() => {
+  const instance = {
+    initialize: vi.fn().mockResolvedValue(undefined),
+    getState: vi.fn().mockReturnValue({
+      status: 'idle',
+      agents: new Map([
+        ['architect-1', { id: 'architect-1', role: 'architect', status: 'idle' }],
+        ['implementer-1', { id: 'implementer-1', role: 'implementer', status: 'idle' }],
+        ['reviewer-1', { id: 'reviewer-1', role: 'reviewer', status: 'idle' }],
+        ['tester-1', { id: 'tester-1', role: 'tester', status: 'idle' }],
+      ]),
+      taskQueue: [],
+      activeTasks: new Map(),
+      completedTasks: [],
+    }),
+    onEvent: vi.fn().mockReturnValue(() => {}),
+    createAgent: vi.fn(),
+    getMetrics: vi.fn(),
+  };
+  return {
+    mockOrchestratorInstance: instance,
+    MockAgentOrchestrator: vi.fn().mockImplementation(() => instance),
+  };
+});
+
 // Mock AI dependencies from @thumbcode/agent-intelligence
 vi.mock('@thumbcode/agent-intelligence', () => ({
   createAIClient: vi.fn(),
   getDefaultModel: vi.fn().mockReturnValue('claude-3-5-sonnet-20241022'),
+  AgentOrchestrator: MockAgentOrchestrator,
 }));
 
 vi.mock('../AgentPrompts', () => ({
@@ -38,6 +65,25 @@ function mockCompletionResponse(text = '') {
   };
 }
 
+/** Helper to set up valid Anthropic credentials */
+function setupAnthropicCredentials() {
+  useCredentialStore.setState({
+    credentials: [
+      {
+        id: '1',
+        provider: 'anthropic',
+        name: 'Anthropic',
+        secureStoreKey: 'anthropic-key',
+        status: 'valid',
+        createdAt: new Date().toISOString(),
+      },
+    ],
+    isValidating: false,
+    lastError: null,
+  });
+  (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-ant-key' });
+}
+
 describe('AgentResponseService', () => {
   let service: AgentResponseService;
   let streamHandler: StreamHandler;
@@ -45,6 +91,22 @@ describe('AgentResponseService', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Restore orchestrator mock implementations after clearAllMocks
+    mockOrchestratorInstance.initialize.mockResolvedValue(undefined);
+    mockOrchestratorInstance.getState.mockReturnValue({
+      status: 'idle',
+      agents: new Map([
+        ['architect-1', { id: 'architect-1', role: 'architect', status: 'idle' }],
+        ['implementer-1', { id: 'implementer-1', role: 'implementer', status: 'idle' }],
+        ['reviewer-1', { id: 'reviewer-1', role: 'reviewer', status: 'idle' }],
+        ['tester-1', { id: 'tester-1', role: 'tester', status: 'idle' }],
+      ]),
+      taskQueue: [],
+      activeTasks: new Map(),
+      completedTasks: [],
+    });
+    MockAgentOrchestrator.mockImplementation(() => mockOrchestratorInstance);
 
     // Reset stores
     useChatStore.setState({
@@ -201,15 +263,237 @@ describe('AgentResponseService', () => {
     });
   });
 
-  describe('streaming', () => {
+  describe('orchestrator routing', () => {
     beforeEach(() => {
+      setupAnthropicCredentials();
+    });
+
+    it('should successfully route agent messages with orchestrator available', async () => {
+      const mockClient = {
+        completeStream: vi
+          .fn()
+          .mockImplementation(async (_msgs: any, _opts: any, onEvent: any) => {
+            onEvent({
+              type: 'content_block_delta',
+              index: 0,
+              delta: { type: 'text', text: 'Architect response' },
+            });
+            return mockCompletionResponse('Architect response');
+          }),
+      };
+      mockCreateAIClient.mockReturnValue(mockClient);
+
+      const threadId = useChatStore.getState().createThread({
+        title: 'Test',
+        participants: ['user'],
+        isPinned: false,
+      });
+
+      await service.requestAgentResponse(threadId, 'msg-1', 'architect');
+
+      // Verify the complete message lifecycle
+      expect(streamHandler.emit).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'message_start', sender: 'architect' })
+      );
+      expect(streamHandler.emit).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'message_complete', sender: 'architect' })
+      );
+
+      // Verify message was stored
+      const messages = useChatStore.getState().messages[threadId] || [];
+      const agentMsg = messages.find((m) => m.sender === 'architect');
+      expect(agentMsg).toBeDefined();
+      expect(agentMsg?.content).toBe('Architect response');
+    });
+
+    it('should handle multiple sequential requests to different agents', async () => {
+      const mockClient = {
+        completeStream: vi.fn().mockResolvedValue(mockCompletionResponse('response')),
+      };
+      mockCreateAIClient.mockReturnValue(mockClient);
+
+      const threadId = useChatStore.getState().createThread({
+        title: 'Test',
+        participants: ['user'],
+        isPinned: false,
+      });
+
+      await service.requestAgentResponse(threadId, 'msg-1', 'architect');
+      await service.requestAgentResponse(threadId, 'msg-2', 'implementer');
+
+      // Both should complete without errors
+      const emitCalls = (streamHandler.emit as Mock).mock.calls;
+      const completeCalls = emitCalls.filter((call: any) => call[0].type === 'message_complete');
+      expect(completeCalls).toHaveLength(2);
+      expect(completeCalls[0][0].sender).toBe('architect');
+      expect(completeCalls[1][0].sender).toBe('implementer');
+    });
+
+    it.each(['architect', 'implementer', 'reviewer', 'tester'] as const)(
+      'should route %s messages through the orchestrator',
+      async (agentRole) => {
+        const mockClient = {
+          completeStream: vi
+            .fn()
+            .mockImplementation(async (_msgs: any, _opts: any, onEvent: any) => {
+              onEvent({
+                type: 'content_block_delta',
+                index: 0,
+                delta: { type: 'text', text: `Response from ${agentRole}` },
+              });
+              return mockCompletionResponse(`Response from ${agentRole}`);
+            }),
+        };
+        mockCreateAIClient.mockReturnValue(mockClient);
+
+        const threadId = useChatStore.getState().createThread({
+          title: 'Test',
+          participants: ['user'],
+          isPinned: false,
+        });
+
+        await service.requestAgentResponse(threadId, 'msg-1', agentRole);
+
+        // Should emit message events for this agent
+        expect(streamHandler.emitTypingStart).toHaveBeenCalledWith(threadId, agentRole);
+        expect(streamHandler.emit).toHaveBeenCalledWith(
+          expect.objectContaining({ type: 'message_start', sender: agentRole })
+        );
+        expect(streamHandler.emit).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: 'message_delta',
+            delta: `Response from ${agentRole}`,
+            sender: agentRole,
+          })
+        );
+        expect(streamHandler.emit).toHaveBeenCalledWith(
+          expect.objectContaining({ type: 'message_complete', sender: agentRole })
+        );
+        expect(streamHandler.emitTypingEnd).toHaveBeenCalledWith(threadId, agentRole);
+      }
+    );
+
+    it('should not initialize orchestrator for non-agent senders', async () => {
+      const mockClient = {
+        completeStream: vi.fn().mockResolvedValue(mockCompletionResponse()),
+      };
+      mockCreateAIClient.mockReturnValue(mockClient);
+
+      const threadId = useChatStore.getState().createThread({
+        title: 'Test',
+        participants: ['user'],
+        isPinned: false,
+      });
+
+      // 'system' is not an agent role
+      await service.requestAgentResponse(threadId, 'msg-1', 'system');
+
+      expect(MockAgentOrchestrator).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('orchestrator error handling', () => {
+    beforeEach(() => {
+      setupAnthropicCredentials();
+    });
+
+    it('should fall back to direct AI client when orchestrator initialization fails', async () => {
+      // Make orchestrator initialization fail
+      mockOrchestratorInstance.initialize.mockRejectedValueOnce(
+        new Error('Orchestrator init failed')
+      );
+
+      const mockClient = {
+        completeStream: vi.fn().mockResolvedValue(mockCompletionResponse('fallback response')),
+      };
+      mockCreateAIClient.mockReturnValue(mockClient);
+
+      const threadId = useChatStore.getState().createThread({
+        title: 'Test',
+        participants: ['user'],
+        isPinned: false,
+      });
+
+      // Should NOT throw — should fall back gracefully
+      await service.requestAgentResponse(threadId, 'msg-1', 'architect');
+
+      // Should still have called the AI client (fallback path)
+      expect(mockClient.completeStream).toHaveBeenCalled();
+
+      // Should have completed the message lifecycle
+      expect(streamHandler.emit).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'message_complete' })
+      );
+    });
+
+    it('should emit error event when AI client streaming fails', async () => {
+      const error = new Error('API rate limited');
+      const mockClient = {
+        completeStream: vi.fn().mockRejectedValue(error),
+      };
+      mockCreateAIClient.mockReturnValue(mockClient);
+
+      const threadId = useChatStore.getState().createThread({
+        title: 'Test',
+        participants: ['user'],
+        isPinned: false,
+      });
+
+      await service.requestAgentResponse(threadId, 'msg-1', 'architect');
+
+      expect(streamHandler.emit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'error',
+          threadId,
+          error,
+        })
+      );
+    });
+
+    it('should clear typing state even when orchestrator and AI both fail', async () => {
+      mockOrchestratorInstance.initialize.mockRejectedValueOnce(new Error('Init failed'));
+
+      const mockClient = {
+        completeStream: vi.fn().mockRejectedValue(new Error('Stream failed')),
+      };
+      mockCreateAIClient.mockReturnValue(mockClient);
+
+      const threadId = useChatStore.getState().createThread({
+        title: 'Test',
+        participants: ['user'],
+        isPinned: false,
+      });
+
+      await service.requestAgentResponse(threadId, 'msg-1', 'reviewer');
+
+      expect(streamHandler.emitTypingEnd).toHaveBeenCalledWith(threadId, 'reviewer');
+      expect(streamHandler.cleanupAbort).toHaveBeenCalledWith(threadId);
+    });
+
+    it('should re-initialize orchestrator if provider changes', async () => {
+      const mockClient = {
+        completeStream: vi.fn().mockResolvedValue(mockCompletionResponse()),
+      };
+      mockCreateAIClient.mockReturnValue(mockClient);
+
+      const threadId = useChatStore.getState().createThread({
+        title: 'Test',
+        participants: ['user'],
+        isPinned: false,
+      });
+
+      // First request with Anthropic
+      await service.requestAgentResponse(threadId, 'msg-1', 'architect');
+      expect(MockAgentOrchestrator).toHaveBeenCalledTimes(1);
+
+      // Switch to OpenAI credentials
       useCredentialStore.setState({
         credentials: [
           {
-            id: '1',
-            provider: 'anthropic',
-            name: 'Anthropic',
-            secureStoreKey: 'anthropic-key',
+            id: '2',
+            provider: 'openai',
+            name: 'OpenAI',
+            secureStoreKey: 'openai-key',
             status: 'valid',
             createdAt: new Date().toISOString(),
           },
@@ -217,7 +501,17 @@ describe('AgentResponseService', () => {
         isValidating: false,
         lastError: null,
       });
-      (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-ant-key' });
+      (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-openai-key' });
+
+      // Second request should re-initialize with new provider
+      await service.requestAgentResponse(threadId, 'msg-2', 'implementer');
+      expect(MockAgentOrchestrator).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('streaming', () => {
+    beforeEach(() => {
+      setupAnthropicCredentials();
     });
 
     it('should stream response and emit events', async () => {
@@ -284,21 +578,7 @@ describe('AgentResponseService', () => {
 
   describe('abort/cancel', () => {
     beforeEach(() => {
-      useCredentialStore.setState({
-        credentials: [
-          {
-            id: '1',
-            provider: 'anthropic',
-            name: 'Anthropic',
-            secureStoreKey: 'anthropic-key',
-            status: 'valid',
-            createdAt: new Date().toISOString(),
-          },
-        ],
-        isValidating: false,
-        lastError: null,
-      });
-      (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-ant-key' });
+      setupAnthropicCredentials();
     });
 
     it('should not emit error event on AbortError', async () => {

@@ -16,18 +16,6 @@ vi.mock('@/components/ui', () => ({
   ),
 }));
 
-vi.mock('@/lib/organic-styles', () => ({
-  organicBorderRadius: {
-    pill: {},
-    chatBubbleUser: {},
-    chatBubbleAgent: {},
-    card: {},
-    badge: {},
-    button: {},
-    codeBlock: {},
-  },
-}));
-
 vi.mock('@/utils/design-tokens', () => ({
   getColor: vi.fn(() => '#000000'),
 }));

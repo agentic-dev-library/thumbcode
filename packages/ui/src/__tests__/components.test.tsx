@@ -11,7 +11,6 @@ import { Spinner } from '../feedback/Spinner';
 import { Button } from '../form/Button';
 import { Card } from '../layout/Card';
 import { Text } from '../primitives/Text';
-import { organicBorderRadius, organicShadow } from '../theme/organicStyles';
 import { themeTokens } from '../theme/ThemeProvider';
 
 vi.mock('lucide-react', () => ({
@@ -215,34 +214,4 @@ describe('Theme', () => {
     });
   });
 
-  describe('organicBorderRadius', () => {
-    it('defines asymmetric card border radius', () => {
-      const { card } = organicBorderRadius;
-      expect(card.borderTopLeftRadius).not.toBe(card.borderTopRightRadius);
-    });
-
-    it('defines button border radius', () => {
-      expect(organicBorderRadius.button).toBeDefined();
-      expect(organicBorderRadius.button.borderTopLeftRadius).toBeDefined();
-    });
-
-    it('defines badge border radius', () => {
-      expect(organicBorderRadius.badge).toBeDefined();
-    });
-  });
-
-  describe('organicShadow', () => {
-    it('defines card shadow', () => {
-      expect(organicShadow.card.boxShadow).toBeDefined();
-      expect(organicShadow.card.boxShadow).toContain('rgba');
-    });
-
-    it('elevated shadow has greater elevation than card', () => {
-      expect(organicShadow.elevated.boxShadow).toBeDefined();
-      // Elevated shadow string should be longer / contain larger values
-      expect(organicShadow.elevated.boxShadow?.length).toBeGreaterThan(
-        organicShadow.card.boxShadow?.length ?? 0
-      );
-    });
-  });
 });

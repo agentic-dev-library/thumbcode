@@ -7,7 +7,6 @@
  */
 
 import { useEffect, useMemo } from 'react';
-import { organicBorderRadius } from '@/lib/organic-styles';
 import { createFileTreeStore, FileTreeContext } from './FileTreeContext';
 import { TreeNode } from './TreeNode';
 
@@ -91,8 +90,7 @@ export function FileTree({
     <FileTreeContext.Provider value={contextValue}>
       <ul
         aria-label="File tree"
-        className="bg-surface overflow-hidden list-none p-0 m-0"
-        style={organicBorderRadius.card}
+        className="bg-surface overflow-hidden list-none p-0 m-0 rounded-organic-card"
       >
         {sortedData.map((node) => (
           <TreeNode key={node.path} node={node} depth={0} />

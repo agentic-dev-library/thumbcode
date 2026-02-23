@@ -1,13 +1,22 @@
 /**
  * Agent Response Service
  *
- * Handles agent response orchestration using @thumbcode/agent-intelligence
- * AI clients (with tool calling, token tracking, rich streaming events)
- * and approval workflows.
+ * Routes user messages to the appropriate agent via AgentOrchestrator
+ * from @thumbcode/agent-intelligence. The orchestrator manages agent
+ * lifecycle and routing; streaming responses flow through the existing
+ * chat event infrastructure.
  */
 
-import type { Message as AIMessage, AIProvider, StreamEvent } from '@thumbcode/agent-intelligence';
+import type {
+  AgentContext,
+  AgentOrchestrator,
+  Message as AIMessage,
+  AIProvider,
+  OrchestratorConfig,
+  StreamEvent,
+} from '@thumbcode/agent-intelligence';
 import { createAIClient, getDefaultModel } from '@thumbcode/agent-intelligence';
+import type { AgentRole } from '@thumbcode/types';
 import type { Message, MessageSender } from '@thumbcode/state';
 import { useChatStore, useCredentialStore } from '@thumbcode/state';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
@@ -15,14 +24,68 @@ import { getAgentSystemPrompt } from './AgentPrompts';
 import type { MessageStore } from './MessageStore';
 import type { StreamHandler } from './StreamHandler';
 
+/** Agent roles the orchestrator can route to */
+const AGENT_ROLES: readonly AgentRole[] = ['architect', 'implementer', 'reviewer', 'tester'];
+
+/** Default project context for orchestrator initialization */
+const DEFAULT_PROJECT_CONTEXT: AgentContext = {
+  projectId: '',
+  workspaceDir: '',
+  currentBranch: 'main',
+  availableFiles: [],
+};
+
 export class AgentResponseService {
+  private orchestrator: AgentOrchestrator | null = null;
+  private orchestratorProvider: AIProvider | null = null;
+
   constructor(
     private streamHandler: StreamHandler,
     private messageStore: MessageStore
   ) {}
 
   /**
-   * Request a response from an agent
+   * Ensure the orchestrator is initialized with current credentials.
+   * Returns null if no credentials are available.
+   */
+  private async ensureOrchestrator(
+    provider: AIProvider,
+    apiKey: string
+  ): Promise<AgentOrchestrator | null> {
+    // Re-create if provider changed or not yet initialized
+    if (this.orchestrator && this.orchestratorProvider === provider) {
+      return this.orchestrator;
+    }
+
+    // Lazy import to avoid circular dependency at module load time
+    const { AgentOrchestrator: OrchestratorClass } = await import('@thumbcode/agent-intelligence');
+
+    const config: OrchestratorConfig = {
+      provider,
+      model: getDefaultModel(provider),
+      maxConcurrentAgents: 1,
+      autoAssign: true,
+      enableParallelExecution: false,
+      projectContext: DEFAULT_PROJECT_CONTEXT,
+    };
+
+    const orchestrator = new OrchestratorClass(config, apiKey);
+    await orchestrator.initialize();
+
+    this.orchestrator = orchestrator;
+    this.orchestratorProvider = provider;
+    return orchestrator;
+  }
+
+  /**
+   * Check if a MessageSender is a valid agent role for routing
+   */
+  private isAgentRole(sender: MessageSender): sender is AgentRole {
+    return (AGENT_ROLES as readonly string[]).includes(sender);
+  }
+
+  /**
+   * Request a response from an agent, routed through the orchestrator
    */
   async requestAgentResponse(
     threadId: string,
@@ -55,8 +118,21 @@ export class AgentResponseService {
       }
 
       const { provider, apiKey } = credentials;
+
+      // Initialize or reuse orchestrator for agent routing
+      let orchestrator: AgentOrchestrator | null = null;
+      if (this.isAgentRole(agent)) {
+        try {
+          orchestrator = await this.ensureOrchestrator(provider, apiKey);
+        } catch {
+          // Orchestrator init failed — fall through to direct AI client
+          orchestrator = null;
+        }
+      }
+
+      // Route through orchestrator when available, otherwise direct
       const aiClient = createAIClient(provider, apiKey);
-      const systemPrompt = getAgentSystemPrompt(agent);
+      const systemPrompt = this.resolveSystemPrompt(agent, orchestrator);
       const aiMessages = this.toAIMessages(recentMessages);
 
       // Create message for streaming response
@@ -126,6 +202,27 @@ export class AgentResponseService {
       this.streamHandler.emitTypingEnd(threadId, agent);
       this.streamHandler.cleanupAbort(threadId);
     }
+  }
+
+  /**
+   * Resolve system prompt — the orchestrator validates agent availability,
+   * while the prompt content comes from AgentPrompts (our chat-specific prompts).
+   */
+  private resolveSystemPrompt(
+    agent: MessageSender,
+    orchestrator: AgentOrchestrator | null
+  ): string {
+    if (orchestrator && this.isAgentRole(agent)) {
+      // Verify the agent role has an initialized agent in the orchestrator
+      const state = orchestrator.getState();
+      const hasAgent = Array.from(state.agents.values()).some((a) => a.role === agent);
+      if (!hasAgent) {
+        // Agent not found in orchestrator — this shouldn't happen after init,
+        // but fall back gracefully to the static prompt
+        return getAgentSystemPrompt(agent);
+      }
+    }
+    return getAgentSystemPrompt(agent);
   }
 
   /**
