@@ -4,6 +4,17 @@
  * Reusable hooks for common patterns.
  */
 
+// Agent hooks
+export {
+  type AgentDetailMetrics,
+  getRoleColor,
+  getStatusBadgeClasses,
+  getStatusVariant,
+  ROLE_DESCRIPTION,
+  type StatusVariant,
+  type UseAgentDetailResult,
+  useAgentDetail,
+} from './use-agent-detail';
 export {
   type AgentMetrics,
   type UseAgentListResult,

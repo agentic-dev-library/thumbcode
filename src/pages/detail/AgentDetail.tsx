@@ -2,67 +2,16 @@
  * Agent Detail Page
  *
  * Production agent detail backed by @thumbcode/state.
- * Migrated from app/agent/[id].tsx (React Native) to web React.
+ * Composes AgentMetrics, AgentActions, and AgentHistory
+ * with data from the useAgentDetail hook.
  */
 
-import type { AgentRole, AgentStatus } from '@thumbcode/state';
-import { useAgentStore } from '@thumbcode/state';
+import type { AgentRole } from '@thumbcode/state';
 import { ArrowLeft, Eye, FlaskConical, Sparkles, Zap } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
-const ROLE_DESCRIPTION: Record<AgentRole, string> = {
-  architect:
-    'Designs system architecture, creates task breakdowns, and coordinates agent workflows.',
-  implementer:
-    'Writes code, implements features, and resolves technical issues based on architectural plans.',
-  reviewer:
-    'Reviews code quality, identifies bugs, ensures best practices, and provides detailed feedback.',
-  tester:
-    'Creates and runs tests, validates functionality, and ensures high-quality releases with good coverage.',
-};
-
-function getStatusColor(status: AgentStatus): 'success' | 'pending' | 'error' | 'inactive' {
-  switch (status) {
-    case 'working':
-    case 'needs_review':
-    case 'complete':
-      return 'success';
-    case 'awaiting_approval':
-    case 'blocked':
-      return 'pending';
-    case 'error':
-      return 'error';
-    default:
-      return 'inactive';
-  }
-}
-
-function getStatusBadgeClasses(variant: 'success' | 'pending' | 'error' | 'inactive'): string {
-  switch (variant) {
-    case 'success':
-      return 'bg-teal-500/20 text-teal-400';
-    case 'pending':
-      return 'bg-gold-400/20 text-gold-400';
-    case 'error':
-      return 'bg-coral-500/20 text-coral-500';
-    case 'inactive':
-      return 'bg-neutral-700/50 text-neutral-400';
-  }
-}
-
-function getRoleColor(role: AgentRole): string {
-  switch (role) {
-    case 'architect':
-      return 'bg-gold-400/20';
-    case 'implementer':
-      return 'bg-teal-500/20';
-    case 'reviewer':
-      return 'bg-coral-500/20';
-    case 'tester':
-      return 'bg-teal-500/20';
-  }
-}
+import { AgentActions, AgentHistory, AgentMetrics } from '@/components/agents';
+import { getRoleColor, getStatusBadgeClasses, ROLE_DESCRIPTION, useAgentDetail } from '@/hooks';
 
 function RoleIcon({ role, size = 40 }: { role: AgentRole; size?: number }) {
   const colorMap: Record<AgentRole, string> = {
@@ -89,20 +38,8 @@ export function AgentDetail() {
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<'overview' | 'history'>('overview');
 
-  const agent = useAgentStore((s) => s.agents.find((a) => a.id === id));
-  const tasks = useAgentStore((s) => s.tasks.filter((t) => t.agentId === id));
-  const updateAgentStatus = useAgentStore((s) => s.updateAgentStatus);
-
-  const currentTask = useMemo(() => {
-    if (!agent?.currentTaskId) return null;
-    return tasks.find((t) => t.id === agent.currentTaskId) ?? null;
-  }, [agent?.currentTaskId, tasks]);
-
-  const completed = tasks.filter((t) => t.status === 'completed').length;
-  const failed = tasks.filter((t) => t.status === 'failed').length;
-  const denom = completed + failed;
-  const successRate = denom > 0 ? Math.round((completed / denom) * 100) : null;
-  const progress = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
+  const { agent, tasks, currentTask, metrics, statusVariant, setIdle, setWorking } =
+    useAgentDetail(id);
 
   if (!id || !agent) {
     return (
@@ -125,8 +62,6 @@ export function AgentDetail() {
       </div>
     );
   }
-
-  const statusVariant = getStatusColor(agent.status);
 
   return (
     <div className="flex-1 bg-charcoal min-h-screen">
@@ -191,20 +126,20 @@ export function AgentDetail() {
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-neutral-500 font-body">Progress</span>
               <output className="text-sm text-teal-400 font-body" aria-live="polite">
-                {progress}%
+                {metrics.progress}%
               </output>
             </div>
             <div
               className="w-full h-2 bg-neutral-700 rounded-full overflow-hidden"
               role="progressbar"
-              aria-valuenow={progress}
+              aria-valuenow={metrics.progress}
               aria-valuemin={0}
               aria-valuemax={100}
               aria-label="Task progress"
             >
               <div
                 className="h-full bg-teal-500 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
+                style={{ width: `${metrics.progress}%` }}
               />
             </div>
           </div>
@@ -234,85 +169,19 @@ export function AgentDetail() {
       <div className="overflow-y-auto flex-1 px-6 py-6">
         {activeTab === 'overview' ? (
           <div className="space-y-4">
-            {/* Agent Metrics */}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-surface p-4 rounded-organic-card shadow-organic-card text-center">
-                <p className="text-2xl font-bold text-teal-400 font-body">{completed}</p>
-                <p className="text-xs text-neutral-400 font-body mt-1">Completed</p>
-              </div>
-              <div className="bg-surface p-4 rounded-organic-card shadow-organic-card text-center">
-                <p className="text-2xl font-bold text-coral-500 font-body">{failed}</p>
-                <p className="text-xs text-neutral-400 font-body mt-1">Failed</p>
-              </div>
-              <div className="bg-surface p-4 rounded-organic-card shadow-organic-card text-center">
-                <p className="text-2xl font-bold text-gold-400 font-body">
-                  {successRate !== null ? `${successRate}%` : '--'}
-                </p>
-                <p className="text-xs text-neutral-400 font-body mt-1">Success Rate</p>
-              </div>
-            </div>
-
-            {/* Agent Actions */}
-            <div className="bg-surface p-4 rounded-organic-card shadow-organic-card">
-              <h3 className="text-sm font-semibold text-neutral-400 font-body mb-3">ACTIONS</h3>
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => updateAgentStatus(agent.id, 'idle')}
-                  className="flex-1 py-2.5 bg-neutral-700 text-white font-body text-sm font-medium rounded-organic-button hover:bg-neutral-600 transition-colors"
-                  data-testid="set-idle-button"
-                >
-                  Set Idle
-                </button>
-                <button
-                  type="button"
-                  onClick={() => updateAgentStatus(agent.id, 'working')}
-                  className="flex-1 py-2.5 bg-teal-600 text-white font-body text-sm font-medium rounded-organic-button hover:bg-teal-700 transition-colors"
-                  data-testid="set-working-button"
-                >
-                  Set Working
-                </button>
-              </div>
-            </div>
+            <AgentMetrics
+              completed={metrics.completed}
+              failed={metrics.failed}
+              successRate={metrics.successRate}
+            />
+            <AgentActions
+              agentId={agent.id}
+              onSetIdle={() => setIdle()}
+              onSetWorking={() => setWorking()}
+            />
           </div>
         ) : (
-          /* Agent History */
-          <div className="space-y-3">
-            {tasks.length === 0 ? (
-              <p className="text-neutral-500 text-center py-8 font-body">No task history yet.</p>
-            ) : (
-              tasks.map((task) => (
-                <div
-                  key={task.id}
-                  className="bg-surface p-4 rounded-organic-card shadow-organic-card"
-                  style={{ transform: 'rotate(-0.15deg)' }}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-white font-body font-medium truncate flex-1 mr-2">
-                      {task.description}
-                    </span>
-                    <span
-                      className={`inline-flex items-center px-2 py-0.5 text-xs font-medium capitalize rounded-organic-badge ${
-                        task.status === 'completed'
-                          ? 'bg-teal-500/20 text-teal-400'
-                          : task.status === 'failed'
-                            ? 'bg-coral-500/20 text-coral-500'
-                            : 'bg-gold-400/20 text-gold-400'
-                      }`}
-                    >
-                      {task.status.replaceAll('_', ' ')}
-                    </span>
-                  </div>
-                  {task.result && (
-                    <p className="text-xs text-neutral-500 font-body mt-1">{task.result}</p>
-                  )}
-                  <p className="text-xs text-neutral-600 font-body mt-2">
-                    {new Date(task.createdAt).toLocaleString()}
-                  </p>
-                </div>
-              ))
-            )}
-          </div>
+          <AgentHistory tasks={tasks} />
         )}
       </div>
     </div>
