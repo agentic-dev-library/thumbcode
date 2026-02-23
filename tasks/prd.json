@@ -19,8 +19,8 @@
         "pnpm test passes"
       ],
       "priority": 1,
-      "passes": false,
-      "notes": "",
+      "passes": true,
+      "notes": "Removed RN dep, replaced jest with vitest. Tests already used vi.mock() so no migration needed.",
       "dependsOn": []
     },
     {
@@ -59,8 +59,8 @@
         "pnpm test passes"
       ],
       "priority": 3,
-      "passes": false,
-      "notes": "",
+      "passes": true,
+      "notes": "AgentOrchestrator wired into AgentResponseService with lazy init, provider-change detection, graceful fallback. 24 tests.",
       "dependsOn": ["US-002"]
     },
     {
@@ -157,8 +157,8 @@
         "pnpm test passes"
       ],
       "priority": 3,
-      "passes": false,
-      "notes": "",
+      "passes": true,
+      "notes": "Extracted chat-utils.ts, useChatPage hook. chat.tsx reduced from 510 to 47 lines. Components use shared utils.",
       "dependsOn": ["US-002"]
     },
     {
@@ -214,8 +214,8 @@
         "pnpm test passes"
       ],
       "priority": 5,
-      "passes": false,
-      "notes": "",
+      "passes": true,
+      "notes": "useAgentDetail hook extracted with 29 tests. AgentDetail.tsx reduced from 320 to 189 lines.",
       "dependsOn": []
     },
     {
@@ -253,8 +253,8 @@
         "pnpm test passes"
       ],
       "priority": 6,
-      "passes": false,
-      "notes": "",
+      "passes": true,
+      "notes": "icon-paths.ts already tree-shaken by Vite. Consolidated all organic styling to Tailwind classes. Deleted organic-styles.ts. 41 files changed.",
       "dependsOn": []
     },
     {
@@ -290,8 +290,8 @@
         "pnpm lint passes"
       ],
       "priority": 3,
-      "passes": false,
-      "notes": "",
+      "passes": true,
+      "notes": "9 docs files created (1512 lines): systemPatterns, activeContext, progress + architecture/, design/, vision/ directories with migrated content.",
       "dependsOn": ["US-014"]
     },
     {
@@ -471,8 +471,8 @@
   ],
   "metadata": {
     "updatedAt": "2026-02-23T22:50:00.000Z",
-    "completedStories": 9,
+    "completedStories": 15,
     "totalStories": 24,
-    "lastVerifiedOn": "main @ 950 tests passing"
+    "lastVerifiedOn": "feat/v1-consolidation-wave-2 @ 1004 tests passing"
   }
 }
