@@ -21,10 +21,14 @@ export type {
   ApprovalMessage,
   ChatThread,
   CodeMessage,
+  DocumentMessage,
+  ImageMessage,
+  MediaAttachment,
   Message,
   MessageContentType,
   MessageSender,
   MessageStatus,
+  VoiceMessage,
 } from './chatStore';
 // Chat store
 export {
@@ -79,6 +83,24 @@ export {
   selectWorkspace,
   useProjectStore,
 } from './projectStore';
+export type {
+  McpCategory,
+  McpServerConfig,
+  McpServerStatus,
+  McpSuggestion,
+} from './mcpStore';
+// MCP store
+export {
+  CURATED_SUGGESTIONS,
+  selectConnectedServers,
+  selectDisconnectedServers,
+  selectErrorServers,
+  selectMcpError,
+  selectServerCount,
+  selectServers,
+  selectServersByCategory,
+  useMcpStore,
+} from './mcpStore';
 export type {
   AgentPreferences,
   EditorPreferences,

@@ -17,7 +17,7 @@ export type MessageRole = 'system' | 'user' | 'assistant';
 /**
  * Message content types
  */
-export type ContentType = 'text' | 'tool_use' | 'tool_result';
+export type ContentType = 'text' | 'tool_use' | 'tool_result' | 'image' | 'document' | 'audio';
 
 /**
  * A message in a conversation
@@ -25,6 +25,93 @@ export type ContentType = 'text' | 'tool_use' | 'tool_result';
 export interface Message {
   role: MessageRole;
   content: string | ContentBlock[];
+}
+
+/**
+ * Image source for image content blocks
+ */
+export interface ImageSource {
+  type: 'base64' | 'url' | 'file_id';
+  mediaType: 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp';
+  data: string;
+}
+
+/**
+ * Document source for document content blocks
+ */
+export interface DocumentSource {
+  type: 'base64' | 'url';
+  mediaType: 'application/pdf';
+  data: string;
+}
+
+/**
+ * Audio source for audio content blocks
+ */
+export interface AudioSource {
+  type: 'base64';
+  mediaType: 'audio/wav' | 'audio/mp3' | 'audio/webm';
+  data: string;
+}
+
+/**
+ * Base content block for multi-modal messages
+ */
+export interface BaseContentBlock {
+  type: ContentType;
+}
+
+/**
+ * Text content block
+ */
+export interface TextContentBlock extends BaseContentBlock {
+  type: 'text';
+  text?: string;
+}
+
+/**
+ * Tool use content block
+ */
+export interface ToolUseContentBlock extends BaseContentBlock {
+  type: 'tool_use';
+  id?: string;
+  name?: string;
+  input?: Record<string, unknown>;
+}
+
+/**
+ * Tool result content block
+ */
+export interface ToolResultContentBlock extends BaseContentBlock {
+  type: 'tool_result';
+  tool_use_id?: string;
+  content?: string;
+}
+
+/**
+ * Image content block
+ */
+export interface ImageContentBlock extends BaseContentBlock {
+  type: 'image';
+  source: ImageSource;
+}
+
+/**
+ * Document content block
+ */
+export interface DocumentContentBlock extends BaseContentBlock {
+  type: 'document';
+  source: DocumentSource;
+  filename?: string;
+}
+
+/**
+ * Audio content block
+ */
+export interface AudioContentBlock extends BaseContentBlock {
+  type: 'audio';
+  source: AudioSource;
+  transcript?: string;
 }
 
 /**
@@ -38,6 +125,9 @@ export interface ContentBlock {
   input?: Record<string, unknown>;
   tool_use_id?: string;
   content?: string;
+  source?: ImageSource | DocumentSource | AudioSource;
+  filename?: string;
+  transcript?: string;
 }
 
 /**

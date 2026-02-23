@@ -201,6 +201,7 @@ function formatContentBlocks(
   | Anthropic.Messages.TextBlockParam
   | Anthropic.Messages.ToolUseBlockParam
   | Anthropic.Messages.ToolResultBlockParam
+  | Anthropic.Messages.ImageBlockParam
 )[] {
   return blocks.map((block) => {
     if (block.type === 'text') {
@@ -219,6 +220,28 @@ function formatContentBlocks(
         type: 'tool_result' as const,
         tool_use_id: block.tool_use_id || '',
         content: block.content || '',
+      };
+    }
+    if (block.type === 'image' && block.source) {
+      return {
+        type: 'image' as const,
+        source: {
+          type: 'base64' as const,
+          media_type: block.source.mediaType as
+            | 'image/jpeg'
+            | 'image/png'
+            | 'image/gif'
+            | 'image/webp',
+          data: block.source.data,
+        },
+      };
+    }
+    if (block.type === 'document' && block.source) {
+      // Document blocks are not yet supported in this SDK version;
+      // encode as text with a reference to the document content.
+      return {
+        type: 'text' as const,
+        text: `[Document: ${block.filename || 'document.pdf'}]`,
       };
     }
     return { type: 'text' as const, text: '' };

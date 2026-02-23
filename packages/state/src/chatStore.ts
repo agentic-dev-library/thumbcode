@@ -20,7 +20,27 @@ export type MessageSender = 'user' | 'architect' | 'implementer' | 'reviewer' | 
 export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'failed';
 
 // Message content types
-export type MessageContentType = 'text' | 'code' | 'diff' | 'file_reference' | 'approval_request';
+export type MessageContentType =
+  | 'text'
+  | 'code'
+  | 'diff'
+  | 'file_reference'
+  | 'approval_request'
+  | 'image'
+  | 'mixed_media'
+  | 'voice_transcript'
+  | 'document';
+
+// Media attachment for multimedia messages
+export interface MediaAttachment {
+  id: string;
+  type: 'image' | 'document' | 'audio';
+  uri: string;
+  mimeType: string;
+  filename?: string;
+  size?: number;
+  thumbnail?: string;
+}
 
 // Base message interface
 export interface Message {
@@ -33,6 +53,7 @@ export interface Message {
   status: MessageStatus;
   timestamp: string;
   metadata?: Record<string, unknown>;
+  attachments?: MediaAttachment[];
 }
 
 // Code message with language highlighting
@@ -52,6 +73,36 @@ export interface ApprovalMessage extends Message {
     actionDescription: string;
     approved?: boolean;
     respondedAt?: string;
+  };
+}
+
+// Image message with dimensions and caption
+export interface ImageMessage extends Message {
+  contentType: 'image';
+  metadata: {
+    imageUrl: string;
+    width?: number;
+    height?: number;
+    caption?: string;
+  };
+}
+
+// Document message with file metadata
+export interface DocumentMessage extends Message {
+  contentType: 'document';
+  metadata: {
+    filename: string;
+    mimeType: string;
+    size: number;
+  };
+}
+
+// Voice transcript message
+export interface VoiceMessage extends Message {
+  contentType: 'voice_transcript';
+  metadata: {
+    audioUrl?: string;
+    duration?: number;
   };
 }
 
