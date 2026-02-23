@@ -1,6 +1,6 @@
 {
   "name": "ThumbCode v1.0 Consolidation & Completion",
-  "branchName": "ralph/v1-consolidation",
+  "branchName": "main",
   "description": "Reconnect disconnected packages, refactor monoliths (TSX=design, logic=packages), consolidate docs into Cline-style memory bank, achieve 80%+ test coverage, wire multi-agent pipeline end-to-end.",
   "userStories": [
     {
@@ -39,8 +39,8 @@
         "pnpm test passes"
       ],
       "priority": 2,
-      "passes": false,
-      "notes": "",
+      "passes": true,
+      "notes": "Merged to main via ralph session. src/services/ai/ deleted, AgentResponseService imports from @thumbcode/agent-intelligence.",
       "dependsOn": ["US-001"]
     },
     {
@@ -136,8 +136,8 @@
         "pnpm test passes"
       ],
       "priority": 2,
-      "passes": false,
-      "notes": "",
+      "passes": true,
+      "notes": "Merged to main. src/components/ui/ re-exports from @thumbcode/ui. Dead constants removed.",
       "dependsOn": []
     },
     {
@@ -177,8 +177,8 @@
         "pnpm test passes"
       ],
       "priority": 4,
-      "passes": false,
-      "notes": "",
+      "passes": true,
+      "notes": "Merged to main. useCreateProject hook, repository-service, validation module extracted. Page reduced from 411 to ~100 lines. Tests added.",
       "dependsOn": []
     },
     {
@@ -196,8 +196,8 @@
         "pnpm test passes"
       ],
       "priority": 5,
-      "passes": false,
-      "notes": "",
+      "passes": true,
+      "notes": "Merged to main. useProjectFiles, useProjectActions, useProjectCommits hooks extracted. ProjectDetail.tsx under 200 lines. Tests added.",
       "dependsOn": []
     },
     {
@@ -233,8 +233,8 @@
         "pnpm test passes"
       ],
       "priority": 5,
-      "passes": false,
-      "notes": "",
+      "passes": true,
+      "notes": "Merged to main. useHomeDashboard, useProjectList, useAgentList hooks extracted. All 3 tab pages are thin composition layers with unit tests.",
       "dependsOn": []
     },
     {
@@ -271,8 +271,8 @@
         "pnpm lint passes"
       ],
       "priority": 2,
-      "passes": false,
-      "notes": "",
+      "passes": true,
+      "notes": "Merged to main. projectbrief.md, productContext.md, techContext.md created with accurate Capacitor/Vite stack documentation.",
       "dependsOn": []
     },
     {
@@ -331,8 +331,8 @@
         "pnpm lint passes"
       ],
       "priority": 3,
-      "passes": false,
-      "notes": "",
+      "passes": true,
+      "notes": "Merged to main. .env.example uses VITE_*, eslint.config.mjs/.coveralls.yml/expo-env.d.ts/.eas/ deleted, setup.sh updated.",
       "dependsOn": []
     },
     {
@@ -349,8 +349,8 @@
         "pnpm test passes"
       ],
       "priority": 4,
-      "passes": false,
-      "notes": "",
+      "passes": true,
+      "notes": "Merged to main. biome.json includes packages, sonar-project.properties updated, tsconfig expanded, capacitor plugins configured.",
       "dependsOn": ["US-001", "US-017"]
     },
     {
@@ -468,5 +468,11 @@
       "notes": "",
       "dependsOn": ["US-021", "US-022", "US-023"]
     }
-  ]
+  ],
+  "metadata": {
+    "updatedAt": "2026-02-23T22:50:00.000Z",
+    "completedStories": 9,
+    "totalStories": 24,
+    "lastVerifiedOn": "main @ 950 tests passing"
+  }
 }

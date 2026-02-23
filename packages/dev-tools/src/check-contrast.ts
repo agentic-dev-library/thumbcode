@@ -8,9 +8,11 @@ const allColors: { name: string; hex: string }[] = [];
 Object.entries(colors).forEach(([name, color]) => {
   const colorEntry = color as Record<string, unknown>;
   if (colorEntry.values) {
-    Object.entries(colorEntry.values as Record<string, { hex: string }>).forEach(([shade, value]) => {
-      allColors.push({ name: `${name}-${shade}`, hex: value.hex });
-    });
+    Object.entries(colorEntry.values as Record<string, { hex: string }>).forEach(
+      ([shade, value]) => {
+        allColors.push({ name: `${name}-${shade}`, hex: value.hex });
+      }
+    );
   } else {
     allColors.push({ name, hex: (colorEntry as { hex: string }).hex });
   }
