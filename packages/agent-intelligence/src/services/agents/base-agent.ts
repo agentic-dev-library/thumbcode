@@ -10,6 +10,13 @@
 
 import type { Agent, AgentRole, AgentStatus, TaskAssignment } from '@thumbcode/types';
 import type { AIClient, Message, StreamEvent, ToolDefinition } from '../ai';
+import type { McpClient } from '../mcp/McpClient';
+import {
+  type BridgedMcpTool,
+  convertAllMcpTools,
+  executeMcpTool,
+  isMcpTool,
+} from '../mcp/McpToolBridge';
 import type { AgentSkill, SkillToolDefinition } from '../skills/types';
 import { parseExecutionResult } from './Committable';
 import { formatTaskMessage } from './Promptable';
@@ -31,6 +38,8 @@ export abstract class BaseAgent {
   protected maxTokens: number;
   protected temperature: number;
   protected skills: AgentSkill[] = [];
+  protected mcpClient?: McpClient;
+  private mcpBridgedTools: BridgedMcpTool[] = [];
   protected eventCallbacks: AgentEventCallback[] = [];
   protected conversationHistory: Message[] = [];
 
@@ -42,6 +51,7 @@ export abstract class BaseAgent {
     model?: string;
     maxTokens?: number;
     temperature?: number;
+    mcpClient?: McpClient;
   }) {
     this.id = config.id;
     this.role = config.role;
@@ -51,6 +61,7 @@ export abstract class BaseAgent {
     this.model = config.model || 'claude-3-5-sonnet-20241022';
     this.maxTokens = config.maxTokens || 4096;
     this.temperature = config.temperature || 0.7;
+    this.mcpClient = config.mcpClient;
   }
 
   /**
@@ -177,29 +188,39 @@ export abstract class BaseAgent {
   }
 
   /**
-   * Get all tools including skill-provided tools
+   * Get all tools including skill-provided and MCP tools
    */
   protected getToolsWithSkills(): ToolDefinition[] {
     const baseTools = this.getTools();
-    if (this.skills.length === 0) {
-      return baseTools;
-    }
 
     const skillTools = this.skills.flatMap((skill) =>
       skill.getTools().map((st) => this.skillToolToToolDefinition(st))
     );
 
-    return [...baseTools, ...skillTools];
+    // Refresh MCP bridged tools from client
+    if (this.mcpClient?.hasConnections()) {
+      this.mcpBridgedTools = convertAllMcpTools(this.mcpClient);
+    } else {
+      this.mcpBridgedTools = [];
+    }
+    const mcpTools = this.mcpBridgedTools.map((b) => b.definition);
+
+    return [...baseTools, ...skillTools, ...mcpTools];
   }
 
   /**
-   * Execute a tool, routing to skills if the base agent doesn't handle it
+   * Execute a tool, routing to MCP, skills, or the base agent
    */
   protected async executeToolWithSkills(
     name: string,
     input: Record<string, unknown>,
     context: AgentContext
   ): Promise<string> {
+    // Check if this is an MCP tool
+    if (this.mcpClient && isMcpTool(this.mcpBridgedTools, name)) {
+      return executeMcpTool(this.mcpClient, this.mcpBridgedTools, name, input);
+    }
+
     // Check if any skill owns this tool
     for (const skill of this.skills) {
       const skillToolNames = skill.getTools().map((t) => t.name);

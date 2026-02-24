@@ -267,6 +267,14 @@ export default function SettingsPage() {
           />
           <HorizontalDivider />
           <SettingsItemRow
+            Icon={Brain}
+            iconClassName="text-coral-500"
+            title="AI Providers"
+            subtitle="Configure provider API keys and capabilities"
+            onClick={() => navigate('/settings/providers')}
+          />
+          <HorizontalDivider />
+          <SettingsItemRow
             Icon={GitBranch}
             iconClassName="text-teal-500"
             title="Branch Protection"

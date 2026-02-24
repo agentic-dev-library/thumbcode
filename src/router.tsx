@@ -43,6 +43,7 @@ import { AgentSettings } from '@/pages/settings/AgentSettings';
 import { CredentialSettings } from '@/pages/settings/CredentialSettings';
 import { EditorSettings } from '@/pages/settings/EditorSettings';
 import { McpSettings } from '@/pages/settings/McpSettings';
+import { ProviderConfig } from '@/pages/settings/ProviderConfig';
 import AgentsPage from '@/pages/tabs/agents';
 import ChatPage from '@/pages/tabs/chat';
 // Tab screens (migrated from React Native)
@@ -68,6 +69,7 @@ export function AppRoutes() {
         <Route path="settings/credentials" element={<CredentialSettings />} />
         <Route path="settings/editor" element={<EditorSettings />} />
         <Route path="settings/mcp" element={<McpSettings />} />
+        <Route path="settings/providers" element={<ProviderConfig />} />
 
         {/* Detail pages (outside tabs, own header) */}
         <Route path="project/:id" element={<ProjectDetail />} />
