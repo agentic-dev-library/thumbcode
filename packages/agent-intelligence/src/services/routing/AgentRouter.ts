@@ -7,12 +7,8 @@
  */
 
 import type { AgentRole, TaskAssignment } from '@thumbcode/types';
-import type { ProviderCapability, ProviderCapabilityEntry } from '@thumbcode/config';
-import {
-  getProvider,
-  getProvidersWithCapability,
-  PROVIDER_REGISTRY,
-} from '@thumbcode/config';
+import type { ProviderCapability } from '@thumbcode/config';
+import { getProvider } from '@thumbcode/config';
 import { getDefaultModel } from '../ai';
 import type { AIProvider } from '../ai';
 import type {

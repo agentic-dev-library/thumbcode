@@ -447,7 +447,7 @@ describe('ChatStore', () => {
 
     it('selectPinnedThreads returns only pinned', () => {
       act(() => {
-        const id = useChatStore.getState().createThread({
+        useChatStore.getState().createThread({
           title: 'Pinned',
           participants: ['user'],
           isPinned: true,

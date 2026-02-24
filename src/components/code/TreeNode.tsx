@@ -184,7 +184,7 @@ export const TreeNode = memo(function TreeNode({ node, depth }: Readonly<TreeNod
 
   return (
     <div>
-      <div className="flex flex-rowitems-center">
+      <div className="flex flex-row items-center">
         <div className="flex-1">
           <FileTreeNodeRow
             node={node}

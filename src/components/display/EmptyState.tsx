@@ -77,7 +77,7 @@ export function EmptyState({
       {children}
 
       {(action || secondaryAction) && (
-        <div className="flex flex-rowitems-center gap-3 mt-4">
+        <div className="flex flex-row items-center gap-3 mt-4">
           {secondaryAction && (
             <button
               type="button"

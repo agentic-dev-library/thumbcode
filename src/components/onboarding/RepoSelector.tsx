@@ -95,7 +95,7 @@ export function RepoSelector({
               onClick={() => onSelectRepo(repo)}
               className={`p-4 rounded-organic-card ${selectedRepo?.key === repo.key ? 'bg-teal-600/20 border-teal-600' : 'bg-surface border-transparent'} border`}
             >
-              <div className="flex flex-rowitems-center mb-2">
+              <div className="flex flex-row items-center mb-2">
                 <div className="mr-2">
                   {repo.isPrivate ? (
                     <SecurityIcon size={18} color="warmGray" turbulence={0.15} />
@@ -113,12 +113,12 @@ export function RepoSelector({
               <Text size="sm" className="text-neutral-400" numberOfLines={1}>
                 {repo.description || 'No description'}
               </Text>
-              <div className="flex flex-rowitems-center mt-1">
+              <div className="flex flex-row items-center mt-1">
                 <Text size="xs" className="text-neutral-500">
                   {repo.fullName}
                 </Text>
                 {(repo.stars || 0) > 0 && (
-                  <div className="flex flex-rowitems-center ml-2">
+                  <div className="flex flex-row items-center ml-2">
                     <StarIcon size={12} color="gold" turbulence={0.15} />
                     <Text size="xs" className="text-neutral-500 ml-1">
                       {repo.stars}
@@ -138,7 +138,7 @@ export function RepoSelector({
           onClick={() => onModeChange('create')}
           className="mt-4 p-4 border border-dashed border-teal-600/50 active:bg-teal-600/10 rounded-organic-card"
         >
-          <div className="flex flex-rowitems-center justify-center">
+          <div className="flex flex-row items-center justify-center">
             <Text className="text-teal-400">+ Create new repository</Text>
           </div>
         </button>
@@ -147,7 +147,7 @@ export function RepoSelector({
           spacing="sm"
           className="mt-4 p-4 bg-surface border border-teal-600/30 rounded-organic-card"
         >
-          <div className="flex flex-rowitems-center justify-between mb-2">
+          <div className="flex flex-row items-center justify-between mb-2">
             <Text weight="semibold" className="text-white">
               New Repository
             </Text>
@@ -170,7 +170,7 @@ export function RepoSelector({
             onChangeText={onNewRepoDescriptionChange}
           />
 
-          <div className="flex flex-rowitems-center justify-between py-2">
+          <div className="flex flex-row items-center justify-between py-2">
             <Text className="text-neutral-300">Private repository</Text>
             <input
               type="checkbox"
