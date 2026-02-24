@@ -37,7 +37,7 @@ function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
     <button
       type="button"
       onClick={onPress}
-      className="bg-surface-elevated p-4 mb-2 active:bg-neutral-700 rounded-organic-card"
+      className="bg-surface-elevated p-4 mb-2 active:bg-neutral-700 rounded-organic-card tap-feedback"
       aria-label={accessibilityLabel}
       title="Open this thread"
       style={{ transform: 'rotate(-0.2deg)' }}
@@ -121,7 +121,7 @@ export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadLi
           <button
             type="button"
             onClick={onCreateThread}
-            className="bg-coral-500 px-6 py-3 active:bg-coral-600 rounded-organic-button"
+            className="bg-coral-500 px-6 py-3 active:bg-coral-600 rounded-organic-button tap-feedback"
             aria-label="New Thread"
             title="Create a new chat thread"
           >
@@ -145,7 +145,7 @@ export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadLi
           <button
             type="button"
             onClick={onCreateThread}
-            className="bg-teal-600 px-3 py-1.5 active:bg-teal-700 rounded-organic-button"
+            className="bg-teal-600 px-3 py-1.5 active:bg-teal-700 rounded-organic-button tap-feedback"
             aria-label="New Thread"
             title="Create a new chat thread"
           >

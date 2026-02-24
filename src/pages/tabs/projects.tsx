@@ -39,10 +39,13 @@ export default function ProjectsPage() {
   const { searchQuery, setSearchQuery, filteredProjects } = useProjectList();
 
   return (
-    <div className="flex-1 flex flex-col bg-charcoal" data-testid="projects-screen">
+    <div
+      className="flex-1 flex flex-col bg-charcoal animate-page-enter hide-scrollbar"
+      data-testid="projects-screen"
+    >
       {/* Search */}
       <div className="p-4">
-        <div className="bg-surface flex items-center px-4 py-3 rounded-organic-card">
+        <div className="bg-surface flex items-center px-4 py-3 rounded-organic-card tap-feedback">
           <Search size={20} className="text-neutral-400 mr-3" aria-hidden="true" />
           <input
             type="text"
@@ -69,7 +72,7 @@ export default function ProjectsPage() {
             <button
               type="button"
               onClick={() => navigate('/onboarding/create-project')}
-              className="px-4 py-2 bg-coral-500 text-white font-body font-semibold rounded-organic-button hover:bg-coral-600 transition-colors"
+              className="px-4 py-2 bg-coral-500 text-white font-body font-semibold rounded-organic-button hover:bg-coral-600 transition-colors tap-feedback"
             >
               Create Project
             </button>
@@ -81,7 +84,7 @@ export default function ProjectsPage() {
                 type="button"
                 key={project.id}
                 onClick={() => navigate(`/project/${project.id}`)}
-                className="bg-surface p-4 rounded-organic-card shadow-organic-card hover:bg-surface-elevated transition-colors text-left"
+                className="bg-surface p-4 rounded-organic-card shadow-organic-card hover:bg-surface-elevated transition-colors text-left tap-feedback"
                 style={{ transform: `rotate(${index % 2 === 0 ? '-0.3' : '0.3'}deg)` }}
               >
                 {/* Header */}
@@ -139,7 +142,7 @@ export default function ProjectsPage() {
       <button
         type="button"
         onClick={() => navigate('/onboarding/create-project')}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-coral-500 flex items-center justify-center rounded-organic-button shadow-organic-float hover:bg-coral-600 transition-colors z-10"
+        className="fixed bottom-24 right-6 w-14 h-14 bg-coral-500 flex items-center justify-center rounded-organic-button shadow-organic-float hover:bg-coral-600 transition-colors z-10 tap-feedback"
         aria-label="Create new project"
       >
         <Plus size={24} className="text-white" />

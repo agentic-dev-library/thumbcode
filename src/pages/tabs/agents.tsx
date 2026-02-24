@@ -82,7 +82,7 @@ const RoleFilterButton = memo(({ role, isSelected, onPress }: Readonly<RoleFilte
     type="button"
     data-testid={`role-filter-${role}`}
     onClick={() => onPress(role)}
-    className={`shrink-0 px-4 py-2 capitalize font-body transition-colors ${
+    className={`shrink-0 px-4 py-2 capitalize font-body transition-colors tap-feedback ${
       isSelected
         ? 'bg-coral-500 text-white'
         : 'bg-surface text-neutral-400 hover:bg-surface-elevated'
@@ -109,31 +109,34 @@ export default function AgentsPage() {
   const handleAllPress = useCallback(() => setSelectedRole(null), [setSelectedRole]);
 
   return (
-    <div className="flex-1 overflow-y-auto bg-charcoal" data-testid="agents-screen">
-      <div className="w-full p-6">
+    <div
+      className="flex-1 overflow-y-auto bg-charcoal animate-page-enter hide-scrollbar"
+      data-testid="agents-screen"
+    >
+      <div className="w-full p-4">
         {/* Overview */}
-        <div className="flex gap-3 mb-6">
+        <div className="flex gap-3 mb-4">
           <div
-            className="bg-surface p-4 flex-1 rounded-organic-card shadow-organic-card"
+            className="bg-surface p-4 flex-1 rounded-organic-card shadow-organic-card tap-feedback"
             style={{ transform: 'rotate(-0.3deg)' }}
           >
             <div className="mb-2">
               <Users size={28} className="text-coral-500" />
             </div>
-            <span className="block text-2xl font-bold font-body text-white">
+            <span className="block text-xl font-bold font-body text-white">
               {activeAgents}/{totalAgents}
             </span>
             <span className="text-sm font-body text-neutral-400">Active Agents</span>
           </div>
 
           <div
-            className="bg-surface p-4 flex-1 rounded-organic-card shadow-organic-card"
+            className="bg-surface p-4 flex-1 rounded-organic-card shadow-organic-card tap-feedback"
             style={{ transform: 'rotate(0.3deg)' }}
           >
             <div className="mb-2">
               <CheckCircle size={28} className="text-teal-500" />
             </div>
-            <span className="block text-2xl font-bold font-body text-white">
+            <span className="block text-xl font-bold font-body text-white">
               {totalCompletedTasks}
             </span>
             <span className="text-sm font-body text-neutral-400">Tasks Completed</span>
@@ -141,12 +144,12 @@ export default function AgentsPage() {
         </div>
 
         {/* Role Filter */}
-        <div className="flex flex-nowrap gap-2 mb-6 overflow-x-auto pb-1">
+        <div className="flex flex-nowrap gap-2 mb-4 overflow-x-auto pb-1">
           <button
             type="button"
             data-testid="role-filter-all"
             onClick={handleAllPress}
-            className={`shrink-0 px-4 py-2 font-body transition-colors ${
+            className={`shrink-0 px-4 py-2 font-body transition-colors tap-feedback ${
               !selectedRole
                 ? 'bg-coral-500 text-white'
                 : 'bg-surface text-neutral-400 hover:bg-surface-elevated'
@@ -176,7 +179,7 @@ export default function AgentsPage() {
                 type="button"
                 key={agent.id}
                 onClick={() => navigate(`/agent/${agent.id}`)}
-                className="bg-surface p-4 rounded-organic-card shadow-organic-card hover:bg-surface-elevated transition-colors text-left"
+                className="bg-surface p-4 rounded-organic-card shadow-organic-card hover:bg-surface-elevated transition-colors text-left tap-feedback"
               >
                 {/* Header */}
                 <div className="flex justify-between items-start mb-4">

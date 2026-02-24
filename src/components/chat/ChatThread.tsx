@@ -87,7 +87,7 @@ export function ChatThread({ threadId }: Readonly<ChatThreadProps>) {
 
   return (
     <div className="flex-1">
-      <div ref={scrollRef} style={{ overflowY: 'auto', flex: 1 }}>
+      <div ref={scrollRef} className="hide-scrollbar" style={{ overflowY: 'auto', flex: 1 }}>
         {messages.map((item) => (
           <ChatMessage key={item.id} message={item} onApprovalResponse={handleApprovalResponse} />
         ))}

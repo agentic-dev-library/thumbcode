@@ -65,7 +65,7 @@ function SettingsItemRow({
   return (
     <Tag
       onClick={onClick}
-      className={`py-4 flex items-center w-full text-left ${onClick ? 'hover:bg-neutral-800 transition-colors' : ''}`}
+      className={`py-4 flex items-center w-full text-left ${onClick ? 'hover:bg-neutral-800 transition-colors tap-feedback' : ''}`}
       {...(isInteractive ? {} : {})}
     >
       <div className="w-10 h-10 bg-surface-elevated flex items-center justify-center mr-4 rounded-organic-badge">
@@ -109,7 +109,7 @@ function SettingsSectionGroup({
   children,
 }: Readonly<{ title: string; children: React.ReactNode }>) {
   return (
-    <div className="bg-surface rounded-organic-card shadow-organic-card overflow-hidden mb-6">
+    <div className="bg-surface rounded-organic-card shadow-organic-card overflow-hidden mb-4">
       <div className="px-4 py-3 border-b border-neutral-700">
         <span className="text-sm font-body font-semibold text-neutral-400">{title}</span>
       </div>
@@ -153,12 +153,15 @@ export default function SettingsPage() {
   const displayName = profile?.name || profile?.login || 'ThumbCode User';
 
   return (
-    <div className="flex-1 overflow-y-auto bg-charcoal" data-testid="settings-screen">
-      <div className="w-full p-6">
+    <div
+      className="flex-1 overflow-y-auto bg-charcoal animate-page-enter hide-scrollbar"
+      data-testid="settings-screen"
+    >
+      <div className="w-full p-4">
         {/* Profile */}
         <button
           type="button"
-          className="bg-surface p-4 mb-6 flex items-center rounded-organic-card shadow-organic-card hover:bg-surface-elevated transition-colors w-full text-left"
+          className="bg-surface p-4 mb-4 flex items-center rounded-organic-card shadow-organic-card hover:bg-surface-elevated transition-colors w-full text-left"
           style={{ transform: 'rotate(-0.2deg)' }}
         >
           <div className="w-14 h-14 rounded-full bg-neutral-700 flex items-center justify-center">
@@ -322,7 +325,7 @@ export default function SettingsPage() {
             useUserStore.getState().logout();
             navigate('/onboarding/welcome');
           }}
-          className="w-full bg-coral-500/10 p-4 rounded-organic-card text-center hover:bg-coral-500/20 transition-colors"
+          className="w-full bg-coral-500/10 p-4 rounded-organic-card text-center hover:bg-coral-500/20 transition-colors tap-feedback"
         >
           <div className="flex items-center justify-center gap-2">
             <LogOut size={18} className="text-coral-500" />

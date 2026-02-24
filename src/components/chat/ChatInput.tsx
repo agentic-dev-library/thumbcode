@@ -86,7 +86,7 @@ export function ChatInput({
   const canSend = (text.trim().length > 0 || attachments.length > 0) && !disabled && !isSending;
 
   return (
-    <div>
+    <div className="safe-bottom">
       {/* Camera overlay */}
       {showCamera && (
         <div className="px-3 py-2 border-t border-neutral-700 bg-surface">
@@ -135,7 +135,7 @@ export function ChatInput({
         <button
           type="button"
           onClick={() => setShowCamera((prev) => !prev)}
-          className={`px-3 py-3 mr-2 rounded-organic-button ${showCamera ? 'bg-coral-500' : 'bg-neutral-700'}`}
+          className={`p-2.5 mr-1 rounded-organic-button ${showCamera ? 'bg-coral-500' : 'bg-neutral-700'}`}
           aria-label="Open camera"
           aria-pressed={showCamera}
         >
@@ -157,13 +157,13 @@ export function ChatInput({
         </button>
 
         {/* Voice input button */}
-        <div className="mr-2">
+        <div className="mr-1">
           <VoiceInputButton onTranscript={handleVoiceTranscript} />
         </div>
 
         <input
           aria-label="Message input"
-          className="flex-1 bg-neutral-800 text-white font-body px-4 py-3 mr-2 rounded-organic-input"
+          className="flex-1 min-w-0 bg-neutral-800 text-white font-body px-3 py-3 mr-1 rounded-organic-input"
           style={{ minHeight: 44, maxHeight: 120 }}
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -173,7 +173,7 @@ export function ChatInput({
         <button
           type="button"
           onClick={toggleVariantMode}
-          className={`px-3 py-3 mr-2 rounded-organic-button ${variantMode ? 'bg-gold-400' : 'bg-neutral-700'}`}
+          className={`p-2.5 mr-1 rounded-organic-button ${variantMode ? 'bg-gold-400' : 'bg-neutral-700'}`}
           aria-label="Toggle variant mode"
           aria-pressed={variantMode}
         >
@@ -187,7 +187,7 @@ export function ChatInput({
           type="button"
           onClick={handleSend}
           disabled={!canSend}
-          className={`px-4 py-3 rounded-organic-button ${canSend ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}
+          className={`px-3 py-2.5 rounded-organic-button ${canSend ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}
           aria-label="Send"
           title="Send the message"
         >
