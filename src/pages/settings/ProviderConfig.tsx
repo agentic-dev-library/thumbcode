@@ -15,7 +15,7 @@ import {
   type ProviderCapability,
   type ProviderCapabilityEntry,
 } from '@/config';
-import { useCredentialStore } from '@/state';
+import { toast, useCredentialStore } from '@/state';
 
 /**
  * Capability category for color coding.
@@ -315,6 +315,7 @@ export function ProviderConfig() {
       maskedValue: `${key.slice(0, 4)}...${key.slice(-4)}`,
     });
 
+    toast.success(`${provider.displayName} key saved`);
     // Clear the input
     setApiKeys((prev) => ({ ...prev, [provider.providerId]: '' }));
   };

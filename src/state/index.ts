@@ -103,6 +103,8 @@ export {
   selectWorkspace,
   useProjectStore,
 } from './projectStore';
+// Toast store
+export { toast, useToastStore } from './toastStore';
 export type {
   AgentPreferences,
   EditorPreferences,

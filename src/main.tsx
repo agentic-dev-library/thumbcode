@@ -8,6 +8,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { ErrorBoundary } from '@/components/error';
+import { ToastContainer } from '@/components/feedback/ToastContainer';
 import { OnboardingProvider } from '@/contexts/onboarding';
 import { AppRoutes } from '@/router';
 import '../global.css';
@@ -23,6 +24,7 @@ ReactDOM.createRoot(rootElement).render(
       <ErrorBoundary>
         <OnboardingProvider>
           <AppRoutes />
+          <ToastContainer />
         </OnboardingProvider>
       </ErrorBoundary>
     </BrowserRouter>

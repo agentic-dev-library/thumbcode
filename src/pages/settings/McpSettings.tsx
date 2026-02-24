@@ -21,7 +21,7 @@ import {
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { McpCategory, McpServerConfig } from '@/state';
-import { CURATED_SUGGESTIONS, selectServers, useMcpStore } from '@/state';
+import { CURATED_SUGGESTIONS, selectServers, toast, useMcpStore } from '@/state';
 
 const CATEGORY_LABELS: Record<McpCategory, string> = {
   docs: 'Docs',
@@ -210,10 +210,13 @@ export function McpSettings() {
       icon: suggestion.icon,
       category: suggestion.category,
     });
+    toast.success(`${suggestion.name} connected`);
   };
 
   const handleRemoveServer = (serverId: string) => {
+    const server = servers.find((s) => s.id === serverId);
     removeServer(serverId);
+    toast.info(`${server?.name ?? 'Server'} removed`);
   };
 
   const handleAddCustom = () => {
@@ -251,6 +254,7 @@ export function McpSettings() {
       category: 'general',
     });
 
+    toast.success(`${customName.trim()} added`);
     // Reset form
     setCustomName('');
     setCustomCommand('');

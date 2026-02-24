@@ -8,3 +8,4 @@ export { LoadingOverlay, Skeleton, SkeletonCard, SkeletonText, Spinner } from '.
 export { ConfirmDialog, Modal } from './Modal';
 export { ProgressBar, ProgressCircle, StepsProgress } from './Progress';
 export { Toast } from './Toast';
+export { ToastContainer } from './ToastContainer';

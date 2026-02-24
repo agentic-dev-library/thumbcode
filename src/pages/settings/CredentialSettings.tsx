@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CredentialService } from '@/core';
 import type { CredentialMetadata } from '@/state';
-import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@/state';
+import { selectCredentialByProvider, toast, useCredentialStore, useUserStore } from '@/state';
 
 interface ApiKeyInputProps {
   label: string;
@@ -166,6 +166,7 @@ export function CredentialSettings() {
       // Clear input on success
       if (type === 'anthropic') setAnthropicKey('');
       if (type === 'openai') setOpenaiKey('');
+      toast.success(`${name} saved successfully`);
     } catch (error) {
       setSaveError({
         type,

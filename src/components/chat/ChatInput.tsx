@@ -12,6 +12,7 @@ import { Text } from '@/components/ui';
 import { logger } from '@/lib/logger';
 import { ChatService } from '@/services/chat';
 import type { MediaAttachment, MessageSender } from '@/state';
+import { toast } from '@/state';
 import { CameraCapture } from './CameraCapture';
 import { VoiceInputButton } from './VoiceInputButton';
 
@@ -58,6 +59,7 @@ export function ChatInput({
       });
     } catch (error) {
       logger.error('Failed to send message', error, { component: 'ChatInput' });
+      toast.error('Failed to send message');
       // Restore text and attachments on error
       setText(trimmedText);
       setAttachments(currentAttachments);
