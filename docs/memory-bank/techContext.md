@@ -157,7 +157,7 @@ thumbcode/
 │   └── dev-tools/                # Token/icon generators
 ├── design-system/                # Design tokens (JSON, TS, CSS)
 ├── docs/                         # Documentation
-├── docs-site/                    # Astro documentation site
+
 ├── e2e/                          # Playwright E2E tests
 ├── ios/                          # Capacitor iOS project
 ├── android/                      # Capacitor Android project

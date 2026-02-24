@@ -2,7 +2,5 @@
 # https://pnpm.io/workspaces
 
 packages:
-  # Main app remains at root
+  # Main app at root
   - '.'
-  # Documentation site
-  - 'docs-site'

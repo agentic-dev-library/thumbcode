@@ -149,8 +149,6 @@ vite.config.ts.timestamp-*
 /playwright-report/
 /playwright/.cache/
 
-# Astro generated files
-docs-site/.astro/
 
 # Archive binary files
 archive/*.zip
@@ -169,7 +167,7 @@ android/local.properties
 !tools/**/*.png
 !assets/**/*.png
 !public/**/*.png
-!docs-site/**/*.png
+
 
 # Ralph TUI session artifacts
 .ralph-tui/

@@ -182,8 +182,8 @@ ThumbCode uses a **procedural “Paint Daube” SVG icon system** in `src/compon
 - Prefer paint-daube icons for app UI consistency.
 - If a future migration to Lucide happens, it must be done behind a single semantic wrapper (so screens don’t import raw icon libraries).
 
-#### External/Docs Icons (Optional)
-- Lucide can be used in docs-site if needed, but the app should remain consistent with PaintDaube.
+#### Icon Consistency
+- All icons use Lucide React (`lucide-react`) across the application.
 
 ---
 
