@@ -23,7 +23,7 @@ export function Header({ title, onBack, rightElement }: HeaderProps) {
           <button
             type="button"
             onClick={onBack}
-            className="p-2"
+            className="p-2.5"
             aria-label="Back"
             title="Go to previous screen"
           >

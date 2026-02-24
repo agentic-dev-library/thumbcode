@@ -56,6 +56,10 @@ function ApiKeyInput({
           }}
           className="flex-1 bg-charcoal border border-neutral-700 text-white font-mono text-sm px-3 py-2 rounded-organic-input placeholder:text-neutral-600 focus:outline-none focus:border-coral-500 transition-colors"
           data-testid={`api-key-input-${label.toLowerCase().replace(/\s+/g, '-')}`}
+          autoComplete="off"
+          autoCapitalize="off"
+          spellCheck={false}
+          enterKeyHint="send"
         />
         <button
           type="button"
@@ -190,7 +194,7 @@ export function CredentialSettings() {
         <button
           type="button"
           onClick={() => navigate('/settings')}
-          className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body tap-feedback"
+          className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body tap-feedback min-h-[44px]"
           aria-label="Back to settings"
         >
           <ArrowLeft size={18} />
@@ -232,7 +236,7 @@ export function CredentialSettings() {
                   <button
                     type="button"
                     onClick={handleGitHubDisconnect}
-                    className="px-3 py-1.5 text-sm text-coral-500 border border-coral-500/30 rounded-organic-button font-body hover:bg-coral-500/10 transition-colors"
+                    className="px-3 py-2.5 text-sm text-coral-500 border border-coral-500/30 rounded-organic-button font-body hover:bg-coral-500/10 transition-colors"
                     data-testid="disconnect-github"
                   >
                     Disconnect
@@ -241,7 +245,7 @@ export function CredentialSettings() {
                   <button
                     type="button"
                     onClick={handleGitHubConnect}
-                    className="px-3 py-1.5 text-sm text-teal-400 border border-teal-500/30 rounded-organic-button font-body hover:bg-teal-500/10 transition-colors"
+                    className="px-3 py-2.5 text-sm text-teal-400 border border-teal-500/30 rounded-organic-button font-body hover:bg-teal-500/10 transition-colors"
                     data-testid="connect-github"
                   >
                     Connect

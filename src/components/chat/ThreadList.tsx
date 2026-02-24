@@ -146,7 +146,7 @@ export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadLi
           <button
             type="button"
             onClick={onCreateThread}
-            className="bg-teal-600 px-3 py-1.5 active:bg-teal-700 rounded-organic-button tap-feedback"
+            className="bg-teal-600 px-3 py-2.5 active:bg-teal-700 rounded-organic-button tap-feedback"
             aria-label="New Thread"
             title="Create a new chat thread"
           >

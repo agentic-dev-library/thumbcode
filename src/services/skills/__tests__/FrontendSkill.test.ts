@@ -515,7 +515,7 @@ describe('FrontendSkill tools', () => {
       });
       const data = JSON.parse(result.output);
       const playfulVariant = data.variants[0];
-      expect(playfulVariant.code).toContain("rotate(-1deg)");
+      expect(playfulVariant.code).toContain('rotate(-1deg)');
     });
   });
 

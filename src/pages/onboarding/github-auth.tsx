@@ -133,7 +133,7 @@ export default function GitHubAuthPage() {
       className="flex flex-col min-h-screen bg-charcoal animate-page-enter"
       data-testid="github-auth-screen"
     >
-      <div className="flex-1 px-6 pt-6 pb-32">
+      <div className="flex-1 overflow-auto hide-scrollbar px-6 pt-6 pb-32">
         {/* Progress Steps */}
         <StepsProgress
           totalSteps={4}

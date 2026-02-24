@@ -66,6 +66,9 @@ export function RepoSelector({
           placeholder="Search repositories..."
           value={searchQuery}
           onChangeText={onSearchChange}
+          inputMode="search"
+          enterKeyHint="search"
+          autoComplete="off"
         />
       </VStack>
 
@@ -151,7 +154,7 @@ export function RepoSelector({
             <Text weight="semibold" className="text-white">
               New Repository
             </Text>
-            <button type="button" onClick={() => onModeChange('select')}>
+            <button type="button" onClick={() => onModeChange('select')} className="py-3 px-4">
               <Text size="sm" className="text-neutral-400">
                 Cancel
               </Text>
@@ -170,14 +173,14 @@ export function RepoSelector({
             onChangeText={onNewRepoDescriptionChange}
           />
 
-          <div className="flex flex-row items-center justify-between py-2">
-            <Text className="text-neutral-300">Private repository</Text>
+          <label className="flex items-center gap-3 cursor-pointer py-2">
             <input
               type="checkbox"
               checked={newRepoPrivate}
               onChange={(e) => onNewRepoPrivateChange(e.target.checked)}
             />
-          </div>
+            <Text className="text-neutral-300">Private repository</Text>
+          </label>
 
           {errorMessage && mode === 'create' && (
             <Text size="sm" className="text-coral-500">

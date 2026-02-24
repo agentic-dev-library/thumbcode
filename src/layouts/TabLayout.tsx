@@ -47,7 +47,10 @@ function TabItem({ to, label, icon, activeIcon }: TabItemProps) {
 export function TabLayout() {
   return (
     <div className="min-h-screen flex flex-col bg-charcoal">
-      <main className="flex-1 overflow-auto hide-scrollbar animate-page-enter">
+      <main
+        className="flex-1 overflow-auto hide-scrollbar animate-page-enter"
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
+      >
         <Outlet />
       </main>
       <nav

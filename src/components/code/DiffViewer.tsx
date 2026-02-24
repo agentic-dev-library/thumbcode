@@ -88,7 +88,7 @@ export function DiffViewer({
   };
 
   return (
-    <div className="bg-charcoal overflow-hidden rounded-organic-card">
+    <div className="bg-charcoal overflow-x-auto rounded-organic-card">
       {/* Header */}
       <button
         type="button"

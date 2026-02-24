@@ -182,6 +182,7 @@ export function ChatInput({
           onKeyDown={handleKeyDown}
           placeholder={variantMode ? 'Describe what you want variants for...' : placeholder}
           disabled={disabled}
+          enterKeyHint="send"
         />
         <button
           type="button"

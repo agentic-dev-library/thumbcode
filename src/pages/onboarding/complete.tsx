@@ -81,7 +81,7 @@ export default function CompletePage() {
       className="flex flex-col min-h-screen bg-charcoal animate-page-enter"
       data-testid="complete-screen"
     >
-      <div className="flex-1 px-6 pt-6 pb-32">
+      <div className="flex-1 overflow-auto hide-scrollbar px-6 pt-6 pb-32">
         {/* Celebration */}
         <div className="flex flex-col items-center mt-12 mb-10">
           <div

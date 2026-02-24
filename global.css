@@ -110,6 +110,10 @@
 
 /* Organic design system custom utilities */
 @layer utilities {
+  .min-h-dvh {
+    min-height: 100dvh;
+  }
+
   .organic-card {
     border-radius: 1rem 0.75rem 1.25rem 0.5rem;
   }

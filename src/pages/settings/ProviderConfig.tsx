@@ -178,7 +178,7 @@ function ProviderCard({
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="p-1 text-neutral-500 hover:text-white transition-colors"
+          className="p-3 text-neutral-500 hover:text-white transition-colors"
           aria-label={isExpanded ? 'Collapse' : 'Expand'}
           data-testid={`expand-${provider.providerId}`}
         >
@@ -344,7 +344,7 @@ export function ProviderConfig() {
         <button
           type="button"
           onClick={() => navigate('/settings')}
-          className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body tap-feedback"
+          className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body tap-feedback min-h-[44px]"
           aria-label="Back to settings"
         >
           <ArrowLeft size={18} />

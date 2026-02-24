@@ -50,6 +50,10 @@ export function APIKeyInput({
           error ? 'border-coral-500' : 'border-neutral-200'
         } px-4 py-3 font-body text-base text-neutral-900 rounded-organic-input placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-coral-500/40`}
         data-testid={testId}
+        autoComplete="off"
+        autoCapitalize="off"
+        spellCheck={false}
+        enterKeyHint="done"
       />
 
       {error && <span className="font-body text-sm text-coral-500">{error}</span>}

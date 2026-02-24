@@ -142,7 +142,7 @@ export function Toast({
           )}
           <button
             onClick={onDismiss}
-            className="p-1 text-neutral-400 hover:text-white transition-colors"
+            className="p-3 -m-1.5 text-neutral-400 hover:text-white transition-colors"
             aria-label="Dismiss notification"
             type="button"
           >

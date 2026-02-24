@@ -107,7 +107,7 @@ function ConnectedServerCard({
         <button
           type="button"
           onClick={onRemove}
-          className="p-2 text-neutral-500 hover:text-coral-500 transition-colors rounded-organic-button hover:bg-coral-500/10"
+          className="p-3 text-neutral-500 hover:text-coral-500 transition-colors rounded-organic-button hover:bg-coral-500/10"
           aria-label={`Remove ${server.name}`}
           data-testid={`remove-server-${server.id}`}
         >
@@ -270,7 +270,7 @@ export function McpSettings() {
         <button
           type="button"
           onClick={() => navigate('/settings')}
-          className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body tap-feedback"
+          className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body tap-feedback min-h-[44px]"
           aria-label="Back to settings"
         >
           <ArrowLeft size={18} />
@@ -370,6 +370,10 @@ export function McpSettings() {
                     onChange={(e) => setCustomName(e.target.value)}
                     className="w-full bg-charcoal border border-neutral-700 text-white font-body text-sm px-3 py-2 rounded-organic-input placeholder:text-neutral-600 focus:outline-none focus:border-teal-500 transition-colors"
                     data-testid="custom-name-input"
+                    autoComplete="off"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    enterKeyHint="next"
                   />
                 </div>
                 <div>
@@ -387,6 +391,10 @@ export function McpSettings() {
                     onChange={(e) => setCustomCommand(e.target.value)}
                     className="w-full bg-charcoal border border-neutral-700 text-white font-mono text-sm px-3 py-2 rounded-organic-input placeholder:text-neutral-600 focus:outline-none focus:border-teal-500 transition-colors"
                     data-testid="custom-command-input"
+                    autoComplete="off"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    enterKeyHint="next"
                   />
                 </div>
                 <div>
@@ -404,6 +412,10 @@ export function McpSettings() {
                     onChange={(e) => setCustomArgs(e.target.value)}
                     className="w-full bg-charcoal border border-neutral-700 text-white font-mono text-sm px-3 py-2 rounded-organic-input placeholder:text-neutral-600 focus:outline-none focus:border-teal-500 transition-colors"
                     data-testid="custom-args-input"
+                    autoComplete="off"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    enterKeyHint="next"
                   />
                 </div>
                 <div>
@@ -421,6 +433,10 @@ export function McpSettings() {
                     onChange={(e) => setCustomEnv(e.target.value)}
                     className="w-full bg-charcoal border border-neutral-700 text-white font-mono text-sm px-3 py-2 rounded-organic-input placeholder:text-neutral-600 focus:outline-none focus:border-teal-500 transition-colors"
                     data-testid="custom-env-input"
+                    autoComplete="off"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    enterKeyHint="done"
                   />
                 </div>
 
