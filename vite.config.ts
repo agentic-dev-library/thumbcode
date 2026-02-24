@@ -9,8 +9,19 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
+    target: 'es2022',
     commonjsOptions: {
       transformMixedEsModules: true,
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-zustand': ['zustand'],
+          'vendor-ai': ['ai', '@ai-sdk/anthropic', '@ai-sdk/openai'],
+          'vendor-git': ['isomorphic-git'],
+        },
+      },
     },
   },
   server: {

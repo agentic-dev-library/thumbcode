@@ -5,6 +5,7 @@
  * Uses organic daube styling per brand guidelines.
  */
 
+import { memo } from 'react';
 import { Text } from '@/components/ui';
 import { formatTime, getSenderInfo } from '@/lib/chat-utils';
 import type {
@@ -88,7 +89,10 @@ function renderSpecialContent(
   return null;
 }
 
-export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessageProps>) {
+export const ChatMessage = memo(function ChatMessage({
+  message,
+  onApprovalResponse,
+}: Readonly<ChatMessageProps>) {
   const isUser = message.sender === 'user';
   const senderInfo = getSenderInfo(message.sender);
 
@@ -149,4 +153,4 @@ export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessag
       </div>
     </div>
   );
-}
+});

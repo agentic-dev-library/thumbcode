@@ -33,7 +33,7 @@ export default function ChatPage() {
         <button
           type="button"
           onClick={() => setActiveThread(null)}
-          className="mr-3 p-2 -ml-2 hover:bg-neutral-800 rounded-organic-button transition-colors tap-feedback"
+          className="mr-2 p-3 -ml-3 hover:bg-neutral-800 rounded-organic-button transition-colors tap-feedback"
           aria-label="Back to thread list"
         >
           <ChevronLeft size={18} className="text-neutral-400" />

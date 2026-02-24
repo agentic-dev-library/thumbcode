@@ -83,6 +83,16 @@ export function ChatInput({
     setText((prev) => (prev ? `${prev} ${transcript}` : transcript));
   }, []);
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSend();
+      }
+    },
+    [handleSend]
+  );
+
   const canSend = (text.trim().length > 0 || attachments.length > 0) && !disabled && !isSending;
 
   return (
@@ -107,7 +117,7 @@ export function ChatInput({
               <button
                 type="button"
                 onClick={() => handleRemoveAttachment(attachment.id)}
-                className="absolute -top-1 -right-1 w-5 h-5 bg-coral-500 rounded-full flex items-center justify-center"
+                className="absolute -top-2 -right-2 w-7 h-7 bg-coral-500 rounded-full flex items-center justify-center"
                 aria-label={`Remove ${attachment.filename ?? 'attachment'}`}
               >
                 <Text className="text-white text-xs leading-none">x</Text>
@@ -167,6 +177,7 @@ export function ChatInput({
           style={{ minHeight: 44, maxHeight: 120 }}
           value={text}
           onChange={(e) => setText(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder={variantMode ? 'Describe what you want variants for...' : placeholder}
           disabled={disabled}
         />

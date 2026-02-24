@@ -53,7 +53,7 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
         <button
           type="button"
           onClick={handleCopy}
-          className="px-2 py-1 active:bg-neutral-700 rounded-organic-badge"
+          className="px-3 py-2 active:bg-neutral-700 rounded-organic-badge"
           aria-label="Copy code"
           title="Copy the code to the clipboard"
         >
@@ -64,7 +64,7 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
       </div>
 
       {/* Code content with syntax highlighting */}
-      <div>
+      <div className="overflow-x-auto">
         <div className="p-3">
           {tokenizedLines.map((lineTokens, lineIndex) => (
             <Text

@@ -5,6 +5,7 @@
  * Uses organic styling with visual indicators for unread messages.
  */
 
+import { memo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { Badge } from '@/components/display';
 import { Text } from '@/components/ui';
@@ -27,7 +28,7 @@ interface ThreadItemProps {
   onPress: () => void;
 }
 
-function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
+const ThreadItem = memo(function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
   const hasUnread = thread.unreadCount > 0;
   const accessibilityLabel = [thread.title, hasUnread ? `${thread.unreadCount} unread` : '']
     .filter(Boolean)
@@ -100,7 +101,7 @@ function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
       </div>
     </button>
   );
-}
+});
 
 export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadListProps>) {
   const pinnedThreads = useChatStore(useShallow(selectPinnedThreads));

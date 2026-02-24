@@ -111,6 +111,7 @@ export default function HomePage() {
               type="button"
               onClick={() => navigate('/agents')}
               className="text-sm font-body text-coral-500 hover:text-coral-400 transition-colors tap-feedback"
+              aria-label="View all agents"
             >
               View All &rarr;
             </button>
@@ -123,6 +124,7 @@ export default function HomePage() {
                 key={agent.id}
                 onClick={() => navigate(`/agent/${agent.id}`)}
                 className="bg-surface p-3 flex items-center rounded-organic-card shadow-organic-card hover:bg-surface-elevated transition-colors text-left tap-feedback"
+                aria-label={`View agent ${agent.name}`}
               >
                 <div className="w-8 h-8 rounded-full bg-neutral-700 flex items-center justify-center">
                   <span className="font-body text-white text-xs font-semibold">
@@ -169,6 +171,7 @@ export default function HomePage() {
             <button
               type="button"
               className="text-sm font-body text-coral-500 hover:text-coral-400 transition-colors tap-feedback"
+              aria-label="See all recent activity"
             >
               See All &rarr;
             </button>
