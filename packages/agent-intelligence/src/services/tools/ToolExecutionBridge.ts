@@ -35,33 +35,33 @@ export class ToolExecutionBridge {
     try {
       switch (toolName) {
         case 'read_file':
-          return this.readFile(input, workspaceDir);
+          return await this.readFile(input, workspaceDir);
         case 'list_directory':
-          return this.listDirectory(input, workspaceDir);
+          return await this.listDirectory(input, workspaceDir);
         case 'get_diff':
-          return this.getDiff(input, workspaceDir);
+          return await this.getDiff(input, workspaceDir);
         case 'search_code':
-          return this.searchCode(input, workspaceDir);
+          return await this.searchCode(input, workspaceDir);
         case 'run_tests':
-          return this.runTests(input, workspaceDir);
+          return await this.runTests(input, workspaceDir);
         case 'get_coverage':
-          return this.getCoverage(input, workspaceDir);
+          return await this.getCoverage(input, workspaceDir);
         case 'analyze_test_results':
-          return this.analyzeTestResults(input, workspaceDir);
+          return await this.analyzeTestResults(input, workspaceDir);
         case 'write_file':
-          return this.writeFile(input, workspaceDir);
+          return await this.writeFile(input, workspaceDir);
         case 'create_file':
-          return this.createFile(input, workspaceDir);
+          return await this.createFile(input, workspaceDir);
         case 'delete_file':
-          return this.deleteFile(input, workspaceDir);
+          return await this.deleteFile(input, workspaceDir);
         case 'create_document':
-          return this.createDocument(input);
+          return await this.createDocument(input);
         case 'create_presentation':
-          return this.createPresentation(input);
+          return await this.createPresentation(input);
         case 'create_spreadsheet':
-          return this.createSpreadsheet(input);
+          return await this.createSpreadsheet(input);
         case 'create_pdf':
-          return this.createPdf(input);
+          return await this.createPdf(input);
         default:
           return { success: false, output: '', error: `Unknown tool: ${toolName}` };
       }
