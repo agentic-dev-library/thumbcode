@@ -4,6 +4,9 @@
  * Reusable hooks for common patterns.
  */
 
+// Camera and voice input hooks
+export { type UseCameraCaptureResult, useCameraCapture } from './use-camera-capture';
+export { type UseVoiceInputResult, useVoiceInput } from './use-voice-input';
 // Agent hooks
 export {
   type AgentDetailMetrics,
