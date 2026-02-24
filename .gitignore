@@ -159,3 +159,20 @@ android/.gradle/
 android/app/build/
 android/build/
 android/local.properties
+
+# Test screenshots (Playwright visual regression)
+*.png
+!src/**/*.png
+!packages/**/*.png
+!assets/**/*.png
+!public/**/*.png
+!docs-site/**/*.png
+
+# Ralph TUI session artifacts
+.ralph-tui/
+
+# Vitest temporary files
+__vitest_*
+
+# Doppler (local config only, secrets are remote)
+.doppler.yaml
