@@ -187,7 +187,6 @@ describe('formatMessagesForOpenAI', () => {
 
       const toolMsg = result.find((m) => m.role === 'tool');
       expect(toolMsg).toBeDefined();
-      // @ts-expect-error -- checking dynamic property
       expect(toolMsg?.tool_call_id).toBe('');
     });
 
