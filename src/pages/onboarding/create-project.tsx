@@ -41,9 +41,12 @@ export default function CreateProjectPage() {
   } = useCreateProject();
 
   return (
-    <div className="flex flex-col min-h-screen bg-charcoal" data-testid="create-project-screen">
+    <div
+      className="flex flex-col min-h-screen bg-charcoal animate-page-enter"
+      data-testid="create-project-screen"
+    >
       {/* Scrollable content */}
-      <div className="flex-1 overflow-auto px-6 pt-6 pb-32">
+      <div className="flex-1 overflow-auto px-6 pt-6 pb-32 hide-scrollbar">
         {/* Progress */}
         <StepsProgress
           totalSteps={4}

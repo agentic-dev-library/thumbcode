@@ -129,7 +129,10 @@ export default function GitHubAuthPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-charcoal" data-testid="github-auth-screen">
+    <div
+      className="flex flex-col min-h-screen bg-charcoal animate-page-enter"
+      data-testid="github-auth-screen"
+    >
       <div className="flex-1 px-6 pt-6 pb-32">
         {/* Progress Steps */}
         <StepsProgress
@@ -169,7 +172,7 @@ export default function GitHubAuthPage() {
                   type="button"
                   onClick={startDeviceFlow}
                   disabled={isAuthenticating}
-                  className={`bg-neutral-800 py-4 rounded-organic-button font-body font-semibold text-white text-center transition-colors ${
+                  className={`bg-neutral-800 py-4 rounded-organic-button font-body font-semibold text-white text-center transition-colors tap-feedback ${
                     isAuthenticating
                       ? 'opacity-70 cursor-not-allowed'
                       : 'hover:bg-neutral-700 active:bg-neutral-600'
@@ -200,7 +203,7 @@ export default function GitHubAuthPage() {
                 <button
                   type="button"
                   onClick={openGitHub}
-                  className="bg-neutral-800 py-4 rounded-organic-button font-body font-semibold text-white text-center hover:bg-neutral-700 active:bg-neutral-600 transition-colors"
+                  className="bg-neutral-800 py-4 rounded-organic-button font-body font-semibold text-white text-center hover:bg-neutral-700 active:bg-neutral-600 transition-colors tap-feedback"
                   data-testid="open-github-button"
                 >
                   Open GitHub &rarr;
@@ -210,7 +213,7 @@ export default function GitHubAuthPage() {
                   type="button"
                   onClick={checkAuth}
                   disabled={isAuthenticating}
-                  className={`bg-teal-600 py-4 rounded-organic-button font-body font-semibold text-white text-center transition-colors ${
+                  className={`bg-teal-600 py-4 rounded-organic-button font-body font-semibold text-white text-center transition-colors tap-feedback ${
                     isAuthenticating
                       ? 'opacity-70 cursor-not-allowed'
                       : 'hover:bg-teal-700 active:bg-teal-800'
@@ -262,13 +265,13 @@ export default function GitHubAuthPage() {
 
       {/* Bottom Buttons */}
       <div
-        className="fixed bottom-0 left-0 right-0 border-t border-neutral-800 bg-charcoal px-6 py-4 flex flex-row gap-4"
+        className="fixed bottom-0 left-0 right-0 border-t border-white/5 glass px-6 py-4 flex flex-row gap-4"
         style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
       >
         <button
           type="button"
           onClick={handleSkip}
-          className="flex-1 bg-neutral-800 py-4 rounded-organic-button font-body text-neutral-300 text-center hover:bg-neutral-700 active:bg-neutral-600 transition-colors"
+          className="flex-1 bg-neutral-800 py-4 rounded-organic-button font-body text-neutral-300 text-center hover:bg-neutral-700 active:bg-neutral-600 transition-colors tap-feedback"
           data-testid="skip-button"
         >
           Skip for Now
@@ -278,7 +281,7 @@ export default function GitHubAuthPage() {
           <button
             type="button"
             onClick={handleContinue}
-            className="flex-1 bg-coral-500 py-4 rounded-organic-button font-body font-semibold text-white text-center hover:bg-coral-600 active:bg-coral-700 transition-colors"
+            className="flex-1 bg-coral-500 py-4 rounded-organic-button font-body font-semibold text-white text-center hover:bg-coral-600 active:bg-coral-700 transition-colors tap-feedback"
             data-testid="continue-button"
           >
             Continue

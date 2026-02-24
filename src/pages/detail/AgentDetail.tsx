@@ -64,13 +64,13 @@ export function AgentDetail() {
   }
 
   return (
-    <div className="flex-1 bg-charcoal min-h-screen">
+    <div className="flex-1 bg-charcoal min-h-screen animate-page-enter">
       {/* Back navigation */}
-      <div className="px-4 py-3 border-b border-neutral-800">
+      <div className="px-4 py-3 border-b border-white/5 glass">
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body"
+          className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body tap-feedback"
           aria-label="Go back"
         >
           <ArrowLeft size={18} />
@@ -153,7 +153,7 @@ export function AgentDetail() {
             type="button"
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-3 text-center capitalize font-body transition-colors ${
+            className={`flex-1 py-3 text-center capitalize font-body transition-colors tap-feedback ${
               activeTab === tab
                 ? 'border-b-2 border-coral-500 text-coral-500 font-semibold'
                 : 'text-neutral-400 hover:text-neutral-300'
@@ -166,7 +166,7 @@ export function AgentDetail() {
       </div>
 
       {/* Content */}
-      <div className="overflow-y-auto flex-1 px-6 py-6">
+      <div className="overflow-y-auto flex-1 px-6 py-6 hide-scrollbar">
         {activeTab === 'overview' ? (
           <div className="space-y-4">
             <AgentMetrics

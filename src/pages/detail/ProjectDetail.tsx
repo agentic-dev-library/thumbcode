@@ -79,7 +79,7 @@ export function ProjectDetail() {
   }
 
   return (
-    <div className="flex-1 bg-charcoal min-h-screen flex flex-col">
+    <div className="flex-1 bg-charcoal min-h-screen flex flex-col animate-page-enter">
       <ProjectHeader
         name={project.name}
         repoUrl={project.repoUrl}
@@ -96,7 +96,7 @@ export function ProjectDetail() {
             type="button"
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-3 text-center capitalize font-body transition-colors ${
+            className={`flex-1 py-3 text-center capitalize font-body transition-colors tap-feedback ${
               activeTab === tab
                 ? 'border-b-2 border-coral-500 text-coral-500 font-semibold'
                 : 'text-neutral-400 hover:text-neutral-300'
@@ -109,7 +109,7 @@ export function ProjectDetail() {
       </div>
 
       {/* Content */}
-      <div className="overflow-y-auto flex-1 px-6 py-6">
+      <div className="overflow-y-auto flex-1 px-6 py-6 hide-scrollbar">
         {activeTab === 'files' &&
           (repoInfo ? (
             <ProjectFileExplorer

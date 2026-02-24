@@ -187,9 +187,12 @@ export default function ApiKeysPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-charcoal" data-testid="api-keys-screen">
+    <div
+      className="flex flex-col min-h-screen bg-charcoal animate-page-enter"
+      data-testid="api-keys-screen"
+    >
       {/* Scrollable content */}
-      <div className="flex-1 overflow-auto px-6 pt-6 pb-32">
+      <div className="flex-1 overflow-auto px-6 pt-6 pb-32 hide-scrollbar">
         {/* Progress */}
         <StepsProgress
           totalSteps={4}
@@ -277,13 +280,13 @@ export default function ApiKeysPage() {
 
       {/* Bottom Buttons */}
       <div
-        className="fixed bottom-0 left-0 right-0 border-t border-neutral-800 bg-charcoal px-6 py-4 flex flex-row gap-4"
+        className="fixed bottom-0 left-0 right-0 border-t border-white/5 glass px-6 py-4 flex flex-row gap-4"
         style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
       >
         <button
           type="button"
           onClick={handleSkip}
-          className="flex-1 bg-neutral-800 py-4 rounded-organic-button font-body text-neutral-300 text-center hover:bg-neutral-700 active:bg-neutral-600 transition-colors"
+          className="flex-1 bg-neutral-800 py-4 rounded-organic-button font-body text-neutral-300 text-center hover:bg-neutral-700 active:bg-neutral-600 transition-colors tap-feedback"
           data-testid="skip-button"
         >
           Skip for Now
@@ -293,7 +296,7 @@ export default function ApiKeysPage() {
           type="button"
           onClick={handleContinue}
           disabled={!hasAtLeastOneKey}
-          className={`flex-1 py-4 rounded-organic-button font-body font-semibold text-center transition-colors ${
+          className={`flex-1 py-4 rounded-organic-button font-body font-semibold text-center transition-colors tap-feedback ${
             hasAtLeastOneKey
               ? 'bg-coral-500 text-white hover:bg-coral-600 active:bg-coral-700'
               : 'bg-neutral-700 text-neutral-500 cursor-not-allowed'

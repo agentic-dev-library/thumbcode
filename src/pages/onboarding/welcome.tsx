@@ -73,9 +73,12 @@ export default function WelcomePage() {
   const router = useAppRouter();
 
   return (
-    <div className="flex flex-col min-h-screen bg-charcoal" data-testid="welcome-screen">
+    <div
+      className="flex flex-col min-h-screen bg-charcoal animate-page-enter"
+      data-testid="welcome-screen"
+    >
       {/* Scrollable content */}
-      <div className="flex-1 overflow-auto px-6 pb-32">
+      <div className="flex-1 overflow-auto px-6 pb-32 hide-scrollbar">
         {/* Hero */}
         <div className="flex flex-col items-center gap-4 mt-12 mb-10">
           <div className="w-24 h-24 bg-coral-500 flex items-center justify-center rounded-organic-hero">
@@ -112,13 +115,13 @@ export default function WelcomePage() {
 
       {/* Bottom CTA */}
       <div
-        className="fixed bottom-0 left-0 right-0 bg-charcoal border-t border-neutral-800 px-6 py-4"
+        className="fixed bottom-0 left-0 right-0 glass border-t border-white/5 px-6 py-4"
         style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
       >
         <button
           type="button"
           onClick={() => router.push('/onboarding/github-auth')}
-          className="w-full bg-coral-500 py-4 font-body font-semibold text-white text-center text-lg rounded-organic-button hover:bg-coral-600 active:bg-coral-700 transition-colors"
+          className="w-full bg-coral-500 py-4 font-body font-semibold text-white text-center text-lg rounded-organic-button hover:bg-coral-600 active:bg-coral-700 transition-colors tap-feedback"
           data-testid="get-started-button"
         >
           Get Started

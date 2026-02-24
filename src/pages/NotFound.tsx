@@ -12,7 +12,7 @@ export function NotFoundPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex-1 flex items-center justify-center p-8 bg-charcoal min-h-screen">
+    <div className="flex-1 flex items-center justify-center p-8 bg-charcoal min-h-screen animate-page-enter">
       <div className="max-w-sm w-full">
         <div className="flex flex-col items-center space-y-6">
           {/* Icon */}
@@ -32,7 +32,7 @@ export function NotFoundPage() {
           <div className="w-full space-y-3">
             <Link
               to="/"
-              className="block w-full py-4 px-8 bg-coral-500 text-center text-white font-semibold font-body rounded-organic-cta hover:bg-coral-600 transition-colors"
+              className="block w-full py-4 px-8 bg-coral-500 text-center text-white font-semibold font-body rounded-organic-cta hover:bg-coral-600 transition-colors tap-feedback"
             >
               Go Home
             </Link>
@@ -40,7 +40,7 @@ export function NotFoundPage() {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="block w-full py-4 px-8 bg-surface text-center text-white font-body rounded-organic-cta hover:bg-neutral-700 transition-colors"
+              className="block w-full py-4 px-8 bg-surface text-center text-white font-body rounded-organic-cta hover:bg-neutral-700 transition-colors tap-feedback"
             >
               Go Back
             </button>

@@ -77,7 +77,10 @@ export default function CompletePage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-charcoal" data-testid="complete-screen">
+    <div
+      className="flex flex-col min-h-screen bg-charcoal animate-page-enter"
+      data-testid="complete-screen"
+    >
       <div className="flex-1 px-6 pt-6 pb-32">
         {/* Celebration */}
         <div className="flex flex-col items-center mt-12 mb-10">
@@ -131,13 +134,13 @@ export default function CompletePage() {
 
       {/* Bottom CTA */}
       <div
-        className="fixed bottom-0 left-0 right-0 border-t border-neutral-800 bg-charcoal px-6 py-4"
+        className="fixed bottom-0 left-0 right-0 border-t border-white/5 glass px-6 py-4"
         style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
       >
         <button
           type="button"
           onClick={handleGetStarted}
-          className="w-full bg-coral-500 py-4 rounded-organic-button font-body font-semibold text-white text-center text-lg hover:bg-coral-600 active:bg-coral-700 transition-colors"
+          className="w-full bg-coral-500 py-4 rounded-organic-button font-body font-semibold text-white text-center text-lg hover:bg-coral-600 active:bg-coral-700 transition-colors tap-feedback"
           data-testid="start-building-button"
         >
           Start Building &rarr;
