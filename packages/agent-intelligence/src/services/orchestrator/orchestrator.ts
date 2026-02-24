@@ -11,6 +11,8 @@ import type { AgentRole, TaskAssignment, TaskStatus } from '@thumbcode/types';
 import type { DEFAULT_AGENT_CONFIGS } from '../agents';
 import type { AIProvider, CompletionResponse } from '../ai';
 import { createAIClient, getDefaultModel } from '../ai';
+import { AgentRouter } from '../routing/AgentRouter';
+import type { RoutingDecision } from '../routing/types';
 import { AgentCoordinator } from './AgentCoordinator';
 import { OrchestrationStateManager } from './OrchestrationState';
 import { TaskAssigner } from './TaskAssigner';
@@ -64,6 +66,7 @@ export class AgentOrchestrator {
   private readonly taskAssigner: TaskAssigner;
   private readonly config: OrchestratorConfig;
   private readonly apiKey: string;
+  private readonly router: AgentRouter;
   private variantResults: Map<string, VariantResult> = new Map();
 
   constructor(config: OrchestratorConfig, apiKey: string) {
@@ -72,6 +75,10 @@ export class AgentOrchestrator {
     this.stateManager = new OrchestrationStateManager(config);
     this.coordinator = new AgentCoordinator(config, this.stateManager, apiKey);
     this.taskAssigner = new TaskAssigner(this.stateManager, config.autoAssign);
+    this.router = new AgentRouter({
+      defaultProvider: config.provider,
+      defaultModel: config.model ?? getDefaultModel(config.provider),
+    });
   }
 
   // Event management (delegated to OrchestrationStateManager)
@@ -102,6 +109,24 @@ export class AgentOrchestrator {
 
   assignTask(taskId: string, role: AgentRole): void {
     this.taskAssigner.assignTask(taskId, role);
+  }
+
+  /**
+   * Route a task to the best available provider for the given agent role.
+   * Falls back to the configured default provider if routing fails.
+   */
+  routeTask(taskId: string, agentRole: AgentRole, availableProviders: string[]): RoutingDecision {
+    const task = this.taskAssigner.getTask(taskId);
+    if (!task) {
+      return {
+        provider: this.config.provider,
+        model: this.config.model ?? getDefaultModel(this.config.provider),
+        agent: agentRole,
+        confidence: 0,
+        fallbackChain: [],
+      };
+    }
+    return this.router.routeTask(task, availableProviders, agentRole);
   }
 
   getTask(taskId: string): TaskAssignment | undefined {

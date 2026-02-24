@@ -19,3 +19,9 @@ export * from './services/tools';
 
 // Agent Skills
 export * from './services/skills';
+
+// Agent Routing
+export * from './services/routing';
+
+// MCP Services
+export * from './services/mcp';
