@@ -5,12 +5,21 @@
  * Uses organic daube styling per brand guidelines.
  */
 
-import type { ApprovalMessage, DocumentOutputMessage, Message } from '@thumbcode/state';
+import type {
+  ApprovalMessage,
+  DocumentOutputMessage,
+  ImageMessage as ImageMessageType,
+  Message,
+  VoiceMessage,
+} from '@thumbcode/state';
 import { Text } from '@/components/ui';
 import { formatTime, getSenderInfo } from '@/lib/chat-utils';
 import { ApprovalCard } from './ApprovalCard';
+import { AudioMessage } from './AudioMessage';
 import { CodeBlock } from './CodeBlock';
 import { DocumentCard } from './DocumentCard';
+import { ImageMessage } from './ImageMessage';
+import { MixedMediaMessage } from './MixedMediaMessage';
 
 /** Props for the ChatMessage component */
 interface ChatMessageProps {
@@ -45,6 +54,36 @@ export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessag
     return (
       <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
         <DocumentCard message={docMessage} />
+        <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
+      </div>
+    );
+  }
+
+  // Render image message
+  if (message.contentType === 'image') {
+    return (
+      <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
+        <ImageMessage message={message as ImageMessageType} />
+        <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
+      </div>
+    );
+  }
+
+  // Render voice transcript / audio message
+  if (message.contentType === 'voice_transcript') {
+    return (
+      <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
+        <AudioMessage message={message as VoiceMessage} />
+        <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
+      </div>
+    );
+  }
+
+  // Render mixed media message
+  if (message.contentType === 'mixed_media') {
+    return (
+      <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
+        <MixedMediaMessage message={message} />
         <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
       </div>
     );
