@@ -26,6 +26,7 @@ describe('getColor', () => {
   });
 
   it('throws for an unknown shade', () => {
+    // biome-ignore lint/suspicious/noExplicitAny: Testing runtime behavior with invalid shade value
     expect(() => getColor('coral', '50' as any)).toThrow();
   });
 });

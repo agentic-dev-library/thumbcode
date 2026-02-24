@@ -53,6 +53,24 @@ function createUnifiedPatch(
   return { patch, additions, deletions };
 }
 
+/**
+ * Interpret the git status matrix row to determine file status and staging
+ */
+function interpretStatusMatrix(
+  head: number,
+  workdir: number,
+  stage: number
+): { status: FileStatus['status']; staged: boolean } {
+  if (head === 0 && workdir === 2 && stage === 0) return { status: 'untracked', staged: false };
+  if (head === 0 && workdir === 2 && stage === 2) return { status: 'added', staged: true };
+  if (head === 1 && workdir === 0 && stage === 0) return { status: 'deleted', staged: false };
+  if (head === 1 && workdir === 0 && stage === 3) return { status: 'deleted', staged: true };
+  if (head === 1 && workdir === 2 && stage === 1) return { status: 'modified', staged: false };
+  if (head === 1 && workdir === 2 && stage === 2) return { status: 'modified', staged: true };
+  if (head === 1 && workdir === 1 && stage === 1) return { status: 'unmodified', staged: false };
+  return { status: 'modified', staged: false };
+}
+
 class GitDiffServiceClass {
   /**
    * Get file status for the repository
@@ -62,32 +80,7 @@ class GitDiffServiceClass {
       const matrix = await git.statusMatrix({ fs, dir });
 
       const statuses: FileStatus[] = matrix.map(([filepath, head, workdir, stage]) => {
-        let status: FileStatus['status'];
-        let staged = false;
-
-        // Interpret status matrix
-        // [HEAD, WORKDIR, STAGE]
-        if (head === 0 && workdir === 2 && stage === 0) {
-          status = 'untracked';
-        } else if (head === 0 && workdir === 2 && stage === 2) {
-          status = 'added';
-          staged = true;
-        } else if (head === 1 && workdir === 0 && stage === 0) {
-          status = 'deleted';
-        } else if (head === 1 && workdir === 0 && stage === 3) {
-          status = 'deleted';
-          staged = true;
-        } else if (head === 1 && workdir === 2 && stage === 1) {
-          status = 'modified';
-        } else if (head === 1 && workdir === 2 && stage === 2) {
-          status = 'modified';
-          staged = true;
-        } else if (head === 1 && workdir === 1 && stage === 1) {
-          status = 'unmodified';
-        } else {
-          status = 'modified';
-        }
-
+        const { status, staged } = interpretStatusMatrix(head, workdir, stage);
         return {
           path: filepath,
           status,
@@ -148,6 +141,7 @@ class GitDiffServiceClass {
       for (let i = 0; i < allFilesArray.length; i += BATCH_SIZE) {
         const batch = allFilesArray.slice(i, i + BATCH_SIZE);
         await Promise.all(
+          // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: file diff comparison requires branching on add/delete/modify
           batch.map(async (filepath) => {
             const blobA = filesInA.get(filepath);
             const blobB = filesInB.get(filepath);
@@ -250,6 +244,7 @@ class GitDiffServiceClass {
       const headOid = await git.resolveRef({ fs, dir, ref: 'HEAD' });
 
       const results = await Promise.all(
+        // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: working dir diff requires branching on file status types
         matrix.map(async ([filepath, head, workdir, _stage]) => {
           // Skip unmodified files
           if (head === 1 && workdir === 1) return null;

@@ -5,8 +5,8 @@ let mockRecognitionInstance: {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
-  onresult: ((event: any) => void) | null;
-  onerror: ((event: any) => void) | null;
+  onresult: ((event: unknown) => void) | null;
+  onerror: ((event: unknown) => void) | null;
   onend: (() => void) | null;
   start: ReturnType<typeof vi.fn>;
   stop: ReturnType<typeof vi.fn>;
@@ -160,7 +160,7 @@ describe('useVoiceInput', () => {
     });
 
     act(() => {
-      mockRecognitionInstance.onerror?.({ error: 'not-allowed' } as any);
+      mockRecognitionInstance.onerror?.({ error: 'not-allowed' } as unknown);
     });
 
     expect(result.current.error).toContain('permission was denied');
@@ -174,7 +174,7 @@ describe('useVoiceInput', () => {
     });
 
     act(() => {
-      mockRecognitionInstance.onerror?.({ error: 'no-speech' } as any);
+      mockRecognitionInstance.onerror?.({ error: 'no-speech' } as unknown);
     });
 
     expect(result.current.error).toContain('No speech detected');
@@ -187,7 +187,7 @@ describe('useVoiceInput', () => {
     });
 
     act(() => {
-      mockRecognitionInstance.onerror?.({ error: 'network' } as any);
+      mockRecognitionInstance.onerror?.({ error: 'network' } as unknown);
     });
 
     expect(result.current.error).toContain('Network error');

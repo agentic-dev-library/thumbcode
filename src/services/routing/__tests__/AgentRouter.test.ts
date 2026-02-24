@@ -6,7 +6,7 @@
 
 import type { TaskAssignment } from '@/types';
 import { AgentRouter } from '../AgentRouter';
-import type { AgentRouterConfig, RoutingRule } from '../types';
+import type { RoutingRule } from '../types';
 
 // Mock AI SDKs to prevent import errors
 vi.mock('@anthropic-ai/sdk', () => ({ default: vi.fn() }));

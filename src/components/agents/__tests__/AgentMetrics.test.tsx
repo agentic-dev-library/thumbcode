@@ -2,12 +2,12 @@ import { render, screen } from '@testing-library/react';
 import { AgentMetrics } from '../AgentMetrics';
 
 vi.mock('@/components/layout', () => ({
-  HStack: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  VStack: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  HStack: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+  VStack: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui', () => ({
-  Text: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+  Text: ({ children }: { children?: React.ReactNode }) => <span>{children}</span>,
 }));
 
 describe('AgentMetrics', () => {

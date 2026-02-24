@@ -17,19 +17,23 @@ vi.mock('@/components/ui', () => ({
 
 // Mock sub-components to isolate MixedMediaMessage logic
 vi.mock('../ImageMessage', () => ({
-  ImageMessage: ({ message }: any) => (
+  ImageMessage: ({
+    message,
+  }: {
+    message: { metadata?: { imageUrl?: string; caption?: string } };
+  }) => (
     <div data-testid="image-message">{message.metadata?.imageUrl || message.metadata?.caption}</div>
   ),
 }));
 
 vi.mock('../AudioMessage', () => ({
-  AudioMessage: ({ message }: any) => (
+  AudioMessage: ({ message }: { message: { metadata?: { audioUrl?: string } } }) => (
     <div data-testid="audio-message">{message.metadata?.audioUrl}</div>
   ),
 }));
 
 vi.mock('../DocumentCard', () => ({
-  DocumentCard: ({ message }: any) => (
+  DocumentCard: ({ message }: { message: { metadata?: { filename?: string } } }) => (
     <div data-testid="document-card">{message.metadata?.filename}</div>
   ),
 }));

@@ -156,7 +156,15 @@ describe('Git Services Performance', () => {
 
     // 6. Measure diff time
     const start = performance.now();
-    const diffResult = await GitDiffService.diff(repoDir, commit1.data!, commit2.data!);
+    const commit1Data = commit1.data;
+    const commit2Data = commit2.data;
+    expect(commit1Data).toBeDefined();
+    expect(commit2Data).toBeDefined();
+    const diffResult = await GitDiffService.diff(
+      repoDir,
+      commit1Data as string,
+      commit2Data as string
+    );
     const end = performance.now();
 
     expect(diffResult.success).toBe(true);

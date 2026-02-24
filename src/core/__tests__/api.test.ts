@@ -4,7 +4,7 @@ const mockSignRequest = vi.fn();
 
 vi.mock('../security/RequestSigningService', () => ({
   requestSigningService: {
-    signRequest: (...args: any[]) => mockSignRequest(...args),
+    signRequest: (...args: unknown[]) => mockSignRequest(...args),
   },
 }));
 

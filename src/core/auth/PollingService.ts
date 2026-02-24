@@ -49,6 +49,7 @@ export class PollingService {
     return new Promise((resolve) => {
       this.pollResolve = resolve;
 
+      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: polling loop with retry, backoff, and cancellation logic
       const poll = async () => {
         if (this.isCancelled) {
           resolve({ authorized: false, shouldContinue: false, error: 'Authorization cancelled.' });

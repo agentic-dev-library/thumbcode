@@ -9,7 +9,9 @@ vi.mock('@/components/icons', () => ({
 }));
 
 vi.mock('@/components/ui', () => ({
-  Text: ({ children, className }: any) => <span className={className}>{children}</span>,
+  Text: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
+    <span className={className}>{children}</span>
+  ),
 }));
 
 describe('Badge', () => {

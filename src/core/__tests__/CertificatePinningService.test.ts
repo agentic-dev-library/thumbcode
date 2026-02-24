@@ -4,6 +4,7 @@ describe('CertificatePinningService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset internal state for testing
+    // biome-ignore lint/suspicious/noExplicitAny: Accessing private property for test reset
     (certificatePinningService as any).isInitialized = false;
   });
 

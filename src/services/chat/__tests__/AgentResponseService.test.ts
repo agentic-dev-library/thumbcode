@@ -273,14 +273,22 @@ describe('AgentResponseService', () => {
 
     it('should successfully route agent messages with orchestrator available', async () => {
       const mockClient = {
-        completeStream: vi.fn().mockImplementation(async (_msgs: any, _opts: any, onEvent: any) => {
-          onEvent({
-            type: 'content_block_delta',
-            index: 0,
-            delta: { type: 'text', text: 'Architect response' },
-          });
-          return mockCompletionResponse('Architect response');
-        }),
+        completeStream: vi
+          .fn()
+          .mockImplementation(
+            async (
+              _msgs: unknown,
+              _opts: unknown,
+              onEvent: (e: Record<string, unknown>) => void
+            ) => {
+              onEvent({
+                type: 'content_block_delta',
+                index: 0,
+                delta: { type: 'text', text: 'Architect response' },
+              });
+              return mockCompletionResponse('Architect response');
+            }
+          ),
       };
       mockCreateAIClient.mockReturnValue(mockClient);
 
@@ -324,7 +332,7 @@ describe('AgentResponseService', () => {
 
       // Both should complete without errors
       const emitCalls = (streamHandler.emit as Mock).mock.calls;
-      const completeCalls = emitCalls.filter((call: any) => call[0].type === 'message_complete');
+      const completeCalls = emitCalls.filter((call) => call[0].type === 'message_complete');
       expect(completeCalls).toHaveLength(2);
       expect(completeCalls[0][0].sender).toBe('architect');
       expect(completeCalls[1][0].sender).toBe('implementer');
@@ -337,14 +345,22 @@ describe('AgentResponseService', () => {
       'tester',
     ] as const)('should route %s messages through the orchestrator', async (agentRole) => {
       const mockClient = {
-        completeStream: vi.fn().mockImplementation(async (_msgs: any, _opts: any, onEvent: any) => {
-          onEvent({
-            type: 'content_block_delta',
-            index: 0,
-            delta: { type: 'text', text: `Response from ${agentRole}` },
-          });
-          return mockCompletionResponse(`Response from ${agentRole}`);
-        }),
+        completeStream: vi
+          .fn()
+          .mockImplementation(
+            async (
+              _msgs: unknown,
+              _opts: unknown,
+              onEvent: (e: Record<string, unknown>) => void
+            ) => {
+              onEvent({
+                type: 'content_block_delta',
+                index: 0,
+                delta: { type: 'text', text: `Response from ${agentRole}` },
+              });
+              return mockCompletionResponse(`Response from ${agentRole}`);
+            }
+          ),
       };
       mockCreateAIClient.mockReturnValue(mockClient);
 
@@ -517,20 +533,28 @@ describe('AgentResponseService', () => {
 
     it('should stream response and emit events', async () => {
       const mockClient = {
-        completeStream: vi.fn().mockImplementation(async (_msgs: any, _opts: any, onEvent: any) => {
-          // Simulate streaming content_block_delta events
-          onEvent({
-            type: 'content_block_delta',
-            index: 0,
-            delta: { type: 'text', text: 'Hello' },
-          });
-          onEvent({
-            type: 'content_block_delta',
-            index: 0,
-            delta: { type: 'text', text: ' world' },
-          });
-          return mockCompletionResponse('Hello world');
-        }),
+        completeStream: vi
+          .fn()
+          .mockImplementation(
+            async (
+              _msgs: unknown,
+              _opts: unknown,
+              onEvent: (e: Record<string, unknown>) => void
+            ) => {
+              // Simulate streaming content_block_delta events
+              onEvent({
+                type: 'content_block_delta',
+                index: 0,
+                delta: { type: 'text', text: 'Hello' },
+              });
+              onEvent({
+                type: 'content_block_delta',
+                index: 0,
+                delta: { type: 'text', text: ' world' },
+              });
+              return mockCompletionResponse('Hello world');
+            }
+          ),
       };
       mockCreateAIClient.mockReturnValue(mockClient);
 
@@ -599,7 +623,7 @@ describe('AgentResponseService', () => {
 
       // Should not emit error event for abort
       const errorCalls = (streamHandler.emit as Mock).mock.calls.filter(
-        (call: any) => call[0].type === 'error'
+        (call) => call[0].type === 'error'
       );
       expect(errorCalls).toHaveLength(0);
     });

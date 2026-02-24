@@ -38,6 +38,7 @@ describe('KeyValidator', () => {
     });
 
     it('should accept unknown credential types', async () => {
+      // biome-ignore lint/suspicious/noExplicitAny: Testing runtime behavior with unknown credential type
       const result = await validator.validateCredential('custom' as any, 'any-value');
 
       expect(result.isValid).toBe(true);
@@ -203,6 +204,7 @@ describe('KeyValidator', () => {
     });
 
     it('should handle unknown credential type', () => {
+      // biome-ignore lint/suspicious/noExplicitAny: Testing runtime behavior with unknown credential type
       const masked = validator.maskSecret('secret12345678', 'custom' as any);
       expect(masked).toBe('secr...5678');
     });

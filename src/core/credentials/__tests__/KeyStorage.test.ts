@@ -12,10 +12,10 @@ import { afterEach, beforeEach, describe, expect, it, type Mocked, vi } from 'vi
 import { KeyStorage } from '../KeyStorage';
 import type { KeyValidator } from '../KeyValidator';
 
-const mockValidator: Mocked<KeyValidator> = {
+const mockValidator = {
   validateCredential: vi.fn(),
   maskSecret: vi.fn(),
-} as any;
+} as unknown as Mocked<KeyValidator>;
 
 const mockSecureStorage = SecureStoragePlugin as Mocked<typeof SecureStoragePlugin>;
 const mockBiometricAuth = BiometricAuth as Mocked<typeof BiometricAuth>;
@@ -246,7 +246,7 @@ describe('KeyStorage', () => {
           code: 0,
           strongBiometryIsAvailable: true,
           biometryTypes: [1],
-        } as any);
+        } as never);
 
         const result = await storage.isBiometricAvailable();
 
@@ -261,7 +261,7 @@ describe('KeyStorage', () => {
           code: 0,
           strongBiometryIsAvailable: false,
           biometryTypes: [],
-        } as any);
+        } as never);
 
         const result = await storage.isBiometricAvailable();
 

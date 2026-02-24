@@ -29,9 +29,9 @@ const mockConfig: OrchestratorConfig = {
 function createMockAgent(id: string, role: string, status = 'idle'): Agent {
   return {
     id,
-    role: role as any,
+    role: role as Agent['role'],
     name: `${role} agent`,
-    status: status as any,
+    status: status as Agent['status'],
     capabilities: [],
     config: {
       model: 'claude-3-5-sonnet-20241022',

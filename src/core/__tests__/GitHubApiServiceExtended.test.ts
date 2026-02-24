@@ -70,7 +70,7 @@ describe('GitHubApiService - listCommits', () => {
 
     await GitHubApiService.listCommits('owner', 'repo', { sha: 'develop' });
 
-    const url = (global.fetch as any).mock.calls[0][0];
+    const url = (global.fetch as unknown as { mock: { calls: string[][] } }).mock.calls[0][0];
     expect(url).toContain('sha=develop');
   });
 
@@ -82,7 +82,7 @@ describe('GitHubApiService - listCommits', () => {
 
     await GitHubApiService.listCommits('owner', 'repo', { perPage: 10 });
 
-    const url = (global.fetch as any).mock.calls[0][0];
+    const url = (global.fetch as unknown as { mock: { calls: string[][] } }).mock.calls[0][0];
     expect(url).toContain('per_page=10');
   });
 });
@@ -150,7 +150,7 @@ describe('GitHubApiService - getContents', () => {
 
     await GitHubApiService.getContents('owner', 'repo', 'src/components');
 
-    const url = (global.fetch as any).mock.calls[0][0];
+    const url = (global.fetch as unknown as { mock: { calls: string[][] } }).mock.calls[0][0];
     expect(url).toContain('/repos/owner/repo/contents/src/components');
   });
 
@@ -162,7 +162,7 @@ describe('GitHubApiService - getContents', () => {
 
     await GitHubApiService.getContents('owner', 'repo', undefined, 'develop');
 
-    const url = (global.fetch as any).mock.calls[0][0];
+    const url = (global.fetch as unknown as { mock: { calls: string[][] } }).mock.calls[0][0];
     expect(url).toContain('ref=develop');
   });
 

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Input } from '../form/Input';
 
-describe('Input (packages/ui)', () => {
+describe('Input (src/ui)', () => {
   it('renders input element', () => {
     render(<Input placeholder="Type here" />);
     expect(screen.getByPlaceholderText('Type here')).toBeInTheDocument();

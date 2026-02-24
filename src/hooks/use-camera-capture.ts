@@ -36,6 +36,7 @@ export function useCameraCapture(): UseCameraCaptureResult {
     setIsCapturing(false);
   }, []);
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: error handling for multiple DOMException types
   const startCapture = useCallback(async () => {
     setError(null);
 

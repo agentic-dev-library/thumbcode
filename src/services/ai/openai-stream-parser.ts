@@ -43,6 +43,7 @@ export function createStreamParserState(defaultModel: string): StreamParserState
   };
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: processes stream chunks with text deltas, tool calls, and finish reasons
 export function processStreamChunk(
   state: StreamParserState,
   chunk: {

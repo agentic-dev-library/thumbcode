@@ -27,7 +27,15 @@ vi.mock('../CodeBlock', () => ({
 
 // Mock ApprovalCard
 vi.mock('../ApprovalCard', () => ({
-  ApprovalCard: ({ message, onApprove, onReject }: any) => (
+  ApprovalCard: ({
+    message,
+    onApprove,
+    onReject,
+  }: {
+    message: { content: string };
+    onApprove: () => void;
+    onReject: () => void;
+  }) => (
     <div>
       <span>{message.content}</span>
       <button type="button" onClick={onApprove}>

@@ -46,7 +46,7 @@ const mockMessages: Message[] = [
 ];
 
 vi.mock('@/state', () => ({
-  useChatStore: vi.fn((selector: any) =>
+  useChatStore: vi.fn((selector: (state: Record<string, unknown>) => unknown) =>
     selector({
       threads: {
         'thread-1': {
@@ -73,12 +73,14 @@ describe('ChatThread', () => {
   it('shows empty state when no messages', () => {
     vi.mocked(selectThreadMessages).mockReturnValue(() => []);
     vi.mocked(selectTypingIndicators).mockReturnValue(() => []);
-    vi.mocked(useChatStore).mockImplementation((selector: any) =>
-      selector({
-        threads: {
-          'thread-empty': { id: 'thread-empty', messages: [], typingIndicators: {} },
-        },
-      })
+    vi.mocked(useChatStore).mockImplementation(
+      // biome-ignore lint/suspicious/noExplicitAny: test mock needs flexible selector type
+      (selector: any) =>
+        selector({
+          threads: {
+            'thread-empty': { id: 'thread-empty', messages: [], typingIndicators: {} },
+          },
+        })
     );
 
     render(<ChatThread threadId="thread-empty" />);
@@ -89,16 +91,18 @@ describe('ChatThread', () => {
   it('shows typing indicator when agents are typing', () => {
     vi.mocked(selectThreadMessages).mockReturnValue(() => mockMessages);
     vi.mocked(selectTypingIndicators).mockReturnValue(() => ['architect']);
-    vi.mocked(useChatStore).mockImplementation((selector: any) =>
-      selector({
-        threads: {
-          'thread-1': {
-            id: 'thread-1',
-            messages: mockMessages,
-            typingIndicators: { architect: true },
+    vi.mocked(useChatStore).mockImplementation(
+      // biome-ignore lint/suspicious/noExplicitAny: test mock needs flexible selector type
+      (selector: any) =>
+        selector({
+          threads: {
+            'thread-1': {
+              id: 'thread-1',
+              messages: mockMessages,
+              typingIndicators: { architect: true },
+            },
           },
-        },
-      })
+        })
     );
 
     render(<ChatThread threadId="thread-1" />);

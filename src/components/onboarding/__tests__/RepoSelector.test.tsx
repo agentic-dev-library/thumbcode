@@ -10,18 +10,26 @@ vi.mock('@/components/icons', () => ({
 }));
 
 vi.mock('@/components/layout', () => ({
-  VStack: ({ children }: any) => <div>{children}</div>,
+  VStack: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui', () => ({
-  Input: ({ placeholder, value, onChangeText }: any) => (
+  Input: ({
+    placeholder,
+    value,
+    onChangeText,
+  }: {
+    placeholder?: string;
+    value?: string;
+    onChangeText?: (v: string) => void;
+  }) => (
     <input
       placeholder={placeholder}
       value={value}
-      onChange={(e: any) => onChangeText(e.target.value)}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeText?.(e.target.value)}
     />
   ),
-  Text: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+  Text: ({ children }: { children?: React.ReactNode }) => <span>{children}</span>,
 }));
 
 const makeRepo = (overrides: Partial<RepoListItem> = {}): RepoListItem => ({

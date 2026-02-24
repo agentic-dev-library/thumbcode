@@ -2,17 +2,17 @@
 // main.tsx throws if #root element is not found, so we create it first.
 
 vi.mock('react-router-dom', () => ({
-  BrowserRouter: ({ children }: any) => children,
+  BrowserRouter: ({ children }: { children?: React.ReactNode }) => children,
   Route: () => null,
   Routes: () => null,
 }));
 
 vi.mock('@/components/error', () => ({
-  ErrorBoundary: ({ children }: any) => children,
+  ErrorBoundary: ({ children }: { children?: React.ReactNode }) => children,
 }));
 
 vi.mock('@/contexts/onboarding', () => ({
-  OnboardingProvider: ({ children }: any) => children,
+  OnboardingProvider: ({ children }: { children?: React.ReactNode }) => children,
 }));
 
 vi.mock('@/router', () => ({

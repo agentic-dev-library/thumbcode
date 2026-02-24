@@ -10,6 +10,7 @@ import type { CompletionResponse, ContentBlock, Message } from './types';
 /**
  * Format messages for OpenAI API
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: maps message content types to OpenAI API format
 export function formatMessagesForOpenAI(
   messages: Message[],
   systemPrompt?: string

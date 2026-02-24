@@ -157,7 +157,7 @@ export function clearFeatureOverrides(): void {
 export function isFeatureEnabledWithOverrides(feature: FeatureFlag): boolean {
   // Check for override first (dev only)
   if (env.isDev && featureOverrides.has(feature)) {
-    return featureOverrides.get(feature)!;
+    return featureOverrides.get(feature) ?? false;
   }
   return isFeatureEnabled(feature);
 }

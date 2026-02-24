@@ -38,6 +38,23 @@ const TAILWIND_CONFIG = `{
 const GOOGLE_FONTS_URL =
   'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,100..900&family=Cabin:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap';
 
+/** Maximum iterations for iterative sanitization to prevent infinite loops */
+const MAX_SANITIZE_ITERATIONS = 10;
+
+/**
+ * Apply a sanitization function iteratively until the output stabilizes.
+ * Prevents bypass via nested/recursive injection patterns like `<scr<script>ipt>`.
+ */
+function sanitizeIteratively(input: string, sanitizeFn: (s: string) => string): string {
+  let result = input;
+  for (let i = 0; i < MAX_SANITIZE_ITERATIONS; i++) {
+    const next = sanitizeFn(result);
+    if (next === result) break;
+    result = next;
+  }
+  return result;
+}
+
 /**
  * Create a self-contained HTML preview document for a component.
  *
@@ -51,6 +68,8 @@ export function createPreviewHtml(code: string, config?: PreviewConfig): string 
   const title = config?.title ?? 'ThumbCode Component Preview';
   const customCss = sanitizeCss(config?.customCss ?? '');
 
+  // bgColor and textColor are hardcoded constants derived from a boolean,
+  // not user input — no validation needed.
   const bgColor = darkMode ? '#151820' : '#F8FAFC';
   const textColor = darkMode ? '#F8FAFC' : '#151820';
 
@@ -87,61 +106,103 @@ export function createPreviewHtml(code: string, config?: PreviewConfig): string 
 /**
  * Sanitize CSS to prevent style-tag breakout and CSS injection attacks.
  *
- * Prevents injection of closing style tags, script blocks, and
- * dangerous CSS functions like expression() and url(javascript:).
+ * Uses iterative sanitization to prevent bypass via nested injection.
+ * Strips closing style/script tags, dangerous CSS functions (expression(),
+ * url(javascript:), @import), and HTML injection vectors.
  */
 export function sanitizeCss(css: string): string {
-  // Prevent breaking out of <style> block
-  let sanitized = css.replace(/<\/?style\b[^>]*>/gi, '');
+  return sanitizeIteratively(css, (input) => {
+    let sanitized = input;
 
-  // Remove any HTML tags that could have been injected
-  sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-  sanitized = sanitized.replace(/<[^>]+>/g, '');
+    // Remove <style> and </style> tags (with optional whitespace/attributes)
+    sanitized = sanitized.replace(/<\/?style\s*[^>]*>/gi, '');
 
-  // Remove CSS expression() (IE-specific XSS vector)
-  sanitized = sanitized.replace(/expression\s*\(/gi, '');
+    // Remove <script> tags and their content (handles whitespace in closing tag)
+    sanitized = sanitized.replace(
+      /<script\b[^<]*(?:(?!<\/\s*script\s*>)<[^<]*)*<\/\s*script\s*>/gi,
+      ''
+    );
+    // Remove any remaining opening/closing script tags
+    sanitized = sanitized.replace(/<\/?script\s*[^>]*>/gi, '');
 
-  // Remove javascript: URLs in CSS url()
-  sanitized = sanitized.replace(/url\s*\(\s*(['"]?)javascript:/gi, 'url($1');
+    // Remove all remaining HTML tags
+    sanitized = sanitized.replace(/<[^>]+>/g, '');
 
-  return sanitized;
+    // Remove CSS expression() — IE-specific XSS vector (case-insensitive, whitespace-tolerant)
+    sanitized = sanitized.replace(/expression\s*\(/gi, '');
+
+    // Remove javascript: URLs in CSS url() — handles whitespace and quotes
+    sanitized = sanitized.replace(/url\s*\(\s*(['"]?)\s*javascript\s*:/gi, 'url($1');
+
+    // Remove @import rules (can load external stylesheets with JS payloads)
+    sanitized = sanitized.replace(/@import\s+(?:url\s*\()?[^;]*/gi, '');
+
+    // Remove -moz-binding (Firefox XSS vector)
+    sanitized = sanitized.replace(/-moz-binding\s*:/gi, '');
+
+    // Remove behavior: (IE HTC XSS vector)
+    sanitized = sanitized.replace(/behavior\s*:/gi, '');
+
+    return sanitized;
+  });
 }
 
 /**
  * Sanitize HTML content to prevent XSS attacks.
  *
- * Strips dangerous tags and attributes from user-provided HTML.
- * This is a basic sanitizer for preview content -- NOT a full
- * HTML sanitizer for untrusted user input.
+ * Uses iterative sanitization to prevent bypass via nested/recursive
+ * injection patterns (e.g. `<scr<script>ipt>`). Strips dangerous tags,
+ * event handlers, javascript: URLs, and style-based injection vectors.
+ *
+ * This is a defense-in-depth sanitizer for preview content.
  */
 export function sanitizeHtml(html: string): string {
-  // Remove script tags and their content
-  let sanitized = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+  return sanitizeIteratively(html, (input) => {
+    let sanitized = input;
 
-  // Remove event handler attributes (onclick, onerror, onload, etc.)
-  // Handles quoted, single-quoted, backtick-quoted, and unquoted values
-  sanitized = sanitized.replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi, '');
+    // Remove script tags and their content (handles whitespace in closing tag: </script >)
+    sanitized = sanitized.replace(
+      /<script\b[^<]*(?:(?!<\/\s*script\s*>)<[^<]*)*<\/\s*script\s*>/gi,
+      ''
+    );
+    // Remove any remaining opening/closing script tags (handles self-closing and orphaned tags)
+    sanitized = sanitized.replace(/<\/?script\s*[^>]*>/gi, '');
 
-  // Remove javascript: protocol in href/src attributes (quoted and unquoted)
-  sanitized = sanitized.replace(
-    /(href|src|action)\s*=\s*(?:"javascript:[^"]*"|'javascript:[^']*'|javascript:[^\s>]*)/gi,
-    '$1=""'
-  );
+    // Remove style tags and their content (prevents CSS injection via <style> blocks)
+    sanitized = sanitized.replace(
+      /<style\b[^<]*(?:(?!<\/\s*style\s*>)<[^<]*)*<\/\s*style\s*>/gi,
+      ''
+    );
+    sanitized = sanitized.replace(/<\/?style\s*[^>]*>/gi, '');
 
-  // Remove data: protocol in src attributes (potential XSS vector)
-  sanitized = sanitized.replace(
-    /src\s*=\s*(?:"data:text\/html[^"]*"|'data:text\/html[^']*'|data:text\/html[^\s>]*)/gi,
-    'src=""'
-  );
+    // Remove event handler attributes (onclick, onerror, onload, etc.)
+    // Handles: double-quoted, single-quoted, backtick-quoted, unquoted values
+    // Also handles whitespace/newlines between 'on' and '=' and around '='
+    sanitized = sanitized.replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi, '');
 
-  // Remove iframe, object, embed tags
-  sanitized = sanitized.replace(/<\/?(?:iframe|object|embed|applet|form)\b[^>]*>/gi, '');
+    // Remove javascript: protocol in href/src/action attributes (quoted and unquoted)
+    // Handles whitespace between protocol name and colon
+    sanitized = sanitized.replace(
+      /(href|src|action)\s*=\s*(?:"[^"]*javascript\s*:[^"]*"|'[^']*javascript\s*:[^']*'|javascript\s*:[^\s>]*)/gi,
+      '$1=""'
+    );
 
-  // Remove style attributes containing expressions or url() (quoted and single-quoted)
-  sanitized = sanitized.replace(
-    /style\s*=\s*(?:"[^"]*(?:expression|url\s*\()[^"]*"|'[^']*(?:expression|url\s*\()[^']*')/gi,
-    'style=""'
-  );
+    // Remove data: protocol in src attributes (potential XSS vector via data:text/html)
+    sanitized = sanitized.replace(
+      /src\s*=\s*(?:"data:text\/html[^"]*"|'data:text\/html[^']*'|data:text\/html[^\s>]*)/gi,
+      'src=""'
+    );
 
-  return sanitized;
+    // Remove iframe, object, embed, applet, form tags
+    sanitized = sanitized.replace(/<\/?(?:iframe|object|embed|applet|form)\b[^>]*>/gi, '');
+
+    // Remove style attributes containing dangerous values
+    // Handles double-quoted, single-quoted, and backtick-quoted attribute values
+    sanitized = sanitized.replace(
+      /style\s*=\s*(?:"[^"]*(?:expression|url\s*\(|javascript\s*:|-moz-binding)[^"]*"|'[^']*(?:expression|url\s*\(|javascript\s*:|-moz-binding)[^']*'|`[^`]*(?:expression|url\s*\(|javascript\s*:|-moz-binding)[^`]*`)/gi,
+      'style=""'
+    );
+
+    return sanitized;
+  });
 }

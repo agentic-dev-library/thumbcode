@@ -55,48 +55,48 @@ function isNativePlatform(): boolean {
  * Note: This is NOT fully secure against a determined attacker with local access,
  * as the key is also stored in the browser. However, it prevents casual inspection.
  */
-class WebEncryption {
-  private static readonly KEY_STORAGE_KEY = 'thumbcode_web_ek';
-  private static readonly ALGORITHM = 'AES-GCM';
-  private static readonly KEY_LENGTH = 256;
+const WEB_ENCRYPTION_KEY_STORAGE_KEY = 'thumbcode_web_ek';
+const WEB_ENCRYPTION_ALGORITHM = 'AES-GCM';
+const WEB_ENCRYPTION_KEY_LENGTH = 256;
 
-  private static async getKey(): Promise<CryptoKey> {
-    const storedKey = sessionStorage.getItem(WebEncryption.KEY_STORAGE_KEY);
+async function getWebEncryptionKey(): Promise<CryptoKey> {
+  const storedKey = sessionStorage.getItem(WEB_ENCRYPTION_KEY_STORAGE_KEY);
 
-    if (storedKey) {
-      // Import existing key
-      const keyData = JSON.parse(storedKey);
-      return crypto.subtle.importKey(
-        'jwk',
-        keyData,
-        { name: WebEncryption.ALGORITHM, length: WebEncryption.KEY_LENGTH },
-        true,
-        ['encrypt', 'decrypt']
-      );
-    }
-
-    // Generate new key
-    const key = await crypto.subtle.generateKey(
-      { name: WebEncryption.ALGORITHM, length: WebEncryption.KEY_LENGTH },
+  if (storedKey) {
+    // Import existing key
+    const keyData = JSON.parse(storedKey);
+    return crypto.subtle.importKey(
+      'jwk',
+      keyData,
+      { name: WEB_ENCRYPTION_ALGORITHM, length: WEB_ENCRYPTION_KEY_LENGTH },
       true,
       ['encrypt', 'decrypt']
     );
-
-    // Export and store key
-    const exportedKey = await crypto.subtle.exportKey('jwk', key);
-    sessionStorage.setItem(WebEncryption.KEY_STORAGE_KEY, JSON.stringify(exportedKey));
-
-    return key;
   }
 
-  static async encrypt(data: string): Promise<string> {
-    const key = await WebEncryption.getKey();
+  // Generate new key
+  const key = await crypto.subtle.generateKey(
+    { name: WEB_ENCRYPTION_ALGORITHM, length: WEB_ENCRYPTION_KEY_LENGTH },
+    true,
+    ['encrypt', 'decrypt']
+  );
+
+  // Export and store key
+  const exportedKey = await crypto.subtle.exportKey('jwk', key);
+  sessionStorage.setItem(WEB_ENCRYPTION_KEY_STORAGE_KEY, JSON.stringify(exportedKey));
+
+  return key;
+}
+
+const WebEncryption = {
+  async encrypt(data: string): Promise<string> {
+    const key = await getWebEncryptionKey();
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const encoder = new TextEncoder();
     const encodedData = encoder.encode(data);
 
     const encryptedContent = await crypto.subtle.encrypt(
-      { name: WebEncryption.ALGORITHM, iv },
+      { name: WEB_ENCRYPTION_ALGORITHM, iv },
       key,
       encodedData
     );
@@ -108,15 +108,15 @@ class WebEncryption {
       iv: ivArray,
       data: encryptedArray,
     });
-  }
+  },
 
-  static async decrypt(encryptedString: string): Promise<string | null> {
+  async decrypt(encryptedString: string): Promise<string | null> {
     try {
       const { iv, data } = JSON.parse(encryptedString);
-      const key = await WebEncryption.getKey();
+      const key = await getWebEncryptionKey();
 
       const decryptedContent = await crypto.subtle.decrypt(
-        { name: WebEncryption.ALGORITHM, iv: new Uint8Array(iv) },
+        { name: WEB_ENCRYPTION_ALGORITHM, iv: new Uint8Array(iv) },
         key,
         new Uint8Array(data)
       );
@@ -127,8 +127,8 @@ class WebEncryption {
       console.error('Decryption failed:', error);
       return null;
     }
-  }
-}
+  },
+};
 
 export class KeyStorage {
   constructor(private validator: KeyValidator) {}

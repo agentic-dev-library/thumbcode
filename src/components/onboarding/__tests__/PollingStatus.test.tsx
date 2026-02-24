@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { PollingStatus } from '../PollingStatus';
 
 vi.mock('@/components/ui', () => ({
-  Text: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+  Text: ({ children }: { children?: React.ReactNode }) => <span>{children}</span>,
 }));
 
 describe('PollingStatus', () => {

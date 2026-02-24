@@ -125,9 +125,12 @@ describe('GitCloneService', () => {
     });
 
     it('should invoke onProgress callback with normalized progress', async () => {
-      mockGit.clone.mockImplementation(async (args: any) => {
-        if (args.onProgress) {
-          args.onProgress({ phase: 'Counting objects', loaded: 50, total: 100 });
+      mockGit.clone.mockImplementation(async (args) => {
+        const onProgress = args.onProgress as
+          | ((progress: { phase: string; loaded: number; total: number }) => void)
+          | undefined;
+        if (onProgress) {
+          onProgress({ phase: 'Counting objects', loaded: 50, total: 100 });
         }
       });
 

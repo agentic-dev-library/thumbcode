@@ -108,7 +108,7 @@ export const fs = {
         };
       } catch {
         const error = new Error(`ENOENT: no such file or directory, stat '${filepath}'`);
-        (error as any).code = 'ENOENT';
+        (error as NodeJS.ErrnoException).code = 'ENOENT';
         throw error;
       }
     },

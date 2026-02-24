@@ -6,6 +6,7 @@
  * Supports different variants for success, error, warning, and info.
  */
 
+import type { LucideIcon } from 'lucide-react';
 import { CircleAlert, CircleCheck, Info, TriangleAlert, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -37,7 +38,7 @@ interface ToastProps {
 interface VariantStyle {
   bg: string;
   borderColor: string;
-  Icon: React.ComponentType<any>;
+  Icon: LucideIcon;
   iconClass: string;
 }
 

@@ -2,13 +2,13 @@ import { act, renderHook } from '@testing-library/react';
 import { useIsOnline, useNetworkError } from '../use-network-error';
 
 vi.mock('@/lib/error-handler', () => ({
-  createAppError: vi.fn((msg: string, opts: any) => ({
+  createAppError: vi.fn((msg: string, opts: Record<string, unknown>) => ({
     message: msg,
     code: opts.code,
     severity: opts.severity,
     recoverable: opts.recoverable,
   })),
-  handleError: vi.fn((err: any) => ({
+  handleError: vi.fn((err: unknown) => ({
     message: err instanceof Error ? err.message : String(err),
     code: 'UNKNOWN',
   })),

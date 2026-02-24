@@ -12,6 +12,7 @@ import type { Message } from '../ai';
  * Parse execution results from conversation history to determine
  * what files were created, modified, or deleted.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: parses nested message content blocks for file operations
 export function parseExecutionResult(conversationHistory: Message[]): TaskOutput {
   const filesCreated: string[] = [];
   const filesModified: string[] = [];

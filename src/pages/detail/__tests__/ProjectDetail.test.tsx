@@ -10,7 +10,7 @@ vi.mock('react-router-dom', () => ({
   useParams: () => ({ id: 'project-1' }),
 }));
 
-// Mock @thumbcode/core
+// Mock @/core
 vi.mock('@/core', () => ({
   GitHubApiService: {
     listCommits: vi.fn(),
@@ -18,7 +18,7 @@ vi.mock('@/core', () => ({
   },
 }));
 
-// Mock @thumbcode/state
+// Mock @/state
 const mockProject = {
   id: 'project-1',
   name: 'Test Project',
@@ -144,6 +144,7 @@ describe('ProjectDetail', () => {
     // Override the mock for this test to return no matching project
     const { useProjectStore } = await import('@/state');
     const mockedStore = vi.mocked(useProjectStore);
+    // biome-ignore lint/suspicious/noExplicitAny: test mock needs flexible selector type for Zustand store
     mockedStore.mockImplementation((selector: any) => {
       const state = {
         projects: [],
@@ -159,6 +160,7 @@ describe('ProjectDetail', () => {
     expect(screen.getByText('Project not found')).toBeInTheDocument();
 
     // Restore original mock
+    // biome-ignore lint/suspicious/noExplicitAny: test mock needs flexible selector type for Zustand store
     mockedStore.mockImplementation((selector: any) => {
       const state = {
         projects: [mockProject],

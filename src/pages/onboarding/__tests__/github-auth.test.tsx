@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { GitHubAuthService } from '@/core';
 import GitHubAuthPage from '../github-auth';
 
-// Mock @thumbcode/core
+// Mock @/core
 vi.mock('@/core', () => ({
   GitHubAuthService: {
     startDeviceFlow: vi.fn(),
@@ -12,7 +12,7 @@ vi.mock('@/core', () => ({
   },
 }));
 
-// Mock @thumbcode/config
+// Mock @/config
 vi.mock('@/config', () => ({
   env: { githubClientId: 'test-client-id' },
   GITHUB_OAUTH: { scopes: 'repo,user' },

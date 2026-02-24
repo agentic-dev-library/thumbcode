@@ -163,7 +163,7 @@ android/local.properties
 # Test screenshots (Playwright visual regression)
 *.png
 !src/**/*.png
-!packages/**/*.png
+!tools/**/*.png
 !assets/**/*.png
 !public/**/*.png
 !docs-site/**/*.png

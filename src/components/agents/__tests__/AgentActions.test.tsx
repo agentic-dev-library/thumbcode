@@ -2,15 +2,13 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { AgentActions } from '../AgentActions';
 
 vi.mock('@/components/layout', () => ({
-  HStack: ({ children, ...props }: any) => (
-    <div data-testid="hstack" {...props}>
-      {children}
-    </div>
+  HStack: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="hstack">{children}</div>
   ),
 }));
 
 vi.mock('@/components/ui', () => ({
-  Text: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+  Text: ({ children }: { children?: React.ReactNode }) => <span>{children}</span>,
 }));
 
 describe('AgentActions', () => {

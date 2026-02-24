@@ -26,8 +26,26 @@ function formatDuration(seconds: number): string {
 
 /** Static waveform bar heights (pseudo-random pattern) */
 const WAVEFORM_BARS = [
-  0.3, 0.6, 0.8, 0.5, 0.9, 0.4, 0.7, 1.0, 0.6, 0.3, 0.7, 0.5, 0.8, 0.4, 0.6, 0.9, 0.5, 0.7, 0.3,
-  0.8,
+  { id: 'w0', h: 0.3 },
+  { id: 'w1', h: 0.6 },
+  { id: 'w2', h: 0.8 },
+  { id: 'w3', h: 0.5 },
+  { id: 'w4', h: 0.9 },
+  { id: 'w5', h: 0.4 },
+  { id: 'w6', h: 0.7 },
+  { id: 'w7', h: 1.0 },
+  { id: 'w8', h: 0.6 },
+  { id: 'w9', h: 0.3 },
+  { id: 'w10', h: 0.7 },
+  { id: 'w11', h: 0.5 },
+  { id: 'w12', h: 0.8 },
+  { id: 'w13', h: 0.4 },
+  { id: 'w14', h: 0.6 },
+  { id: 'w15', h: 0.9 },
+  { id: 'w16', h: 0.5 },
+  { id: 'w17', h: 0.7 },
+  { id: 'w18', h: 0.3 },
+  { id: 'w19', h: 0.8 },
 ];
 
 export function AudioMessage({ message }: Readonly<AudioMessageProps>) {
@@ -142,14 +160,14 @@ export function AudioMessage({ message }: Readonly<AudioMessageProps>) {
             aria-valuemin={0}
             aria-valuemax={Math.round(duration)}
           >
-            {WAVEFORM_BARS.map((height, i) => {
-              const barProgress = (i / WAVEFORM_BARS.length) * 100;
+            {WAVEFORM_BARS.map((bar, barIndex) => {
+              const barProgress = (barIndex / WAVEFORM_BARS.length) * 100;
               const isActive = barProgress < progress;
               return (
                 <div
-                  key={`bar-${i}`}
+                  key={bar.id}
                   className={`flex-1 rounded-sm transition-colors ${isActive ? 'bg-coral-500' : 'bg-neutral-600'}`}
-                  style={{ height: `${height * 100}%` }}
+                  style={{ height: `${bar.h * 100}%` }}
                 />
               );
             })}

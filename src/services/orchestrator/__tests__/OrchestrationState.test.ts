@@ -222,7 +222,7 @@ describe('OrchestrationStateManager', () => {
         agentId: 'agent-1',
         success: true,
         duration: 100,
-        result: { summary: '', tokensUsed: 50, agentRole: 'implementer' } as any,
+        result: { summary: '', tokensUsed: 50, agentRole: 'implementer' } as never,
         startedAt: now,
         completedAt: now,
       });
@@ -231,7 +231,7 @@ describe('OrchestrationStateManager', () => {
         agentId: 'agent-2',
         success: false,
         duration: 50,
-        result: { summary: 'timeout', tokensUsed: 20, agentRole: 'reviewer' } as any,
+        result: { summary: 'timeout', tokensUsed: 20, agentRole: 'reviewer' } as never,
         startedAt: now,
         completedAt: now,
       });
@@ -264,7 +264,9 @@ describe('OrchestrationStateManager', () => {
         updatedAt: now,
       });
       expect(manager.getTask('q-1')).toBeDefined();
-      expect(manager.getTask('q-1')!.description).toBe('In queue');
+      const task = manager.getTask('q-1');
+      expect(task).toBeDefined();
+      expect(task?.description).toBe('In queue');
     });
 
     it('finds task in completed', () => {

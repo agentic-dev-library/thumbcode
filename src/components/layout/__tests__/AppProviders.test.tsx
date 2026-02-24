@@ -2,11 +2,13 @@ import { render, screen } from '@testing-library/react';
 import { AppProviders } from '../AppProviders';
 
 vi.mock('@/components/error', () => ({
-  ErrorBoundary: ({ children }: any) => <div data-testid="error-boundary">{children}</div>,
+  ErrorBoundary: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="error-boundary">{children}</div>
+  ),
 }));
 
 vi.mock('@/contexts/onboarding', () => ({
-  OnboardingProvider: ({ children }: any) => (
+  OnboardingProvider: ({ children }: { children?: React.ReactNode }) => (
     <div data-testid="onboarding-provider">{children}</div>
   ),
 }));

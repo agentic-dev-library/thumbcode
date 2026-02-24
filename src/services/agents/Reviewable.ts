@@ -34,6 +34,7 @@ export interface ExecutionCallbacks {
 /**
  * Execute a task with the iterative tool-use loop
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: iterative tool-use loop with streaming, retries, and error handling
 export async function executeTask(
   task: TaskAssignment,
   context: AgentContext,

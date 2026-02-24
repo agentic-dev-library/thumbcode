@@ -19,7 +19,7 @@ describe('ChatStore', () => {
 
   describe('thread operations', () => {
     it('creates a thread with generated id and timestamps', () => {
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'Test Thread',
@@ -28,15 +28,15 @@ describe('ChatStore', () => {
         });
       });
       const state = useChatStore.getState();
-      const thread = state.threads.find((t) => t.id === threadId!);
+      const thread = state.threads.find((t) => t.id === threadId);
       expect(thread).toBeDefined();
-      expect(thread!.title).toBe('Test Thread');
-      expect(thread!.unreadCount).toBe(0);
-      expect(thread!.createdAt).toBeDefined();
+      expect(thread?.title).toBe('Test Thread');
+      expect(thread?.unreadCount).toBe(0);
+      expect(thread?.createdAt).toBeDefined();
     });
 
     it('deletes a thread and its messages', () => {
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'To Delete',
@@ -44,12 +44,12 @@ describe('ChatStore', () => {
           isPinned: false,
         });
       });
-      act(() => useChatStore.getState().deleteThread(threadId!));
+      act(() => useChatStore.getState().deleteThread(threadId));
       expect(useChatStore.getState().threads).toHaveLength(0);
     });
 
     it('clears activeThreadId when active thread is deleted', () => {
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'Active',
@@ -58,12 +58,12 @@ describe('ChatStore', () => {
         });
         useChatStore.getState().setActiveThread(threadId);
       });
-      act(() => useChatStore.getState().deleteThread(threadId!));
+      act(() => useChatStore.getState().deleteThread(threadId));
       expect(useChatStore.getState().activeThreadId).toBeNull();
     });
 
     it('sets active thread and marks as read', () => {
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'Thread',
@@ -79,9 +79,9 @@ describe('ChatStore', () => {
         });
       });
       // Now set active - should clear unread
-      act(() => useChatStore.getState().setActiveThread(threadId!));
-      const thread = useChatStore.getState().threads.find((t) => t.id === threadId!);
-      expect(thread!.unreadCount).toBe(0);
+      act(() => useChatStore.getState().setActiveThread(threadId));
+      const thread = useChatStore.getState().threads.find((t) => t.id === threadId);
+      expect(thread?.unreadCount).toBe(0);
     });
 
     it('sets activeThread to null', () => {
@@ -90,7 +90,7 @@ describe('ChatStore', () => {
     });
 
     it('updates thread properties', () => {
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'Old',
@@ -98,13 +98,13 @@ describe('ChatStore', () => {
           isPinned: false,
         });
       });
-      act(() => useChatStore.getState().updateThread(threadId!, { title: 'New' }));
-      const thread = useChatStore.getState().threads.find((t) => t.id === threadId!);
-      expect(thread!.title).toBe('New');
+      act(() => useChatStore.getState().updateThread(threadId, { title: 'New' }));
+      const thread = useChatStore.getState().threads.find((t) => t.id === threadId);
+      expect(thread?.title).toBe('New');
     });
 
     it('pins and unpins thread', () => {
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'Pinnable',
@@ -112,14 +112,14 @@ describe('ChatStore', () => {
           isPinned: false,
         });
       });
-      act(() => useChatStore.getState().pinThread(threadId!, true));
+      act(() => useChatStore.getState().pinThread(threadId, true));
       expect(useChatStore.getState().threads[0].isPinned).toBe(true);
-      act(() => useChatStore.getState().pinThread(threadId!, false));
+      act(() => useChatStore.getState().pinThread(threadId, false));
       expect(useChatStore.getState().threads[0].isPinned).toBe(false);
     });
 
     it('marks thread as read', () => {
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'Unread',
@@ -133,13 +133,13 @@ describe('ChatStore', () => {
           sender: 'architect',
         });
       });
-      act(() => useChatStore.getState().markThreadAsRead(threadId!));
+      act(() => useChatStore.getState().markThreadAsRead(threadId));
       expect(useChatStore.getState().threads[0].unreadCount).toBe(0);
     });
   });
 
   describe('message operations', () => {
-    let threadId: string;
+    let threadId = '';
 
     beforeEach(() => {
       act(() => {
@@ -153,7 +153,7 @@ describe('ChatStore', () => {
     });
 
     it('adds a message with generated id and sending status', () => {
-      let msgId: string;
+      let msgId = '';
       act(() => {
         msgId = useChatStore.getState().addMessage({
           threadId,
@@ -164,7 +164,7 @@ describe('ChatStore', () => {
       });
       const msgs = useChatStore.getState().messages[threadId];
       expect(msgs).toHaveLength(1);
-      expect(msgs[0].id).toBe(msgId!);
+      expect(msgs[0].id).toBe(msgId);
       expect(msgs[0].status).toBe('sending');
     });
 
@@ -179,7 +179,7 @@ describe('ChatStore', () => {
         });
       });
       const thread = useChatStore.getState().threads.find((t) => t.id === threadId);
-      expect(thread!.unreadCount).toBe(1);
+      expect(thread?.unreadCount).toBe(1);
     });
 
     it('does not increment unread for user messages', () => {
@@ -193,11 +193,11 @@ describe('ChatStore', () => {
         });
       });
       const thread = useChatStore.getState().threads.find((t) => t.id === threadId);
-      expect(thread!.unreadCount).toBe(0);
+      expect(thread?.unreadCount).toBe(0);
     });
 
     it('updates message content', () => {
-      let msgId: string;
+      let msgId = '';
       act(() => {
         msgId = useChatStore.getState().addMessage({
           threadId,
@@ -206,13 +206,13 @@ describe('ChatStore', () => {
           sender: 'user',
         });
       });
-      act(() => useChatStore.getState().updateMessageContent(msgId!, threadId, 'Updated'));
-      const msg = useChatStore.getState().messages[threadId].find((m) => m.id === msgId!);
-      expect(msg!.content).toBe('Updated');
+      act(() => useChatStore.getState().updateMessageContent(msgId, threadId, 'Updated'));
+      const msg = useChatStore.getState().messages[threadId].find((m) => m.id === msgId);
+      expect(msg?.content).toBe('Updated');
     });
 
     it('updates message status', () => {
-      let msgId: string;
+      let msgId = '';
       act(() => {
         msgId = useChatStore.getState().addMessage({
           threadId,
@@ -221,13 +221,13 @@ describe('ChatStore', () => {
           sender: 'user',
         });
       });
-      act(() => useChatStore.getState().updateMessageStatus(msgId!, threadId, 'delivered'));
-      const msg = useChatStore.getState().messages[threadId].find((m) => m.id === msgId!);
-      expect(msg!.status).toBe('delivered');
+      act(() => useChatStore.getState().updateMessageStatus(msgId, threadId, 'delivered'));
+      const msg = useChatStore.getState().messages[threadId].find((m) => m.id === msgId);
+      expect(msg?.status).toBe('delivered');
     });
 
     it('deletes a message', () => {
-      let msgId: string;
+      let msgId = '';
       act(() => {
         msgId = useChatStore.getState().addMessage({
           threadId,
@@ -236,15 +236,15 @@ describe('ChatStore', () => {
           sender: 'user',
         });
       });
-      act(() => useChatStore.getState().deleteMessage(msgId!, threadId));
+      act(() => useChatStore.getState().deleteMessage(msgId, threadId));
       expect(useChatStore.getState().messages[threadId]).toHaveLength(0);
     });
   });
 
   describe('approval operations', () => {
     it('responds to approval request', () => {
-      let threadId: string;
-      let msgId: string;
+      let threadId = '';
+      let msgId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'Approvals',
@@ -262,16 +262,17 @@ describe('ChatStore', () => {
           },
         });
       });
-      act(() => useChatStore.getState().respondToApproval(msgId!, threadId!, true));
-      const msg = useChatStore.getState().messages[threadId!].find((m) => m.id === msgId!) as any;
-      expect(msg.metadata.approved).toBe(true);
-      expect(msg.metadata.respondedAt).toBeDefined();
+      act(() => useChatStore.getState().respondToApproval(msgId, threadId, true));
+      const msg = useChatStore.getState().messages[threadId].find((m) => m.id === msgId);
+      const metadata = msg?.metadata as { approved: boolean; respondedAt: string };
+      expect(metadata.approved).toBe(true);
+      expect(metadata.respondedAt).toBeDefined();
     });
   });
 
   describe('typing indicators', () => {
     it('adds typing indicator', () => {
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'Typing',
@@ -279,12 +280,12 @@ describe('ChatStore', () => {
           isPinned: false,
         });
       });
-      act(() => useChatStore.getState().setTyping(threadId!, 'architect', true));
-      expect(useChatStore.getState().isTyping[threadId!]).toContain('architect');
+      act(() => useChatStore.getState().setTyping(threadId, 'architect', true));
+      expect(useChatStore.getState().isTyping[threadId]).toContain('architect');
     });
 
     it('removes typing indicator', () => {
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'Typing',
@@ -293,12 +294,12 @@ describe('ChatStore', () => {
         });
         useChatStore.getState().setTyping(threadId, 'architect', true);
       });
-      act(() => useChatStore.getState().setTyping(threadId!, 'architect', false));
-      expect(useChatStore.getState().isTyping[threadId!]).not.toContain('architect');
+      act(() => useChatStore.getState().setTyping(threadId, 'architect', false));
+      expect(useChatStore.getState().isTyping[threadId]).not.toContain('architect');
     });
 
     it('does not add duplicate typing indicators', () => {
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'Typing',
@@ -307,16 +308,16 @@ describe('ChatStore', () => {
         });
         useChatStore.getState().setTyping(threadId, 'architect', true);
       });
-      act(() => useChatStore.getState().setTyping(threadId!, 'architect', true));
+      act(() => useChatStore.getState().setTyping(threadId, 'architect', true));
       expect(
-        useChatStore.getState().isTyping[threadId!].filter((s) => s === 'architect')
+        useChatStore.getState().isTyping[threadId].filter((s) => s === 'architect')
       ).toHaveLength(1);
     });
   });
 
   describe('bulk operations', () => {
     it("clears a thread's messages", () => {
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'Clear me',
@@ -330,8 +331,8 @@ describe('ChatStore', () => {
           sender: 'user',
         });
       });
-      act(() => useChatStore.getState().clearThread(threadId!));
-      expect(useChatStore.getState().messages[threadId!]).toHaveLength(0);
+      act(() => useChatStore.getState().clearThread(threadId));
+      expect(useChatStore.getState().messages[threadId]).toHaveLength(0);
     });
 
     it('clears all threads', () => {
@@ -370,7 +371,7 @@ describe('ChatStore', () => {
       const result = selectActiveThread(useChatStore.getState());
       expect(result).toBeNull();
 
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'Active',
@@ -387,7 +388,7 @@ describe('ChatStore', () => {
       const emptyMsgs = selectActiveThreadMessages(useChatStore.getState());
       expect(emptyMsgs).toHaveLength(0);
 
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'T',
@@ -407,7 +408,7 @@ describe('ChatStore', () => {
     });
 
     it('selectThreadMessages returns messages for a specific thread', () => {
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'T',
@@ -421,13 +422,13 @@ describe('ChatStore', () => {
           sender: 'user',
         });
       });
-      const msgs = selectThreadMessages(threadId!)(useChatStore.getState());
+      const msgs = selectThreadMessages(threadId)(useChatStore.getState());
       expect(msgs).toHaveLength(1);
     });
 
     it('selectUnreadCount totals unread across threads', () => {
-      let t1: string;
-      let t2: string;
+      let t1 = '';
+      let t2 = '';
       act(() => {
         t1 = useChatStore.getState().createThread({
           title: 'T1',
@@ -488,7 +489,7 @@ describe('ChatStore', () => {
     });
 
     it('selectTypingIndicators returns typing senders for thread', () => {
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'T',
@@ -497,7 +498,7 @@ describe('ChatStore', () => {
         });
         useChatStore.getState().setTyping(threadId, 'architect', true);
       });
-      const typing = selectTypingIndicators(threadId!)(useChatStore.getState());
+      const typing = selectTypingIndicators(threadId)(useChatStore.getState());
       expect(typing).toContain('architect');
     });
 
@@ -507,7 +508,7 @@ describe('ChatStore', () => {
     });
 
     it('selectPendingApprovals returns unanswered approval messages', () => {
-      let threadId: string;
+      let threadId = '';
       act(() => {
         threadId = useChatStore.getState().createThread({
           title: 'Approvals',

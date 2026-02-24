@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { CodeBlock } from '../CodeBlock';
 
 vi.mock('@/components/ui', () => ({
-  Text: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+  Text: ({ children }: { children?: React.ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/lib/syntax-highlighter', () => ({

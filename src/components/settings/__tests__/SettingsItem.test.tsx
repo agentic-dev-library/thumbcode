@@ -2,21 +2,25 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { SettingsItem } from '../SettingsItem';
 
 vi.mock('@/components/display', () => ({
-  Badge: ({ children }: any) => <span data-testid="badge">{children}</span>,
+  Badge: ({ children }: { children?: React.ReactNode }) => (
+    <span data-testid="badge">{children}</span>
+  ),
 }));
 
 vi.mock('@/components/icons', () => ({}));
 
 vi.mock('@/components/layout', () => ({
-  HStack: ({ children }: any) => <div>{children}</div>,
-  VStack: ({ children }: any) => <div>{children}</div>,
+  HStack: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+  VStack: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui', () => ({
-  Text: ({ children }: any) => <span>{children}</span>,
+  Text: ({ children }: { children?: React.ReactNode }) => <span>{children}</span>,
 }));
 
-const MockIcon = ({ size, color }: any) => <span data-testid="icon">icon</span>;
+const MockIcon = ({ size: _size, color: _color }: { size?: number; color?: string }) => (
+  <span data-testid="icon">icon</span>
+);
 
 describe('SettingsItem', () => {
   it('renders title and icon', () => {

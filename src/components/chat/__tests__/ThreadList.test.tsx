@@ -8,27 +8,33 @@ vi.mock('@/state', () => ({
 }));
 
 vi.mock('zustand/react/shallow', () => ({
-  useShallow: (fn: any) => fn,
+  useShallow: (fn: unknown) => fn,
 }));
 
 vi.mock('@/components/display', () => ({
-  Badge: ({ children }: any) => <span data-testid="badge">{children}</span>,
+  Badge: ({ children }: { children?: React.ReactNode }) => (
+    <span data-testid="badge">{children}</span>
+  ),
 }));
 
 vi.mock('@/components/ui', () => ({
-  Text: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+  Text: ({ children }: { children?: React.ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/lib/chat-utils', () => ({
-  formatRelativeTime: vi.fn((ts: string) => '2 min ago'),
+  formatRelativeTime: vi.fn((_ts: string) => '2 min ago'),
   getParticipantColor: vi.fn(() => 'bg-teal-500'),
 }));
 
 import { selectPinnedThreads, selectRecentThreads, useChatStore } from '@/state';
 
-function setupStore(pinned: any[] = [], recent: any[] = []) {
-  vi.mocked(selectPinnedThreads).mockReturnValue(pinned as any);
-  vi.mocked(selectRecentThreads).mockReturnValue(recent as any);
+function setupStore(
+  pinned: Record<string, unknown>[] = [],
+  recent: Record<string, unknown>[] = []
+) {
+  vi.mocked(selectPinnedThreads).mockReturnValue(pinned as never);
+  vi.mocked(selectRecentThreads).mockReturnValue(recent as never);
+  // biome-ignore lint/suspicious/noExplicitAny: test mock needs flexible selector type for Zustand store
   vi.mocked(useChatStore).mockImplementation((selector: any) => {
     if (selector === selectPinnedThreads || selector.toString().includes('pinned')) return pinned;
     if (selector === selectRecentThreads || selector.toString().includes('recent')) return recent;
@@ -39,7 +45,7 @@ function setupStore(pinned: any[] = [], recent: any[] = []) {
   });
 }
 
-const mockThread = (overrides: any = {}) => ({
+const mockThread = (overrides: Record<string, unknown> = {}) => ({
   id: 'thread-1',
   title: 'Test Thread',
   participants: ['user', 'architect'],

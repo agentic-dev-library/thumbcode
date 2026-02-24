@@ -81,6 +81,7 @@ export default function GitHubAuthPage() {
     window.open(verificationUri, '_blank', 'noopener,noreferrer');
   };
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: auth flow with polling, error handling, and cancellation
   const checkAuth = async () => {
     setIsAuthenticating(true);
     setErrorMessage(null);

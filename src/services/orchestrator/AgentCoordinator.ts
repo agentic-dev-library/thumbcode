@@ -123,7 +123,7 @@ export class AgentCoordinator {
         agentId: task.assignee,
         success: result.success,
         result,
-        startedAt: task.startedAt!,
+        startedAt: task.startedAt ?? new Date().toISOString(),
         completedAt: new Date().toISOString(),
         duration: Date.now() - startTime,
       };
@@ -187,7 +187,7 @@ export class AgentCoordinator {
               tokensUsed: 0,
               error: errorMessage,
             },
-            startedAt: task.startedAt!,
+            startedAt: task.startedAt ?? new Date().toISOString(),
             completedAt: new Date().toISOString(),
             duration: Date.now() - startTime,
           },

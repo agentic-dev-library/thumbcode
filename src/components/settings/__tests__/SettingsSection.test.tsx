@@ -2,11 +2,13 @@ import { render, screen } from '@testing-library/react';
 import { SettingsSection } from '../SettingsSection';
 
 vi.mock('@/components/layout', () => ({
-  VStack: ({ children, className }: any) => <div className={className}>{children}</div>,
+  VStack: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
+    <div className={className}>{children}</div>
+  ),
 }));
 
 vi.mock('@/components/ui', () => ({
-  Text: ({ children }: any) => <span>{children}</span>,
+  Text: ({ children }: { children?: React.ReactNode }) => <span>{children}</span>,
 }));
 
 describe('SettingsSection', () => {

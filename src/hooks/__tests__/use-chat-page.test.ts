@@ -5,7 +5,7 @@ const mockSetActiveThread = vi.fn();
 const mockCreateThread = vi.fn().mockReturnValue('new-thread-id');
 
 vi.mock('@/state', () => ({
-  useChatStore: vi.fn((selector: any) =>
+  useChatStore: vi.fn((selector: (state: Record<string, unknown>) => unknown) =>
     selector({
       activeThreadId: 'thread-1',
       setActiveThread: mockSetActiveThread,
@@ -19,7 +19,7 @@ vi.mock('@/state', () => ({
 
 vi.mock('@/services/chat', () => ({
   ChatService: {
-    createThread: (...args: any[]) => mockCreateThread(...args),
+    createThread: (...args: unknown[]) => mockCreateThread(...args),
   },
 }));
 

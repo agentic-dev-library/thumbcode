@@ -14,27 +14,27 @@ import { Text } from '../primitives/Text';
 import { themeTokens } from '../theme/ThemeProvider';
 
 vi.mock('lucide-react', () => ({
-  ArrowLeft: ({ size, color, className }: any) => (
+  ArrowLeft: ({ className }: { size?: number; color?: string; className?: string }) => (
     <span data-testid="icon-back" className={className}>
       back
     </span>
   ),
-  CircleCheck: ({ size, color, className }: any) => (
+  CircleCheck: ({ className }: { size?: number; color?: string; className?: string }) => (
     <span data-testid="icon-alertSuccess" className={className}>
       alertSuccess
     </span>
   ),
-  CircleAlert: ({ size, color, className }: any) => (
+  CircleAlert: ({ className }: { size?: number; color?: string; className?: string }) => (
     <span data-testid="icon-alertError" className={className}>
       alertError
     </span>
   ),
-  TriangleAlert: ({ size, color, className }: any) => (
+  TriangleAlert: ({ className }: { size?: number; color?: string; className?: string }) => (
     <span data-testid="icon-alertWarning" className={className}>
       alertWarning
     </span>
   ),
-  Info: ({ size, color, className }: any) => (
+  Info: ({ className }: { size?: number; color?: string; className?: string }) => (
     <span data-testid="icon-alertInfo" className={className}>
       alertInfo
     </span>

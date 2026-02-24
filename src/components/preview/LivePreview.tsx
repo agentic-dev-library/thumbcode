@@ -59,7 +59,7 @@ export function LivePreview({
       iframe.removeEventListener('load', handleLoad);
       iframe.removeEventListener('error', handleError);
     };
-  }, [handleLoad, handleError, refreshKey]);
+  }, [handleLoad, handleError]);
 
   if (!html || html.trim().length === 0) {
     return (

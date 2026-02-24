@@ -102,7 +102,6 @@ export function CameraCapture({ onCapture, onCancel }: Readonly<CameraCapturePro
         </div>
       ) : (
         <div>
-          {/* biome-ignore lint/a11y/useMediaCaption: live preview does not need captions */}
           <video
             ref={previewRef}
             autoPlay

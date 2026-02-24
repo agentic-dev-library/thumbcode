@@ -16,8 +16,8 @@ import sharp from 'sharp';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Workspace root (three levels up from packages/dev-tools/src/)
-const ROOT_DIR = join(__dirname, '../../../');
+// Workspace root (one level up from tools/)
+const ROOT_DIR = join(__dirname, '..');
 const OUTPUT_DIR = join(ROOT_DIR, 'assets');
 
 // Icon specifications for Expo

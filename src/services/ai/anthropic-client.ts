@@ -24,6 +24,76 @@ export const ANTHROPIC_MODELS = {
 } as const;
 
 /**
+ * Process a single Anthropic stream event and emit the corresponding StreamEvent
+ */
+function processAnthropicStreamEvent(
+  // biome-ignore lint/suspicious/noExplicitAny: Anthropic SDK stream events have dynamic properties
+  event: { type: string; [key: string]: any },
+  blockIndex: number,
+  currentText: string,
+  onEvent: (event: StreamEvent) => void
+): { blockIndex: number; text: string; contentBlock: ContentBlock | null } {
+  switch (event.type) {
+    case 'message_start':
+      onEvent({ type: 'message_start' });
+      return { blockIndex, text: currentText, contentBlock: null };
+    case 'content_block_start':
+      if (event.content_block.type === 'text') {
+        onEvent({
+          type: 'content_block_start',
+          index: event.index,
+          content_block: { type: 'text', text: '' },
+        });
+      } else if (event.content_block.type === 'tool_use') {
+        onEvent({
+          type: 'content_block_start',
+          index: event.index,
+          content_block: {
+            type: 'tool_use',
+            id: event.content_block.id,
+            name: event.content_block.name,
+            input: {},
+          },
+        });
+      }
+      return { blockIndex: event.index, text: '', contentBlock: null };
+    case 'content_block_delta':
+      if (event.delta.type === 'text_delta') {
+        onEvent({
+          type: 'content_block_delta',
+          index: blockIndex,
+          delta: { type: 'text', text: event.delta.text },
+        });
+        return { blockIndex, text: currentText + event.delta.text, contentBlock: null };
+      }
+      if (event.delta.type === 'input_json_delta') {
+        onEvent({
+          type: 'content_block_delta',
+          index: blockIndex,
+          delta: { type: 'tool_use', partial_json: event.delta.partial_json },
+        });
+      }
+      return { blockIndex, text: currentText, contentBlock: null };
+    case 'content_block_stop': {
+      const contentBlock = currentText ? { type: 'text' as const, text: currentText } : null;
+      onEvent({ type: 'content_block_stop', index: blockIndex });
+      return { blockIndex, text: currentText, contentBlock };
+    }
+    case 'message_delta':
+      onEvent({
+        type: 'message_delta',
+        usage: { outputTokens: event.usage?.output_tokens },
+      });
+      return { blockIndex, text: currentText, contentBlock: null };
+    case 'message_stop':
+      onEvent({ type: 'message_stop' });
+      return { blockIndex, text: currentText, contentBlock: null };
+    default:
+      return { blockIndex, text: currentText, contentBlock: null };
+  }
+}
+
+/**
  * Create an Anthropic AI client
  */
 export function createAnthropicClient(apiKey: string): AIClient {
@@ -98,65 +168,11 @@ export function createAnthropicClient(apiKey: string): AIClient {
       let currentText = '';
 
       for await (const event of stream) {
-        switch (event.type) {
-          case 'message_start':
-            onEvent({ type: 'message_start' });
-            break;
-          case 'content_block_start':
-            currentBlockIndex = event.index;
-            if (event.content_block.type === 'text') {
-              currentText = '';
-              onEvent({
-                type: 'content_block_start',
-                index: event.index,
-                content_block: { type: 'text', text: '' },
-              });
-            } else if (event.content_block.type === 'tool_use') {
-              onEvent({
-                type: 'content_block_start',
-                index: event.index,
-                content_block: {
-                  type: 'tool_use',
-                  id: event.content_block.id,
-                  name: event.content_block.name,
-                  input: {},
-                },
-              });
-            }
-            break;
-          case 'content_block_delta':
-            if (event.delta.type === 'text_delta') {
-              currentText += event.delta.text;
-              onEvent({
-                type: 'content_block_delta',
-                index: currentBlockIndex,
-                delta: { type: 'text', text: event.delta.text },
-              });
-            } else if (event.delta.type === 'input_json_delta') {
-              onEvent({
-                type: 'content_block_delta',
-                index: currentBlockIndex,
-                delta: { type: 'tool_use', partial_json: event.delta.partial_json },
-              });
-            }
-            break;
-          case 'content_block_stop':
-            if (currentText) {
-              collectedContent.push({ type: 'text', text: currentText });
-            }
-            onEvent({ type: 'content_block_stop', index: currentBlockIndex });
-            break;
-          case 'message_delta':
-            onEvent({
-              type: 'message_delta',
-              usage: {
-                outputTokens: event.usage?.output_tokens,
-              },
-            });
-            break;
-          case 'message_stop':
-            onEvent({ type: 'message_stop' });
-            break;
+        const result = processAnthropicStreamEvent(event, currentBlockIndex, currentText, onEvent);
+        currentBlockIndex = result.blockIndex;
+        currentText = result.text;
+        if (result.contentBlock) {
+          collectedContent.push(result.contentBlock);
         }
       }
 
@@ -203,6 +219,7 @@ function formatContentBlocks(
   | Anthropic.Messages.ToolResultBlockParam
   | Anthropic.Messages.ImageBlockParam
 )[] {
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: maps each content block type to Anthropic API format
   return blocks.map((block) => {
     if (block.type === 'text') {
       return { type: 'text' as const, text: block.text || '' };

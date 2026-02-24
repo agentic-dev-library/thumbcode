@@ -131,6 +131,7 @@ export function CredentialSettings() {
     }
   };
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: credential save with validation, store, and state updates
   const saveApiKey = async (type: 'anthropic' | 'openai', value: string) => {
     const trimmed = value.trim();
     if (!trimmed) return;

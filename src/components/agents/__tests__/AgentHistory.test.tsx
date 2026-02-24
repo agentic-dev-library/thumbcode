@@ -3,21 +3,19 @@ import type { AgentTask } from '@/state';
 import { AgentHistory } from '../AgentHistory';
 
 vi.mock('@/components/display', () => ({
-  Badge: ({ children, ...props }: any) => (
-    <span data-testid="badge" {...props}>
-      {children}
-    </span>
+  Badge: ({ children }: { children?: React.ReactNode }) => (
+    <span data-testid="badge">{children}</span>
   ),
 }));
 
 vi.mock('@/components/layout', () => ({
   Divider: () => <hr />,
-  HStack: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  VStack: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  HStack: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+  VStack: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui', () => ({
-  Text: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+  Text: ({ children }: { children?: React.ReactNode }) => <span>{children}</span>,
 }));
 
 describe('AgentHistory', () => {

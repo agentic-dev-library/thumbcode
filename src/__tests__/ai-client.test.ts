@@ -5,13 +5,7 @@
  * via mocked Vercel AI SDK (generateText / streamText).
  */
 
-import {
-  ANTHROPIC_MODELS,
-  createAIClient,
-  getAvailableModels,
-  getDefaultModel,
-  OPENAI_MODELS,
-} from '../services/ai';
+import { createAIClient, getAvailableModels, getDefaultModel } from '../services/ai';
 
 // Mock the Vercel AI SDK — this is the actual call path now
 vi.mock('ai', () => ({

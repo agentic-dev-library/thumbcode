@@ -2,27 +2,28 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { ProjectFileExplorer, ProjectFileExplorerEmpty } from '../ProjectFileExplorer';
 
 vi.mock('lucide-react', () => ({
-  FileText: ({ size }: any) => <span data-testid="file-icon">{size}</span>,
-  Folder: ({ size }: any) => <span data-testid="folder-icon">{size}</span>,
-  FolderOpen: ({ size }: any) => <span data-testid="folder-open-icon">{size}</span>,
+  FileText: ({ size }: { size?: number }) => <span data-testid="file-icon">{size}</span>,
+  Folder: ({ size }: { size?: number }) => <span data-testid="folder-icon">{size}</span>,
+  FolderOpen: ({ size }: { size?: number }) => <span data-testid="folder-open-icon">{size}</span>,
   Loader2: () => <span data-testid="loader" className="animate-spin" />,
 }));
 
-const mockContent = (overrides: any = {}) => ({
+import type { GitHubContent } from '@/core';
+
+const mockContent = (overrides: Partial<GitHubContent> = {}): GitHubContent => ({
   name: 'file.ts',
   path: 'src/file.ts',
   sha: 'abc123',
   size: 500,
   type: 'file' as const,
   url: 'https://api.github.com/repos/user/repo/contents/src/file.ts',
-  htmlUrl: 'https://github.com/user/repo/blob/main/src/file.ts',
   downloadUrl: 'https://raw.githubusercontent.com/user/repo/main/src/file.ts',
   ...overrides,
 });
 
 describe('ProjectFileExplorer', () => {
   const defaultProps = {
-    contents: [] as any[],
+    contents: [] as GitHubContent[],
     currentPath: '',
     parentPath: '',
     isLoading: false,

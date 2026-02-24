@@ -6,11 +6,11 @@ vi.mock('@/components/icons', () => ({
 }));
 
 vi.mock('@/components/layout', () => ({
-  VStack: ({ children }: any) => <div>{children}</div>,
+  VStack: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui', () => ({
-  Text: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+  Text: ({ children }: { children?: React.ReactNode }) => <span>{children}</span>,
 }));
 
 describe('DeviceCodeDisplay', () => {

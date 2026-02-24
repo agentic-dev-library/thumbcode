@@ -29,65 +29,72 @@ interface ChatMessageProps {
   onApprovalResponse?: (messageId: string, approved: boolean) => void;
 }
 
-export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessageProps>) {
+/** Wrapper for media-type messages (approval, document, image, voice, mixed) */
+function MessageWrapper({ message, children }: { message: Message; children: React.ReactNode }) {
   const isUser = message.sender === 'user';
-  const senderInfo = getSenderInfo(message.sender);
+  return (
+    <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
+      {children}
+      <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
+    </div>
+  );
+}
 
-  // Render approval request
+/** Renders the appropriate content based on message type */
+function renderSpecialContent(
+  message: Message,
+  onApprovalResponse?: (messageId: string, approved: boolean) => void
+): React.ReactNode | null {
   if (message.contentType === 'approval_request') {
     const approvalMessage = message as ApprovalMessage;
     return (
-      <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
+      <MessageWrapper message={message}>
         <ApprovalCard
           message={approvalMessage}
           onApprove={() => onApprovalResponse?.(message.id, true)}
           onReject={() => onApprovalResponse?.(message.id, false)}
         />
-        <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
-      </div>
+      </MessageWrapper>
     );
   }
-
-  // Render document output
   if (message.contentType === 'document_output') {
-    const docMessage = message as DocumentOutputMessage;
     return (
-      <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
-        <DocumentCard message={docMessage} />
-        <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
-      </div>
+      <MessageWrapper message={message}>
+        <DocumentCard message={message as DocumentOutputMessage} />
+      </MessageWrapper>
     );
   }
-
-  // Render image message
   if (message.contentType === 'image') {
     return (
-      <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
+      <MessageWrapper message={message}>
         <ImageMessage message={message as ImageMessageType} />
-        <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
-      </div>
+      </MessageWrapper>
     );
   }
-
-  // Render voice transcript / audio message
   if (message.contentType === 'voice_transcript') {
     return (
-      <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
+      <MessageWrapper message={message}>
         <AudioMessage message={message as VoiceMessage} />
-        <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
-      </div>
+      </MessageWrapper>
     );
   }
-
-  // Render mixed media message
   if (message.contentType === 'mixed_media') {
     return (
-      <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
+      <MessageWrapper message={message}>
         <MixedMediaMessage message={message} />
-        <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
-      </div>
+      </MessageWrapper>
     );
   }
+  return null;
+}
+
+export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessageProps>) {
+  const isUser = message.sender === 'user';
+  const senderInfo = getSenderInfo(message.sender);
+
+  // Render special content types
+  const specialContent = renderSpecialContent(message, onApprovalResponse);
+  if (specialContent) return specialContent;
 
   // Render code message
   if (message.contentType === 'code') {
