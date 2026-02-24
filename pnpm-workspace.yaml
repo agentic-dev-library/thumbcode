@@ -4,7 +4,5 @@
 packages:
   # Main app remains at root
   - '.'
-  # All packages in the packages directory
-  - 'packages/*'
   # Documentation site
   - 'docs-site'
