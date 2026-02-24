@@ -115,7 +115,7 @@ export class AgentOrchestrator {
    * Route a task to the best available provider for the given agent role.
    * Falls back to the configured default provider if routing fails.
    */
-  routeTask(taskId: string, agentRole: AgentRole, availableProviders: string[]): RoutingDecision {
+  routeTask(taskId: string, agentRole: AgentRole, availableProviders: AIProvider[]): RoutingDecision {
     const task = this.taskAssigner.getTask(taskId);
     if (!task) {
       return {

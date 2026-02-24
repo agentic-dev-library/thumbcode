@@ -51,11 +51,20 @@ export function PreviewPanel({
   }, [code]);
 
   const handleOpenInNewTab = useCallback(() => {
-    const blob = new Blob([previewHtml], { type: 'text/html' });
+    // Open a sandboxed iframe in a new tab rather than a raw blob URL,
+    // which would inherit same-origin privileges
+    const wrapper = `<!DOCTYPE html>
+<html><head><title>ThumbCode Preview</title><style>
+  body { margin: 0; height: 100vh; }
+  iframe { width: 100%; height: 100%; border: none; }
+</style></head><body>
+<iframe sandbox="allow-scripts" srcdoc="${previewHtml.replace(/"/g, '&quot;')}"></iframe>
+</body></html>`;
+    const blob = new Blob([wrapper], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank');
-    // Clean up after a delay to allow the tab to load
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    // Allow enough time for the new tab to load before revoking
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
   }, [previewHtml]);
 
   const handleMouseDown = useCallback(() => {

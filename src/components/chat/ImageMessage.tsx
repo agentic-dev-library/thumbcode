@@ -76,6 +76,8 @@ function Lightbox({
       role="dialog"
       aria-modal="true"
       aria-label="Image lightbox"
+      tabIndex={-1}
+      ref={(el) => el?.focus()}
     >
       <button
         type="button"

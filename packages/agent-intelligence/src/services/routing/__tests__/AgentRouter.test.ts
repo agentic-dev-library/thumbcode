@@ -151,10 +151,11 @@ describe('AgentRouter', () => {
       expect(decision.fallbackChain).toEqual([]);
     });
 
-    it('should return a default decision when no providers match', () => {
+    it('should return a default decision when no providers match the registry', () => {
       const task = createMockTask({ type: 'feature' });
-      // Use provider IDs that don't exist in the registry
-      const decision = router.routeTask(task, ['nonexistent-provider'], 'architect');
+      // Use a valid type but one filtered by minimumTier
+      const highTierRouter = new AgentRouter({ minimumTier: 5 });
+      const decision = highTierRouter.routeTask(task, ['groq'], 'architect');
 
       expect(decision.provider).toBe('anthropic');
       expect(decision.confidence).toBe(0);

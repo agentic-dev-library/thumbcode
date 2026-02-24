@@ -127,12 +127,11 @@ export function AudioMessage({ message }: Readonly<AudioMessageProps>) {
           <div
             className="flex items-end gap-[2px] h-8 cursor-pointer"
             onClick={handleProgressClick}
-            role="slider"
+            role="progressbar"
             aria-label="Audio progress"
             aria-valuenow={Math.round(currentTime)}
             aria-valuemin={0}
             aria-valuemax={Math.round(duration)}
-            tabIndex={0}
           >
             {WAVEFORM_BARS.map((height, i) => {
               const barProgress = (i / WAVEFORM_BARS.length) * 100;

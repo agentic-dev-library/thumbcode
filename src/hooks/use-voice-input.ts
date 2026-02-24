@@ -59,6 +59,7 @@ export function useVoiceInput(): UseVoiceInputResult {
   const [isListening, setIsListening] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+  const finalLengthRef = useRef(0);
 
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
@@ -76,6 +77,7 @@ export function useVoiceInput(): UseVoiceInputResult {
 
     setError(null);
     setTranscript('');
+    finalLengthRef.current = 0;
 
     const recognition = new SpeechRecognitionClass();
     recognition.continuous = true;
@@ -97,11 +99,12 @@ export function useVoiceInput(): UseVoiceInputResult {
 
       setTranscript((prev) => {
         if (finalTranscript) {
-          return prev + finalTranscript;
+          const newText = prev.slice(0, finalLengthRef.current) + finalTranscript;
+          finalLengthRef.current = newText.length;
+          return newText;
         }
-        // Show interim results appended to previous final results
-        const lastFinalEnd = prev.length;
-        return prev.slice(0, lastFinalEnd) + interimTranscript;
+        // Replace only the interim portion (after the last finalized text)
+        return prev.slice(0, finalLengthRef.current) + interimTranscript;
       });
     };
 

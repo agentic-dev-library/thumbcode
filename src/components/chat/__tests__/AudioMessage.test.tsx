@@ -88,10 +88,10 @@ describe('AudioMessage', () => {
 
   it('renders waveform bars', () => {
     render(<AudioMessage message={createVoiceMessage()} />);
-    const slider = screen.getByRole('slider');
-    expect(slider).toBeTruthy();
+    const progressbar = screen.getByRole('progressbar');
+    expect(progressbar).toBeTruthy();
     // Should have 20 bars
-    expect(slider.children.length).toBe(20);
+    expect(progressbar.children.length).toBe(20);
   });
 
   it('renders transcript when content is present', () => {

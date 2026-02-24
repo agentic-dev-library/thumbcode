@@ -99,7 +99,7 @@ export class AgentRouter {
    */
   routeTask(
     task: TaskAssignment,
-    availableProviders: string[],
+    availableProviders: AIProvider[],
     agentRole: AgentRole
   ): RoutingDecision {
     const requiredCapabilities = this.getRequiredCapabilities(agentRole, task.type);
@@ -117,14 +117,14 @@ export class AgentRouter {
 
     const best = scored[0];
     const fallbackChain: FallbackEntry[] = scored.slice(1).map((entry) => ({
-      provider: entry.providerId as AIProvider,
-      model: getDefaultModel(entry.providerId as AIProvider),
+      provider: entry.providerId,
+      model: getDefaultModel(entry.providerId),
       confidence: entry.score,
     }));
 
     return {
-      provider: best.providerId as AIProvider,
-      model: getDefaultModel(best.providerId as AIProvider),
+      provider: best.providerId,
+      model: getDefaultModel(best.providerId),
       agent: agentRole,
       confidence: best.score,
       fallbackChain,
@@ -163,7 +163,7 @@ export class AgentRouter {
    * Score formula: (matched capabilities / total required) * tier weight
    */
   private scoreProviders(
-    availableProviders: string[],
+    availableProviders: AIProvider[],
     requiredCapabilities: ProviderCapability[]
   ): ScoredProvider[] {
     const results: ScoredProvider[] = [];
@@ -229,7 +229,7 @@ export class AgentRouter {
 }
 
 interface ScoredProvider {
-  providerId: string;
+  providerId: AIProvider;
   score: number;
   matchCount: number;
   fullMatchCount: number;
