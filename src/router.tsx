@@ -60,11 +60,46 @@ export function AppRoutes() {
               </ErrorBoundary>
             }
           >
-            <Route index element={<HomePage />} />
-            <Route path="projects" element={<ProjectsPage />} />
-            <Route path="agents" element={<AgentsPage />} />
-            <Route path="chat" element={<ChatPage />} />
-            <Route path="settings" element={<SettingsPage />} />
+            <Route
+              index
+              element={
+                <ErrorBoundary>
+                  <HomePage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="projects"
+              element={
+                <ErrorBoundary>
+                  <ProjectsPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="agents"
+              element={
+                <ErrorBoundary>
+                  <AgentsPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="chat"
+              element={
+                <ErrorBoundary>
+                  <ChatPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="settings"
+              element={
+                <ErrorBoundary>
+                  <SettingsPage />
+                </ErrorBoundary>
+              }
+            />
           </Route>
 
           <Route

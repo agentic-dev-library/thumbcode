@@ -93,6 +93,7 @@ function SettingsItemRow({
             className="sr-only peer"
             checked={toggle.value}
             onChange={(e) => toggle.onChange(e.target.checked)}
+            aria-label={title}
           />
           <div className="w-11 h-6 bg-neutral-700 peer-checked:bg-teal-600 rounded-full transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-neutral-400 peer-checked:after:bg-neutral-50 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full" />
         </label>

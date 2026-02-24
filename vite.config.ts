@@ -19,7 +19,6 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-zustand': ['zustand'],
           'vendor-ai': ['ai', '@ai-sdk/anthropic', '@ai-sdk/openai'],
-          'vendor-git': ['isomorphic-git'],
         },
       },
     },
