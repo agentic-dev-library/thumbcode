@@ -1,5 +1,5 @@
-import { API_URLS } from '@thumbcode/config';
-import type { Repository } from '@thumbcode/types';
+import { API_URLS } from '@/config';
+import type { Repository } from '@/types';
 import { CredentialService } from '../credentials';
 
 interface GitHubCommitResponse {

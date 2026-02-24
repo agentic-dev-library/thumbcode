@@ -5,7 +5,7 @@
  * repeatedly checks for token authorization with error retry and backoff.
  */
 
-import { GITHUB_OAUTH } from '@thumbcode/config';
+import { GITHUB_OAUTH } from '@/config';
 import { CredentialService } from '../credentials';
 import type {
   AccessTokenResponse,

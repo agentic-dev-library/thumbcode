@@ -5,7 +5,7 @@
  * token polling, error handling, slow_down, expiration, and cancellation.
  */
 
-vi.mock('@thumbcode/config', () => ({
+vi.mock('@/config', () => ({
   GITHUB_OAUTH: {
     deviceCodeUrl: 'https://github.com/login/device/code',
     accessTokenUrl: 'https://github.com/login/oauth/access_token',

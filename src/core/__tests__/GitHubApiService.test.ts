@@ -5,8 +5,8 @@
  * Mocks fetch and CredentialService.
  */
 
-// Mock @thumbcode/config
-vi.mock('@thumbcode/config', () => ({
+// Mock @/config
+vi.mock('@/config', () => ({
   API_URLS: {
     github: 'https://api.github.com',
   },

@@ -7,7 +7,7 @@
  * - TokenManager: auth status, user info, sign-out
  */
 
-import { GITHUB_OAUTH } from '@thumbcode/config';
+import { GITHUB_OAUTH } from '@/config';
 import { DeviceFlowHandler } from './DeviceFlowHandler';
 import { PollingService } from './PollingService';
 import { TokenManager } from './TokenManager';

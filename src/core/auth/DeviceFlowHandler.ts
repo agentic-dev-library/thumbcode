@@ -5,7 +5,7 @@
  * requesting a device code and preparing for user authorization.
  */
 
-import { GITHUB_OAUTH } from '@thumbcode/config';
+import { GITHUB_OAUTH } from '@/config';
 import type {
   DeviceCodeResponse,
   DeviceFlowOptions,

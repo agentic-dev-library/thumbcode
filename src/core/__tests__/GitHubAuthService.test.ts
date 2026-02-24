@@ -13,7 +13,7 @@ const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 // Mock config to speed up tests
-vi.mock('@thumbcode/config', () => ({
+vi.mock('@/config', () => ({
   GITHUB_OAUTH: {
     deviceCodeUrl: 'https://github.com/login/device/code',
     accessTokenUrl: 'https://github.com/login/oauth/access_token',
