@@ -51,7 +51,7 @@
 - Programmatic design token generation
 
 ### Infrastructure
-- pnpm monorepo workspace (7 packages + app)
+- pnpm single-package workspace (flat src/)
 - Vite 7 build system with HMR
 - Capacitor 8 native shell (iOS + Android)
 - GitHub Actions CI/CD (lint, typecheck, test, build)
@@ -105,11 +105,9 @@
 2. **Stubbed orchestration** -- Multi-agent coordination exists as types and stubs in agent-intelligence but is not connected to the chat flow.
 3. **PaintDaubeIcon bundle size** -- `icon-paths.ts` (924 lines) is loaded eagerly, adding unnecessary weight to the initial bundle.
 4. **Dual organic styling** -- Some components use JS objects (`style={organicBorderRadius.card}`) while others use Tailwind classes. Consolidation in progress (US-013).
-5. **react-native peer deps** -- `packages/core/` and `packages/config/` still declare `react-native` as a peer dependency despite the Capacitor migration.
-6. **@react-native-async-storage** -- `packages/state/` depends on this React Native library. Needs replacement with web-compatible persistence.
-7. **E2E chat crash** -- 3 Playwright E2E tests are skipped due to Chat page crash in web browser context.
-8. **Low test coverage** -- ~35% statement coverage vs 80% target. 0% coverage on several pages.
-9. **Code duplication** -- 40 clones found (2.38% duplication), well under the 5% jscpd threshold.
+5. **E2E chat crash** -- 3 Playwright E2E tests are skipped due to Chat page crash in web browser context.
+6. **Low test coverage** -- ~35% statement coverage vs 80% target. 0% coverage on several pages.
+7. **Code duplication** -- 40 clones found (2.38% duplication), well under the 5% jscpd threshold.
 
 ## Feature Status Matrix
 

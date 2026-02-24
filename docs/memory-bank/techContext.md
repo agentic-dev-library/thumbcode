@@ -44,14 +44,13 @@ The project migrated from React Native + Expo to a web-first React + Capacitor a
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| **Biome** | 2.3.x | Linting and formatting (replaces ESLint + Prettier) |
+| **Biome** | 2.4.4 | Linting and formatting (replaces ESLint + Prettier) |
 | **TypeScript** | 5.6.x | Static typing |
 | **Vitest** | 4.x | Unit/integration testing |
 | **Playwright** | 1.57.x | E2E browser testing |
 | **Testing Library** | 16.3.x | React component testing |
-| **TypeDoc** | 0.28.x | API documentation generation |
 | **pnpm** | 10.11.x | Package manager (workspaces) |
-| **commitlint** | 19.x | Conventional commit enforcement |
+| **commitlint** | 20.x | Conventional commit enforcement |
 
 ### What Changed from Expo
 
@@ -126,38 +125,32 @@ pnpm format           # biome format --write
 
 ## Project Structure
 
-### Monorepo Layout (pnpm workspaces)
+### Single-Package Layout (pnpm workspace)
 
 ```
 thumbcode/
-├── src/                          # Main application source
+├── src/                          # Application source (flat structure)
 │   ├── components/               # React components
-│   │   ├── ui/                   # Design system primitives
+│   │   ├── ui/                   # Design system re-exports
 │   │   ├── agents/               # Agent-related components
-│   │   ├── workspace/            # Code workspace components
 │   │   ├── chat/                 # Chat interface components
 │   │   └── project/              # Project management components
 │   ├── hooks/                    # Custom React hooks
-│   ├── stores/                   # Zustand state stores
-│   ├── services/                 # External service integrations
+│   ├── state/                    # Zustand state stores
+│   ├── services/                 # AI clients, agent logic, orchestrator
+│   ├── core/                     # Core integrations
 │   │   ├── git/                  # isomorphic-git wrapper
 │   │   ├── github/               # GitHub API + Device Flow
-│   │   ├── ai/                   # Anthropic/OpenAI clients
-│   │   └── credentials/         # Secure storage wrapper
+│   │   └── credentials/          # Secure storage wrapper
+│   ├── ui/                       # Design system components
+│   ├── config/                   # Environment config, feature flags
 │   ├── types/                    # TypeScript type definitions
 │   ├── utils/                    # Utility functions
-│   └── lib/                      # Core libraries
-├── packages/                     # Workspace packages
-│   ├── agent-intelligence/       # AI agent logic, orchestrator
-│   ├── core/                     # Git, credentials, auth services
-│   ├── config/                   # Environment config, feature flags
-│   ├── state/                    # Zustand stores (shared)
-│   ├── types/                    # Shared TypeScript types
-│   ├── ui/                       # Shared UI components
-│   └── dev-tools/                # Token/icon generators
+│   ├── layouts/                  # Layout wrapper components
+│   ├── pages/                    # react-router-dom pages
+│   └── lib/                      # Utility libraries
 ├── design-system/                # Design tokens (JSON, TS, CSS)
 ├── docs/                         # Documentation
-
 ├── e2e/                          # Playwright E2E tests
 ├── ios/                          # Capacitor iOS project
 ├── android/                      # Capacitor Android project

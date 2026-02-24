@@ -183,19 +183,21 @@
 
 ---
 
-## DEC-011: pnpm Monorepo Workspace
+## DEC-011: Flat src/ Structure (Previously pnpm Workspaces)
 
-**Status:** Accepted
-**Date:** January 2026
+**Status:** Accepted (Updated)
+**Date:** January 2026 (original); February 2026 (flattened)
 **Context:** Organizing shared code across the project.
 
-**Decision:** Use pnpm workspaces with 7 packages.
+**Decision:** As of the 2026-02 refactor, the 7 pnpm workspace packages were flattened into `src/`. All code now lives under `src/` with `@/*` path aliases. There are no longer separate `packages/` workspace entries.
 
 **Rationale:**
-- Clean separation of concerns
-- Packages can be developed and tested independently
-- workspace:* protocol for inter-package dependencies
-- Single lockfile, deduped node_modules
+- Eliminates workspace overhead and inter-package build ordering
+- Single lint and typecheck pass over the whole codebase
+- Simpler `@/*` imports without package name indirection
+- Easier for agents to locate and modify code
+
+**History:** Originally used pnpm workspaces with 7 packages (`agent-intelligence`, `core`, `config`, `state`, `types`, `ui`, `dev-tools`). These were merged into `src/` subdirectories in February 2026.
 
 ---
 

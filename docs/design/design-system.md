@@ -14,9 +14,9 @@ If these disagree, fix the disagreement -- don't pick one ad hoc.
 
 ## Component Architecture
 
-### Layer 1: @thumbcode/ui (Canonical Primitives)
+### Layer 1: src/ui/ (Canonical Primitives)
 
-Location: `packages/ui/src/`
+Location: `src/ui/`
 
 | Category | Components |
 |----------|------------|
@@ -30,11 +30,11 @@ Location: `packages/ui/src/`
 
 Location: `src/components/ui/`
 
-Thin re-exports from @thumbcode/ui. App code imports from here.
+Thin re-exports from src/ui/. App code imports from here.
 
 ### Layer 3: src/components/{domain}/ (Composed Components)
 
-Location: `src/components/agents/`, `src/components/chat/`, `src/components/project/`, `src/components/workspace/`
+Location: `src/components/agents/`, `src/components/chat/`, `src/components/project/`
 
 Domain-specific components that compose primitives from Layer 1/2.
 

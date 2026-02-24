@@ -4,26 +4,21 @@
 
 ## Architecture Overview
 
-ThumbCode is a **pnpm monorepo** with a React 18 web application wrapped in Capacitor 8 for native iOS/Android deployment. The codebase is split between a main application (`src/`) and shared workspace packages (`packages/`).
+ThumbCode is a **pnpm single-package workspace** with a React 18 web application wrapped in Capacitor 8 for native iOS/Android deployment. The entire codebase lives under `src/` with a flat directory structure organized by domain.
 
 ```mermaid
 graph TB
-    subgraph "Application Layer"
-        APP["src/ (Main App)"]
+    subgraph "src/ (Flat Application Structure)"
         PAGES["src/pages/"]
         COMPONENTS["src/components/"]
         HOOKS["src/hooks/"]
+        LAYOUTS["src/layouts/"]
         SERVICES["src/services/"]
-    end
-
-    subgraph "Package Layer"
-        AI["@thumbcode/agent-intelligence"]
-        CORE["@thumbcode/core"]
-        STATE["@thumbcode/state"]
-        TYPES["@thumbcode/types"]
-        UI["@thumbcode/ui"]
-        CONFIG["@thumbcode/config"]
-        DEVTOOLS["@thumbcode/dev-tools"]
+        STATE["src/state/"]
+        CORE["src/core/"]
+        CONFIG["src/config/"]
+        TYPES["src/types/"]
+        UI["src/ui/"]
     end
 
     subgraph "External Services"
@@ -34,64 +29,38 @@ graph TB
         KEYCHAIN["iOS Keychain / Android Keystore"]
     end
 
-    APP --> PAGES
-    APP --> COMPONENTS
-    APP --> HOOKS
-    APP --> SERVICES
-
     PAGES --> HOOKS
     PAGES --> COMPONENTS
     HOOKS --> STATE
     HOOKS --> SERVICES
-    SERVICES --> AI
     SERVICES --> CORE
     COMPONENTS --> UI
 
-    AI --> TYPES
-    AI --> STATE
-    AI --> ANTHROPIC
-    AI --> OPENAI
-    CORE --> TYPES
-    CORE --> CONFIG
+    SERVICES --> ANTHROPIC
+    SERVICES --> OPENAI
     CORE --> GITHUB
     CORE --> FILESYSTEM
     CORE --> KEYCHAIN
-    STATE --> CONFIG
+    STATE -.-> CONFIG
     UI -.-> TYPES
-
-    DEVTOOLS -.->|"build-time only"| APP
+    CORE -.-> TYPES
+    SERVICES -.-> TYPES
 ```
 
-## Package Dependency Graph
+### Module Responsibilities
 
-```mermaid
-graph LR
-    TYPES["@thumbcode/types"]
-    CONFIG["@thumbcode/config"]
-    STATE["@thumbcode/state"]
-    CORE["@thumbcode/core"]
-    AI["@thumbcode/agent-intelligence"]
-    UI["@thumbcode/ui"]
-
-    AI --> TYPES
-    AI --> STATE
-    CORE --> TYPES
-    CORE --> CONFIG
-    STATE --> CONFIG
-    UI -.->|"peer"| TYPES
-```
-
-### Package Responsibilities
-
-| Package | Purpose | Key Exports |
-|---------|---------|-------------|
-| **@thumbcode/types** | Shared TypeScript type definitions | Agent, Project, Chat, Credential, Workspace types |
-| **@thumbcode/config** | Environment config, feature flags, constants | `env`, `constants`, `features` |
-| **@thumbcode/state** | Zustand stores for global state | `agentStore`, `chatStore`, `credentialStore`, `projectStore`, `userStore` |
-| **@thumbcode/core** | Git operations, credential management | `GitService`, `CredentialService`, isomorphic-git wrapper |
-| **@thumbcode/agent-intelligence** | AI clients, agent logic, orchestrator | Anthropic/OpenAI clients, `AgentOrchestrator`, tool calling, token tracking |
-| **@thumbcode/ui** | Design system components | Primitives (Box, Text, Button, Card), Layout, Form, Feedback, Theme |
-| **@thumbcode/dev-tools** | Build-time tooling (not runtime) | Token generator, icon generator |
+| Module | Purpose | Key Exports |
+|--------|---------|-------------|
+| **src/types/** | Shared TypeScript type definitions | Agent, Project, Chat, Credential, Workspace types |
+| **src/config/** | Environment config, feature flags, constants | `env`, `constants`, `features` |
+| **src/state/** | Zustand stores for global state | `agentStore`, `chatStore`, `credentialStore`, `projectStore`, `userStore` |
+| **src/core/** | Git operations, credential management | `GitService`, `CredentialService`, isomorphic-git wrapper |
+| **src/services/** | AI clients, agent logic, orchestrator | Anthropic/OpenAI clients, `AgentOrchestrator`, tool calling, token tracking |
+| **src/ui/** | Design system components | Primitives (Box, Text, Button, Card), Layout, Form, Feedback, Theme |
+| **src/hooks/** | Custom React hooks | Data fetching, state subscriptions, derived state |
+| **src/components/** | Domain-specific composed components | agents/, chat/, project/ sub-directories |
+| **src/pages/** | Route-level page components | tabs/, detail/, onboarding/, settings/ sub-directories |
+| **src/layouts/** | Layout wrappers | RootLayout, tab layout shells |
 
 ## Data Flow Patterns
 
@@ -103,7 +72,7 @@ User types message
   -> useSendMessage hook
   -> chatStore.addMessage()
   -> AgentResponseService
-  -> @thumbcode/agent-intelligence AI client
+  -> src/services/ AI client
   -> Anthropic/OpenAI API (streaming)
   -> chatStore.appendStreamChunk()
   -> ChatMessage component re-renders progressively
@@ -115,7 +84,7 @@ User types message
 User enters API key
   -> CredentialSettings page
   -> useCredentials hook
-  -> @thumbcode/core CredentialService
+  -> src/core/ CredentialService
   -> Validation (test API call)
   -> capacitor-secure-storage-plugin (Keychain/Keystore)
   -> credentialStore updated
@@ -127,7 +96,7 @@ User enters API key
 ```
 User triggers git action (clone, commit, push)
   -> useProjectFiles / useProjectActions hook
-  -> @thumbcode/core GitService
+  -> src/core/ GitService
   -> isomorphic-git operations
   -> @capacitor/filesystem for local storage
   -> projectStore updated
@@ -148,7 +117,7 @@ User request -> AgentOrchestrator
   -> Git commit via core
 ```
 
-**Current state**: The orchestrator exists in `@thumbcode/agent-intelligence` but is not yet wired to real execution. Single-agent routing through the orchestrator is the next milestone (US-003).
+**Current state**: The orchestrator exists in `src/services/` but is not yet wired to real execution. Single-agent routing through the orchestrator is the next milestone (US-003).
 
 ## State Architecture (Zustand 5)
 
@@ -208,8 +177,8 @@ Layout structure: `RootLayout` wraps all routes with theme, error boundaries, an
 ## Build Pipeline
 
 ```
-Source (src/ + packages/) -> Vite 7 Build -> dist/ -> Capacitor Sync -> iOS/Android
-                                                   -> Web deploy (Netlify)
+Source (src/) -> Vite 7 Build -> dist/ -> Capacitor Sync -> iOS/Android
+                                       -> Web deploy (Netlify)
 ```
 
 CI/CD: GitHub Actions runs lint (Biome + jscpd) -> typecheck -> test (Vitest + coverage thresholds) -> Semgrep SAST -> build on every push.
@@ -218,9 +187,9 @@ CI/CD: GitHub Actions runs lint (Biome + jscpd) -> typecheck -> test (Vitest + c
 
 ### Design System Layers
 
-1. **@thumbcode/ui** -- canonical primitives (Box, Text, Button, Card, Input, Switch, Spinner, Alert, etc.)
-2. **src/components/ui/** -- re-exports from @thumbcode/ui (thin wrappers for app-level use)
-3. **src/components/{agents,chat,project,workspace}/** -- domain-specific composed components
+1. **src/ui/** -- canonical primitives (Box, Text, Button, Card, Input, Switch, Spinner, Alert, etc.)
+2. **src/components/ui/** -- re-exports from src/ui/ (thin wrappers for app-level use)
+3. **src/components/{agents,chat,project}/** -- domain-specific composed components
 4. **src/pages/** -- page-level composition (thin, hooks + components)
 
 ### Organic Styling Convention
@@ -238,7 +207,7 @@ Tailwind CSS is the only styling approach. The earlier dual approach (JS objects
 
 | Layer | Tool | Location |
 |-------|------|----------|
-| Unit tests | Vitest + Testing Library | `src/**/*.test.ts(x)`, `packages/**/*.test.ts` |
+| Unit tests | Vitest + Testing Library | `src/**/*.test.ts(x)` |
 | E2E tests | Playwright | `e2e/*.spec.ts` |
 | Type checking | TypeScript `tsc --noEmit` | All `tsconfig.json` |
 | Linting | Biome | `biome.json` (covers all packages) |
