@@ -84,6 +84,21 @@ export interface ToolResult {
 }
 
 /**
+ * Minimal interface for document generation the bridge needs.
+ * Matches the shape of DocumentEngine from src/services/documents/.
+ */
+export interface DocumentEngineLike {
+  generate(content: {
+    title: string;
+    author?: string;
+    format: 'docx' | 'pptx' | 'xlsx' | 'pdf';
+    sections?: { heading?: string; content: string; level?: number }[];
+    slides?: { title: string; bullets?: string[]; notes?: string }[];
+    sheets?: { sheetName: string; headers: string[]; rows: (string | number)[][] }[];
+  }): Promise<{ blob: Blob; filename: string; format: string; size: number; blobUrl: string }>;
+}
+
+/**
  * Git service dependencies for the bridge.
  */
 export interface ToolBridgeDependencies {
@@ -92,6 +107,7 @@ export interface ToolBridgeDependencies {
   branchService: BranchServiceLike;
   commitService: CommitServiceLike;
   fileSystem: FileSystemLike;
+  documentEngine?: DocumentEngineLike;
 }
 
 // Slimmed-down types matching @thumbcode/core shapes

@@ -54,6 +54,14 @@ export class ToolExecutionBridge {
           return this.createFile(input, workspaceDir);
         case 'delete_file':
           return this.deleteFile(input, workspaceDir);
+        case 'create_document':
+          return this.createDocument(input);
+        case 'create_presentation':
+          return this.createPresentation(input);
+        case 'create_spreadsheet':
+          return this.createSpreadsheet(input);
+        case 'create_pdf':
+          return this.createPdf(input);
         default:
           return { success: false, output: '', error: `Unknown tool: ${toolName}` };
       }
@@ -440,6 +448,101 @@ export class ToolExecutionBridge {
         success: false,
         output: '',
         error: `Failed to delete file: ${error instanceof Error ? error.message : path}`,
+      };
+    }
+  }
+
+  /**
+   * create_document: Generate a Word document from sections.
+   */
+  private async createDocument(input: Record<string, unknown>): Promise<ToolResult> {
+    return this.generateDocument(input, 'docx');
+  }
+
+  /**
+   * create_presentation: Generate a PowerPoint from slides.
+   */
+  private async createPresentation(input: Record<string, unknown>): Promise<ToolResult> {
+    return this.generateDocument(input, 'pptx');
+  }
+
+  /**
+   * create_spreadsheet: Generate an Excel spreadsheet from data.
+   */
+  private async createSpreadsheet(input: Record<string, unknown>): Promise<ToolResult> {
+    return this.generateDocument(input, 'xlsx');
+  }
+
+  /**
+   * create_pdf: Generate a PDF from content.
+   */
+  private async createPdf(input: Record<string, unknown>): Promise<ToolResult> {
+    return this.generateDocument(input, 'pdf');
+  }
+
+  /**
+   * Shared document generation handler.
+   * Delegates to the injected DocumentEngine if available.
+   */
+  private async generateDocument(
+    input: Record<string, unknown>,
+    format: 'docx' | 'pptx' | 'xlsx' | 'pdf'
+  ): Promise<ToolResult> {
+    const engine = this.deps.documentEngine;
+    if (!engine) {
+      return {
+        success: false,
+        output: '',
+        error: 'Document generation is not available (no DocumentEngine configured)',
+      };
+    }
+
+    const title = input.title as string | undefined;
+    if (!title) {
+      const toolName =
+        format === 'docx'
+          ? 'document'
+          : format === 'pptx'
+            ? 'presentation'
+            : format === 'xlsx'
+              ? 'spreadsheet'
+              : 'pdf';
+      return {
+        success: false,
+        output: '',
+        error: `create_${toolName} requires a "title" parameter`,
+      };
+    }
+
+    try {
+      const result = await engine.generate({
+        title,
+        author: input.author as string | undefined,
+        format,
+        sections: input.sections as
+          | { heading?: string; content: string; level?: number }[]
+          | undefined,
+        slides: input.slides as { title: string; bullets?: string[]; notes?: string }[] | undefined,
+        sheets: input.sheets as
+          | { sheetName: string; headers: string[]; rows: (string | number)[][] }[]
+          | undefined,
+      });
+
+      return {
+        success: true,
+        output: JSON.stringify({
+          filename: result.filename,
+          format: result.format,
+          size: result.size,
+          blobUrl: result.blobUrl,
+          title,
+        }),
+      };
+    } catch (error) {
+      return {
+        success: false,
+        output: '',
+        error: error instanceof Error ? error.message : `Failed to generate ${format}`,
       };
     }
   }

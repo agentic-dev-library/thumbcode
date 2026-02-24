@@ -11,6 +11,7 @@ export type {
   CommitResult,
   CommitServiceLike,
   DiffServiceLike,
+  DocumentEngineLike,
   FileSystemLike,
   StagedChange,
   ToolBridgeDependencies,

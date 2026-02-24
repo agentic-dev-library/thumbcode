@@ -5,11 +5,12 @@
  * Uses organic daube styling per brand guidelines.
  */
 
-import type { ApprovalMessage, Message } from '@thumbcode/state';
+import type { ApprovalMessage, DocumentOutputMessage, Message } from '@thumbcode/state';
 import { Text } from '@/components/ui';
 import { formatTime, getSenderInfo } from '@/lib/chat-utils';
 import { ApprovalCard } from './ApprovalCard';
 import { CodeBlock } from './CodeBlock';
+import { DocumentCard } from './DocumentCard';
 
 /** Props for the ChatMessage component */
 interface ChatMessageProps {
@@ -33,6 +34,17 @@ export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessag
           onApprove={() => onApprovalResponse?.(message.id, true)}
           onReject={() => onApprovalResponse?.(message.id, false)}
         />
+        <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
+      </div>
+    );
+  }
+
+  // Render document output
+  if (message.contentType === 'document_output') {
+    const docMessage = message as DocumentOutputMessage;
+    return (
+      <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
+        <DocumentCard message={docMessage} />
         <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
       </div>
     );
