@@ -55,7 +55,9 @@
 - Vite 7 build system with HMR
 - Capacitor 8 native shell (iOS + Android)
 - GitHub Actions CI/CD (lint, typecheck, test, build)
-- SonarCloud static analysis
+- Semgrep CE SAST scanning
+- jscpd code duplication detection (5% threshold)
+- Vitest coverage thresholds (80% lines/functions/statements, 73% branches)
 - Biome linting and formatting
 - Netlify web deployment
 - Conventional commit enforcement (commitlint)
@@ -107,7 +109,7 @@
 6. **@react-native-async-storage** -- `packages/state/` depends on this React Native library. Needs replacement with web-compatible persistence.
 7. **E2E chat crash** -- 3 Playwright E2E tests are skipped due to Chat page crash in web browser context.
 8. **Low test coverage** -- ~35% statement coverage vs 80% target. 0% coverage on several pages.
-9. **SonarCloud findings** -- 1 bug, 136 code smells, 2 security hotspots (as of last scan).
+9. **Code duplication** -- 40 clones found (2.38% duplication), well under the 5% jscpd threshold.
 
 ## Feature Status Matrix
 
@@ -139,8 +141,8 @@
 | Tests passing | 950 | -- |
 | Statement coverage | ~35% | 80% |
 | Branch coverage | ~18% | 60% |
-| SonarCloud bugs | 1 | 0 |
-| SonarCloud code smells | 136 | < 50 |
+| Code duplication | 2.38% | < 5% |
+| Semgrep SAST findings | TBD (first scan) | 0 |
 | Lines of code | ~11,400 | -- |
 | Packages | 7 | -- |
 | Lint/TypeCheck | Clean | Clean |

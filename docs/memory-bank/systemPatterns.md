@@ -212,7 +212,7 @@ Source (src/ + packages/) -> Vite 7 Build -> dist/ -> Capacitor Sync -> iOS/Andr
                                                    -> Web deploy (Netlify)
 ```
 
-CI/CD: GitHub Actions runs lint -> typecheck -> test -> build on every push. SonarCloud for static analysis.
+CI/CD: GitHub Actions runs lint (Biome + jscpd) -> typecheck -> test (Vitest + coverage thresholds) -> Semgrep SAST -> build on every push.
 
 ## Component Architecture
 
@@ -242,6 +242,7 @@ Tailwind CSS is the only styling approach. The earlier dual approach (JS objects
 | E2E tests | Playwright | `e2e/*.spec.ts` |
 | Type checking | TypeScript `tsc --noEmit` | All `tsconfig.json` |
 | Linting | Biome | `biome.json` (covers all packages) |
-| Static analysis | SonarCloud | `sonar-project.properties` |
+| SAST | Semgrep CE | CI container job |
+| Duplication | jscpd | `.jscpd.json` |
 
 Current metrics: 85 test files, 950 tests passing, ~35% statement coverage (target: 80%).

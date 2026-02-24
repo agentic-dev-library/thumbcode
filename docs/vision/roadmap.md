@@ -43,7 +43,7 @@ The v1.0 release transforms ThumbCode from a polished shell with mock AI into a 
 | US-009 | Refactor create-project.tsx | Done |
 | US-010 | Refactor ProjectDetail.tsx | Done |
 | US-012 | Refactor tab pages | Done |
-| US-018 | Update Biome/SonarCloud/TypeScript configs | Done |
+| US-018 | Update Biome/Semgrep/TypeScript configs | Done |
 | US-008 | Refactor chat.tsx | In Progress |
 | US-011 | Refactor AgentDetail.tsx | In Progress |
 | US-013 | Lazy-load icon-paths.ts, consolidate styling | In Progress |

@@ -230,9 +230,8 @@ CI/CD: GitHub Actions (`ci.yml`) runs lint → typecheck → test → build on e
 | Tests | 245 passed, 3 skipped |
 | Statement Coverage | 34.78% |
 | Branch Coverage | 18.23% |
-| SonarCloud Bugs | 1 |
-| SonarCloud Code Smells | 136 |
-| Security Hotspots | 2 |
+| Code Duplication (jscpd) | 2.38% (40 clones) |
+| Semgrep SAST Findings | TBD (first scan) |
 | Lint/TypeCheck | Clean |
 | Security Audit (prod) | 0 vulnerabilities |
 
@@ -242,5 +241,5 @@ CI/CD: GitHub Actions (`ci.yml`) runs lint → typecheck → test → build on e
 2. **Stubbed orchestration** — Multi-agent coordination not wired to real execution
 3. **Monolithic files** — `PaintDaubeIcon.tsx` (1,268 lines), `GitService.ts` (1,055 lines)
 4. **Low test coverage** — 34.78% statements, target is 60%
-5. **Outdated documentation** — `ARCHITECTURE.md` and `DECISIONS.md` still reference Expo stack
+5. **Documentation consolidation** — Stale Expo-era docs removed; current docs in `docs/architecture/` and `docs/memory-bank/`
 6. **Skipped E2E tests** — Both Playwright test files marked "pending UX research"

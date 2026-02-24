@@ -1,6 +1,6 @@
 # ThumbCode Software License
 
-**Copyright © 2026 agentic-dev-library. All Rights Reserved.**
+**Copyright © 2026 jbcom. All Rights Reserved.**
 
 ---
 
@@ -44,13 +44,13 @@ You **may not**:
 
 By submitting a contribution (pull request, issue, or other submission) to this repository, you agree that:
 
-1. **You grant agentic-dev-library a perpetual, worldwide, non-exclusive, royalty-free, irrevocable license** to use, modify, sublicense, and distribute your contribution as part of the Software
+1. **You grant jbcom a perpetual, worldwide, non-exclusive, royalty-free, irrevocable license** to use, modify, sublicense, and distribute your contribution as part of the Software
 
 2. **You represent** that you have the right to grant this license and that your contribution is your original work or you have permission to submit it
 
 3. **Your contribution becomes part of the Software** and is subject to these license terms
 
-4. **You retain copyright** to your contribution, but grant agentic-dev-library the rights described above
+4. **You retain copyright** to your contribution, but grant jbcom the rights described above
 
 #### 4. Protective Covenants
 
@@ -63,13 +63,13 @@ You acknowledge and agree that:
 
 2. **No Service Offerings**: You will not offer hosting, deployment, or SaaS versions of ThumbCode or derivatives without explicit written permission
 
-3. **Attribution Required**: Any public discussion, presentation, or demonstration of the Software must clearly attribute ThumbCode and agentic-dev-library
+3. **Attribution Required**: Any public discussion, presentation, or demonstration of the Software must clearly attribute ThumbCode and jbcom
 
 4. **Confidentiality**: You will treat non-public development plans, roadmaps, and strategic discussions as confidential
 
 #### 5. Ownership and Intellectual Property
 
-- **agentic-dev-library retains all rights, title, and interest** in the Software, including all intellectual property rights
+- **jbcom retains all rights, title, and interest** in the Software, including all intellectual property rights
 - The Software's design system, brand identity (including Warm Technical palette, organic styling, typography), multi-agent coordination protocols, and architectural patterns are proprietary
 - No transfer of ownership or intellectual property occurs under this license
 
@@ -96,7 +96,7 @@ IN NO EVENT SHALL AGENTIC-DEV-LIBRARY BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDE
 This license may be terminated:
 
 - **Automatically** if you breach any term of this license
-- **By agentic-dev-library** at any time with or without cause
+- **By jbcom** at any time with or without cause
 - **Upon public release** of ThumbCode as described in Section 6
 
 Upon termination:
@@ -115,8 +115,8 @@ This license shall be governed by and construed in accordance with the laws of t
 For questions about this license, commercial licensing inquiries, or permission requests:
 
 - **Email**: Contact through GitHub repository
-- **Issues**: [GitHub Issues](https://github.com/agentic-dev-library/thumbcode/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/agentic-dev-library/thumbcode/discussions)
+- **Issues**: [GitHub Issues](https://github.com/jbcom/thumbcode/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/jbcom/thumbcode/discussions)
 
 ---
 

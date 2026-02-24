@@ -5,7 +5,7 @@ description: Technical architecture of ThumbCode.
 
 # Architecture
 
-ThumbCode is built as a **decentralized, mobile-first application** with no server dependencies for core functionality.
+ThumbCode is built as a **decentralized, web-first application** wrapped in Capacitor for native iOS/Android deployment, with no server dependencies for core functionality.
 
 ## High-Level Architecture
 
@@ -15,8 +15,8 @@ ThumbCode is built as a **decentralized, mobile-first application** with no serv
 ├────────────────────────────────────────────────┤
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────┐ │
 │  │   UI Layer  │  │ Agent Layer │  │  State  │ │
-│  │ (React      │  │ (Multi-     │  │ (Zustand│ │
-│  │  Native)    │  │  Agent)     │  │  Stores)│ │
+│  │ (React 18 + │  │ (Multi-     │  │ (Zustand│ │
+│  │  Tailwind)  │  │  Agent)     │  │  Stores)│ │
 │  └──────┬──────┘  └──────┬──────┘  └────┬────┘ │
 │         │                │               │      │
 │  ┌──────┴────────────────┴───────────────┴────┐ │
@@ -27,9 +27,9 @@ ThumbCode is built as a **decentralized, mobile-first application** with no serv
 │  │  └───────────┘  └───────────┘  └────────┘  │ │
 │  └─────────────────────────────────────────────┘ │
 ├────────────────────────────────────────────────┤
-│                Device Storage                   │
+│               Capacitor Bridge                  │
 │  ┌─────────────┐  ┌─────────────┐             │
-│  │SecureStore  │  │ FileSystem  │             │
+│  │SecureStorage│  │ FileSystem  │             │
 │  │(Encrypted)  │  │ (Repos)     │             │
 │  └─────────────┘  └─────────────┘             │
 └────────────────────────────────────────────────┘
@@ -46,26 +46,34 @@ ThumbCode is built as a **decentralized, mobile-first application** with no serv
 
 | Layer | Technology | Purpose |
 |-------|------------|---------|
-| Framework | React Native + Expo | Cross-platform mobile UI |
-| Styling | NativeWind | Tailwind CSS for React Native |
-| Navigation | expo-router | File-based routing |
-| State | Zustand + Immer | Immutable state management |
+| Framework | React 18 + Vite 7 | Web-first UI with fast builds |
+| Native | Capacitor 8 | iOS/Android native wrapper |
+| Styling | Tailwind CSS | Utility-first CSS |
+| Navigation | React Router DOM 7 | Client-side routing |
+| State | Zustand 5 + Immer | Immutable state management |
 | Git | isomorphic-git | Client-side git operations |
-| Storage | expo-secure-store | Hardware-encrypted credentials |
+| Storage | capacitor-secure-storage | Hardware-encrypted credentials |
 | AI | Anthropic/OpenAI SDKs | Multi-model agent support |
 
 ## Key Design Decisions
 
-### Why React Native + Expo?
+### Why React 18 + Vite?
 
-- Best-in-class TypeScript support
+- Modern ESM-first architecture with excellent DX
+- Fast hot module replacement during development
+- Standard web tooling (no custom bundler)
 - Excellent AI code generation quality (large training corpus)
-- Single codebase for iOS and Android
-- OTA updates for faster iteration
+
+### Why Capacitor?
+
+- Web-first with native device access
+- Standard Vite build pipeline
+- Access to iOS Keychain / Android Keystore for secure storage
+- Easy web deployment alongside native builds
 
 ### Why isomorphic-git?
 
-- Pure JavaScript implementation works on mobile
+- Pure JavaScript implementation works in browser
 - No native git binary required
 - Full git protocol support
 - Works offline
@@ -74,7 +82,7 @@ ThumbCode is built as a **decentralized, mobile-first application** with no serv
 
 - Minimal boilerplate
 - TypeScript-first
-- Works well with React Native
+- Works well with React
 - Easy to test and debug
 
 ### Why BYOK (Bring Your Own Keys)?
@@ -84,15 +92,20 @@ ThumbCode is built as a **decentralized, mobile-first application** with no serv
 - No rate limit sharing
 - Better privacy
 
-## Package Structure
+## Source Structure
 
 ```
-packages/
-├── core/          # Git, Auth, Credentials
-├── config/        # Constants, configuration
-├── state/         # Zustand stores
-├── types/         # Shared TypeScript types
-└── ui/            # Shared UI components
+src/
+├── pages/             # React Router pages
+├── components/        # React components
+│   ├── ui/            # Design system primitives
+│   ├── agents/        # Agent-specific UI
+│   ├── workspace/     # Code workspace
+│   └── chat/          # Chat interface
+├── services/          # Git, GitHub, AI, credentials
+├── stores/            # Zustand state stores
+├── hooks/             # Custom React hooks
+└── lib/               # Utilities
 ```
 
 ## Data Flow
@@ -137,7 +150,7 @@ User Input (API Key)
   API Validation (Test Request)
         │
         ▼
-  SecureStore (Hardware Encrypted)
+  SecureStorage (Hardware Encrypted)
         │
         ▼
   Credential Available for Agents
@@ -145,7 +158,7 @@ User Input (API Key)
 
 ## Security Model
 
-- **Credential Isolation**: Keys stored in hardware-backed secure enclave
+- **Credential Isolation**: Keys stored in hardware-backed secure storage (iOS Keychain / Android Keystore)
 - **No Server**: Direct API calls from device to providers
 - **Transport Security**: Certificate pinning for critical endpoints
 - **Request Signing**: HMAC signing for sensitive operations

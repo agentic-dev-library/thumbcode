@@ -10,7 +10,7 @@ ThumbCode is a **mobile-first agentic development environment**. The core differ
 
 ---
 
-## Competitive Landscape (as captured in `docs/memory-bank/DEVELOPMENT-LOG.md`)
+## Competitive Landscape
 
 Key competitors mentioned:
 - GitHub Copilot
@@ -26,7 +26,7 @@ Key competitors mentioned:
 
 ## Market Forces (from repo research log)
 
-Trends recorded in `docs/memory-bank/DEVELOPMENT-LOG.md`:
+Key market trends:
 1. **Quality > Speed**: governance and reliability matter
 2. **Multi-platform integration**: IDE + terminal + web
 3. **Agent mode**: multi-step autonomous workflows

@@ -10,7 +10,7 @@ This guide helps you set up a local development environment for contributing to 
 ### Required Software
 
 - **Node.js** 20.x or later ([nvm recommended](https://github.com/nvm-sh/nvm))
-- **pnpm** 10.x or later (`npm install -g pnpm`)
+- **pnpm** 10.x or later (`corepack enable && corepack prepare pnpm@latest --activate`)
 - **Git** 2.x or later
 - **Xcode** (for iOS development on macOS)
 - **Android Studio** (for Android development)
@@ -18,18 +18,16 @@ This guide helps you set up a local development environment for contributing to 
 ### Recommended Tools
 
 - **VS Code** with the following extensions:
-  - ESLint
-  - Prettier
+  - Biome (linting + formatting)
   - TypeScript and JavaScript Language Features
   - Tailwind CSS IntelliSense
-- **Expo Go** app on your mobile device
 
 ## Setup Steps
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/agentic-dev-library/thumbcode.git
+git clone https://github.com/jbcom/thumbcode.git
 cd thumbcode
 ```
 
@@ -52,18 +50,18 @@ pnpm install
 Copy the example environment file:
 
 ```bash
-cp .env.example .env
+cp .env.example .env.local
 ```
 
-Edit `.env` with your values:
+Edit `.env.local` with your values:
 
 ```bash
 # GitHub OAuth App Client ID (for Device Flow)
-EXPO_PUBLIC_GITHUB_CLIENT_ID=your_client_id
+VITE_GITHUB_CLIENT_ID=your_client_id
 
 # Optional: API keys for testing
-# EXPO_PUBLIC_ANTHROPIC_KEY=sk-ant-...
-# EXPO_PUBLIC_OPENAI_KEY=sk-...
+# VITE_ANTHROPIC_KEY=sk-ant-...
+# VITE_OPENAI_KEY=sk-...
 ```
 
 ### 5. Start the Development Server
@@ -72,26 +70,22 @@ EXPO_PUBLIC_GITHUB_CLIENT_ID=your_client_id
 pnpm dev
 ```
 
-This starts the Expo development server. You can:
-
-- Press `i` to open iOS simulator
-- Press `a` to open Android emulator
-- Scan the QR code with Expo Go on your device
+This starts the Vite development server at http://localhost:5173.
 
 ## Project Structure
 
 ```
 thumbcode/
-├── app/                    # Expo Router pages
 ├── src/
-│   ├── components/        # Shared components
+│   ├── pages/             # React Router pages
+│   ├── components/        # React components
 │   ├── hooks/             # Custom React hooks
 │   ├── stores/            # Zustand state stores
+│   ├── services/          # Service layer
 │   └── lib/               # Utilities
-├── packages/
-│   ├── core/              # Core services (Git, Credentials)
-│   ├── config/            # Configuration constants
-│   └── types/             # Shared TypeScript types
+├── design-system/         # Design tokens (JSON, TS, CSS)
+├── ios/                   # Capacitor iOS project
+├── android/               # Capacitor Android project
 ├── docs/                  # Documentation source
 └── docs-site/             # Astro documentation site
 ```
@@ -99,8 +93,18 @@ thumbcode/
 ## Common Commands
 
 ```bash
-# Start development server
+# Start Vite dev server
 pnpm dev
+
+# Build for production
+pnpm build
+
+# Sync to native projects
+pnpm cap:sync
+
+# Open native IDEs
+pnpm cap:open:ios
+pnpm cap:open:android
 
 # Run type checking
 pnpm typecheck
@@ -114,22 +118,26 @@ pnpm lint:fix
 # Run tests
 pnpm test
 
-# Build for production
-pnpm build:production
+# Run tests with coverage
+pnpm test:coverage
+
+# Check code duplication
+pnpm lint:duplication
 ```
 
 ## Troubleshooting
 
-### Metro bundler cache issues
+### Vite cache issues
 
 ```bash
-pnpm start --clear
+rm -rf node_modules/.vite && pnpm dev
 ```
 
 ### iOS build failures
 
 ```bash
-cd ios && pod install && cd ..
+cd ios/App && pod install && cd ../..
+pnpm cap:sync
 ```
 
 ### Android build failures
@@ -140,4 +148,4 @@ Open Android Studio, sync Gradle, then retry.
 
 - Read the [Architecture Guide](/thumbcode/about/architecture/)
 - Review the [Brand Guidelines](/thumbcode/brand/guidelines/)
-- Check out [Contributing Guidelines](https://github.com/agentic-dev-library/thumbcode/blob/main/CONTRIBUTING.md)
+- Check out [Contributing Guidelines](https://github.com/jbcom/thumbcode/blob/main/CONTRIBUTING.md)

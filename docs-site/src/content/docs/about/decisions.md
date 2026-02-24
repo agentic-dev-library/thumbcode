@@ -9,31 +9,39 @@ This page summarizes key technical decisions made during ThumbCode development.
 
 ## Stack Decisions
 
-### Mobile Framework: React Native + Expo
+### Web Framework: React 18 + Vite 7
 
-**Decision:** Use React Native with Expo SDK 52+
+**Decision:** Use React 18 with Vite as the build tool
 
 **Rationale:**
-- Best AI code generation quality due to extensive training data
-- TypeScript support is excellent
-- Single codebase for iOS and Android
-- Expo provides OTA updates for fast iteration
+- Fast builds with hot module replacement
+- Modern ESM-first architecture
+- Excellent TypeScript support and AI code generation quality
 - Large ecosystem of compatible libraries
 
-**Alternatives Considered:**
-- Flutter (Dart less familiar to AI models)
-- Native development (double the codebase)
-- PWA (limited device access)
+**History:** Originally built with React Native + Expo SDK 52. Migrated to React + Vite in February 2026 for better web-first development and simpler build tooling.
 
-### Styling: NativeWind (Tailwind CSS)
+### Native Shell: Capacitor 8
 
-**Decision:** Use NativeWind for styling
+**Decision:** Use Capacitor for native iOS/Android access
+
+**Rationale:**
+- Web-first architecture with native capabilities
+- Access to device APIs (secure storage, filesystem, biometrics)
+- Standard web tooling (no Metro bundler)
+- Easy web deployment alongside native builds
+
+### Styling: Tailwind CSS
+
+**Decision:** Use standard Tailwind CSS for styling
 
 **Rationale:**
 - AI agents excel at generating Tailwind patterns
 - Consistent with web development mental model
 - Fast iteration on UI changes
 - Good TypeScript support
+
+**History:** Originally used NativeWind (Tailwind for React Native). Migrated to standard Tailwind CSS with the Capacitor migration.
 
 ### State Management: Zustand
 
@@ -42,7 +50,7 @@ This page summarizes key technical decisions made during ThumbCode development.
 **Rationale:**
 - Minimal boilerplate compared to Redux
 - TypeScript-first design
-- Easy integration with React Native
+- Easy integration with React
 - Supports middleware and devtools
 
 ### Git: isomorphic-git
@@ -50,7 +58,7 @@ This page summarizes key technical decisions made during ThumbCode development.
 **Decision:** Use isomorphic-git for all git operations
 
 **Rationale:**
-- Pure JavaScript works on mobile without native binaries
+- Pure JavaScript works in browser and on mobile without native binaries
 - Full git protocol implementation
 - Works offline
 - Active maintenance
@@ -77,7 +85,7 @@ This page summarizes key technical decisions made during ThumbCode development.
 **Decision:** Store credentials in hardware-backed secure storage only
 
 **Rationale:**
-- Maximum security for sensitive data
+- Maximum security for sensitive data via capacitor-secure-storage-plugin (iOS Keychain / Android Keystore)
 - No server to hack
 - Credentials never leave device
 - Biometric protection available
@@ -136,4 +144,4 @@ This page summarizes key technical decisions made during ThumbCode development.
 
 ## For More Details
 
-See the full [DECISIONS.md](https://github.com/agentic-dev-library/thumbcode/blob/main/DECISIONS.md) in the repository for comprehensive decision records.
+See the full [decisions.md](https://github.com/jbcom/thumbcode/blob/main/docs/architecture/decisions.md) in the repository for comprehensive decision records with migration history.

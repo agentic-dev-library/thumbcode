@@ -56,23 +56,25 @@ All actions are pinned to exact commit SHAs for security and reproducibility.
 
 **Jobs:**
 - **Lint & Type Check** - Biome linting + TypeScript validation
-- **Test** - Jest tests with coverage upload to Codecov, Coveralls, and SonarCloud
-- **Build** - Expo web build with artifact upload
-- **Coveralls Finish** - Finalizes parallel Coveralls build
+- **Test** - Vitest tests with coverage thresholds (80% lines/functions/statements, 73% branches)
+- **Coverage Report** - Posts coverage summary to PRs via vitest-coverage-report-action
+- **Semgrep SAST** - Static application security testing (runs in container)
+- **Build** - Vite web build with artifact upload
 
 **Coverage & Quality:**
-- ✅ Codecov - Test coverage tracking (legacy)
-- ✅ Coveralls - Modern test coverage with badges
-- ✅ SonarCloud - Code quality, security vulnerabilities, code smells, duplication
+- ✅ Vitest coverage thresholds - Enforced natively, CI fails if coverage drops
+- ✅ vitest-coverage-report-action - Coverage diff posted as PR comment
+- ✅ Semgrep CE - SAST scanning for security vulnerabilities (zero SaaS)
+- ✅ jscpd - Code duplication detection (5% threshold)
+- ✅ Biome - 450+ lint rules including security group
+- ✅ pnpm audit - Dependency vulnerability scanning
+- ✅ Dependabot - Automated dependency updates
 
 **Duration:** ~10-15 minutes
 
 **Pinned Actions:**
 - `actions/checkout@de0fac2` (v6.0.2)
 - Uses composite action: `.github/actions/setup-thumbcode` (DRY setup)
-- `codecov/codecov-action@5a10915` (v5.5.1)
-- `coverallsapp/github-action@643bc37` (v2.3.0)
-- `SonarSource/sonarcloud-github-action@e44258b` (v2.3.0)
 - `actions/upload-artifact@ea165f8` (v4.6.2)
 
 ---
@@ -187,7 +189,7 @@ All actions are pinned to exact commit SHAs for security and reproducibility.
 
 **Allowed Tools:**
 - `edit_file`, `write_file`, `read_file`, `list_directory`, `search_files`, `bash`
-- Bash allowlist: `git`, `pnpm`, `npm`, `npx`, `gh`, `biome`, `tsc`, `jest`, `expo`
+- Bash allowlist: `git`, `pnpm`, `npm`, `npx`, `gh`, `biome`, `tsc`, `vitest`
 
 **Pinned Actions:**
 - `actions/checkout@de0fac2` (v6.0.2)
@@ -282,7 +284,7 @@ All actions are pinned to exact commit SHAs for security and reproducibility.
 
 **Allowed Tools:**
 - `edit_file`, `write_file`, `read_file`, `list_directory`, `search_files`, `bash`
-- Bash allowlist: `git`, `pnpm`, `npm`, `npx`, `gh`, `biome`, `tsc`, `jest`, `expo`
+- Bash allowlist: `git`, `pnpm`, `npm`, `npx`, `gh`, `biome`, `tsc`, `vitest`
 
 **Pinned Actions:**
 - `actions/checkout@de0fac2` (v6.0.2)
@@ -346,7 +348,7 @@ For each of the top 3 highest priority issues:
 - Runs: `pnpm biome check --write .`
 - Runs: `pnpm tsc --noEmit`
 - Runs: `pnpm test --passWithNoTests`
-- Runs: `pnpm expo export:web`
+- Runs: `pnpm build`
 - Commits all changes with detailed message
 - Pushes to implementation branch
 
@@ -373,7 +375,7 @@ For each of the top 3 highest priority issues:
 
 **Allowed Tools:**
 - `edit_file`, `write_file`, `read_file`, `list_directory`, `search_files`, `bash`
-- Bash allowlist: `git`, `pnpm`, `npm`, `npx`, `gh`, `biome`, `tsc`, `jest`, `expo`
+- Bash allowlist: `git`, `pnpm`, `npm`, `npx`, `gh`, `biome`, `tsc`, `vitest`
 
 **Pinned Actions:**
 - `actions/checkout@de0fac2` (v6.0.2)
@@ -394,9 +396,6 @@ Add these to your GitHub repository secrets:
 |--------|-------------|--------------|
 | `ANTHROPIC_API_KEY` | Claude API key | PR review, CI auto-fix, issue triage, multi-agent workflow |
 | `GOOGLE_JULES_API_KEY` | Jules API key from jules.google.com | Multi-agent workflow |
-| `COVERALLS_REPO_TOKEN` | Coveralls coverage tracking token | CI test coverage reporting |
-| `SONAR_TOKEN` | SonarCloud code quality token | CI code quality analysis |
-| `CODECOV_TOKEN` | Codecov upload token | CI (optional, legacy) |
 | `GITHUB_TOKEN` | Auto-provided by GitHub Actions | All workflows (automatic) |
 
 ---
@@ -421,56 +420,19 @@ Add these to your GitHub repository secrets:
    - Name: `GOOGLE_JULES_API_KEY`
    - Value: Your Jules API key
 
-### 3. Coveralls Coverage Tracking
+### 3. Local Quality & Security (No SaaS Required)
 
-1. Sign up at [coveralls.io](https://coveralls.io) with your GitHub account
-2. Add your repository: **+ ADD REPOS** → Find `agentic-dev-library/thumbcode` → Toggle ON
-3. Click on the repository name to view details
-4. Copy the **REPO TOKEN** from the repo settings
-5. Add to GitHub: Settings → Secrets → Actions → New secret
-   - Name: `COVERALLS_REPO_TOKEN`
-   - Value: Your Coveralls repo token
+ThumbCode uses a fully local quality stack — no external SaaS accounts needed:
 
-**What you get:**
-- Beautiful coverage badges with percentage
-- Historical coverage trends
-- PR coverage diffs
-- Branch coverage comparison
-
-### 4. SonarCloud Code Quality
-
-1. Sign up at [sonarcloud.io](https://sonarcloud.io) with your GitHub account
-2. Import your organization: **Analyze new project** → Import from GitHub
-3. Select `agentic-dev-library/thumbcode`
-4. Configure analysis:
-   - Choose **GitHub Actions** as analysis method
-   - Project key will be auto-generated: `agentic-dev-library_thumbcode`
-5. Copy the **SONAR_TOKEN** from the setup instructions
-6. Add to GitHub: Settings → Secrets → Actions → New secret
-   - Name: `SONAR_TOKEN`
-   - Value: Your SonarCloud token
-
-**What you get:**
-- Code quality score (A-E rating)
-- Security vulnerability detection
-- Code smell identification
-- Technical debt estimation
-- Code duplication analysis
-- PR quality gates
-
-**Configuration:**
-- Project settings are in `sonar-project.properties`
-- Customize quality gates in SonarCloud dashboard
-- Default: Code coverage, duplications, maintainability, reliability, security
-
-### 5. Codecov (Optional, Legacy)
-
-1. Sign up at [codecov.io](https://codecov.io)
-2. Add your repository
-3. Copy the upload token
-4. Add to GitHub: Settings → Secrets → Actions → New secret
-   - Name: `CODECOV_TOKEN`
-   - Value: Your Codecov token
+| Tool | Purpose | Configuration |
+|------|---------|---------------|
+| **Vitest thresholds** | Coverage enforcement (80%/73% branches) | `vitest.config.ts` |
+| **vitest-coverage-report-action** | PR coverage comments | `.github/workflows/ci.yml` |
+| **Semgrep CE** | SAST security scanning | Runs in Docker container |
+| **jscpd** | Code duplication detection (5% threshold) | `.jscpd.json` |
+| **Biome** | 450+ lint rules including security | `biome.json` |
+| **pnpm audit** | Dependency vulnerability scanning | `package.json` scripts |
+| **Dependabot** | Automated dependency updates | `.github/dependabot.yml` |
 
 ---
 
@@ -811,7 +773,7 @@ ThumbCode now includes AI shortcuts that you can trigger by mentioning them in i
    - Runs: `pnpm biome check .`
    - Runs: `pnpm tsc --noEmit`
    - Runs: `pnpm test --passWithNoTests`
-   - Runs: `pnpm expo export:web`
+   - Runs: `pnpm build`
 4. Reports: **RESOLVED** / **PARTIALLY RESOLVED** / **NOT RESOLVED** / **DUPLICATE**
 5. **Auto-closes if fully resolved** with evidence
 

@@ -222,4 +222,4 @@ The design system evolved through 6 phases:
 5. **Phase 5**: "Daube revolution" -- replaced all gradients with organic paint-daub shapes
 6. **Phase 6**: Typography refined -- Fraunces/Cabin replaced Space Grotesk/Inter
 
-See `docs/memory-bank/DEVELOPMENT-LOG.md` for the full chronological history.
+See `docs/architecture/decisions.md` for current decision records including migration history.

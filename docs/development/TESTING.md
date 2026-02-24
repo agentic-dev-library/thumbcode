@@ -56,11 +56,12 @@ Playwright is configured in `playwright.config.ts` to:
 - Capture screenshots on failure
 - Store snapshots in `e2e/web/screenshots/`
 
-### E2E Tests (Maestro -- Mobile)
+### E2E Tests (Playwright -- Mobile Web)
+
+Playwright E2E tests target mobile viewports in a real browser. Currently focused on web; native E2E testing strategy TBD.
 
 ```bash
-pnpm e2e:build
-pnpm e2e:test
+pnpm test:e2e:web
 ```
 
 ## Test Architecture
@@ -264,19 +265,20 @@ pnpm test:coverage
 
 ### CI Coverage
 
-Coverage reports are uploaded to both Coveralls and SonarCloud in CI. SonarCloud reads `coverage/lcov.info` as configured in `sonar-project.properties`.
+Coverage thresholds are enforced natively by Vitest (80% lines/functions/statements, 73% branches). On PRs, `vitest-coverage-report-action` posts a coverage summary comment.
 
 ## CI Integration
 
 Tests run automatically in GitHub Actions on every push and PR via `.github/workflows/ci.yml`:
 
-1. **Lint** -- Biome check
+1. **Lint** -- Biome check + jscpd duplication detection (5% threshold)
 2. **Typecheck** -- `tsc --noEmit`
-3. **Test** -- `pnpm test` with coverage
-4. **SonarCloud** -- Static analysis and coverage ingestion
-5. **Build** -- Web build validation
-6. **E2E** -- Playwright browser tests (on build success)
-7. **Coveralls** -- Coverage reporting
+3. **Test** -- `pnpm test:coverage` with Vitest threshold enforcement
+4. **Coverage Report** -- PR comment with coverage diff (PRs only)
+5. **Semgrep SAST** -- Static application security testing
+6. **Security** -- `pnpm audit` dependency vulnerability scan
+7. **Build** -- Web build validation
+8. **E2E** -- Playwright browser tests (on build success)
 
 Failed tests block PR merging.
 

@@ -232,19 +232,19 @@ Source (src/ + packages/) -> Vite Build -> dist/ -> Capacitor Sync -> iOS/Androi
 
 ### CI/CD Pipeline
 ```
-Push -> Lint (Biome) -> Typecheck (tsc) -> Test (Vitest) -> Build (Vite) -> Deploy
-                                                                |
-                                                          Coverage Report
-                                                                |
-                                                          SonarCloud Analysis
+Push -> Lint (Biome + jscpd) -> Typecheck (tsc) -> Test (Vitest + thresholds) -> Semgrep SAST -> Build (Vite) -> Deploy
+                                                                                     |
+                                                                               Coverage Report (PR)
 ```
 
 ## Testing Strategy
 
-| Layer | Tool | Target Coverage |
-|-------|------|-----------------|
-| Unit tests | Vitest + Testing Library | 80% statements |
+| Layer | Tool | Target |
+|-------|------|--------|
+| Unit tests | Vitest + Testing Library | 80% lines/functions/statements, 73% branches |
 | E2E tests | Playwright | Critical paths |
 | Type checking | TypeScript (tsc --noEmit) | All files |
 | Linting | Biome | All packages |
-| Static analysis | SonarCloud | 0 bugs, < 50 smells |
+| SAST | Semgrep CE | 0 findings |
+| Duplication | jscpd | < 5% |
+| Dependencies | pnpm audit + Dependabot | 0 moderate+ vulnerabilities |

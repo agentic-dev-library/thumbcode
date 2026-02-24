@@ -4,7 +4,7 @@
 > **Status**: Architecture Proposal
 > **Author**: Engineering Team
 > **Scope**: Two major feature additions for the next development wave
-> **Depends on**: PRD-v1.0.md (core engine must be functional first)
+> **Depends on**: Core engine must be functional first (v1.0 consolidation)
 
 ---
 

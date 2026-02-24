@@ -142,6 +142,6 @@ Before making changes, read in this order:
 
 1. `CLAUDE.md` — Complete agent playbook (root)
 2. `AGENTS.md` — Coordination protocol
-3. `DECISIONS.md` — Technical decisions registry
+3. `docs/architecture/decisions.md` — Technical decisions registry
 4. `docs/memory-bank/techContext.md` — Current tech stack
-5. `docs/development/ARCHITECTURE.md` — System design (note: references outdated Expo stack)
+5. `docs/architecture/architecture.md` — System architecture and data flow

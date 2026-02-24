@@ -4,9 +4,9 @@ This document outlines the security procedures and policies for the ThumbCode pr
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability, please report it to us as soon as possible. We take all security reports seriously and will investigate them promptly.
+If you discover a security vulnerability, please report it responsibly. We take all security reports seriously and will investigate them promptly.
 
-To report a vulnerability, please email us at `security@thumbcode.com` with the following information:
+To report a vulnerability, please open a private security advisory on GitHub with the following information:
 
 - A detailed description of the vulnerability, including the steps to reproduce it.
 - The version of the application you are using.
@@ -20,20 +20,21 @@ The ThumbCode application includes several security features to protect user dat
 
 ### Credential Storage
 
-- All sensitive credentials, such as API keys and tokens, are stored using `expo-secure-store`, which leverages hardware-backed encryption on both iOS and Android.
+- All sensitive credentials (API keys, tokens) are stored using `capacitor-secure-storage-plugin`, which leverages iOS Keychain and Android Keystore for hardware-backed encryption.
 - Credentials are encrypted at rest and are only accessible when the device is unlocked.
-- Biometric authentication (Face ID or fingerprint) is required to access or modify credentials.
+- Biometric authentication (Face ID or fingerprint) is available via `@aparajita/capacitor-biometric-auth` to protect credential access.
+- **BYOK model**: User API keys never leave the device. There is no server-side credential storage.
 
 ### API Communication
 
 - All API communication is protected by TLS encryption.
-- Certificate pinning is implemented to prevent man-in-the-middle attacks. The application will only trust the public keys of the pre-configured API endpoints.
-- All requests to the `mcp_server` are signed with an HMAC-SHA256 signature to prevent tampering and ensure authenticity.
+- Certificate pinning is implemented to prevent man-in-the-middle attacks.
+- All requests to the MCP server are signed with an HMAC-SHA256 signature to prevent tampering and ensure authenticity.
 
 ### Input Sanitization
 
-- All user-provided input, including API keys and project information, is sanitized and validated using `zod` before being stored or used.
-- This helps to prevent a range of injection attacks and ensures the integrity of the data.
+- All user-provided input, including API keys and project information, is sanitized and validated using Zod before being stored or used.
+- This helps prevent injection attacks and ensures the integrity of the data.
 
 ### Runtime Security
 
@@ -42,15 +43,20 @@ The ThumbCode application includes several security features to protect user dat
 
 ### Web Security
 
-- The web version of the application includes a strict Content Security Policy (CSP) to mitigate cross-site scripting (XSS) and other injection attacks.
-- Other security headers, such as `X-Content-Type-Options`, `X-Frame-Options`, and `Referrer-Policy`, are also in place.
+- The web version includes a strict Content Security Policy (CSP) to mitigate cross-site scripting (XSS) and other injection attacks.
+- Other security headers (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`) are configured.
 
 ## Secure Development Practices
 
-- All dependencies are regularly scanned for vulnerabilities using `pnpm audit`.
+- Dependencies are scanned for vulnerabilities via `pnpm audit` (CI enforces zero moderate+ vulnerabilities in production deps).
+- Static analysis via Semgrep CE runs on every push (SARIF results uploaded to GitHub Security tab).
+- Code duplication is monitored via jscpd (< 5% threshold).
+- Biome enforces consistent linting and formatting across the codebase.
 - The principle of least privilege is followed when requesting permissions.
-- All code is reviewed for security vulnerabilities before being merged into the main branch.
+- All code is reviewed for security vulnerabilities before being merged.
 
-## Security Audits
+## CI/CD Security
 
-The application will undergo regular security audits to identify and address any potential vulnerabilities. The results of these audits will be made available to the public.
+- All GitHub Actions are SHA-pinned (no version tags) to prevent supply chain attacks.
+- Dependabot monitors npm packages and GitHub Actions for known vulnerabilities.
+- The CI pipeline runs lint, typecheck, test, Semgrep SAST, and build on every push.

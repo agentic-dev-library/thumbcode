@@ -25,17 +25,26 @@ If you want to run ThumbCode from source:
 
 ```bash
 # Clone the repository
-git clone https://github.com/agentic-dev-library/thumbcode.git
+git clone https://github.com/jbcom/thumbcode.git
 cd thumbcode
 
 # Install dependencies
 pnpm install
 
-# Start the development server
-pnpm start
+# Start the Vite dev server (web)
+pnpm dev
 ```
 
-Then open the Expo Go app on your device and scan the QR code.
+Open http://localhost:5173 in your browser, or build for native:
+
+```bash
+# Build and sync to native
+pnpm build && pnpm cap:sync
+
+# Open in Xcode or Android Studio
+pnpm cap:open:ios
+pnpm cap:open:android
+```
 
 ## First-Time Setup
 
@@ -59,7 +68,7 @@ Your API keys are stored securely on your device:
 2. Enter your Anthropic API key (`sk-ant-...`)
 3. Optionally add OpenAI key for additional models
 
-Your keys are encrypted using hardware-backed secure storage and never leave your device.
+Your keys are encrypted using hardware-backed secure storage (iOS Keychain / Android Keystore) and never leave your device.
 
 ### 3. Clone Your First Repository
 

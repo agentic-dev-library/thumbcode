@@ -46,7 +46,7 @@ export function ErrorFallback({
       const issueBody = encodeURIComponent(
         `**Error Details**\nMessage: ${error?.message || 'No message'}\n\n**Component Stack**\n\`\`\`\n${componentStack || 'No stack trace'}\n\`\`\``
       );
-      const url = `https://github.com/agentic-dev-library/thumbcode/issues/new?title=${issueTitle}&body=${issueBody}`;
+      const url = `https://github.com/jbcom/thumbcode/issues/new?title=${issueTitle}&body=${issueBody}`;
 
       window.open(url, '_blank');
     }

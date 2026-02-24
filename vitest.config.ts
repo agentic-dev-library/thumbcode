@@ -12,9 +12,15 @@ export default defineConfig({
     exclude: ['**/node_modules/**'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'lcov'],
+      reporter: ['text', 'json', 'json-summary', 'lcov'],
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['**/__tests__/**', '**/*.d.ts', '**/types/**'],
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 73,
+        statements: 80,
+      },
     },
   },
 });

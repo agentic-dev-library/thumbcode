@@ -1,6 +1,6 @@
 # Design System Governance (1.0)
 
-ThumbCode’s design system exists to keep the product **warm, technical, and consistent**, even when many agents contribute in parallel.
+ThumbCode's design system exists to keep the product **warm, technical, and consistent**, even when many agents contribute in parallel.
 
 This document defines the **rules, sources of truth, and review gates** for UI work.
 
@@ -8,17 +8,16 @@ This document defines the **rules, sources of truth, and review gates** for UI w
 
 ## Sources of Truth (in priority order)
 
-1. **`/workspace/CLAUDE.md`**
+1. **`CLAUDE.md`** (project root)
    - Brand constraints (no gradients, P3 palette, typography, organic shapes)
 2. **Design tokens**: `design-system/tokens.json`
    - Canonical colors/spacing/typography values
 3. **Tailwind config**: `tailwind.config.ts`
-   - Derived token mappings for NativeWind
-4. **Organic styles**:
-   - App: `src/lib/organic-styles.ts`
-   - Shared UI package: `packages/ui/src/theme/organicStyles.ts`
+   - Derived token mappings for Tailwind CSS
+4. **Organic styles**: `src/lib/organic-styles.ts`
+   - Reusable organic border-radius and shadow presets
 
-If these disagree, fix the disagreement — don’t “pick one” ad hoc.
+If these disagree, fix the disagreement — don't "pick one" ad hoc.
 
 ---
 
@@ -26,40 +25,40 @@ If these disagree, fix the disagreement — don’t “pick one” ad hoc.
 
 ### Colors
 - **No hardcoded hex** in app UI/components (except token sources, tests, or icon generation).
-- Use `getColor()` / `getColorWithOpacity()` (app) or `themeTokens` (shared UI package).
+- Use Tailwind utility classes (`text-coral-500`, `bg-teal-600`) or `getColor()` / `getColorWithOpacity()` from design tokens.
 
 ### Shapes
-- No perfectly rounded “generic” corners for major surfaces.
-- Use organic radii via `organicBorderRadius.*`.
+- No perfectly rounded "generic" corners for major surfaces.
+- Use organic radii via `organicBorderRadius.*` or Tailwind organic classes.
 - True circles are allowed **only** when functionally required (e.g., avatar, radio dot).
 
 ### Shadows
-- Use organic shadows via `organicShadow.*` (RN style objects), not random `shadow*` values.
-- Avoid web-only utilities that don’t map cleanly to RN.
+- Use organic shadows via `organicShadow.*` or Tailwind shadow utilities.
+- Avoid arbitrary shadow values that don't follow the brand pattern.
 
 ### Iconography
 - **No emoji/unicode glyph icons** in production UI.
-- App icons must come from `src/components/icons/` (PaintDaube) unless a migration plan introduces a semantic wrapper.
+- App icons must come from Lucide React (`lucide-react`).
 
 ### Typography
-- Use the system’s font families:
+- Use the system's font families:
   - Display: Fraunces
   - Body: Cabin
   - Mono: JetBrains Mono
 
-### “Demo Mode”
-- No demo-mode paths for production 1.0. If a feature can’t ship, it must be implemented — not simulated.
+### "Demo Mode"
+- No demo-mode paths for production 1.0. If a feature can't ship, it must be implemented — not simulated.
 
 ---
 
 ## Component Ownership & DRY Policy
 
 ### Where components live
-- **Reusable primitives**: `packages/ui`
+- **Design system primitives**: `src/ui/` (Box, Text, Button, Card, Input, etc.)
 - **App-specific composites**: `src/components/**`
-- **Screens**: `app/**`
+- **Pages**: `src/pages/**`
 
-If you’re building something reusable, default to `packages/ui` first.
+If you're building something reusable, default to `src/ui/` first.
 
 ---
 
@@ -90,6 +89,5 @@ If you’re building something reusable, default to `packages/ui` first.
 - [ ] Uses organic shadows where needed (`organicShadow`)
 - [ ] No emoji/unicode glyph icons
 - [ ] Accessible labels and touch targets
-- [ ] Lint passes
-- [ ] Tests pass
-
+- [ ] Lint passes (`pnpm lint`)
+- [ ] Tests pass (`pnpm test`)

@@ -44,7 +44,7 @@ The onboarding flow guides new users through initial setup: GitHub authenticatio
 - [ ] Optional input for OpenAI API key
 - [ ] Real-time validation (format check)
 - [ ] "Validate" button tests key with API call
-- [ ] Secure storage using expo-secure-store
+- [ ] Secure storage using capacitor-secure-storage-plugin
 - [ ] Skip option if user doesn't have keys yet
 
 ### US-004: First Project Creation
@@ -435,13 +435,13 @@ interface OnboardingStore {
 - [ ] Error recovery flows
 - [ ] Skip functionality
 
-### E2E Tests (Maestro)
-```yaml
-# e2e/onboarding.yaml
-- launchApp
-- tapOn: "Get Started"
-- assertVisible: "Connect your GitHub"
-- tapOn: "I'll do this later"
-- assertVisible: "Configure AI Providers"
-# ... continue flow
+### E2E Tests (Playwright)
+```typescript
+// e2e/onboarding.spec.ts
+test('completes onboarding flow', async ({ page }) => {
+  await page.goto('/onboarding/welcome');
+  await page.click('text=Get Started');
+  await expect(page.locator('text=Connect your GitHub')).toBeVisible();
+  // ... continue flow
+});
 ```

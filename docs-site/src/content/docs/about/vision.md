@@ -69,6 +69,6 @@ ThumbCode is open source. Our development process is transparent, and we welcome
 
 ## Join the Journey
 
-- [GitHub Repository](https://github.com/agentic-dev-library/thumbcode)
+- [GitHub Repository](https://github.com/jbcom/thumbcode)
 - [Discord Community](https://discord.gg/thumbcode)
 - [Twitter/X](https://twitter.com/thumbcode)

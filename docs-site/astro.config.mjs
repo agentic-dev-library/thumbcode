@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://agentic-dev-library.github.io',
+  site: 'https://jbcom.github.io',
   base: '/thumbcode',
   integrations: [
     starlight({
@@ -16,7 +16,7 @@ export default defineConfig({
         replacesTitle: false,
       },
       social: {
-        github: 'https://github.com/agentic-dev-library/thumbcode',
+        github: 'https://github.com/jbcom/thumbcode',
       },
       customCss: ['./src/styles/custom.css'],
       sidebar: [

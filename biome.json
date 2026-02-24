@@ -60,6 +60,7 @@
       "!**/.expo",
       "!**/.next",
       "!**/coverage",
+      "!**/reports",
       "!**/*.generated.*",
       "!**/design-system/generated",
       "!index.html",

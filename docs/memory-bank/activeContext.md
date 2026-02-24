@@ -22,7 +22,7 @@ The work is tracked via `tasks/prd.json` with 24 user stories organized by prior
 | **US-012** | Refactor tab pages | Extracted useHomeDashboard, useProjectList, useAgentList hooks |
 | **US-014** | Create memory bank foundation files | projectbrief.md, productContext.md, techContext.md created |
 | **US-017** | Update config files, remove Expo vestiges | .env.example uses VITE_*, Expo artifacts deleted |
-| **US-018** | Update Biome, SonarCloud, TypeScript configs | All packages now linted and typechecked |
+| **US-018** | Update Biome, Semgrep, TypeScript configs | All packages now linted and typechecked |
 
 ### Key Technical Migrations Completed
 
@@ -76,6 +76,6 @@ The work is tracked via `tasks/prd.json` with 24 user stories organized by prior
 
 ## Architecture Decisions Pending
 
-- Whether to keep or archive root-level docs (ARCHITECTURE.md, DECISIONS.md, DEVELOPMENT-LOG.md, PROJECT-STATUS.md) after content migrated to docs/ (US-016 will address)
+- ~~Root-level docs cleanup~~ — Resolved: stale Expo-era docs removed, current docs consolidated in `docs/`
 - How to handle the Capacitor plugin configuration for secure storage when running on web vs native
 - MCP server integration approach for agent tool calling

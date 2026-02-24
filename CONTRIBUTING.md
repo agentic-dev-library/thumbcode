@@ -4,78 +4,82 @@ Thank you for your interest in contributing to ThumbCode!
 
 ## For AI Agents
 
-If you're an AI agent working on this codebase, please read these documents **in this order**:
+If you're an AI agent working on this codebase, read these documents **in this order**:
 
-1. **[docs/agents/CLAUDE.md](docs/agents/CLAUDE.md)** - Complete agent playbook with brand guidelines
+1. **[CLAUDE.md](CLAUDE.md)** - Complete agent playbook with brand guidelines and architecture
 2. **[AGENTS.md](AGENTS.md)** - Agent coordination protocol and workflow
-3. **[DECISIONS.md](DECISIONS.md)** - Technical decisions registry (check before proposing changes)
-4. **[src/types/index.ts](src/types/index.ts)** - Core type definitions (code against these)
-5. **[docs/development/ARCHITECTURE.md](docs/development/ARCHITECTURE.md)** - System architecture
+3. **[docs/memory-bank/techContext.md](docs/memory-bank/techContext.md)** - Current technology stack
+4. **[docs/memory-bank/activeContext.md](docs/memory-bank/activeContext.md)** - Current work in progress
 
 ### Quick Checklist
 
 Before making changes:
 - [ ] Read the agent playbook (CLAUDE.md)
-- [ ] Check DECISIONS.md for relevant decisions
 - [ ] Use design tokens from `design-system/tokens.json`
-- [ ] Follow types in `src/types/`
-- [ ] Apply organic styling (asymmetric border-radius)
+- [ ] Apply organic styling (asymmetric border-radius, no gradients)
 - [ ] Use brand colors (Coral/Teal/Gold)
 - [ ] Write tests for new code
+- [ ] Run `pnpm lint` and `pnpm typecheck` before committing
 
 ## For Human Contributors
 
 ### Prerequisites
 
-> **ThumbCode requires a custom development build.** It does NOT work with Expo Go.
-
-Before contributing, ensure you can build and run ThumbCode:
-
-1. **Build a development client** (required once):
-   ```bash
-   pnpm run build:dev --platform ios   # or android
-   ```
-
-2. **Start development** (daily workflow):
-   ```bash
-   pnpm dev   # launches YOUR dev build, not Expo Go
-   ```
-
-See [docs/development/SETUP.md](docs/development/SETUP.md) for detailed build instructions and troubleshooting common "Native module cannot be null" errors.
+- Node.js (LTS)
+- pnpm 10.x (`corepack enable && corepack prepare pnpm@latest --activate`)
+- For iOS: Xcode + CocoaPods
+- For Android: Android Studio + SDK
 
 ### Getting Started
 
 1. Fork the repository
 2. Clone your fork
 3. Install dependencies: `pnpm install`
-4. **Build development client**: `pnpm run build:dev --platform ios`
+4. Start the Vite dev server: `pnpm dev` (http://localhost:5173)
 5. Create a branch: `git checkout -b feature/your-feature-name`
 
 ### Development Workflow
 
 ```bash
-# Start development server (with custom dev client)
+# Start Vite dev server (web)
 pnpm dev
 
-# Run tests
+# Build for production
+pnpm build
+
+# Sync to native projects
+pnpm cap:sync
+
+# Open native IDEs
+pnpm cap:open:ios
+pnpm cap:open:android
+
+# Type checking
+pnpm typecheck
+
+# Linting and formatting
+pnpm lint
+pnpm lint:fix
+pnpm format
+
+# Testing
 pnpm test
+pnpm test:watch
+pnpm test:coverage
 
-# Type check
-pnpm run typecheck
+# Code duplication check
+pnpm lint:duplication
 
-# Lint
-pnpm run lint:fix
-
-# Generate design tokens (after editing tokens.json)
-pnpm run generate:tokens
+# E2E tests
+pnpm test:e2e:web
 ```
 
 ### Code Style
 
 - **TypeScript**: All new code must be TypeScript
-- **Formatting**: Use the project's ESLint config
+- **Formatting**: Use Biome (runs via `pnpm lint` and `pnpm format`)
 - **Components**: Functional components with hooks
-- **Styling**: Use NativeWind (Tailwind classes)
+- **Styling**: Tailwind CSS utility classes
 - **Design Tokens**: Always use tokens from `design-system/tokens.json`
 
 ### Design System
@@ -106,25 +110,25 @@ test(git): add isomorphic-git integration tests
 
 1. Update documentation if needed
 2. Add tests for new features
-3. Ensure all tests pass
-4. Update DECISIONS.md if making architectural changes
+3. Ensure all tests pass (`pnpm test`)
+4. Ensure lint and typecheck pass (`pnpm lint && pnpm typecheck`)
 5. Fill out the PR template completely
 6. Request review from maintainers
 
 ### Testing
 
 ```bash
-# Unit tests
+# Unit tests (Vitest)
 pnpm test
 
 # Watch mode
-pnpm run test:watch
+pnpm test:watch
 
-# Coverage (aim for 80%)
-pnpm run test:coverage
+# Coverage (80% threshold for lines/functions/statements)
+pnpm test:coverage
 
-# E2E tests
-pnpm run e2e:test
+# E2E tests (Playwright)
+pnpm test:e2e:web
 ```
 
 ### Documentation
@@ -132,17 +136,7 @@ pnpm run e2e:test
 - Update relevant docs when changing functionality
 - Add JSDoc comments to complex functions
 - Update type definitions when changing interfaces
-- Keep README.md and SETUP.md current
-
-## Project Structure
-
-See [docs/development/SETUP.md](docs/development/SETUP.md) for detailed project structure.
-
-## Questions?
-
-- Open an issue for bugs or feature requests
-- Check existing issues and discussions first
-- Be respectful and constructive
+- Keep CLAUDE.md current when making architectural changes
 
 ## License
 

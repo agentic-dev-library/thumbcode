@@ -18,10 +18,8 @@
 Professional software development, reimagined for mobile.
 
 <!-- Build & Quality Badges -->
-[![CI](https://github.com/agentic-dev-library/thumbcode/actions/workflows/ci.yml/badge.svg)](https://github.com/agentic-dev-library/thumbcode/actions/workflows/ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/agentic-dev-library/thumbcode/badge.svg?branch=main)](https://coveralls.io/github/agentic-dev-library/thumbcode?branch=main)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=agentic-dev-library_thumbcode&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=agentic-dev-library_thumbcode)
-[![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Deployed-0D9488?style=for-the-badge&logo=github&logoColor=white)](https://agentic-dev-library.github.io/thumbcode)
+[![CI](https://github.com/jbcom/thumbcode/actions/workflows/ci.yml/badge.svg)](https://github.com/jbcom/thumbcode/actions/workflows/ci.yml)
+[![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Deployed-0D9488?style=for-the-badge&logo=github&logoColor=white)](https://jbcom.github.io/thumbcode)
 
 <!-- Brand Colors -->
 <p>
@@ -256,12 +254,13 @@ ThumbCode is built on a foundation optimized for AI code generation and mobile d
 
 | Layer | Technology | Why It Matters |
 |-------|------------|----------------|
-| **Framework** | React Native + Expo SDK 52 | Largest training corpus for AI models; generates better code |
-| **Styling** | NativeWind (Tailwind) | Declarative patterns AI understands natively |
-| **Navigation** | expo-router | File-based routing that's predictable for agents |
-| **State** | Zustand | Simple patterns that AI can reason about |
+| **Framework** | React 18 + Vite 7 | Fast builds, modern ESM, excellent DX |
+| **Native** | Capacitor 8 | Web-first with native iOS/Android access |
+| **Styling** | Tailwind CSS | Declarative patterns AI understands natively |
+| **Navigation** | React Router DOM 7 | Client-side routing with nested layouts |
+| **State** | Zustand 5 | Simple patterns that AI can reason about |
 | **Git** | isomorphic-git | Client-side operations; no server required |
-| **Security** | expo-secure-store | Hardware-backed encryption for credentials |
+| **Security** | capacitor-secure-storage | Hardware-backed encryption for credentials |
 | **AI** | Anthropic Claude / OpenAI | Long context windows for full-file understanding |
 
 Every technology choice optimizes for **AI agent effectiveness** and **mobile-native experience**.
@@ -300,7 +299,7 @@ ThumbCode is **not yet publicly available** as a mobile app. We're currently in 
 - ✅ Multi-agent coordination protocols
 - ✅ GitHub Actions CI/CD with Claude integration
 - ✅ Automated issue triage and PR creation
-- ✅ React Native Web deployment pipeline
+- ✅ Web deployment via Vite + GitHub Pages
 
 ### What We're Building
 
@@ -377,66 +376,41 @@ ThumbCode rejects perfect uniformity in favor of organic, human-feeling design:
 
 While ThumbCode is in collaborative development, we welcome contributions from both humans and AI agents.
 
-### Development Build Required
-
-> **ThumbCode requires a custom development build and cannot run in Expo Go.**
-
-ThumbCode uses native modules for security features that are incompatible with Expo Go:
-
-| Native Module | Purpose | Why It's Required |
-|---------------|---------|-------------------|
-| `expo-secure-store` | Hardware-backed credential storage | BYOK architecture requires secure key storage |
-| `expo-local-authentication` | Biometric unlock | Protects API keys with device-level security |
-| `react-native-ssl-public-key-pinning` | Certificate pinning | Prevents man-in-the-middle attacks |
-
-**First-time setup (build once):**
-
-```bash
-# Build development client for iOS
-pnpm run build:dev --platform ios
-
-# OR build for Android
-pnpm run build:dev --platform android
-```
-
-**Daily development (after building once):**
-
-```bash
-# Start dev server with development client
-pnpm dev
-
-# This launches YOUR custom dev build, not Expo Go
-```
-
-See [docs/development/SETUP.md](docs/development/SETUP.md) for detailed build instructions and troubleshooting.
-
 ### Getting Started
 
 ```bash
 # Clone the repository
-git clone https://github.com/agentic-dev-library/thumbcode.git
+git clone https://github.com/jbcom/thumbcode.git
 cd thumbcode
 
-# Install dependencies (runs design token generation automatically)
+# Install dependencies
 pnpm install
 
-# Build development client (required - does NOT work with Expo Go)
-pnpm run build:dev --platform ios   # or android
+# Start Vite dev server (web)
+pnpm dev              # http://localhost:5173
 
-# Start development server
-pnpm dev
+# Build for production
+pnpm build            # outputs to dist/
+
+# Sync to native projects
+pnpm cap:sync         # copies dist/ to iOS/Android
+
+# Open native IDEs
+pnpm cap:open:ios     # opens Xcode
+pnpm cap:open:android # opens Android Studio
 ```
 
 ### Project Structure
 
 ```
 thumbcode/
-├── app/                          # Expo Router pages
-│   ├── (onboarding)/            # GitHub auth, API key setup
-│   ├── (tabs)/                  # Main navigation
-│   └── _layout.tsx
 ├── src/
-│   ├── components/              # React Native components
+│   ├── pages/                   # React Router pages
+│   │   ├── tabs/                # Tab navigation (home, projects, agents, chat, settings)
+│   │   ├── detail/              # Entity detail pages
+│   │   ├── onboarding/          # Onboarding flow
+│   │   └── settings/            # Settings sub-pages
+│   ├── components/              # React components
 │   │   ├── ui/                  # Design system primitives
 │   │   ├── agents/              # Agent-specific UI
 │   │   ├── workspace/           # File tree, code viewer
@@ -444,12 +418,12 @@ thumbcode/
 │   ├── services/                # Git, GitHub, AI, credentials
 │   ├── stores/                  # Zustand state management
 │   ├── hooks/                   # Custom React hooks
-│   └── types/                   # TypeScript definitions
-├── packages/
-│   └── dev-tools/               # Build-time tools (token/icon generation)
+│   └── lib/                     # Utilities and helpers
 ├── design-system/
 │   ├── tokens.json              # Design tokens (source of truth)
 │   └── generated/               # Auto-generated CSS/Tailwind
+├── ios/                         # Capacitor iOS project
+├── android/                     # Capacitor Android project
 ├── public/assets/
 │   ├── logos/                   # SVG logos (full, mark, variants)
 │   ├── icons/                   # App icons & favicons
@@ -463,7 +437,7 @@ thumbcode/
 |----------|----------|---------|
 | **[CLAUDE.md](CLAUDE.md)** | AI Agents | Complete agent playbook and coding standards |
 | **[AGENTS.md](AGENTS.md)** | All | Multi-agent coordination protocol |
-| **[ARCHITECTURE.md](ARCHITECTURE.md)** | Developers | System architecture and data flow |
+| **[docs/architecture/architecture.md](docs/architecture/architecture.md)** | Developers | System architecture and data flow |
 | **[VISION.md](docs/vision/VISION.md)** | All | Product vision and roadmap |
 | **[BRAND-GUIDELINES.md](docs/brand/BRAND-GUIDELINES.md)** | Designers | Visual identity and organic styling |
 | **[WORKFLOWS.md](.github/WORKFLOWS.md)** | DevOps | CI/CD workflows and GitHub Actions |
@@ -568,7 +542,7 @@ You bring your own API keys. ThumbCode never proxies or has access to your crede
 <details>
 <summary><strong>Can ThumbCode build production apps?</strong></summary>
 
-Yes. ThumbCode uses **React Native + Expo**, which compiles to native iOS and Android apps. The apps agents build are the same quality as those written by human developers—they're just written faster and with AI-assisted review.
+Yes. ThumbCode uses **React 18 + Capacitor 8**, which deploys as native iOS and Android apps (and web). The apps agents build are the same quality as those written by human developers—they're just written faster and with AI-assisted review.
 
 </details>
 
@@ -594,10 +568,10 @@ That said, understanding basic programming concepts (variables, functions, state
 
 ## Community & Support
 
-- **GitHub Discussions** — [Questions, ideas, feature requests](https://github.com/agentic-dev-library/thumbcode/discussions)
-- **GitHub Issues** — [Bug reports and technical issues](https://github.com/agentic-dev-library/thumbcode/issues)
+- **GitHub Discussions** — [Questions, ideas, feature requests](https://github.com/jbcom/thumbcode/discussions)
+- **GitHub Issues** — [Bug reports and technical issues](https://github.com/jbcom/thumbcode/issues)
 - **Documentation** — Comprehensive guides in [`/docs`](docs/)
-- **Web Preview** — [agentic-dev-library.github.io/thumbcode](https://agentic-dev-library.github.io/thumbcode)
+- **Web Preview** — [jbcom.github.io/thumbcode](https://jbcom.github.io/thumbcode)
 
 ---
 

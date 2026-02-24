@@ -103,7 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GitHub Actions: PR review, CI auto-fix, issue triage, multi-agent workflows
 - Netlify web deployment pipeline
 - EAS Build profiles for development, preview, and production
-- SonarCloud integration for code quality
+- Local quality stack: Vitest coverage thresholds, Semgrep SAST, jscpd duplication detection
 
 ### Security
 
