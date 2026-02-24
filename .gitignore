@@ -149,6 +149,9 @@ vite.config.ts.timestamp-*
 # Astro generated files
 docs-site/.astro/
 
+# Archive binary files
+archive/*.zip
+
 # Capacitor native build artifacts
 ios/App/Pods/
 ios/DerivedData/
@@ -156,3 +159,20 @@ android/.gradle/
 android/app/build/
 android/build/
 android/local.properties
+
+# Test screenshots (Playwright visual regression)
+*.png
+!src/**/*.png
+!tools/**/*.png
+!assets/**/*.png
+!public/**/*.png
+!docs-site/**/*.png
+
+# Ralph TUI session artifacts
+.ralph-tui/
+
+# Vitest temporary files
+__vitest_*
+
+# Doppler (local config only, secrets are remote)
+.doppler.yaml

@@ -10,12 +10,12 @@
  * in a future update.
  */
 
-import { CredentialService } from '@thumbcode/core';
-import type { CredentialMetadata } from '@thumbcode/state';
-import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@thumbcode/state';
 import { ArrowLeft, Check, Link as LinkIcon, Loader2, Shield, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CredentialService } from '@/core';
+import type { CredentialMetadata } from '@/state';
+import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@/state';
 
 interface ApiKeyInputProps {
   label: string;
@@ -131,6 +131,7 @@ export function CredentialSettings() {
     }
   };
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: credential save with validation, store, and state updates
   const saveApiKey = async (type: 'anthropic' | 'openai', value: string) => {
     const trimmed = value.trim();
     if (!trimmed) return;

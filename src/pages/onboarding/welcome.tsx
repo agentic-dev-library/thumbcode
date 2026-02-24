@@ -15,7 +15,7 @@ import {
   SecurityIcon,
   ThumbIcon,
 } from '@/components/icons';
-import { useAppRouter } from '@/hooks/useAppRouter';
+import { useAppRouter } from '@/hooks/use-app-router';
 
 interface Feature {
   icon: IconVariant;

@@ -34,8 +34,8 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
   return (
     <div className="bg-charcoal overflow-hidden rounded-organic-code">
       {/* Header with language and filename */}
-      <div className="flex-row justify-between items-center px-3 py-2 bg-neutral-800 border-b border-neutral-700">
-        <div className="flex-row items-center">
+      <div className="flex flex-row justify-between items-center px-3 py-2 bg-neutral-800 border-b border-neutral-700">
+        <div className="flex flex-row items-center">
           <Text variant="mono" size="xs" className="text-neutral-400">
             {language}
           </Text>

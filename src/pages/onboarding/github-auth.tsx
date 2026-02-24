@@ -7,12 +7,12 @@
  * Migrated from React Native: app/(onboarding)/github-auth.tsx
  */
 
-import { env, GITHUB_OAUTH } from '@thumbcode/config';
-import { GitHubAuthService } from '@thumbcode/core';
 import { useEffect, useRef, useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
 import { LinkIcon, SuccessIcon } from '@/components/icons';
-import { useAppRouter } from '@/hooks/useAppRouter';
+import { env, GITHUB_OAUTH } from '@/config';
+import { GitHubAuthService } from '@/core';
+import { useAppRouter } from '@/hooks/use-app-router';
 
 /** Spinner component for loading states */
 function Spinner({ className = '' }: { className?: string }) {
@@ -81,6 +81,7 @@ export default function GitHubAuthPage() {
     window.open(verificationUri, '_blank', 'noopener,noreferrer');
   };
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: auth flow with polling, error handling, and cancellation
   const checkAuth = async () => {
     setIsAuthenticating(true);
     setErrorMessage(null);

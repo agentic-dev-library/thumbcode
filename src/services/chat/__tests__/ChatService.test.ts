@@ -2,7 +2,7 @@
  * Chat Service Tests
  */
 
-import { useChatStore } from '@thumbcode/state';
+import { useChatStore } from '@/state';
 import { ChatService } from '../ChatService';
 
 // Reset store before each test

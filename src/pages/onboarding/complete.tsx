@@ -18,7 +18,7 @@ import {
   TasksIcon,
 } from '@/components/icons';
 import { useOnboarding } from '@/contexts/onboarding';
-import { useAppRouter } from '@/hooks/useAppRouter';
+import { useAppRouter } from '@/hooks/use-app-router';
 
 type CapabilityIcon = React.FC<{ size?: number; color?: IconColor; turbulence?: number }>;
 

@@ -20,6 +20,10 @@ export {
   type UseAgentListResult,
   useAgentList,
 } from './use-agent-list';
+// Navigation
+export { useAppRouter, useRouteParams, useRouteSegments } from './use-app-router';
+// Camera and voice input hooks
+export { type UseCameraCaptureResult, useCameraCapture } from './use-camera-capture';
 // Tab page hooks
 export {
   type ActivityItem,
@@ -44,5 +48,4 @@ export {
   useProjectFiles,
 } from './use-project-files';
 export { type UseProjectListResult, useProjectList } from './use-project-list';
-// Navigation
-export { useAppRouter, useRouteParams, useRouteSegments } from './useAppRouter';
+export { type UseVoiceInputResult, useVoiceInput } from './use-voice-input';

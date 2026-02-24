@@ -36,6 +36,7 @@ interface TextInputProps {
   testID?: string;
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: form component with label, error, and focus states
 export function TextInput({
   value,
   onChange,

@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import type { ApprovalMessage } from '@thumbcode/state';
+import type { ApprovalMessage } from '@/state';
 import { ApprovalCard } from '../ApprovalCard';
 
 vi.mock('@/components/icons', () => ({

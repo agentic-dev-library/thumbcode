@@ -65,7 +65,7 @@ const mockTasks = [
   },
 ];
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   useAgentStore: (selector: (state: Record<string, unknown>) => unknown) => {
     const state = {
       agents: mockAgents,

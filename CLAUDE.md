@@ -102,33 +102,51 @@ ThumbCode uses **organic, imperfect shapes** — NOT gradients. This is critical
 
 | Layer | Technology | Why |
 |-------|------------|-----|
-| **Framework** | React Native + Expo SDK 52+ | Best AI code generation quality, massive training data |
-| **Styling** | NativeWind (Tailwind) | Agents excel at Tailwind patterns |
-| **Components** | gluestack-ui v3 | Copy-paste model, accessible by default |
-| **Navigation** | expo-router | File-based, predictable |
-| **Credentials** | expo-secure-store | Hardware-backed encryption |
+| **Framework** | React 18 + Vite 7 | Fast builds, modern ESM, excellent DX |
+| **Native** | Capacitor 8 | Web-first with native iOS/Android access |
+| **Styling** | Tailwind CSS | Agents excel at Tailwind patterns |
+| **Components** | src/ui/ | In-house design system with organic styling |
+| **Navigation** | react-router-dom 7 | Client-side routing, nested layouts |
+| **Credentials** | capacitor-secure-storage-plugin | iOS Keychain / Android Keystore |
 | **Git** | isomorphic-git | Client-side operations |
+| **State** | Zustand 5 | Lightweight, slice-based stores |
 | **Auth** | GitHub Device Flow + PKCE | No backend required |
+| **Structure** | Flat src/ | All code under src/ with @/* path aliases |
 
-### File Structure Convention
+### File Structure
 
 ```
 src/
-├── app/                    # expo-router pages
-│   ├── (tabs)/            # Tab navigation group
-│   │   ├── index.tsx      # Home/Dashboard
-│   │   ├── projects.tsx   # Project list
-│   │   └── settings.tsx   # Settings
-│   ├── project/[id]/      # Dynamic project routes
-│   └── _layout.tsx        # Root layout
+├── pages/                  # react-router-dom pages
+│   ├── tabs/              # Tab navigation group
+│   ├── detail/            # Entity detail pages
+│   ├── onboarding/        # Onboarding flow
+│   └── settings/          # Settings sub-pages
 ├── components/
-│   ├── ui/                # Base UI primitives
+│   ├── ui/                # Re-exports from src/ui/
 │   ├── agents/            # Agent-related components
-│   └── workspace/         # Workspace/editor components
+│   ├── chat/              # Chat components
+│   └── project/           # Project components
 ├── hooks/                 # Custom React hooks
+├── layouts/               # Layout components (RootLayout)
+├── contexts/              # React context providers
+├── services/              # Service layer
+│   ├── ai/               # AI client factory, provider adapters
+│   ├── agents/            # Specialized agent implementations
+│   ├── chat/              # Chat service, streaming, message store
+│   ├── mcp/               # MCP client and tool bridge
+│   ├── orchestrator/      # Multi-agent coordination
+│   ├── routing/           # Capability-aware agent routing
+│   ├── skills/            # Agent skill definitions
+│   └── tools/             # Tool execution bridge
+├── config/                # Environment config, feature flags, constants
+├── core/                  # Git operations, credentials, auth, security
+├── state/                 # Zustand stores (chat, agent, project, etc.)
+├── types/                 # Shared TypeScript type definitions
+├── ui/                    # Design system (primitives, layout, form, feedback)
 ├── lib/                   # Utilities and helpers
-├── stores/                # State management (Zustand)
-└── tokens/                # Design tokens
+└── utils/                 # Additional utilities
+tools/                      # Build-time scripts (token/icon generators)
 ```
 
 ### Naming Conventions
@@ -137,11 +155,13 @@ src/
 - **Components**: PascalCase (`AgentCard`, `WorkspaceProvider`)
 - **Functions**: camelCase (`createAgent`, `fetchProjectData`)
 - **Constants**: SCREAMING_SNAKE (`API_BASE_URL`, `MAX_AGENTS`)
-- **CSS classes**: Use NativeWind/Tailwind utilities, custom classes in kebab-case
+- **CSS classes**: Use Tailwind utilities, custom classes in kebab-case
 
 ---
 
 ## Agent Coordination
+
+See **AGENTS.md** for the full multi-agent workflow, tool definitions, and orchestration protocol.
 
 ThumbCode is built BY agents FOR agents. When generating code:
 
@@ -204,14 +224,14 @@ refactor(stores): migrate to Zustand v5
 
 ## Memory Bank
 
-This repository contains institutional memory in `/memory-bank/`:
+Institutional memory lives in `docs/memory-bank/`. Read these before proposing changes:
 
-- **DEVELOPMENT-LOG.md** — Chronological history of major decisions
-- **DECISIONS.md** — Key decisions with rationale
-- **ARCHITECTURE.md** — Technical architecture decisions
-- **BRAND-EVOLUTION.md** — How we arrived at P3 "Warm Technical"
+- **systemPatterns.md** — Architecture overview, data flow, package graph
+- **productContext.md** — Product vision, BYOK model, UX goals
+- **techContext.md** — Current tech stack and build pipeline
+- **activeContext.md** — Current sprint focus and recent changes
 
-**Read these before proposing changes** to understand why things are the way they are.
+See also: `docs/development/`, `docs/agents/`, `docs/brand/` for deeper reference.
 
 ---
 
@@ -219,12 +239,16 @@ This repository contains institutional memory in `/memory-bank/`:
 
 | Decision | Choice | Why |
 |----------|--------|-----|
-| Mobile framework | React Native + Expo | Best AI code generation, TypeScript |
+| Web framework | React 18 + Vite 7 | Fast builds, modern ESM, excellent DX |
+| Native wrapper | Capacitor 8 | Web-first with native iOS/Android access |
+| Routing | react-router-dom 7 | Client-side, nested layouts |
+| State | Zustand 5 | Lightweight, slice-based stores |
 | Color palette | Coral/Teal/Gold on Charcoal | Differentiates from blue tech aesthetic |
 | Visual style | Organic daubes | Counters AI-generated perfection trend |
 | Typography | Fraunces + Cabin | Warm humanist feel, not cold geometric |
 | Auth model | BYOK with Device Flow | Zero server cost, user owns credentials |
 | Multi-agent | Git worktrees | Better than CRDTs for AI agents |
+| Structure | Flat src/ with @/* aliases | No workspace overhead, single lint/typecheck |
 
 ---
 
@@ -235,7 +259,7 @@ This repository contains institutional memory in `/memory-bank/`:
 3. **Never hardcode colors** — always reference tokens
 4. **Never use perfectly rounded corners** — always organic
 5. **Never add server dependencies** — everything client-side
-6. **Never store API keys in code** — use expo-secure-store
+6. **Never store API keys in code** — use capacitor-secure-storage-plugin
 7. **Never ignore accessibility** — maintain WCAG AA contrast
 
 ---

@@ -6,9 +6,9 @@
  * and content sorting (directories first, then alphabetical).
  */
 
-import type { GitHubContent } from '@thumbcode/core';
-import { GitHubApiService } from '@thumbcode/core';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { GitHubContent } from '@/core';
+import { GitHubApiService } from '@/core';
 
 export interface RepoInfo {
   owner: string;

@@ -1,7 +1,17 @@
 /**
- * User System Type Definitions
+ * User Type Definitions
+ *
+ * Types for user profiles and preferences.
  */
 
+/**
+ * Theme mode
+ */
+export type ThemeMode = 'light' | 'dark' | 'system';
+
+/**
+ * User entity
+ */
 export interface User {
   id: string;
   email?: string;
@@ -10,27 +20,68 @@ export interface User {
   credentials: string[]; // Credential IDs
   projects: string[]; // Project IDs
   preferences: UserPreferences;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
+/**
+ * User preferences
+ */
 export interface UserPreferences {
-  theme: 'light' | 'dark' | 'system';
+  theme: ThemeMode;
   hapticFeedback: boolean;
   notifications: NotificationPreferences;
   editor: EditorPreferences;
+  agents: AgentPreferences;
 }
 
+/**
+ * Notification preferences
+ */
 export interface NotificationPreferences {
-  agentComplete: boolean;
-  reviewRequired: boolean;
+  pushEnabled: boolean;
+  soundEnabled: boolean;
+  agentUpdates: boolean;
+  prApprovals: boolean;
+  chatMessages: boolean;
   errorAlerts: boolean;
   dailySummary: boolean;
 }
 
+/**
+ * Editor preferences
+ */
 export interface EditorPreferences {
   fontSize: number;
+  fontFamily: 'jetbrains-mono' | 'fira-code' | 'source-code-pro';
   tabSize: number;
   wordWrap: boolean;
-  lineNumbers: boolean;
+  showLineNumbers: boolean;
+  highlightActiveLine: boolean;
+}
+
+/**
+ * Agent preferences
+ */
+export interface AgentPreferences {
+  defaultProvider: 'anthropic' | 'openai';
+  autoApproveMinorChanges: boolean;
+  requireApprovalForPush: boolean;
+  requireApprovalForMerge: boolean;
+  maxConcurrentAgents: number;
+}
+
+/**
+ * GitHub user profile
+ */
+export interface GitHubProfile {
+  login: string;
+  id: number;
+  avatarUrl: string;
+  name?: string;
+  email?: string;
+  bio?: string;
+  publicRepos: number;
+  followers: number;
+  following: number;
 }

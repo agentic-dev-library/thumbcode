@@ -5,6 +5,7 @@
  * stores so that the home page stays a thin composition layer.
  */
 
+import { useMemo } from 'react';
 import {
   type Agent,
   type AgentTask,
@@ -12,8 +13,7 @@ import {
   selectProjects,
   useAgentStore,
   useProjectStore,
-} from '@thumbcode/state';
-import { useMemo } from 'react';
+} from '@/state';
 
 export interface ActivityItem {
   id: string;

@@ -1,1 +1,1 @@
-export { Button } from '@thumbcode/ui';
+export { Button } from '@/ui';

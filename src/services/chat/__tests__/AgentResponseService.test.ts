@@ -5,9 +5,9 @@
  * mocked AI client, abort/cancel, and approval request/response workflows.
  */
 
-import { useChatStore, useCredentialStore } from '@thumbcode/state';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import type { Mock } from 'vitest';
+import { useChatStore, useCredentialStore } from '@/state';
 
 import { AgentResponseService } from '../AgentResponseService';
 import { MessageStore } from '../MessageStore';
@@ -39,10 +39,13 @@ const { mockOrchestratorInstance, MockAgentOrchestrator } = vi.hoisted(() => {
   };
 });
 
-// Mock AI dependencies from @thumbcode/agent-intelligence
-vi.mock('@thumbcode/agent-intelligence', () => ({
+// Mock AI dependencies
+vi.mock('@/services/ai', () => ({
   createAIClient: vi.fn(),
   getDefaultModel: vi.fn().mockReturnValue('claude-3-5-sonnet-20241022'),
+}));
+
+vi.mock('@/services/orchestrator', () => ({
   AgentOrchestrator: MockAgentOrchestrator,
 }));
 
@@ -50,7 +53,7 @@ vi.mock('../AgentPrompts', () => ({
   getAgentSystemPrompt: vi.fn().mockReturnValue('You are a helpful agent'),
 }));
 
-import { createAIClient } from '@thumbcode/agent-intelligence';
+import { createAIClient } from '@/services/ai';
 
 const mockCreateAIClient = createAIClient as Mock;
 
@@ -272,14 +275,20 @@ describe('AgentResponseService', () => {
       const mockClient = {
         completeStream: vi
           .fn()
-          .mockImplementation(async (_msgs: any, _opts: any, onEvent: any) => {
-            onEvent({
-              type: 'content_block_delta',
-              index: 0,
-              delta: { type: 'text', text: 'Architect response' },
-            });
-            return mockCompletionResponse('Architect response');
-          }),
+          .mockImplementation(
+            async (
+              _msgs: unknown,
+              _opts: unknown,
+              onEvent: (e: Record<string, unknown>) => void
+            ) => {
+              onEvent({
+                type: 'content_block_delta',
+                index: 0,
+                delta: { type: 'text', text: 'Architect response' },
+              });
+              return mockCompletionResponse('Architect response');
+            }
+          ),
       };
       mockCreateAIClient.mockReturnValue(mockClient);
 
@@ -323,55 +332,63 @@ describe('AgentResponseService', () => {
 
       // Both should complete without errors
       const emitCalls = (streamHandler.emit as Mock).mock.calls;
-      const completeCalls = emitCalls.filter((call: any) => call[0].type === 'message_complete');
+      const completeCalls = emitCalls.filter((call) => call[0].type === 'message_complete');
       expect(completeCalls).toHaveLength(2);
       expect(completeCalls[0][0].sender).toBe('architect');
       expect(completeCalls[1][0].sender).toBe('implementer');
     });
 
-    it.each(['architect', 'implementer', 'reviewer', 'tester'] as const)(
-      'should route %s messages through the orchestrator',
-      async (agentRole) => {
-        const mockClient = {
-          completeStream: vi
-            .fn()
-            .mockImplementation(async (_msgs: any, _opts: any, onEvent: any) => {
+    it.each([
+      'architect',
+      'implementer',
+      'reviewer',
+      'tester',
+    ] as const)('should route %s messages through the orchestrator', async (agentRole) => {
+      const mockClient = {
+        completeStream: vi
+          .fn()
+          .mockImplementation(
+            async (
+              _msgs: unknown,
+              _opts: unknown,
+              onEvent: (e: Record<string, unknown>) => void
+            ) => {
               onEvent({
                 type: 'content_block_delta',
                 index: 0,
                 delta: { type: 'text', text: `Response from ${agentRole}` },
               });
               return mockCompletionResponse(`Response from ${agentRole}`);
-            }),
-        };
-        mockCreateAIClient.mockReturnValue(mockClient);
+            }
+          ),
+      };
+      mockCreateAIClient.mockReturnValue(mockClient);
 
-        const threadId = useChatStore.getState().createThread({
-          title: 'Test',
-          participants: ['user'],
-          isPinned: false,
-        });
+      const threadId = useChatStore.getState().createThread({
+        title: 'Test',
+        participants: ['user'],
+        isPinned: false,
+      });
 
-        await service.requestAgentResponse(threadId, 'msg-1', agentRole);
+      await service.requestAgentResponse(threadId, 'msg-1', agentRole);
 
-        // Should emit message events for this agent
-        expect(streamHandler.emitTypingStart).toHaveBeenCalledWith(threadId, agentRole);
-        expect(streamHandler.emit).toHaveBeenCalledWith(
-          expect.objectContaining({ type: 'message_start', sender: agentRole })
-        );
-        expect(streamHandler.emit).toHaveBeenCalledWith(
-          expect.objectContaining({
-            type: 'message_delta',
-            delta: `Response from ${agentRole}`,
-            sender: agentRole,
-          })
-        );
-        expect(streamHandler.emit).toHaveBeenCalledWith(
-          expect.objectContaining({ type: 'message_complete', sender: agentRole })
-        );
-        expect(streamHandler.emitTypingEnd).toHaveBeenCalledWith(threadId, agentRole);
-      }
-    );
+      // Should emit message events for this agent
+      expect(streamHandler.emitTypingStart).toHaveBeenCalledWith(threadId, agentRole);
+      expect(streamHandler.emit).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'message_start', sender: agentRole })
+      );
+      expect(streamHandler.emit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'message_delta',
+          delta: `Response from ${agentRole}`,
+          sender: agentRole,
+        })
+      );
+      expect(streamHandler.emit).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'message_complete', sender: agentRole })
+      );
+      expect(streamHandler.emitTypingEnd).toHaveBeenCalledWith(threadId, agentRole);
+    });
 
     it('should not initialize orchestrator for non-agent senders', async () => {
       const mockClient = {
@@ -516,20 +533,28 @@ describe('AgentResponseService', () => {
 
     it('should stream response and emit events', async () => {
       const mockClient = {
-        completeStream: vi.fn().mockImplementation(async (_msgs: any, _opts: any, onEvent: any) => {
-          // Simulate streaming content_block_delta events
-          onEvent({
-            type: 'content_block_delta',
-            index: 0,
-            delta: { type: 'text', text: 'Hello' },
-          });
-          onEvent({
-            type: 'content_block_delta',
-            index: 0,
-            delta: { type: 'text', text: ' world' },
-          });
-          return mockCompletionResponse('Hello world');
-        }),
+        completeStream: vi
+          .fn()
+          .mockImplementation(
+            async (
+              _msgs: unknown,
+              _opts: unknown,
+              onEvent: (e: Record<string, unknown>) => void
+            ) => {
+              // Simulate streaming content_block_delta events
+              onEvent({
+                type: 'content_block_delta',
+                index: 0,
+                delta: { type: 'text', text: 'Hello' },
+              });
+              onEvent({
+                type: 'content_block_delta',
+                index: 0,
+                delta: { type: 'text', text: ' world' },
+              });
+              return mockCompletionResponse('Hello world');
+            }
+          ),
       };
       mockCreateAIClient.mockReturnValue(mockClient);
 
@@ -598,7 +623,7 @@ describe('AgentResponseService', () => {
 
       // Should not emit error event for abort
       const errorCalls = (streamHandler.emit as Mock).mock.calls.filter(
-        (call: any) => call[0].type === 'error'
+        (call) => call[0].type === 'error'
       );
       expect(errorCalls).toHaveLength(0);
     });

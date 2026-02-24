@@ -5,9 +5,9 @@
  * in the project detail screen.
  */
 
-import type { GitHubCommit } from '@thumbcode/core';
-import type { AgentTask } from '@thumbcode/state';
 import { ChevronRight, FileText, GitCommitHorizontal, ListTodo, Loader2 } from 'lucide-react';
+import type { GitHubCommit } from '@/core';
+import type { AgentTask } from '@/state';
 
 /* ─── Commits ─────────────────────────────────── */
 

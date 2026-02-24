@@ -4,7 +4,7 @@ This document describes the testing architecture, tools, and conventions for Thu
 
 ## Running Tests
 
-### Unit and Integration Tests (Jest)
+### Unit Tests (Vitest)
 
 ```bash
 # Run all tests
@@ -23,23 +23,25 @@ pnpm test -- --testPathPattern="CredentialService"
 pnpm test -- -t "should store credentials"
 ```
 
-### Agent-Intelligence Package Tests
+### Integration Tests (Vitest + MSW)
 
-The `agent-intelligence` package has its own Jest config using `ts-jest` (excluded from the root config):
+Integration tests run in Node.js (not jsdom) with longer timeouts. They use MSW (Mock Service Worker) for VCR-style HTTP recording/replay.
 
 ```bash
-# Run from package directory
-cd packages/agent-intelligence
-pnpm test
-pnpm test:watch
-pnpm test:coverage
+# Run integration tests (uses recorded cassettes)
+pnpm test:integration
+
+# Record new cassettes from live AI providers (requires Doppler secrets)
+pnpm test:integration:record
 ```
+
+Configuration lives in `vitest.config.integration.ts`.
 
 ### E2E Tests (Playwright -- Web)
 
 ```bash
 # Build the web app first
-pnpm build:web
+pnpm build
 
 # Run E2E tests
 pnpm test:e2e:web
@@ -67,102 +69,134 @@ pnpm e2e:test
 
 ```
 thumbcode/
-├── jest.config.js                          # Root Jest configuration
-├── jest.setup.js                           # Global mocks and setup
+├── vitest.config.ts                       # Unit test configuration (jsdom)
+├── vitest.config.integration.ts           # Integration test configuration (node)
+├── vitest.setup.ts                        # Global mocks and setup
+├── playwright.config.ts                   # E2E web configuration
 ├── src/
+│   ├── __tests__/
+│   │   └── integration/                   # AI provider integration tests (MSW)
 │   ├── components/
-│   │   ├── display/__tests__/              # Display component tests
-│   │   ├── error/__tests__/                # Error component tests
-│   │   └── ui/__tests__/                   # UI component tests
-│   ├── contexts/__tests__/                 # Context/provider tests
-│   ├── lib/__tests__/                      # Utility and library tests
-│   ├── services/chat/__tests__/            # Service tests
-│   └── utils/__tests__/                    # Utility tests
-├── app/
-│   └── (tabs)/__tests__/                   # Screen/page tests
-├── packages/
-│   ├── core/src/__tests__/                 # Core service tests
-│   ├── state/src/__tests__/                # Zustand store tests
-│   └── agent-intelligence/src/__tests__/   # AI client and orchestrator tests
+│   │   ├── agents/__tests__/              # Agent UI component tests
+│   │   ├── chat/__tests__/                # Chat component tests
+│   │   ├── display/__tests__/             # Display component tests
+│   │   ├── error/__tests__/               # Error boundary tests
+│   │   └── ui/__tests__/                  # UI primitive re-export tests
+│   ├── config/__tests__/                  # Configuration tests
+│   ├── contexts/__tests__/                # Context/provider tests
+│   ├── core/__tests__/                    # Credential, GitHub, auth service tests
+│   ├── lib/__tests__/                     # Utility and library tests
+│   ├── pages/
+│   │   ├── detail/__tests__/              # Project detail page tests
+│   │   ├── onboarding/__tests__/          # Onboarding flow tests
+│   │   └── tabs/__tests__/               # Tab screen tests
+│   ├── services/
+│   │   ├── agents/__tests__/              # Agent logic tests
+│   │   ├── ai/__tests__/                  # AI client tests
+│   │   ├── chat/__tests__/                # Chat service + pipeline tests
+│   │   ├── mcp/__tests__/                 # MCP client and tool bridge tests
+│   │   ├── orchestrator/__tests__/        # Orchestrator tests
+│   │   └── tools/__tests__/               # Tool execution tests
+│   ├── state/__tests__/                   # Zustand store tests
+│   ├── ui/__tests__/                      # Design system component tests
+│   └── utils/__tests__/                   # Utility tests
 └── e2e/
-    └── web/                                # Playwright E2E tests
+    └── web/                               # Playwright E2E tests
 ```
 
 ### Test Categories
 
 **Unit Tests** -- Isolated logic testing with mocked dependencies:
-- Zustand stores (`packages/state/src/__tests__/`)
-- Core services (`packages/core/src/__tests__/`)
+- Zustand stores (`src/state/__tests__/`)
+- Core services (`src/core/__tests__/`)
 - Utility functions (`src/lib/__tests__/`, `src/utils/__tests__/`)
-- AI clients and orchestrator (`packages/agent-intelligence/src/__tests__/`)
+- AI clients and orchestrator (`src/services/ai/__tests__/`, `src/services/orchestrator/__tests__/`)
 
-**Component Tests** -- React component rendering with React Native Testing Library:
-- UI primitives (`src/components/ui/__tests__/`)
+**Component Tests** -- React component rendering with React Testing Library:
+- UI primitives (`src/ui/__tests__/`)
+- Chat components (`src/components/chat/__tests__/`)
+- Agent components (`src/components/agents/__tests__/`)
 - Display components (`src/components/display/__tests__/`)
 - Error boundaries (`src/components/error/__tests__/`)
 
-**Screen Tests** -- Full screen rendering with navigation context:
-- Tab screens (`app/(tabs)/__tests__/`)
+**Page Tests** -- Full page rendering with routing context:
+- Tab pages (`src/pages/tabs/__tests__/`)
+- Detail pages (`src/pages/detail/__tests__/`)
+- Onboarding flow (`src/pages/onboarding/__tests__/`)
 
 **Performance Tests** -- Execution time benchmarks:
-- Service performance (`packages/core/src/__tests__/*Perf.test.ts`)
 - Context performance (`src/contexts/__tests__/*.perf.test.tsx`)
+
+**Integration Tests** -- AI provider round-trips with VCR recording:
+- Provider tests (`src/__tests__/integration/`)
 
 **E2E Tests** -- Full application testing via browser automation:
 - Web platform (`e2e/web/`)
 
 ## Mocking Patterns
 
-All global mocks are defined in `jest.setup.js`. These mock Expo and React Native modules that are unavailable in the Node.js test environment.
+All global mocks are defined in `vitest.setup.ts`. These mock Capacitor plugins that are unavailable in the jsdom test environment.
 
-### Expo Module Mocks
+### Capacitor Plugin Mocks
 
-```javascript
-// AsyncStorage (Zustand persistence)
-jest.mock('@react-native-async-storage/async-storage', () =>
-  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
-);
-
-// Expo SecureStore (credential storage)
-jest.mock('expo-secure-store', () => ({
-  getItemAsync: jest.fn(),
-  setItemAsync: jest.fn(),
-  deleteItemAsync: jest.fn(),
-  WHEN_UNLOCKED_THIS_DEVICE_ONLY: 'WHEN_UNLOCKED_THIS_DEVICE_ONLY',
+```typescript
+// Secure storage (credential storage)
+vi.mock('capacitor-secure-storage-plugin', () => ({
+  SecureStoragePlugin: {
+    get: vi.fn().mockResolvedValue({ value: '' }),
+    set: vi.fn().mockResolvedValue(undefined),
+    remove: vi.fn().mockResolvedValue(undefined),
+    keys: vi.fn().mockResolvedValue({ value: [] }),
+    clear: vi.fn().mockResolvedValue(undefined),
+  },
 }));
 
-// Expo Local Authentication (biometrics)
-jest.mock('expo-local-authentication', () => ({
-  hasHardwareAsync: jest.fn(),
-  isEnrolledAsync: jest.fn(),
-  authenticateAsync: jest.fn(),
+// Biometric auth
+vi.mock('@aparajita/capacitor-biometric-auth', () => ({
+  BiometricAuth: {
+    authenticate: vi.fn().mockResolvedValue(undefined),
+    checkBiometry: vi.fn().mockResolvedValue({
+      isAvailable: false,
+      biometryType: 0,
+      reason: '',
+    }),
+  },
 }));
 
-// Expo Constants (environment config)
-jest.mock('expo-constants', () => ({
-  __esModule: true,
-  default: { expoConfig: { extra: {} } },
+// Filesystem
+vi.mock('@capacitor/filesystem', () => ({
+  Filesystem: {
+    readFile: vi.fn().mockResolvedValue({ data: '' }),
+    writeFile: vi.fn().mockResolvedValue({ uri: '' }),
+    mkdir: vi.fn().mockResolvedValue(undefined),
+    rmdir: vi.fn().mockResolvedValue(undefined),
+    readdir: vi.fn().mockResolvedValue({ files: [] }),
+    deleteFile: vi.fn().mockResolvedValue(undefined),
+    stat: vi.fn().mockResolvedValue({ type: 'file', size: 0, uri: '' }),
+  },
+  Directory: { Documents: 'DOCUMENTS', Data: 'DATA', Cache: 'CACHE' },
+  Encoding: { UTF8: 'utf8' },
+}));
+
+// Device info
+vi.mock('@capacitor/device', () => ({
+  Device: {
+    getInfo: vi.fn().mockResolvedValue({ platform: 'web' }),
+    getId: vi.fn().mockResolvedValue({ identifier: 'test-device-id' }),
+    getBatteryInfo: vi.fn().mockResolvedValue({ batteryLevel: 1, isCharging: false }),
+  },
 }));
 ```
 
 ### Navigation Mocks
 
-```javascript
-jest.mock('expo-router', () => ({
-  useRouter: jest.fn(),
-  useLocalSearchParams: jest.fn(),
-  router: { push: jest.fn(), replace: jest.fn(), back: jest.fn() },
+```typescript
+// react-router-dom
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => vi.fn(),
+  useParams: () => ({}),
+  useLocation: () => ({ pathname: '/', search: '', hash: '' }),
 }));
-```
-
-### Animation Mocks
-
-```javascript
-jest.mock('react-native-reanimated', () => {
-  const Reanimated = require('react-native-reanimated/mock');
-  Reanimated.default.call = () => {};
-  return Reanimated;
-});
 ```
 
 ### Zustand Store Testing
@@ -170,99 +204,67 @@ jest.mock('react-native-reanimated', () => {
 Reset store state between tests to avoid cross-test contamination:
 
 ```typescript
-import { useAgentStore } from '@thumbcode/state';
+import { useAgentStore } from '@/state';
 
 beforeEach(() => {
   useAgentStore.setState(useAgentStore.getInitialState());
 });
 ```
 
-## Adding a New Screen Test
+## Adding a New Test
 
-1. Create the test file in the screen's `__tests__/` directory:
+1. Create the test file in the relevant `__tests__/` directory:
 
 ```typescript
-// app/(tabs)/__tests__/my-screen.test.tsx
-import { render, screen } from '@testing-library/react-native';
-import MyScreen from '../my-screen';
+// src/services/my-service/__tests__/MyService.test.ts
+import { describe, expect, it, vi } from 'vitest';
+import { MyService } from '../MyService';
 
-// Mock navigation
-jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn(), back: jest.fn() }),
-  useLocalSearchParams: () => ({}),
+// Mock dependencies using @/ path aliases
+vi.mock('@/core', () => ({
+  SomeDependency: { method: vi.fn() },
 }));
 
-describe('MyScreen', () => {
-  it('renders the screen title', () => {
-    render(<MyScreen />);
-    expect(screen.getByText('My Screen')).toBeTruthy();
-  });
-
-  it('handles user interaction', async () => {
-    render(<MyScreen />);
-    const button = screen.getByText('Action');
-    fireEvent.press(button);
-    // Assert expected behavior
+describe('MyService', () => {
+  it('does the thing', () => {
+    const result = MyService.doThing();
+    expect(result).toBe(true);
   });
 });
 ```
 
-2. Verify the test file matches the `testMatch` patterns in `jest.config.js`:
-   - `<rootDir>/src/**/__tests__/**/*.test.{ts,tsx}`
-   - `<rootDir>/app/**/__tests__/**/*.test.{ts,tsx}`
-   - `<rootDir>/packages/state/src/__tests__/**/*.test.{ts,tsx}`
-   - `<rootDir>/packages/core/src/__tests__/**/*.test.{ts,tsx}`
+2. Verify the test file matches the include pattern in `vitest.config.ts`:
+   - `src/**/__tests__/**/*.test.{ts,tsx}`
 
-3. Run the test: `pnpm test -- --testPathPattern="my-screen"`
+3. Run the test: `pnpm test -- --testPathPattern="MyService"`
 
 ## Coverage
 
-### Current State
+### Configuration
 
-Coverage thresholds are configured in `jest.config.js`:
+Coverage is configured in `vitest.config.ts` using the v8 provider:
 
-```javascript
-coverageThreshold: {
-  global: {
-    statements: 20,
-    branches: 15,
-    functions: 20,
-    lines: 20,
-  },
+```typescript
+coverage: {
+  provider: 'v8',
+  reporter: ['text', 'json', 'lcov'],
+  include: ['src/**/*.{ts,tsx}'],
+  exclude: ['**/__tests__/**', '**/*.d.ts', '**/types/**'],
 },
 ```
-
-Current coverage is approximately 34.78%.
-
-### Target
-
-The target is 60% overall coverage. Priority areas:
-1. Core services (credential, git, auth) -- highest value
-2. Zustand stores -- critical state management
-3. UI components -- visual regression prevention
-4. Screen tests -- user-facing behavior
-
-### Coverage Collection
-
-Coverage is collected from:
-- `src/**/*.{ts,tsx}`
-- `app/**/*.{ts,tsx}`
-- `packages/state/src/**/*.{ts,tsx}`
-- `packages/core/src/**/*.{ts,tsx}`
-
-Excluded from coverage:
-- Type definition files (`*.d.ts`)
-- `src/types/**/*`
-- Test files (`__tests__/**/*`)
 
 ### Generating Reports
 
 ```bash
-# Generate HTML coverage report
+# Generate coverage report (text + lcov)
 pnpm test:coverage
 
-# Report is written to coverage/lcov-report/index.html
+# HTML report is written to coverage/lcov-report/index.html
 ```
+
+### CI Coverage
+
+Coverage reports are uploaded to both Coveralls and SonarCloud in CI. SonarCloud reads `coverage/lcov.info` as configured in `sonar-project.properties`.
 
 ## CI Integration
 
@@ -271,6 +273,18 @@ Tests run automatically in GitHub Actions on every push and PR via `.github/work
 1. **Lint** -- Biome check
 2. **Typecheck** -- `tsc --noEmit`
 3. **Test** -- `pnpm test` with coverage
-4. **Build** -- Web build validation
+4. **SonarCloud** -- Static analysis and coverage ingestion
+5. **Build** -- Web build validation
+6. **E2E** -- Playwright browser tests (on build success)
+7. **Coveralls** -- Coverage reporting
 
 Failed tests block PR merging.
+
+## Key Differences from Legacy Setup
+
+- **Vitest** (not Jest) -- uses `vi.mock`, `vi.fn()`, `vi.spyOn()`
+- **Flat src/** (not `packages/`) -- all code lives under `src/`, imported via `@/` path alias
+- **Capacitor** (not Expo) -- mocks target `capacitor-secure-storage-plugin`, `@capacitor/*`
+- **react-router-dom** (not expo-router) -- mock `useNavigate`, `useParams`
+- **@testing-library/react** (not react-native) -- web-first component testing
+- **Biome** (not ESLint) -- linting and formatting

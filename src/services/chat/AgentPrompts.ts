@@ -5,7 +5,7 @@
  * Each agent has a distinct personality and area of expertise.
  */
 
-import type { MessageSender } from '@thumbcode/state';
+import type { MessageSender } from '@/state';
 
 const AGENT_PROMPTS: Record<string, string> = {
   architect: `You are the Architect agent in ThumbCode, a mobile-first AI development platform.

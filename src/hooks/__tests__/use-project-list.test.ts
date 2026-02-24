@@ -29,7 +29,7 @@ const mockProjects = [
   },
 ];
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   useProjectStore: (selector: (state: Record<string, unknown>) => unknown) => {
     const state = { projects: mockProjects };
     return selector(state);

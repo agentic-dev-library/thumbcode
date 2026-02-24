@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { GitHubApiService } from '@thumbcode/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { GitHubApiService } from '@/core';
 import { ProjectDetail } from '../ProjectDetail';
 
 // Mock react-router-dom
@@ -10,15 +10,15 @@ vi.mock('react-router-dom', () => ({
   useParams: () => ({ id: 'project-1' }),
 }));
 
-// Mock @thumbcode/core
-vi.mock('@thumbcode/core', () => ({
+// Mock @/core
+vi.mock('@/core', () => ({
   GitHubApiService: {
     listCommits: vi.fn(),
     getContents: vi.fn(),
   },
 }));
 
-// Mock @thumbcode/state
+// Mock @/state
 const mockProject = {
   id: 'project-1',
   name: 'Test Project',
@@ -32,7 +32,7 @@ const mockProject = {
 
 const mockInitWorkspace = vi.fn();
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   useProjectStore: vi.fn((selector) => {
     const state = {
       projects: [mockProject],
@@ -142,8 +142,9 @@ describe('ProjectDetail', () => {
 
   it('shows "not found" when project does not exist', async () => {
     // Override the mock for this test to return no matching project
-    const { useProjectStore } = await import('@thumbcode/state');
+    const { useProjectStore } = await import('@/state');
     const mockedStore = vi.mocked(useProjectStore);
+    // biome-ignore lint/suspicious/noExplicitAny: test mock needs flexible selector type for Zustand store
     mockedStore.mockImplementation((selector: any) => {
       const state = {
         projects: [],
@@ -159,6 +160,7 @@ describe('ProjectDetail', () => {
     expect(screen.getByText('Project not found')).toBeInTheDocument();
 
     // Restore original mock
+    // biome-ignore lint/suspicious/noExplicitAny: test mock needs flexible selector type for Zustand store
     mockedStore.mockImplementation((selector: any) => {
       const state = {
         projects: [mockProject],

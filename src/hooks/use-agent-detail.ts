@@ -5,9 +5,10 @@
  * so that the AgentDetail page stays a thin composition layer.
  */
 
-import type { Agent, AgentRole, AgentStatus, AgentTask } from '@thumbcode/state';
-import { useAgentStore } from '@thumbcode/state';
 import { useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
+import type { Agent, AgentRole, AgentStatus, AgentTask } from '@/state';
+import { useAgentStore } from '@/state';
 
 export type StatusVariant = 'success' | 'pending' | 'error' | 'inactive';
 
@@ -92,7 +93,7 @@ function computeMetrics(tasks: AgentTask[]): AgentDetailMetrics {
 
 export function useAgentDetail(agentId: string | undefined): UseAgentDetailResult {
   const agent = useAgentStore((s) => s.agents.find((a) => a.id === agentId));
-  const tasks = useAgentStore((s) => s.tasks.filter((t) => t.agentId === agentId));
+  const tasks = useAgentStore(useShallow((s) => s.tasks.filter((t) => t.agentId === agentId)));
   const updateAgentStatus = useAgentStore((s) => s.updateAgentStatus);
 
   const currentTask = useMemo(() => {

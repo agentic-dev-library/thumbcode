@@ -73,13 +73,16 @@ export function SkeletonText({
 }: Readonly<{ lines?: number; lastLineWidth?: string | number }>) {
   return (
     <div className="flex flex-col gap-2">
-      {Array.from({ length: lines }, (_, i) => (
-        <Skeleton
-          key={`skel-line-${i}`}
-          width={i === lines - 1 ? lastLineWidth : '100%'}
-          height={14}
-        />
-      ))}
+      {Array.from({ length: lines }, (_, lineIndex) => {
+        const lineKey = `skel-line-${lineIndex}`;
+        return (
+          <Skeleton
+            key={lineKey}
+            width={lineIndex === lines - 1 ? lastLineWidth : '100%'}
+            height={14}
+          />
+        );
+      })}
     </div>
   );
 }

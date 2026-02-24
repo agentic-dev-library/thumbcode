@@ -7,7 +7,6 @@
 import { HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
 
-
 interface AgentMetricsProps {
   completed: number;
   failed: number;

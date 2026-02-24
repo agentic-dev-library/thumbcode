@@ -7,12 +7,13 @@
  * Migrated from React Native: app/(onboarding)/api-keys.tsx
  */
 
-import { CredentialService } from '@thumbcode/core';
-import { type CredentialProvider, useCredentialStore } from '@thumbcode/state';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
 import { LightbulbIcon, SecurityIcon } from '@/components/icons';
-import { useAppRouter } from '@/hooks/useAppRouter';
+import { CredentialService } from '@/core';
+import { useAppRouter } from '@/hooks/use-app-router';
+import { logger } from '@/lib/logger';
+import { type CredentialProvider, useCredentialStore } from '@/state';
 import { APIKeyInput } from './components/APIKeyInput';
 
 interface APIKeyState {
@@ -94,7 +95,7 @@ export default function ApiKeysPage() {
       } catch (error) {
         if (abortController.signal.aborted) return;
 
-        console.error(`Error validating ${provider} key:`, error);
+        logger.error(`Error validating ${provider} key`, error);
         setKey((prev) => ({
           ...prev,
           isValidating: false,
@@ -164,7 +165,7 @@ export default function ApiKeysPage() {
           expiresAt: undefined,
         });
       } catch (error) {
-        console.error(`Failed to store ${provider} credential:`, error);
+        logger.error(`Failed to store ${provider} credential`, error);
         throw new Error(`Failed to save ${name} key`);
       }
     }

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import type { Message } from '@thumbcode/state';
+import type { Message } from '@/state';
 import { ChatMessage } from '../ChatMessage';
 
 vi.mock('@/components/icons', () => ({
@@ -23,6 +23,29 @@ vi.mock('@/utils/design-tokens', () => ({
 // Mock CodeBlock since it has complex dependencies
 vi.mock('../CodeBlock', () => ({
   CodeBlock: ({ code }: { code: string }) => <span>{code}</span>,
+}));
+
+// Mock ApprovalCard
+vi.mock('../ApprovalCard', () => ({
+  ApprovalCard: ({
+    message,
+    onApprove,
+    onReject,
+  }: {
+    message: { content: string };
+    onApprove: () => void;
+    onReject: () => void;
+  }) => (
+    <div>
+      <span>{message.content}</span>
+      <button type="button" onClick={onApprove}>
+        Approve
+      </button>
+      <button type="button" onClick={onReject}>
+        Reject
+      </button>
+    </div>
+  ),
 }));
 
 const createMessage = (overrides: Partial<Message> = {}): Message => ({
@@ -90,5 +113,20 @@ describe('ChatMessage', () => {
     const reviewerMsg = createMessage({ sender: 'reviewer' });
     render(<ChatMessage message={reviewerMsg} />);
     expect(screen.getByText('Reviewer')).toBeTruthy();
+  });
+
+  it('renders approval request message', () => {
+    const onApproval = vi.fn();
+    const message = createMessage({
+      contentType: 'approval_request',
+      content: 'Approve commit?',
+      metadata: {
+        actionType: 'commit',
+        actionDescription: 'feat: add login page',
+      },
+    });
+    render(<ChatMessage message={message} onApprovalResponse={onApproval} />);
+    // The ApprovalCard is rendered (mocked via auto-discovery)
+    expect(screen.getByText('Approve commit?')).toBeTruthy();
   });
 });

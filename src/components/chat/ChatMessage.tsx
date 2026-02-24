@@ -5,11 +5,21 @@
  * Uses organic daube styling per brand guidelines.
  */
 
-import type { ApprovalMessage, Message } from '@thumbcode/state';
 import { Text } from '@/components/ui';
 import { formatTime, getSenderInfo } from '@/lib/chat-utils';
+import type {
+  ApprovalMessage,
+  DocumentOutputMessage,
+  ImageMessage as ImageMessageType,
+  Message,
+  VoiceMessage,
+} from '@/state';
 import { ApprovalCard } from './ApprovalCard';
+import { AudioMessage } from './AudioMessage';
 import { CodeBlock } from './CodeBlock';
+import { DocumentCard } from './DocumentCard';
+import { ImageMessage } from './ImageMessage';
+import { MixedMediaMessage } from './MixedMediaMessage';
 
 /** Props for the ChatMessage component */
 interface ChatMessageProps {
@@ -19,31 +29,79 @@ interface ChatMessageProps {
   onApprovalResponse?: (messageId: string, approved: boolean) => void;
 }
 
-export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessageProps>) {
+/** Wrapper for media-type messages (approval, document, image, voice, mixed) */
+function MessageWrapper({ message, children }: { message: Message; children: React.ReactNode }) {
   const isUser = message.sender === 'user';
-  const senderInfo = getSenderInfo(message.sender);
+  return (
+    <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
+      {children}
+      <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
+    </div>
+  );
+}
 
-  // Render approval request
+/** Renders the appropriate content based on message type */
+function renderSpecialContent(
+  message: Message,
+  onApprovalResponse?: (messageId: string, approved: boolean) => void
+): React.ReactNode | null {
   if (message.contentType === 'approval_request') {
     const approvalMessage = message as ApprovalMessage;
     return (
-      <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
+      <MessageWrapper message={message}>
         <ApprovalCard
           message={approvalMessage}
           onApprove={() => onApprovalResponse?.(message.id, true)}
           onReject={() => onApprovalResponse?.(message.id, false)}
         />
-        <Text className="text-xs text-neutral-500 mt-1 mx-2">{formatTime(message.timestamp)}</Text>
-      </div>
+      </MessageWrapper>
     );
   }
+  if (message.contentType === 'document_output') {
+    return (
+      <MessageWrapper message={message}>
+        <DocumentCard message={message as DocumentOutputMessage} />
+      </MessageWrapper>
+    );
+  }
+  if (message.contentType === 'image') {
+    return (
+      <MessageWrapper message={message}>
+        <ImageMessage message={message as ImageMessageType} />
+      </MessageWrapper>
+    );
+  }
+  if (message.contentType === 'voice_transcript') {
+    return (
+      <MessageWrapper message={message}>
+        <AudioMessage message={message as VoiceMessage} />
+      </MessageWrapper>
+    );
+  }
+  if (message.contentType === 'mixed_media') {
+    return (
+      <MessageWrapper message={message}>
+        <MixedMediaMessage message={message} />
+      </MessageWrapper>
+    );
+  }
+  return null;
+}
+
+export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessageProps>) {
+  const isUser = message.sender === 'user';
+  const senderInfo = getSenderInfo(message.sender);
+
+  // Render special content types
+  const specialContent = renderSpecialContent(message, onApprovalResponse);
+  if (specialContent) return specialContent;
 
   // Render code message
   if (message.contentType === 'code') {
     return (
       <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
         <div className="max-w-[90%]">
-          <div className="flex-row items-center mb-1">
+          <div className="flex flex-row items-center mb-1">
             <div className={`px-2 py-0.5 ${senderInfo.bgColor} rounded-organic-input`}>
               <Text size="xs" className={senderInfo.textColor}>
                 {senderInfo.name}
@@ -66,7 +124,7 @@ export function ChatMessage({ message, onApprovalResponse }: Readonly<ChatMessag
     <div className={`mb-3 ${isUser ? 'items-end' : 'items-start'}`}>
       <div className="max-w-[80%]">
         {!isUser && (
-          <div className="flex-row items-center mb-1">
+          <div className="flex flex-row items-center mb-1">
             <div className={`px-2 py-0.5 ${senderInfo.bgColor} rounded-organic-input`}>
               <Text size="xs" className={senderInfo.textColor}>
                 {senderInfo.name}

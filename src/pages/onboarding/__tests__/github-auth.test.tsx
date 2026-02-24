@@ -1,10 +1,10 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { GitHubAuthService } from '@thumbcode/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { GitHubAuthService } from '@/core';
 import GitHubAuthPage from '../github-auth';
 
-// Mock @thumbcode/core
-vi.mock('@thumbcode/core', () => ({
+// Mock @/core
+vi.mock('@/core', () => ({
   GitHubAuthService: {
     startDeviceFlow: vi.fn(),
     pollForToken: vi.fn(),
@@ -12,15 +12,15 @@ vi.mock('@thumbcode/core', () => ({
   },
 }));
 
-// Mock @thumbcode/config
-vi.mock('@thumbcode/config', () => ({
+// Mock @/config
+vi.mock('@/config', () => ({
   env: { githubClientId: 'test-client-id' },
   GITHUB_OAUTH: { scopes: 'repo,user' },
 }));
 
 // Mock useAppRouter
 const mockPush = vi.fn();
-vi.mock('@/hooks/useAppRouter', () => ({
+vi.mock('@/hooks/use-app-router', () => ({
   useAppRouter: () => ({
     push: mockPush,
     replace: vi.fn(),

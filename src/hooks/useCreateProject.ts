@@ -5,10 +5,10 @@
  * Delegates data operations to repository-service and validation to validation module.
  */
 
-import { useProjectStore } from '@thumbcode/state';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { RepoListItem } from '@/components/onboarding';
-import { useAppRouter } from '@/hooks/useAppRouter';
+import { useAppRouter } from '@/hooks/use-app-router';
+import { logger } from '@/lib/logger';
 import {
   canCreateProject,
   classifyError,
@@ -16,6 +16,7 @@ import {
   fetchRepositories,
   filterRepositories,
 } from '@/services/repository';
+import { useProjectStore } from '@/state';
 
 export function useCreateProject() {
   const router = useAppRouter();
@@ -121,7 +122,7 @@ export function useCreateProject() {
 
       router.replace('/onboarding/complete');
     } catch (error) {
-      console.error('Failed to create project:', error);
+      logger.error('Failed to create project', error);
       setErrorMessage(error instanceof Error ? error.message : 'Failed to create project');
     } finally {
       setIsLoading(false);

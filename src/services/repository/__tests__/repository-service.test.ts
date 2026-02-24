@@ -1,6 +1,6 @@
-import { GitHubApiService } from '@thumbcode/core';
-import type { Repository } from '@thumbcode/types';
 import { describe, expect, it, vi } from 'vitest';
+import { GitHubApiService } from '@/core';
+import type { Repository } from '@/types';
 import {
   classifyError,
   createRepository,
@@ -9,8 +9,8 @@ import {
   toRepoListItem,
 } from '../repository-service';
 
-vi.mock('@thumbcode/core', async () => {
-  const actual = await vi.importActual('@thumbcode/core');
+vi.mock('@/core', async () => {
+  const actual = await vi.importActual('@/core');
   return {
     ...actual,
     GitHubApiService: {

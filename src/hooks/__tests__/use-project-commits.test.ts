@@ -3,11 +3,11 @@
  */
 
 import { renderHook, waitFor } from '@testing-library/react';
-import { GitHubApiService } from '@thumbcode/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { GitHubApiService } from '@/core';
 import { useProjectCommits } from '../use-project-commits';
 
-vi.mock('@thumbcode/core', () => ({
+vi.mock('@/core', () => ({
   GitHubApiService: {
     listCommits: vi.fn(),
   },

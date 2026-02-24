@@ -6,7 +6,6 @@
  * with data from useProjectFiles and useProjectCommits hooks.
  */
 
-import { useAgentStore, useProjectStore } from '@thumbcode/state';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -18,6 +17,7 @@ import {
   ProjectTasks,
 } from '@/components/project';
 import { parseRepoInfo, useProjectCommits, useProjectFiles } from '@/hooks';
+import { useAgentStore, useProjectStore } from '@/state';
 
 type Tab = 'files' | 'commits' | 'tasks' | 'agents';
 

@@ -130,10 +130,10 @@ function FileTreeNodeRow({
       onClick={onPress}
       aria-label={accessibilityLabel}
       aria-description={accessibilityHint}
-      className={`flex-row items-center py-1.5 px-2 ${rowClass}`}
+      className={`flex flex-row items-center py-1.5 px-2 ${rowClass}`}
       style={{ paddingLeft: 8 + depth * 16 }}
     >
-      <div className="w-4 mr-1 items-center justify-center">
+      <div className="w-4 mr-1 flex items-center justify-center">
         {isFolder && hasChildren ? (
           <div style={{ transform: `rotate(${isExpanded ? '0deg' : '-90deg'})` }}>
             <ChevronDownIcon size={12} color="warmGray" turbulence={0.12} />
@@ -184,7 +184,7 @@ export const TreeNode = memo(function TreeNode({ node, depth }: Readonly<TreeNod
 
   return (
     <div>
-      <div className="flex-row items-center">
+      <div className="flex flex-row items-center">
         <div className="flex-1">
           <FileTreeNodeRow
             node={node}

@@ -1,6 +1,14 @@
-name: Android Release
+name: Android Debug APK
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'android/**'
+      - 'capacitor.config.ts'
+      - 'package.json'
+      - '.github/workflows/android-release.yml'
   release:
     types: [published]
   workflow_dispatch:
@@ -27,6 +35,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+        with:
+          cmdline-tools-version: '11076708'
+
       - name: Build web
         run: pnpm build
         env:
@@ -35,8 +48,13 @@ jobs:
       - name: Sync web assets to Android
         run: npx cap sync android
 
-      - name: Build debug APKs
+      - name: Build debug APKs (all architectures)
         run: cd android && ./gradlew assembleDebug
+
+      - name: List built APKs
+        run: |
+          echo "Built APKs:"
+          ls -lh android/app/build/outputs/apk/debug/*.apk
 
       - name: Upload APKs as release assets
         if: github.event_name == 'release'
@@ -45,7 +63,6 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           APK_DIR="android/app/build/outputs/apk/debug"
-
           echo "Uploading APKs from $APK_DIR for release $RELEASE_TAG"
           for apk in "$APK_DIR"/*.apk; do
             if [ -f "$apk" ]; then
@@ -55,9 +72,8 @@ jobs:
           done
 
       - name: Upload APKs as workflow artifacts
-        if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: debug-apks
+          name: debug-apks-${{ github.sha }}
           path: android/app/build/outputs/apk/debug/*.apk
-          retention-days: 7
+          retention-days: 30

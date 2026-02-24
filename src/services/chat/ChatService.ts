@@ -7,7 +7,8 @@
  * - AgentResponseService: agent response simulation, approval workflows
  */
 
-import type { ChatThread, Message, MessageSender } from '@thumbcode/state';
+import type { ToolExecutionBridge } from '@/services/tools';
+import type { ChatThread, Message, MessageSender } from '@/state';
 import { AgentResponseService } from './AgentResponseService';
 import { MessageStore } from './MessageStore';
 import { StreamHandler } from './StreamHandler';
@@ -54,6 +55,24 @@ class ChatServiceImpl {
     const { targetAgent } = options;
 
     const messageId = this.messageStore.sendUserMessage(options);
+
+    // Variant mode: generate multiple variant responses
+    if (options.variantMode) {
+      await this.agentResponseService.requestVariantResponse(
+        options.threadId,
+        options.content,
+        options.variantOptions
+      );
+      return messageId;
+    }
+
+    // Detect pipeline requests when no specific agent is targeted
+    if (!targetAgent || targetAgent === 'user') {
+      if (this.agentResponseService.isMultiStepRequest(options.content)) {
+        await this.agentResponseService.requestPipelineResponse(options.threadId, options.content);
+        return messageId;
+      }
+    }
 
     // If targeting a specific agent, request a response
     if (targetAgent && targetAgent !== 'user' && targetAgent !== 'system') {
@@ -113,6 +132,33 @@ class ChatServiceImpl {
 
   respondToApproval(threadId: string, messageId: string, approved: boolean): void {
     this.agentResponseService.respondToApproval(threadId, messageId, approved);
+  }
+
+  // Tool bridge integration for approval-triggered commits
+  setToolBridge(bridge: ToolExecutionBridge, workspaceDir: string): void {
+    this.agentResponseService.setToolBridge(bridge, workspaceDir);
+  }
+
+  // Pipeline methods (delegated to AgentResponseService)
+  isMultiStepRequest(content: string): boolean {
+    return this.agentResponseService.isMultiStepRequest(content);
+  }
+
+  async requestPipelineResponse(threadId: string, userMessage: string) {
+    return this.agentResponseService.requestPipelineResponse(threadId, userMessage);
+  }
+
+  // Variant methods (delegated to AgentResponseService)
+  async requestVariantResponse(
+    threadId: string,
+    prompt: string,
+    options?: { variantCount?: number; diversityMode?: 'same_provider' | 'multi_provider' }
+  ) {
+    return this.agentResponseService.requestVariantResponse(threadId, prompt, options);
+  }
+
+  selectVariant(threadId: string, messageId: string, variantId: string): void {
+    this.agentResponseService.selectVariant(threadId, messageId, variantId);
   }
 }
 

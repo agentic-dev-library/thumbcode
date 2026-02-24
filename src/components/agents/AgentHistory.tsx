@@ -4,10 +4,10 @@
  * Displays the task history list for an agent.
  */
 
-import type { AgentTask } from '@thumbcode/state';
 import { Badge } from '@/components/display';
 import { Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';
+import type { AgentTask } from '@/state';
 
 function formatDateTime(value: string) {
   const d = new Date(value);
@@ -30,10 +30,7 @@ export function AgentHistory({ tasks }: Readonly<AgentHistoryProps>) {
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   return (
-    <VStack
-      spacing="none"
-      className="bg-surface rounded-organic-card overflow-hidden"
-    >
+    <VStack spacing="none" className="bg-surface rounded-organic-card overflow-hidden">
       <div className="px-4 py-3 border-b border-neutral-700">
         <Text size="sm" weight="semibold" className="text-neutral-400">
           TASK HISTORY

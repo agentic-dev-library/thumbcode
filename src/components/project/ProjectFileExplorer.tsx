@@ -5,8 +5,8 @@
  * Consumes data from the useProjectFiles hook.
  */
 
-import type { GitHubContent } from '@thumbcode/core';
 import { FileText, Folder, FolderOpen, Loader2 } from 'lucide-react';
+import type { GitHubContent } from '@/core';
 
 interface ProjectFileExplorerProps {
   contents: GitHubContent[];

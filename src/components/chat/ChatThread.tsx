@@ -5,10 +5,11 @@
  * Includes typing indicators and auto-scroll to bottom.
  */
 
-import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@thumbcode/state';
 import { useCallback, useEffect, useRef } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { Text } from '@/components/ui';
 import { ChatService } from '@/services/chat';
+import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@/state';
 import { ChatMessage } from './ChatMessage';
 
 /** Props for the ChatThread component */
@@ -36,8 +37,8 @@ function TypingIndicator({ senders }: { senders: string[] }) {
   const label = names.length === 1 ? `${names[0]} is typing` : `${names.join(', ')} are typing`;
 
   return (
-    <div className="flex-row items-center px-4 py-2">
-      <div className="flex-row mr-2">
+    <div className="flex flex-row items-center px-4 py-2">
+      <div className="flex flex-row mr-2">
         <div className="w-2 h-2 bg-neutral-400 rounded-full mr-1" />
         <div className="w-2 h-2 bg-neutral-500 rounded-full mr-1" />
         <div className="w-2 h-2 bg-neutral-600 rounded-full" />
@@ -51,8 +52,8 @@ export function ChatThread({ threadId }: Readonly<ChatThreadProps>) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Subscribe to messages and typing indicators
-  const messages = useChatStore(selectThreadMessages(threadId));
-  const typingSenders = useChatStore(selectTypingIndicators(threadId));
+  const messages = useChatStore(useShallow(selectThreadMessages(threadId)));
+  const typingSenders = useChatStore(useShallow(selectTypingIndicators(threadId)));
 
   // Handle approval responses
   const handleApprovalResponse = useCallback(
@@ -73,7 +74,7 @@ export function ChatThread({ threadId }: Readonly<ChatThreadProps>) {
 
   if (messages.length === 0) {
     return (
-      <div className="flex-1 items-center justify-center p-4">
+      <div className="flex-1 flex flex-col items-center justify-center p-4">
         <Text className="font-display text-lg text-neutral-400 text-center mb-2">
           Start the conversation
         </Text>

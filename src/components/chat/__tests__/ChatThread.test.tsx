@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import type { Message } from '@thumbcode/state';
+import type { Message } from '@/state';
 import { ChatThread } from '../ChatThread';
 
 vi.mock('@/components/icons', () => ({
@@ -45,8 +45,8 @@ const mockMessages: Message[] = [
   },
 ];
 
-vi.mock('@thumbcode/state', () => ({
-  useChatStore: vi.fn((selector: any) =>
+vi.mock('@/state', () => ({
+  useChatStore: vi.fn((selector: (state: Record<string, unknown>) => unknown) =>
     selector({
       threads: {
         'thread-1': {
@@ -61,7 +61,7 @@ vi.mock('@thumbcode/state', () => ({
   selectTypingIndicators: vi.fn(() => () => []),
 }));
 
-import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@thumbcode/state';
+import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@/state';
 
 describe('ChatThread', () => {
   it('renders messages from thread', () => {
@@ -73,12 +73,14 @@ describe('ChatThread', () => {
   it('shows empty state when no messages', () => {
     vi.mocked(selectThreadMessages).mockReturnValue(() => []);
     vi.mocked(selectTypingIndicators).mockReturnValue(() => []);
-    vi.mocked(useChatStore).mockImplementation((selector: any) =>
-      selector({
-        threads: {
-          'thread-empty': { id: 'thread-empty', messages: [], typingIndicators: {} },
-        },
-      })
+    vi.mocked(useChatStore).mockImplementation(
+      // biome-ignore lint/suspicious/noExplicitAny: test mock needs flexible selector type
+      (selector: any) =>
+        selector({
+          threads: {
+            'thread-empty': { id: 'thread-empty', messages: [], typingIndicators: {} },
+          },
+        })
     );
 
     render(<ChatThread threadId="thread-empty" />);
@@ -89,16 +91,18 @@ describe('ChatThread', () => {
   it('shows typing indicator when agents are typing', () => {
     vi.mocked(selectThreadMessages).mockReturnValue(() => mockMessages);
     vi.mocked(selectTypingIndicators).mockReturnValue(() => ['architect']);
-    vi.mocked(useChatStore).mockImplementation((selector: any) =>
-      selector({
-        threads: {
-          'thread-1': {
-            id: 'thread-1',
-            messages: mockMessages,
-            typingIndicators: { architect: true },
+    vi.mocked(useChatStore).mockImplementation(
+      // biome-ignore lint/suspicious/noExplicitAny: test mock needs flexible selector type
+      (selector: any) =>
+        selector({
+          threads: {
+            'thread-1': {
+              id: 'thread-1',
+              messages: mockMessages,
+              typingIndicators: { architect: true },
+            },
           },
-        },
-      })
+        })
     );
 
     render(<ChatThread threadId="thread-1" />);

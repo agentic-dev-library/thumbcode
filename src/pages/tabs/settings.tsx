@@ -5,13 +5,6 @@
  * Migrated from React Native to web React with Tailwind CSS.
  */
 
-import {
-  selectCredentialByProvider,
-  selectGitHubProfile,
-  selectSettings,
-  useCredentialStore,
-  useUserStore,
-} from '@thumbcode/state';
 import type { LucideIcon } from 'lucide-react';
 import {
   Bell,
@@ -24,12 +17,20 @@ import {
   Link,
   LogOut,
   Palette,
+  Plug,
   Scale,
   Smartphone,
   Users,
   Vibrate,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  selectCredentialByProvider,
+  selectGitHubProfile,
+  selectSettings,
+  useCredentialStore,
+  useUserStore,
+} from '@/state';
 
 /** Reusable settings row */
 interface SettingsItemProps {
@@ -266,11 +267,27 @@ export default function SettingsPage() {
           />
           <HorizontalDivider />
           <SettingsItemRow
+            Icon={Brain}
+            iconClassName="text-coral-500"
+            title="AI Providers"
+            subtitle="Configure provider API keys and capabilities"
+            onClick={() => navigate('/settings/providers')}
+          />
+          <HorizontalDivider />
+          <SettingsItemRow
             Icon={GitBranch}
             iconClassName="text-teal-500"
             title="Branch Protection"
             subtitle="Protected branches and rules"
             onClick={() => navigate('/settings/agents')}
+          />
+          <HorizontalDivider />
+          <SettingsItemRow
+            Icon={Plug}
+            iconClassName="text-teal-500"
+            title="MCP Servers"
+            subtitle="Extend agent capabilities"
+            onClick={() => navigate('/settings/mcp')}
           />
         </SettingsSectionGroup>
 

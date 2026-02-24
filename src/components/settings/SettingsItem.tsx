@@ -44,9 +44,7 @@ export function SettingsItem({
       className={`py-4 ${onPress ? 'active:bg-neutral-800' : ''}`}
     >
       <HStack align="center">
-        <div
-          className="w-10 h-10 bg-surface-elevated items-center justify-center mr-4 rounded-organic-badge"
-        >
+        <div className="w-10 h-10 flex items-center justify-center bg-surface-elevated mr-4 rounded-organic-badge">
           <Icon size={22} color={iconColor} turbulence={0.2} />
         </div>
 
