@@ -17,8 +17,8 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Paths relative to workspace root
-const ROOT_DIR = join(__dirname, '../../../');
+// Workspace root (one level up from tools/)
+const ROOT_DIR = join(__dirname, '..');
 const TOKENS_PATH = join(ROOT_DIR, 'design-system/tokens.json');
 const OUTPUT_DIR = join(ROOT_DIR, 'design-system/generated');
 
