@@ -12,7 +12,7 @@ import { GitHubAuthService } from '@thumbcode/core';
 import { useEffect, useRef, useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
 import { LinkIcon, SuccessIcon } from '@/components/icons';
-import { useAppRouter } from '@/hooks/useAppRouter';
+import { useAppRouter } from '@/hooks/use-app-router';
 
 /** Spinner component for loading states */
 function Spinner({ className = '' }: { className?: string }) {

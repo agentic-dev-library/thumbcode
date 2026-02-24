@@ -6,6 +6,7 @@
  */
 
 import type { MessageSender } from '@thumbcode/state';
+import { logger } from '@/lib/logger';
 import type { ChatEvent, ChatEventListener } from './types';
 
 export class StreamHandler {
@@ -28,7 +29,7 @@ export class StreamHandler {
       try {
         listener(event);
       } catch (error) {
-        console.error('[ChatService] Error in event listener:', error);
+        logger.error('Error in event listener', error, { service: 'ChatService' });
       }
     }
   }

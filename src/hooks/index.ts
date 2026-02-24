@@ -45,4 +45,4 @@ export {
 } from './use-project-files';
 export { type UseProjectListResult, useProjectList } from './use-project-list';
 // Navigation
-export { useAppRouter, useRouteParams, useRouteSegments } from './useAppRouter';
+export { useAppRouter, useRouteParams, useRouteSegments } from './use-app-router';

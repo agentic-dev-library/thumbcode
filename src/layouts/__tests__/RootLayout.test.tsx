@@ -10,7 +10,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RootLayout } from '../RootLayout';
 
 const mockReplace = vi.fn();
-vi.mock('@/hooks/useAppRouter', () => ({
+vi.mock('@/hooks/use-app-router', () => ({
   useAppRouter: () => ({
     push: vi.fn(),
     replace: mockReplace,

@@ -30,10 +30,10 @@ describe('Chat Flow Integration', () => {
       });
       expect(threadId).toBeDefined();
 
-      // Send messages
+      // Send messages (use content that won't trigger multi-step pipeline detection)
       await ChatService.sendMessage({
         threadId,
-        content: 'Build a login page',
+        content: 'What colors should the login page use?',
       });
       await ChatService.sendMessage({
         threadId,
@@ -42,7 +42,7 @@ describe('Chat Flow Integration', () => {
 
       const messages = ChatService.getMessages(threadId);
       expect(messages).toHaveLength(2);
-      expect(messages[0].content).toBe('Build a login page');
+      expect(messages[0].content).toBe('What colors should the login page use?');
       expect(messages[1].content).toBe('Use OAuth for authentication');
 
       // Delete

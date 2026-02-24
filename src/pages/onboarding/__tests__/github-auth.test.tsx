@@ -20,7 +20,7 @@ vi.mock('@thumbcode/config', () => ({
 
 // Mock useAppRouter
 const mockPush = vi.fn();
-vi.mock('@/hooks/useAppRouter', () => ({
+vi.mock('@/hooks/use-app-router', () => ({
   useAppRouter: () => ({
     push: mockPush,
     replace: vi.fn(),

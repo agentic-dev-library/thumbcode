@@ -8,7 +8,7 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useOnboarding } from '@/contexts/onboarding';
-import { useAppRouter } from '@/hooks/useAppRouter';
+import { useAppRouter } from '@/hooks/use-app-router';
 
 export function RootLayout() {
   const { isLoading, hasCompletedOnboarding } = useOnboarding();

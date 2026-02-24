@@ -28,7 +28,7 @@ vi.mock('@thumbcode/state', () => ({
 }));
 
 // Mock useAppRouter
-vi.mock('@/hooks/useAppRouter', () => ({
+vi.mock('@/hooks/use-app-router', () => ({
   useAppRouter: () => ({
     push: vi.fn(),
     replace: vi.fn(),

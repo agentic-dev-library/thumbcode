@@ -7,7 +7,17 @@
 /**
  * Supported AI providers
  */
-export type AIProvider = 'anthropic' | 'openai';
+export type AIProvider =
+  | 'anthropic'
+  | 'openai'
+  | 'google'
+  | 'azure'
+  | 'xai'
+  | 'amazon-bedrock'
+  | 'mistral'
+  | 'cohere'
+  | 'groq'
+  | 'deepseek';
 
 /**
  * Message role in conversation

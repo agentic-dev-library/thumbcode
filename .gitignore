@@ -149,6 +149,9 @@ vite.config.ts.timestamp-*
 # Astro generated files
 docs-site/.astro/
 
+# Archive binary files
+archive/*.zip
+
 # Capacitor native build artifacts
 ios/App/Pods/
 ios/DerivedData/

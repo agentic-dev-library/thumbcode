@@ -25,6 +25,17 @@ vi.mock('../CodeBlock', () => ({
   CodeBlock: ({ code }: { code: string }) => <span>{code}</span>,
 }));
 
+// Mock ApprovalCard
+vi.mock('../ApprovalCard', () => ({
+  ApprovalCard: ({ message, onApprove, onReject }: any) => (
+    <div>
+      <span>{message.content}</span>
+      <button type="button" onClick={onApprove}>Approve</button>
+      <button type="button" onClick={onReject}>Reject</button>
+    </div>
+  ),
+}));
+
 const createMessage = (overrides: Partial<Message> = {}): Message => ({
   id: 'msg-1',
   threadId: 'thread-1',
@@ -90,5 +101,20 @@ describe('ChatMessage', () => {
     const reviewerMsg = createMessage({ sender: 'reviewer' });
     render(<ChatMessage message={reviewerMsg} />);
     expect(screen.getByText('Reviewer')).toBeTruthy();
+  });
+
+  it('renders approval request message', () => {
+    const onApproval = vi.fn();
+    const message = createMessage({
+      contentType: 'approval_request',
+      content: 'Approve commit?',
+      metadata: {
+        actionType: 'commit',
+        actionDescription: 'feat: add login page',
+      },
+    });
+    render(<ChatMessage message={message} onApprovalResponse={onApproval} />);
+    // The ApprovalCard is rendered (mocked via auto-discovery)
+    expect(screen.getByText('Approve commit?')).toBeTruthy();
   });
 });
