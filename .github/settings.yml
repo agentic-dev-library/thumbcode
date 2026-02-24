@@ -7,8 +7,9 @@ repository:
   homepage: https://thumbcode.app
   topics:
     - mobile-development
-    - react-native
-    - expo
+    - react
+    - vite
+    - capacitor
     - ai-agents
     - claude
     - mobile-first
@@ -81,8 +82,8 @@ branches:
         strict: false
         contexts:
           - "Lint & Type Check"
-          - "Test"
-          - "Build"
+          - "Run Tests"
+          - "Build Web"
 
       enforce_admins: false
       required_linear_history: false
