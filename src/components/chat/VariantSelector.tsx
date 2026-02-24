@@ -8,8 +8,10 @@
  */
 
 import type { VariantSetMessage } from '@thumbcode/state';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { PreviewPanel } from '@/components/preview';
 import { Text } from '@/components/ui';
+import { createPreviewHtml } from '@/lib/preview-sandbox';
 
 /** Provider brand color map */
 const PROVIDER_COLORS: Record<string, { bg: string; text: string }> = {
@@ -33,10 +35,24 @@ interface VariantSelectorProps {
 
 export function VariantSelector({ message, onSelect }: Readonly<VariantSelectorProps>) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [previewId, setPreviewId] = useState<string | null>(null);
   const { variants, selectedVariantId } = message.metadata;
+
+  /** Pre-compute preview HTML for all variants */
+  const previewHtmlMap = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const variant of variants) {
+      map.set(variant.id, createPreviewHtml(variant.content, { title: variant.name }));
+    }
+    return map;
+  }, [variants]);
 
   const handleToggleExpand = useCallback((variantId: string) => {
     setExpandedId((prev) => (prev === variantId ? null : variantId));
+  }, []);
+
+  const handleTogglePreview = useCallback((variantId: string) => {
+    setPreviewId((prev) => (prev === variantId ? null : variantId));
   }, []);
 
   const handleSelect = useCallback(
@@ -111,14 +127,46 @@ export function VariantSelector({ message, onSelect }: Readonly<VariantSelectorP
               {/* Expanded content */}
               {isExpanded && (
                 <div className="px-4 pb-4 pt-3 border-t border-neutral-700">
-                  <Text
-                    className="font-body text-sm text-neutral-200 mb-3"
-                    style={{ whiteSpace: 'pre-wrap' }}
-                  >
-                    {variant.content.length > 500
-                      ? `${variant.content.slice(0, 500)}...`
-                      : variant.content}
-                  </Text>
+                  {/* Preview toggle */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <button
+                      type="button"
+                      onClick={() => handleTogglePreview(variant.id)}
+                      className={`px-3 py-1 text-xs font-body rounded-organic-badge transition-colors ${
+                        previewId === variant.id
+                          ? 'bg-coral-500 text-white'
+                          : 'bg-neutral-700 text-neutral-300 hover:text-white'
+                      }`}
+                      aria-label={`Toggle preview for ${variant.name}`}
+                      aria-pressed={previewId === variant.id}
+                    >
+                      Preview
+                    </button>
+                  </div>
+
+                  {/* Live preview panel */}
+                  {previewId === variant.id && (
+                    <div className="mb-3" style={{ width: '100%', minWidth: 0 }}>
+                      <PreviewPanel
+                        code={variant.content}
+                        previewHtml={previewHtmlMap.get(variant.id) ?? ''}
+                        title={variant.name}
+                      />
+                    </div>
+                  )}
+
+                  {/* Code snippet (shown when preview is off) */}
+                  {previewId !== variant.id && (
+                    <Text
+                      className="font-body text-sm text-neutral-200 mb-3"
+                      style={{ whiteSpace: 'pre-wrap' }}
+                    >
+                      {variant.content.length > 500
+                        ? `${variant.content.slice(0, 500)}...`
+                        : variant.content}
+                    </Text>
+                  )}
+
                   {!selectedVariantId && (
                     <button
                       type="button"
