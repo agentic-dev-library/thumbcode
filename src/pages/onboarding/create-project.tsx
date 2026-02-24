@@ -86,7 +86,10 @@ export default function CreateProjectPage() {
       </div>
 
       {/* Bottom Buttons */}
-      <div className="fixed bottom-0 left-0 right-0 bg-charcoal">
+      <div
+        className="fixed bottom-0 left-0 right-0 bg-charcoal"
+        style={{ paddingBottom: 'max(0px, env(safe-area-inset-bottom))' }}
+      >
         <ProjectFormActions
           canCreate={canCreate}
           isLoading={isLoading}

@@ -276,7 +276,10 @@ export default function ApiKeysPage() {
       </div>
 
       {/* Bottom Buttons */}
-      <div className="fixed bottom-0 left-0 right-0 border-t border-neutral-800 bg-charcoal px-6 py-4 pb-8 flex flex-row gap-4">
+      <div
+        className="fixed bottom-0 left-0 right-0 border-t border-neutral-800 bg-charcoal px-6 py-4 flex flex-row gap-4"
+        style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
+      >
         <button
           type="button"
           onClick={handleSkip}

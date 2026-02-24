@@ -72,10 +72,17 @@ class ChatServiceImpl {
         await this.agentResponseService.requestPipelineResponse(options.threadId, options.content);
         return messageId;
       }
+      // Simple message without pipeline trigger — route to default agent
+      await this.agentResponseService.requestAgentResponse(
+        options.threadId,
+        messageId,
+        'architect'
+      );
+      return messageId;
     }
 
     // If targeting a specific agent, request a response
-    if (targetAgent && targetAgent !== 'user' && targetAgent !== 'system') {
+    if (targetAgent && targetAgent !== 'system') {
       await this.agentResponseService.requestAgentResponse(
         options.threadId,
         messageId,

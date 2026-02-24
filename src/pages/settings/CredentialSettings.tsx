@@ -2,12 +2,8 @@
  * Credential Settings Page
  *
  * Manage API keys and connected services.
- * Migrated from app/settings/credentials.tsx (React Native) to web React.
- *
- * Note: Actual credential validation and secure storage (expo-secure-store)
- * are not yet available on web. This page renders the full UI structure.
- * Credential operations will be wired to a web-compatible storage backend
- * in a future update.
+ * Uses CredentialService for secure storage (Capacitor SecureStorage on native,
+ * AES-GCM encrypted sessionStorage on web).
  */
 
 import { ArrowLeft, Check, Link as LinkIcon, Loader2, Shield, X } from 'lucide-react';
@@ -112,6 +108,7 @@ export function CredentialSettings() {
   const [savingType, setSavingType] = useState<'anthropic' | 'openai' | null>(null);
   const [saveError, setSaveError] = useState<{ type: string; message: string } | null>(null);
   const [isNative, setIsNative] = useState(false);
+  const [showDisconnectConfirm, setShowDisconnectConfirm] = useState(false);
 
   useEffect(() => {
     setIsNative(window.Capacitor?.isNativePlatform() ?? false);
@@ -122,13 +119,16 @@ export function CredentialSettings() {
   };
 
   const handleGitHubDisconnect = () => {
-    if (window.confirm('Disconnect GitHub? You will need to reconnect to use ThumbCode.')) {
-      if (githubCredential) {
-        removeCredential(githubCredential.id);
-        setGitHubProfile(null);
-        setAuthenticated(false);
-      }
+    setShowDisconnectConfirm(true);
+  };
+
+  const confirmDisconnect = () => {
+    if (githubCredential) {
+      removeCredential(githubCredential.id);
+      setGitHubProfile(null);
+      setAuthenticated(false);
     }
+    setShowDisconnectConfirm(false);
   };
 
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: credential save with validation, store, and state updates
@@ -283,6 +283,33 @@ export function CredentialSettings() {
             />
           </div>
         </div>
+
+        {/* Disconnect Confirmation */}
+        {showDisconnectConfirm && (
+          <div className="bg-coral-500/10 border border-coral-500/20 p-4 mb-6 rounded-organic-card">
+            <p className="text-white font-body font-medium mb-2">Disconnect GitHub?</p>
+            <p className="text-sm text-neutral-400 font-body mb-4">
+              You will need to reconnect to use ThumbCode with GitHub repositories.
+            </p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowDisconnectConfirm(false)}
+                className="flex-1 py-2 text-sm font-body text-neutral-300 bg-neutral-800 rounded-organic-button hover:bg-neutral-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDisconnect}
+                className="flex-1 py-2 text-sm font-body font-medium text-white bg-coral-500 rounded-organic-button hover:bg-coral-600 transition-colors"
+                data-testid="confirm-disconnect"
+              >
+                Disconnect
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Security Info */}
         <div className="bg-teal-500/10 p-4 rounded-organic-card">

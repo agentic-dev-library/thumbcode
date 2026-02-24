@@ -98,7 +98,7 @@ jobs:
             pnpm biome check --write .
             pnpm tsc --noEmit
             pnpm test --passWithNoTests
-            pnpm expo export:web
+            pnpm build
             ```
 
             **E. Commit & Push:**

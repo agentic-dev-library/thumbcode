@@ -110,7 +110,7 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
             onClick={onReject}
             className="px-4 py-2 bg-neutral-700 active:bg-neutral-600 rounded-organic-button"
             aria-label="Reject"
-            aria-description="Reject this action"
+            title="Reject this action"
           >
             <Text className="font-body text-sm text-neutral-200">Reject</Text>
           </button>
@@ -119,7 +119,7 @@ export function ApprovalCard({ message, onApprove, onReject }: Readonly<Approval
             onClick={onApprove}
             className="px-4 py-2 bg-teal-600 active:bg-teal-700 ml-2 rounded-organic-button"
             aria-label="Approve"
-            aria-description="Approve this action"
+            title="Approve this action"
           >
             <Text className="font-body text-sm text-white font-semibold">Approve</Text>
           </button>

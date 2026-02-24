@@ -55,7 +55,7 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
           onClick={handleCopy}
           className="px-2 py-1 active:bg-neutral-700 rounded-organic-badge"
           aria-label="Copy code"
-          aria-description="Copy the code to the clipboard"
+          title="Copy the code to the clipboard"
         >
           <Text size="xs" className="text-neutral-400">
             {copied ? 'Copied!' : 'Copy'}

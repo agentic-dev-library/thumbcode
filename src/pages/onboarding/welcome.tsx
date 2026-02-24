@@ -111,7 +111,10 @@ export default function WelcomePage() {
       </div>
 
       {/* Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-charcoal border-t border-neutral-800 px-6 py-4 pb-8">
+      <div
+        className="fixed bottom-0 left-0 right-0 bg-charcoal border-t border-neutral-800 px-6 py-4"
+        style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
+      >
         <button
           type="button"
           onClick={() => router.push('/onboarding/github-auth')}

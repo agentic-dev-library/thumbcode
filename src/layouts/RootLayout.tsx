@@ -9,11 +9,34 @@ import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useOnboarding } from '@/contexts/onboarding';
 import { useAppRouter } from '@/hooks/use-app-router';
+import { selectTheme, useUserStore } from '@/state';
 
 export function RootLayout() {
   const { isLoading, hasCompletedOnboarding } = useOnboarding();
   const { replace } = useAppRouter();
   const location = useLocation();
+  const theme = useUserStore(selectTheme);
+
+  // Apply dark/light class on <html> based on theme preference
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else if (theme === 'light') {
+      root.classList.remove('dark');
+    } else {
+      // system: follow OS preference
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      root.classList.toggle('dark', prefersDark);
+
+      const listener = (e: MediaQueryListEvent) => {
+        root.classList.toggle('dark', e.matches);
+      };
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      mq.addEventListener('change', listener);
+      return () => mq.removeEventListener('change', listener);
+    }
+  }, [theme]);
 
   useEffect(() => {
     if (isLoading) return;

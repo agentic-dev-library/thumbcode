@@ -7,7 +7,7 @@
  * chat event infrastructure.
  */
 
-import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+import { CredentialService } from '@/core';
 import type { AgentContext } from '@/services/agents';
 import type { Message as AIMessage, AIProvider, StreamEvent } from '@/services/ai';
 import { createAIClient, getDefaultModel } from '@/services/ai';
@@ -258,11 +258,13 @@ export class AgentResponseService {
     const metadata = credState.credentials;
 
     // Try Anthropic first, then OpenAI
+    // Use CredentialService.retrieve() which handles web (sessionStorage + AES-GCM)
+    // and native (Capacitor SecureStorage) transparently.
     const anthropicCred = metadata.find((c) => c.provider === 'anthropic' && c.status === 'valid');
     if (anthropicCred) {
       try {
-        const result = await SecureStoragePlugin.get({ key: anthropicCred.secureStoreKey });
-        if (result.value) return { provider: 'anthropic', apiKey: result.value };
+        const result = await CredentialService.retrieve('anthropic');
+        if (result.secret) return { provider: 'anthropic', apiKey: result.secret };
       } catch {
         // Key not found
       }
@@ -271,8 +273,8 @@ export class AgentResponseService {
     const openaiCred = metadata.find((c) => c.provider === 'openai' && c.status === 'valid');
     if (openaiCred) {
       try {
-        const result = await SecureStoragePlugin.get({ key: openaiCred.secureStoreKey });
-        if (result.value) return { provider: 'openai', apiKey: result.value };
+        const result = await CredentialService.retrieve('openai');
+        if (result.secret) return { provider: 'openai', apiKey: result.secret };
       } catch {
         // Key not found
       }
@@ -750,15 +752,15 @@ export class AgentResponseService {
     const metadata = credState.credentials;
     const results: Array<{ provider: AIProvider; apiKey: string }> = [];
 
-    const aiProviders: AIProvider[] = ['anthropic', 'openai'];
+    const aiProviders = ['anthropic', 'openai'] as const;
 
     for (const providerName of aiProviders) {
       const cred = metadata.find((c) => c.provider === providerName && c.status === 'valid');
       if (cred) {
         try {
-          const result = await SecureStoragePlugin.get({ key: cred.secureStoreKey });
-          if (result.value) {
-            results.push({ provider: providerName, apiKey: result.value });
+          const result = await CredentialService.retrieve(providerName);
+          if (result.secret) {
+            results.push({ provider: providerName, apiKey: result.secret });
           }
         } catch {
           // Key not found, skip

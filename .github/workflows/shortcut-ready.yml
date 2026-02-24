@@ -135,7 +135,7 @@ jobs:
             pnpm biome check .
             pnpm tsc --noEmit
             pnpm test --passWithNoTests
-            pnpm expo export:web
+            pnpm build
             ```
 
             ### 6. Report Results

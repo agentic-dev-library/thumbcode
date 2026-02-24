@@ -22,7 +22,7 @@ export interface ButtonProps {
   accessibilityRole?: string;
   /** Accessibility label (mapped to aria-label) */
   accessibilityLabel?: string;
-  /** Accessibility hint (mapped to aria-description) */
+  /** Accessibility hint (mapped to title) */
   accessibilityHint?: string;
   /** Accessibility state (mapped to aria-* attributes) */
   accessibilityState?: {
@@ -81,7 +81,7 @@ export function Button({
       disabled={disabled || accessibilityState?.disabled}
       role={accessibilityRole}
       aria-label={accessibilityLabel}
-      aria-description={accessibilityHint}
+      title={accessibilityHint}
       aria-checked={supportsChecked ? accessibilityState?.checked : undefined}
       aria-expanded={accessibilityState?.expanded}
       aria-selected={accessibilityState?.selected}

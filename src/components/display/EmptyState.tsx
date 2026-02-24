@@ -84,7 +84,7 @@ export function EmptyState({
               onClick={secondaryAction.onPress}
               className="px-4 py-2 bg-neutral-700 active:bg-neutral-600 rounded-organic-button"
               aria-label={secondaryAction.label}
-              aria-description={`Perform the action: ${secondaryAction.label}`}
+              title={`Perform the action: ${secondaryAction.label}`}
             >
               <Text className="font-body text-neutral-200">{secondaryAction.label}</Text>
             </button>
@@ -95,7 +95,7 @@ export function EmptyState({
               onClick={action.onPress}
               className="px-4 py-2 bg-coral-500 active:bg-coral-600 rounded-organic-button"
               aria-label={action.label}
-              aria-description={`Perform the action: ${action.label}`}
+              title={`Perform the action: ${action.label}`}
             >
               <Text className="font-body text-white font-semibold">{action.label}</Text>
             </button>

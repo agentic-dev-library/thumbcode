@@ -6,8 +6,8 @@
  * gates, and error handling when an agent fails mid-pipeline.
  */
 
-import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import type { Mock } from 'vitest';
+import { CredentialService } from '@/core';
 import { useAgentStore, useChatStore, useCredentialStore } from '@/state';
 
 import { AgentResponseService } from '../AgentResponseService';
@@ -118,6 +118,13 @@ vi.mock('../AgentPrompts', () => ({
   getAgentSystemPrompt: vi.fn().mockReturnValue('You are a helpful agent'),
 }));
 
+vi.mock('@/core', () => ({
+  CredentialService: {
+    retrieve: vi.fn().mockResolvedValue({ secret: null }),
+    store: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
 import { createAIClient } from '@/services/ai';
 
 const mockCreateAIClient = createAIClient as Mock;
@@ -138,7 +145,7 @@ function setupAnthropicCredentials() {
     isValidating: false,
     lastError: null,
   });
-  (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-ant-key' });
+  (CredentialService.retrieve as Mock).mockResolvedValue({ secret: 'sk-ant-key' });
 }
 
 describe('Pipeline Routing', () => {

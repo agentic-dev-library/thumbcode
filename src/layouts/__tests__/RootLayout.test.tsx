@@ -18,6 +18,11 @@ vi.mock('@/hooks/use-app-router', () => ({
   }),
 }));
 
+vi.mock('@/state', () => ({
+  selectTheme: (state: { theme: string }) => state.theme,
+  useUserStore: (selector: (state: { theme: string }) => string) => selector({ theme: 'dark' }),
+}));
+
 let mockIsLoading = false;
 let mockHasCompletedOnboarding = true;
 

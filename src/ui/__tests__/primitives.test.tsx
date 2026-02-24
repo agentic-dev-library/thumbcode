@@ -98,7 +98,7 @@ describe('Button', () => {
     );
     const btn = screen.getByRole('checkbox');
     expect(btn).toHaveAttribute('aria-label', 'Save');
-    expect(btn).toHaveAttribute('aria-description', 'Saves the form');
+    expect(btn).toHaveAttribute('title', 'Saves the form');
     expect(btn).toHaveAttribute('aria-checked', 'true');
   });
 

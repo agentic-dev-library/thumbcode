@@ -9,6 +9,8 @@ import { ArrowLeft, Lightbulb } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { selectAgentPreferences, useUserStore } from '@/state';
+
 interface SettingRowProps {
   title: string;
   subtitle?: string;
@@ -149,13 +151,18 @@ function Divider() {
 export function AgentSettings() {
   const navigate = useNavigate();
 
-  // Settings state
+  // Store-backed agent settings
+  const agentPrefs = useUserStore(selectAgentPreferences);
+  const updateAgentPreferences = useUserStore((s) => s.updateAgentPreferences);
+
+  const commitApproval = agentPrefs.autoApproveMinorChanges ? 'auto' : 'require';
+  const pushApproval = agentPrefs.requireApprovalForPush ? 'require' : 'auto';
+  const parallelAgents = agentPrefs.maxConcurrentAgents > 1;
+
+  // Local-only settings (not in store)
   const [autoReview, setAutoReview] = useState(true);
   const [autoTest, setAutoTest] = useState(true);
-  const [commitApproval, setCommitApproval] = useState('require');
-  const [pushApproval, setPushApproval] = useState('require');
   const [deployApproval, setDeployApproval] = useState('require');
-  const [parallelAgents, setParallelAgents] = useState(true);
   const [verboseLogging, setVerboseLogging] = useState(false);
 
   const approvalLevels = [
@@ -214,7 +221,11 @@ export function AgentSettings() {
             <SettingRow
               title="Parallel Execution"
               subtitle="Allow multiple agents to work simultaneously"
-              toggle={{ value: parallelAgents, onValueChange: setParallelAgents }}
+              toggle={{
+                value: parallelAgents,
+                onValueChange: (val) =>
+                  updateAgentPreferences({ maxConcurrentAgents: val ? 4 : 1 }),
+              }}
             />
           </div>
         </div>
@@ -232,7 +243,7 @@ export function AgentSettings() {
               description="When agents create git commits"
               levels={approvalLevels}
               selected={commitApproval}
-              onSelect={setCommitApproval}
+              onSelect={(id) => updateAgentPreferences({ autoApproveMinorChanges: id === 'auto' })}
             />
             <Divider />
             <ApprovalLevelSelector
@@ -240,7 +251,9 @@ export function AgentSettings() {
               description="When agents push commits to GitHub"
               levels={approvalLevels}
               selected={pushApproval}
-              onSelect={setPushApproval}
+              onSelect={(id) =>
+                updateAgentPreferences({ requireApprovalForPush: id === 'require' })
+              }
             />
             <Divider />
             <ApprovalLevelSelector

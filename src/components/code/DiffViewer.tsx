@@ -95,7 +95,7 @@ export function DiffViewer({
         onClick={() => setCollapsed(!collapsed)}
         className="flex flex-row items-center justify-between px-3 py-2 bg-neutral-800 border-b border-neutral-700"
         aria-label={`${filename || 'file'}, ${additions} additions, ${deletions} deletions`}
-        aria-description={collapsed ? 'Expand the diff' : 'Collapse the diff'}
+        title={collapsed ? 'Expand the diff' : 'Collapse the diff'}
         aria-expanded={!collapsed}
       >
         <div className="flex flex-row items-center flex-1">

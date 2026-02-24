@@ -39,7 +39,7 @@ function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
       onClick={onPress}
       className="bg-surface-elevated p-4 mb-2 active:bg-neutral-700 rounded-organic-card"
       aria-label={accessibilityLabel}
-      aria-description="Open this thread"
+      title="Open this thread"
       style={{ transform: 'rotate(-0.2deg)' }}
     >
       <div className="flex flex-row items-start justify-between">
@@ -123,7 +123,7 @@ export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadLi
             onClick={onCreateThread}
             className="bg-coral-500 px-6 py-3 active:bg-coral-600 rounded-organic-button"
             aria-label="New Thread"
-            aria-description="Create a new chat thread"
+            title="Create a new chat thread"
           >
             <Text weight="semibold" className="text-white">
               New Thread
@@ -147,7 +147,7 @@ export function ThreadList({ onSelectThread, onCreateThread }: Readonly<ThreadLi
             onClick={onCreateThread}
             className="bg-teal-600 px-3 py-1.5 active:bg-teal-700 rounded-organic-button"
             aria-label="New Thread"
-            aria-description="Create a new chat thread"
+            title="Create a new chat thread"
           >
             <Text size="sm" weight="semibold" className="text-white">
               + New

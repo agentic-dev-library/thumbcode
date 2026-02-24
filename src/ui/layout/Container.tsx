@@ -21,7 +21,7 @@ export function Container({
   const variantClasses = {
     default: 'flex-1 bg-charcoal',
     padded: 'flex-1 bg-charcoal p-4',
-    centered: 'flex-1 bg-charcoal items-center justify-center',
+    centered: 'flex flex-1 bg-charcoal items-center justify-center',
   }[variant];
 
   return (

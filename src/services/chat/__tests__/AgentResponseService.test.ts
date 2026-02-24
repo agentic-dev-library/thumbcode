@@ -5,8 +5,8 @@
  * mocked AI client, abort/cancel, and approval request/response workflows.
  */
 
-import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import type { Mock } from 'vitest';
+import { CredentialService } from '@/core';
 import { useChatStore, useCredentialStore } from '@/state';
 
 import { AgentResponseService } from '../AgentResponseService';
@@ -53,6 +53,13 @@ vi.mock('../AgentPrompts', () => ({
   getAgentSystemPrompt: vi.fn().mockReturnValue('You are a helpful agent'),
 }));
 
+vi.mock('@/core', () => ({
+  CredentialService: {
+    retrieve: vi.fn().mockResolvedValue({ secret: null }),
+    store: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
 import { createAIClient } from '@/services/ai';
 
 const mockCreateAIClient = createAIClient as Mock;
@@ -84,7 +91,7 @@ function setupAnthropicCredentials() {
     isValidating: false,
     lastError: null,
   });
-  (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-ant-key' });
+  (CredentialService.retrieve as Mock).mockResolvedValue({ secret: 'sk-ant-key' });
 }
 
 describe('AgentResponseService', () => {
@@ -162,7 +169,7 @@ describe('AgentResponseService', () => {
         lastError: null,
       });
 
-      (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-ant-test-key' });
+      (CredentialService.retrieve as Mock).mockResolvedValue({ secret: 'sk-ant-test-key' });
 
       const mockClient = {
         completeStream: vi.fn().mockResolvedValue(mockCompletionResponse()),
@@ -197,7 +204,7 @@ describe('AgentResponseService', () => {
         lastError: null,
       });
 
-      (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-test-openai-key' });
+      (CredentialService.retrieve as Mock).mockResolvedValue({ secret: 'sk-test-openai-key' });
 
       const mockClient = {
         completeStream: vi.fn().mockResolvedValue(mockCompletionResponse()),
@@ -518,7 +525,7 @@ describe('AgentResponseService', () => {
         isValidating: false,
         lastError: null,
       });
-      (SecureStoragePlugin.get as Mock).mockResolvedValue({ value: 'sk-openai-key' });
+      (CredentialService.retrieve as Mock).mockResolvedValue({ secret: 'sk-openai-key' });
 
       // Second request should re-initialize with new provider
       await service.requestAgentResponse(threadId, 'msg-2', 'implementer');

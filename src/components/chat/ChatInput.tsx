@@ -189,7 +189,7 @@ export function ChatInput({
           disabled={!canSend}
           className={`px-4 py-3 rounded-organic-button ${canSend ? 'bg-coral-500 active:bg-coral-600' : 'bg-neutral-700'}`}
           aria-label="Send"
-          aria-description="Send the message"
+          title="Send the message"
         >
           <Text
             className={`font-body font-semibold ${canSend ? 'text-white' : 'text-neutral-500'}`}

@@ -9,6 +9,8 @@ import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { selectEditorPreferences, useUserStore } from '@/state';
+
 interface SettingRowProps {
   title: string;
   subtitle?: string;
@@ -115,12 +117,17 @@ function getThemeColor(theme: Theme, type: keyof typeof themeColors): string {
 export function EditorSettings() {
   const navigate = useNavigate();
 
-  // Editor settings state
-  const [fontSize, setFontSize] = useState('14');
-  const [tabSize, setTabSize] = useState('2');
+  // Store-backed editor settings
+  const editorPrefs = useUserStore(selectEditorPreferences);
+  const updateEditorPreferences = useUserStore((s) => s.updateEditorPreferences);
+
+  const fontSize = String(editorPrefs.fontSize);
+  const tabSize = String(editorPrefs.tabSize);
+  const wordWrap = editorPrefs.wordWrap;
+  const lineNumbers = editorPrefs.showLineNumbers;
+
+  // Local-only settings (not in store)
   const [theme, setTheme] = useState('dark');
-  const [wordWrap, setWordWrap] = useState(true);
-  const [lineNumbers, setLineNumbers] = useState(true);
   const [minimap, setMinimap] = useState(false);
   const [autoSave, setAutoSave] = useState(true);
   const [formatOnSave, setFormatOnSave] = useState(true);
@@ -172,13 +179,16 @@ export function EditorSettings() {
                 { label: '18', value: '18' },
               ]}
               selected={fontSize}
-              onSelect={setFontSize}
+              onSelect={(val) => updateEditorPreferences({ fontSize: Number(val) })}
             />
             <Divider />
             <SettingRow
               title="Line Numbers"
               subtitle="Show line numbers in the gutter"
-              toggle={{ value: lineNumbers, onValueChange: setLineNumbers }}
+              toggle={{
+                value: lineNumbers,
+                onValueChange: (val) => updateEditorPreferences({ showLineNumbers: val }),
+              }}
             />
             <Divider />
             <SettingRow
@@ -203,13 +213,18 @@ export function EditorSettings() {
                 { label: 'Tab', value: 'tab' },
               ]}
               selected={tabSize}
-              onSelect={setTabSize}
+              onSelect={(val) =>
+                updateEditorPreferences({ tabSize: val === 'tab' ? 4 : Number(val) })
+              }
             />
             <Divider />
             <SettingRow
               title="Word Wrap"
               subtitle="Wrap long lines to fit the viewport"
-              toggle={{ value: wordWrap, onValueChange: setWordWrap }}
+              toggle={{
+                value: wordWrap,
+                onValueChange: (val) => updateEditorPreferences({ wordWrap: val }),
+              }}
             />
             <Divider />
             <SettingRow

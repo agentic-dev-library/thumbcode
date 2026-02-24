@@ -17,7 +17,7 @@ interface HeaderProps {
  */
 export function Header({ title, onBack, rightElement }: HeaderProps) {
   return (
-    <div className="flex-row items-center justify-between pb-4">
+    <div className="flex flex-row items-center justify-between pb-4">
       <div className="w-10">
         {onBack && (
           <button
@@ -25,7 +25,7 @@ export function Header({ title, onBack, rightElement }: HeaderProps) {
             onClick={onBack}
             className="p-2"
             aria-label="Back"
-            aria-description="Go to previous screen"
+            title="Go to previous screen"
           >
             <Icon name="back" size={24} color="white" />
           </button>

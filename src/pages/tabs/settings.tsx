@@ -318,6 +318,10 @@ export default function SettingsPage() {
         {/* Danger Zone */}
         <button
           type="button"
+          onClick={() => {
+            useUserStore.getState().logout();
+            navigate('/onboarding/welcome');
+          }}
           className="w-full bg-coral-500/10 p-4 rounded-organic-card text-center hover:bg-coral-500/20 transition-colors"
         >
           <div className="flex items-center justify-center gap-2">
