@@ -105,25 +105,13 @@ ThumbCode uses **organic, imperfect shapes** — NOT gradients. This is critical
 | **Framework** | React 18 + Vite 7 | Fast builds, modern ESM, excellent DX |
 | **Native** | Capacitor 8 | Web-first with native iOS/Android access |
 | **Styling** | Tailwind CSS | Agents excel at Tailwind patterns |
-| **Components** | @thumbcode/ui | In-house design system with organic styling |
+| **Components** | src/ui/ | In-house design system with organic styling |
 | **Navigation** | react-router-dom 7 | Client-side routing, nested layouts |
 | **Credentials** | capacitor-secure-storage-plugin | iOS Keychain / Android Keystore |
 | **Git** | isomorphic-git | Client-side operations |
 | **State** | Zustand 5 | Lightweight, slice-based stores |
 | **Auth** | GitHub Device Flow + PKCE | No backend required |
-| **Monorepo** | pnpm workspaces | Shared packages under `packages/` |
-
-### Monorepo Packages
-
-| Package | Purpose |
-|---------|---------|
-| `@thumbcode/types` | Shared TypeScript type definitions |
-| `@thumbcode/config` | Environment config, feature flags, constants |
-| `@thumbcode/state` | Zustand stores for global state |
-| `@thumbcode/core` | Git operations, credential management |
-| `@thumbcode/agent-intelligence` | AI clients, agent logic, orchestrator |
-| `@thumbcode/ui` | Design system components (primitives, layout, form, feedback) |
-| `@thumbcode/dev-tools` | Build-time tooling (token generator, icon generator) |
+| **Structure** | Flat src/ | All code under src/ with @/* path aliases |
 
 ### File Structure
 
@@ -131,34 +119,34 @@ ThumbCode uses **organic, imperfect shapes** — NOT gradients. This is critical
 src/
 ├── pages/                  # react-router-dom pages
 │   ├── tabs/              # Tab navigation group
-│   │   ├── home.tsx       # Dashboard
-│   │   ├── projects.tsx   # Project list
-│   │   ├── agents.tsx     # Agent management
-│   │   ├── chat.tsx       # Chat interface
-│   │   └── settings.tsx   # Settings
 │   ├── detail/            # Entity detail pages
 │   ├── onboarding/        # Onboarding flow
 │   └── settings/          # Settings sub-pages
 ├── components/
-│   ├── ui/                # Re-exports from @thumbcode/ui
+│   ├── ui/                # Re-exports from src/ui/
 │   ├── agents/            # Agent-related components
 │   ├── chat/              # Chat components
-│   ├── project/           # Project components
-│   └── workspace/         # Workspace/editor components
+│   └── project/           # Project components
 ├── hooks/                 # Custom React hooks
 ├── layouts/               # Layout components (RootLayout)
 ├── contexts/              # React context providers
-├── services/              # Service layer (AgentResponseService, etc.)
+├── services/              # Service layer
+│   ├── ai/               # AI client factory, provider adapters
+│   ├── agents/            # Specialized agent implementations
+│   ├── chat/              # Chat service, streaming, message store
+│   ├── mcp/               # MCP client and tool bridge
+│   ├── orchestrator/      # Multi-agent coordination
+│   ├── routing/           # Capability-aware agent routing
+│   ├── skills/            # Agent skill definitions
+│   └── tools/             # Tool execution bridge
+├── config/                # Environment config, feature flags, constants
+├── core/                  # Git operations, credentials, auth, security
+├── state/                 # Zustand stores (chat, agent, project, etc.)
+├── types/                 # Shared TypeScript type definitions
+├── ui/                    # Design system (primitives, layout, form, feedback)
 ├── lib/                   # Utilities and helpers
 └── utils/                 # Additional utilities
-packages/
-├── agent-intelligence/    # AI clients, agents, orchestrator
-├── config/                # Shared configuration
-├── core/                  # Git, credentials
-├── dev-tools/             # Build-time tools
-├── state/                 # Zustand stores
-├── types/                 # Shared TypeScript types
-└── ui/                    # Design system
+tools/                      # Build-time scripts (token/icon generators)
 ```
 
 ### Naming Conventions
@@ -260,7 +248,7 @@ See also: `docs/development/`, `docs/agents/`, `docs/brand/` for deeper referenc
 | Typography | Fraunces + Cabin | Warm humanist feel, not cold geometric |
 | Auth model | BYOK with Device Flow | Zero server cost, user owns credentials |
 | Multi-agent | Git worktrees | Better than CRDTs for AI agents |
-| Monorepo | pnpm workspaces | Shared packages, single lint/typecheck |
+| Structure | Flat src/ with @/* aliases | No workspace overhead, single lint/typecheck |
 
 ---
 

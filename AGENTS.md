@@ -6,7 +6,7 @@
 
 ## Agent Roles
 
-ThumbCode uses four specialized agents, each with a distinct responsibility. All agents extend `BaseAgent` in `packages/agent-intelligence/src/services/agents/base-agent.ts` and compose three trait modules: **Promptable** (prompt construction), **Reviewable** (execution loop), and **Committable** (result parsing).
+ThumbCode uses four specialized agents, each with a distinct responsibility. All agents extend `BaseAgent` in `src/services/agents/base-agent.ts` and compose three trait modules: **Promptable** (prompt construction), **Reviewable** (execution loop), and **Committable** (result parsing).
 
 ### Architect
 
@@ -84,7 +84,7 @@ ThumbCode uses four specialized agents, each with a distinct responsibility. All
 
 ## Orchestration Architecture
 
-The orchestration system lives in `packages/agent-intelligence/src/services/orchestrator/` and consists of three modules:
+The orchestration system lives in `src/services/orchestrator/` and consists of three modules:
 
 ```
 AgentOrchestrator (facade)
@@ -307,6 +307,6 @@ MCP (Model Context Protocol) is wired through `@ai-sdk/mcp` from the Vercel AI S
 
 1. Read `CLAUDE.md` first for brand identity, coding conventions, and anti-patterns
 2. Read `docs/memory-bank/systemPatterns.md` for full architecture details
-3. Check `packages/agent-intelligence/src/services/agents/` for agent implementations
-4. Check `packages/agent-intelligence/src/services/orchestrator/` for coordination logic
+3. Check `src/services/agents/` for agent implementations
+4. Check `src/services/orchestrator/` for coordination logic
 5. Never modify agent tool definitions without updating this document
