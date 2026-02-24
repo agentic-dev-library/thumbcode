@@ -1,1 +1,1 @@
-export { Text } from '@thumbcode/ui';
+export { Text } from '@/ui';

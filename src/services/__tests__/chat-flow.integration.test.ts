@@ -5,7 +5,7 @@
  * event emission, approval workflows, and search across threads.
  */
 
-import { useChatStore } from '@thumbcode/state';
+import { useChatStore } from '@/state';
 import { ChatService } from '../chat/ChatService';
 import type { ChatEvent } from '../chat/types';
 

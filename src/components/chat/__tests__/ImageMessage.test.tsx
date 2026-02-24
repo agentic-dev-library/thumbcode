@@ -6,7 +6,7 @@
  */
 
 import { fireEvent, render, screen } from '@testing-library/react';
-import type { ImageMessage as ImageMessageType } from '@thumbcode/state';
+import type { ImageMessage as ImageMessageType } from '@/state';
 import { ImageMessage } from '../ImageMessage';
 
 vi.mock('@/components/ui', () => ({

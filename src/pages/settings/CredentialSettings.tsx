@@ -10,9 +10,9 @@
  * in a future update.
  */
 
-import { CredentialService } from '@thumbcode/core';
-import type { CredentialMetadata } from '@thumbcode/state';
-import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@thumbcode/state';
+import { CredentialService } from '@/core';
+import type { CredentialMetadata } from '@/state';
+import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@/state';
 import { ArrowLeft, Check, Link as LinkIcon, Loader2, Shield, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';

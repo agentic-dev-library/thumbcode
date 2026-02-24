@@ -31,7 +31,7 @@ let mockServers: Array<{
   createdAt: string;
 }> = [];
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   CURATED_SUGGESTIONS: [
     {
       id: 'context7',

@@ -7,7 +7,7 @@
  * Uses organic daube styling.
  */
 
-import type { VariantSetMessage } from '@thumbcode/state';
+import type { VariantSetMessage } from '@/state';
 import { useCallback, useMemo, useState } from 'react';
 import { PreviewPanel } from '@/components/preview';
 import { Text } from '@/components/ui';

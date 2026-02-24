@@ -6,7 +6,7 @@
  * with data from useProjectFiles and useProjectCommits hooks.
  */
 
-import { useAgentStore, useProjectStore } from '@thumbcode/state';
+import { useAgentStore, useProjectStore } from '@/state';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {

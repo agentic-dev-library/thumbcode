@@ -7,24 +7,19 @@
  * chat event infrastructure.
  */
 
+import type { AgentContext } from '@/services/agents';
+import type { Message as AIMessage, AIProvider, StreamEvent } from '@/services/ai';
+import { createAIClient, getDefaultModel } from '@/services/ai';
 import type {
-  AgentContext,
   AgentOrchestrator,
-  Message as AIMessage,
-  AIProvider,
   OrchestratorConfig,
   Pipeline,
-  StreamEvent,
   VariantResult,
-} from '@thumbcode/agent-intelligence';
-import {
-  createAIClient,
-  getDefaultModel,
-  type ToolExecutionBridge,
-} from '@thumbcode/agent-intelligence';
-import type { Message, MessageSender } from '@thumbcode/state';
-import { useAgentStore, useChatStore, useCredentialStore } from '@thumbcode/state';
-import type { AgentRole } from '@thumbcode/types';
+} from '@/services/orchestrator';
+import type { ToolExecutionBridge } from '@/services/tools';
+import type { Message, MessageSender } from '@/state';
+import { useAgentStore, useChatStore, useCredentialStore } from '@/state';
+import type { AgentRole } from '@/types';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import { getAgentSystemPrompt } from './AgentPrompts';
 import type { MessageStore } from './MessageStore';
@@ -85,7 +80,7 @@ export class AgentResponseService {
     }
 
     // Lazy import to avoid circular dependency at module load time
-    const { AgentOrchestrator: OrchestratorClass } = await import('@thumbcode/agent-intelligence');
+    const { AgentOrchestrator: OrchestratorClass } = await import('@/services/orchestrator');
 
     const config: OrchestratorConfig = {
       provider,

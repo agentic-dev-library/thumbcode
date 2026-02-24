@@ -5,8 +5,8 @@
  * so that the AgentDetail page stays a thin composition layer.
  */
 
-import type { Agent, AgentRole, AgentStatus, AgentTask } from '@thumbcode/state';
-import { useAgentStore } from '@thumbcode/state';
+import type { Agent, AgentRole, AgentStatus, AgentTask } from '@/state';
+import { useAgentStore } from '@/state';
 import { useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 

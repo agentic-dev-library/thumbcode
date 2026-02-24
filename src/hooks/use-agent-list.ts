@@ -6,7 +6,7 @@
  * focused on layout only.
  */
 
-import { type Agent, type AgentTask, selectAgents, useAgentStore } from '@thumbcode/state';
+import { type Agent, type AgentTask, selectAgents, useAgentStore } from '@/state';
 import { useCallback, useMemo, useState } from 'react';
 
 export interface AgentMetrics {

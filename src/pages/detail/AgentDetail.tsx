@@ -6,7 +6,7 @@
  * with data from the useAgentDetail hook.
  */
 
-import type { AgentRole } from '@thumbcode/state';
+import type { AgentRole } from '@/state';
 import { ArrowLeft, Eye, FlaskConical, Sparkles, Zap } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';

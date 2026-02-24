@@ -6,7 +6,7 @@
  */
 
 import { render, screen } from '@testing-library/react';
-import type { MediaAttachment, Message } from '@thumbcode/state';
+import type { MediaAttachment, Message } from '@/state';
 import { MixedMediaMessage } from '../MixedMediaMessage';
 
 vi.mock('@/components/ui', () => ({

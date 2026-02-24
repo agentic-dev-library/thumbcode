@@ -6,7 +6,7 @@
  * Uses organic daube styling per brand guidelines.
  */
 
-import type { ImageMessage as ImageMessageType, MediaAttachment } from '@thumbcode/state';
+import type { ImageMessage as ImageMessageType, MediaAttachment } from '@/state';
 import { useCallback, useState } from 'react';
 import { Text } from '@/components/ui';
 

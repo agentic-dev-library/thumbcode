@@ -6,7 +6,7 @@
  * so the page component stays focused on layout.
  */
 
-import { useProjectStore } from '@thumbcode/state';
+import { useProjectStore } from '@/state';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 

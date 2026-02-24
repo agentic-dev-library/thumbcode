@@ -6,7 +6,7 @@
  */
 
 import { fireEvent, render, screen } from '@testing-library/react';
-import type { VoiceMessage } from '@thumbcode/state';
+import type { VoiceMessage } from '@/state';
 import { AudioMessage } from '../AudioMessage';
 
 vi.mock('@/components/ui', () => ({

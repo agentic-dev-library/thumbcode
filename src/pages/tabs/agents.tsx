@@ -5,7 +5,7 @@
  * All data logic lives in useAgentList; this file is layout only.
  */
 
-import type { Agent as StoreAgent } from '@thumbcode/state';
+import type { Agent as StoreAgent } from '@/state';
 import { CheckCircle, Eye, Search, Star, Users, Zap } from 'lucide-react';
 import type React from 'react';
 import { memo, useCallback } from 'react';

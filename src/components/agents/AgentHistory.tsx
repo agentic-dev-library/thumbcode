@@ -4,7 +4,7 @@
  * Displays the task history list for an agent.
  */
 
-import type { AgentTask } from '@thumbcode/state';
+import type { AgentTask } from '@/state';
 import { Badge } from '@/components/display';
 import { Divider, HStack, VStack } from '@/components/layout';
 import { Text } from '@/components/ui';

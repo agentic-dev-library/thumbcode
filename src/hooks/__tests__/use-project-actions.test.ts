@@ -14,7 +14,7 @@ vi.mock('react-router-dom', () => ({
 const mockRemoveProject = vi.fn();
 const mockUpdateProject = vi.fn();
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   useProjectStore: Object.assign(
     (selector: (state: Record<string, unknown>) => unknown) => {
       const state = {

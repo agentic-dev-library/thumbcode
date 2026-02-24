@@ -21,7 +21,7 @@ vi.mock('react-router-dom', () => ({
 const mockUpdateNotificationPreferences = vi.fn();
 const mockSetTheme = vi.fn();
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   useUserStore: (selector: (state: unknown) => unknown) => {
     const state = {
       githubProfile: { name: 'Jane Doe', login: 'janedoe' },

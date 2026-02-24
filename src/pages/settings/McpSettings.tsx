@@ -6,8 +6,8 @@
  * and a form to add custom servers.
  */
 
-import type { McpCategory, McpServerConfig } from '@thumbcode/state';
-import { CURATED_SUGGESTIONS, selectServers, useMcpStore } from '@thumbcode/state';
+import type { McpCategory, McpServerConfig } from '@/state';
+import { CURATED_SUGGESTIONS, selectServers, useMcpStore } from '@/state';
 import {
   ArrowLeft,
   BookOpen,

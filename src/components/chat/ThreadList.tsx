@@ -10,7 +10,7 @@ import {
   selectPinnedThreads,
   selectRecentThreads,
   useChatStore,
-} from '@thumbcode/state';
+} from '@/state';
 import { useShallow } from 'zustand/react/shallow';
 import { Badge } from '@/components/display';
 import { Text } from '@/components/ui';

@@ -4,7 +4,7 @@ import { useChatPage } from '../use-chat-page';
 const mockSetActiveThread = vi.fn();
 const mockCreateThread = vi.fn().mockReturnValue('new-thread-id');
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   useChatStore: vi.fn((selector: any) =>
     selector({
       activeThreadId: 'thread-1',

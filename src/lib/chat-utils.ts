@@ -5,7 +5,7 @@
  * and participant colors used across chat components.
  */
 
-import type { Message } from '@thumbcode/state';
+import type { Message } from '@/state';
 
 export interface SenderInfo {
   name: string;

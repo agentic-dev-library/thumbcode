@@ -4,7 +4,7 @@
  * Shared type definitions for the chat service modules.
  */
 
-import type { MessageContentType, MessageSender } from '@thumbcode/state';
+import type { MessageContentType, MessageSender } from '@/state';
 
 export type ChatEventType =
   | 'message_start'

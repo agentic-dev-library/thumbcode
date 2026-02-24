@@ -5,7 +5,7 @@
  * mocked AI client, abort/cancel, and approval request/response workflows.
  */
 
-import { useChatStore, useCredentialStore } from '@thumbcode/state';
+import { useChatStore, useCredentialStore } from '@/state';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import type { Mock } from 'vitest';
 
@@ -39,10 +39,13 @@ const { mockOrchestratorInstance, MockAgentOrchestrator } = vi.hoisted(() => {
   };
 });
 
-// Mock AI dependencies from @thumbcode/agent-intelligence
-vi.mock('@thumbcode/agent-intelligence', () => ({
+// Mock AI dependencies
+vi.mock('@/services/ai', () => ({
   createAIClient: vi.fn(),
   getDefaultModel: vi.fn().mockReturnValue('claude-3-5-sonnet-20241022'),
+}));
+
+vi.mock('@/services/orchestrator', () => ({
   AgentOrchestrator: MockAgentOrchestrator,
 }));
 
@@ -50,7 +53,7 @@ vi.mock('../AgentPrompts', () => ({
   getAgentSystemPrompt: vi.fn().mockReturnValue('You are a helpful agent'),
 }));
 
-import { createAIClient } from '@thumbcode/agent-intelligence';
+import { createAIClient } from '@/services/ai';
 
 const mockCreateAIClient = createAIClient as Mock;
 

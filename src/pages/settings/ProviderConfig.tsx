@@ -11,8 +11,8 @@ import {
   PROVIDER_REGISTRY,
   type ProviderCapability,
   type ProviderCapabilityEntry,
-} from '@thumbcode/config';
-import { useCredentialStore } from '@thumbcode/state';
+} from '@/config';
+import { useCredentialStore } from '@/state';
 import { ArrowLeft, Check, ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';

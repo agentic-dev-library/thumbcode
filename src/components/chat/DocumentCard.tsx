@@ -6,7 +6,7 @@
  * Uses organic daube styling per brand guidelines.
  */
 
-import type { DocumentOutputMessage } from '@thumbcode/state';
+import type { DocumentOutputMessage } from '@/state';
 import { Text } from '@/components/ui';
 
 /** Props for the DocumentCard component */

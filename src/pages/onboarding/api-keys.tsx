@@ -7,8 +7,8 @@
  * Migrated from React Native: app/(onboarding)/api-keys.tsx
  */
 
-import { CredentialService } from '@thumbcode/core';
-import { type CredentialProvider, useCredentialStore } from '@thumbcode/state';
+import { CredentialService } from '@/core';
+import { type CredentialProvider, useCredentialStore } from '@/state';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
 import { LightbulbIcon, SecurityIcon } from '@/components/icons';

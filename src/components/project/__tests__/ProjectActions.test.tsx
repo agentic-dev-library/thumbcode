@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import type { GitHubCommit } from '@thumbcode/core';
-import type { AgentTask } from '@thumbcode/state';
+import type { GitHubCommit } from '@/core';
+import type { AgentTask } from '@/state';
 import { ProjectAgents, ProjectCommits, ProjectTasks } from '../ProjectActions';
 
 describe('ProjectCommits', () => {

@@ -6,7 +6,7 @@
  */
 
 import { BiometricAuth } from '@aparajita/capacitor-biometric-auth';
-import { CredentialService } from '@thumbcode/core';
+import { CredentialService } from '@/core';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import type { Mock } from 'vitest';
 

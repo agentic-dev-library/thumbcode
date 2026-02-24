@@ -7,8 +7,8 @@
  * - AgentResponseService: agent response simulation, approval workflows
  */
 
-import type { ToolExecutionBridge } from '@thumbcode/agent-intelligence';
-import type { ChatThread, Message, MessageSender } from '@thumbcode/state';
+import type { ToolExecutionBridge } from '@/services/tools';
+import type { ChatThread, Message, MessageSender } from '@/state';
 import { AgentResponseService } from './AgentResponseService';
 import { MessageStore } from './MessageStore';
 import { StreamHandler } from './StreamHandler';

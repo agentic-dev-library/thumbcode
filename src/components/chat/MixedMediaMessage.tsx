@@ -12,7 +12,7 @@ import type {
   MediaAttachment,
   Message,
   VoiceMessage,
-} from '@thumbcode/state';
+} from '@/state';
 import { Text } from '@/components/ui';
 import { AudioMessage } from './AudioMessage';
 import { DocumentCard } from './DocumentCard';

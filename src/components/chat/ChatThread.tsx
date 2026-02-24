@@ -5,7 +5,7 @@
  * Includes typing indicators and auto-scroll to bottom.
  */
 
-import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@thumbcode/state';
+import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@/state';
 import { useCallback, useEffect, useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { Text } from '@/components/ui';

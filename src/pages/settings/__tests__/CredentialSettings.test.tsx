@@ -14,7 +14,7 @@ vi.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-vi.mock('@thumbcode/core', () => ({
+vi.mock('@/core', () => ({
   CredentialService: {
     store: vi.fn(),
     maskSecret: vi.fn(() => 'sk-ant-***'),
@@ -25,7 +25,7 @@ const mockAddCredential = vi.fn(() => 'cred-1');
 const mockRemoveCredential = vi.fn();
 const mockSetCredentialStatus = vi.fn();
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   selectCredentialByProvider: (provider: string) => (state: Record<string, unknown>) =>
     state[`${provider}Credential`],
   useCredentialStore: vi.fn((selector: (state: Record<string, unknown>) => unknown) => {

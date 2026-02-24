@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import type { Message } from '@thumbcode/state';
+import type { Message } from '@/state';
 import { ChatMessage } from '../ChatMessage';
 
 vi.mock('@/components/icons', () => ({

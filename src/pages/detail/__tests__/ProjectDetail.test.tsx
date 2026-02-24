@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { GitHubApiService } from '@thumbcode/core';
+import { GitHubApiService } from '@/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProjectDetail } from '../ProjectDetail';
 
@@ -11,7 +11,7 @@ vi.mock('react-router-dom', () => ({
 }));
 
 // Mock @thumbcode/core
-vi.mock('@thumbcode/core', () => ({
+vi.mock('@/core', () => ({
   GitHubApiService: {
     listCommits: vi.fn(),
     getContents: vi.fn(),
@@ -32,7 +32,7 @@ const mockProject = {
 
 const mockInitWorkspace = vi.fn();
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   useProjectStore: vi.fn((selector) => {
     const state = {
       projects: [mockProject],
@@ -142,7 +142,7 @@ describe('ProjectDetail', () => {
 
   it('shows "not found" when project does not exist', async () => {
     // Override the mock for this test to return no matching project
-    const { useProjectStore } = await import('@thumbcode/state');
+    const { useProjectStore } = await import('@/state');
     const mockedStore = vi.mocked(useProjectStore);
     mockedStore.mockImplementation((selector: any) => {
       const state = {

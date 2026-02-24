@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import type { Message } from '@thumbcode/state';
+import type { Message } from '@/state';
 import { ChatThread } from '../ChatThread';
 
 vi.mock('@/components/icons', () => ({
@@ -45,7 +45,7 @@ const mockMessages: Message[] = [
   },
 ];
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   useChatStore: vi.fn((selector: any) =>
     selector({
       threads: {
@@ -61,7 +61,7 @@ vi.mock('@thumbcode/state', () => ({
   selectTypingIndicators: vi.fn(() => () => []),
 }));
 
-import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@thumbcode/state';
+import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@/state';
 
 describe('ChatThread', () => {
   it('renders messages from thread', () => {

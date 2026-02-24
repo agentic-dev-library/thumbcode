@@ -5,7 +5,7 @@
  * list from @thumbcode/state so the projects page is a thin shell.
  */
 
-import { type Project, selectProjects, useProjectStore } from '@thumbcode/state';
+import { type Project, selectProjects, useProjectStore } from '@/state';
 import { useCallback, useMemo, useState } from 'react';
 
 export interface UseProjectListResult {

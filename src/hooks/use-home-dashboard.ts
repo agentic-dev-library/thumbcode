@@ -12,7 +12,7 @@ import {
   selectProjects,
   useAgentStore,
   useProjectStore,
-} from '@thumbcode/state';
+} from '@/state';
 import { useMemo } from 'react';
 
 export interface ActivityItem {

@@ -1,10 +1,10 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { CredentialService } from '@thumbcode/core';
+import { CredentialService } from '@/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ApiKeysPage from '../api-keys';
 
 // Mock CredentialService
-vi.mock('@thumbcode/core', async () => {
+vi.mock('@/core', async () => {
   return {
     CredentialService: {
       validateCredential: vi.fn(),
@@ -18,7 +18,7 @@ vi.mock('@thumbcode/core', async () => {
 const mockAddCredential = vi.fn(() => 'test-cred-id');
 const mockSetValidationResult = vi.fn();
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   useCredentialStore: vi.fn((selector) => {
     const state = {
       addCredential: mockAddCredential,

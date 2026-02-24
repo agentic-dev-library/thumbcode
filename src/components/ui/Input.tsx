@@ -1,1 +1,1 @@
-export { Input } from '@thumbcode/ui';
+export { Input } from '@/ui';

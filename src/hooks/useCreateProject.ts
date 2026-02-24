@@ -5,7 +5,7 @@
  * Delegates data operations to repository-service and validation to validation module.
  */
 
-import { useProjectStore } from '@thumbcode/state';
+import { useProjectStore } from '@/state';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { RepoListItem } from '@/components/onboarding';
 import { useAppRouter } from '@/hooks/use-app-router';

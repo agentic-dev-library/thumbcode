@@ -6,7 +6,7 @@
  */
 
 import { fireEvent, render, screen } from '@testing-library/react';
-import type { VariantSetMessage } from '@thumbcode/state';
+import type { VariantSetMessage } from '@/state';
 import { VariantSelector } from '../VariantSelector';
 
 vi.mock('@/components/ui', () => ({

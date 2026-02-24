@@ -11,7 +11,7 @@ import {
   selectSettings,
   useCredentialStore,
   useUserStore,
-} from '@thumbcode/state';
+} from '@/state';
 import type { LucideIcon } from 'lucide-react';
 import {
   Bell,

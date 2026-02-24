@@ -5,7 +5,7 @@
  * and thread metadata. Keeps the chat page a thin composition layer.
  */
 
-import { useChatStore } from '@thumbcode/state';
+import { useChatStore } from '@/state';
 import { useCallback } from 'react';
 import { ChatService } from '@/services/chat';
 

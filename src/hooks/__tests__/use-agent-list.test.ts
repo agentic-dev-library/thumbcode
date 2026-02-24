@@ -3,7 +3,7 @@
  */
 
 import { act, renderHook } from '@testing-library/react';
-import type { Agent } from '@thumbcode/state';
+import type { Agent } from '@/state';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAgentList } from '../use-agent-list';
 
@@ -72,7 +72,7 @@ const mockTasks = [
   },
 ];
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   useAgentStore: (selector: (state: Record<string, unknown>) => unknown) => {
     const state = { agents: mockAgents, tasks: mockTasks };
     return selector(state);

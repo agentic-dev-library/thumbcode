@@ -1,12 +1,12 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { GitHubApiService } from '@thumbcode/core';
-import type { Repository } from '@thumbcode/types';
+import { GitHubApiService } from '@/core';
+import type { Repository } from '@/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import CreateProjectPage from '../create-project';
 
 // Mock GitHubApiService
-vi.mock('@thumbcode/core', async () => {
-  const actual = await vi.importActual('@thumbcode/core');
+vi.mock('@/core', async () => {
+  const actual = await vi.importActual('@/core');
   return {
     ...actual,
     GitHubApiService: {
@@ -19,7 +19,7 @@ vi.mock('@thumbcode/core', async () => {
 // Mock useProjectStore
 const mockAddProject = vi.fn(() => 'project-123');
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   useProjectStore: vi.fn((selector) => {
     const state = { addProject: mockAddProject };
     if (typeof selector === 'function') return selector(state);

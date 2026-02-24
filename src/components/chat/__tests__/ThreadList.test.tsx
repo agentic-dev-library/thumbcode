@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { ThreadList } from '../ThreadList';
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   useChatStore: vi.fn(),
   selectPinnedThreads: vi.fn(),
   selectRecentThreads: vi.fn(),
@@ -24,7 +24,7 @@ vi.mock('@/lib/chat-utils', () => ({
   getParticipantColor: vi.fn(() => 'bg-teal-500'),
 }));
 
-import { selectPinnedThreads, selectRecentThreads, useChatStore } from '@thumbcode/state';
+import { selectPinnedThreads, selectRecentThreads, useChatStore } from '@/state';
 
 function setupStore(pinned: any[] = [], recent: any[] = []) {
   vi.mocked(selectPinnedThreads).mockReturnValue(pinned as any);

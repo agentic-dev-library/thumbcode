@@ -24,7 +24,7 @@ let mockCredentials: Array<{
   createdAt: string;
 }> = [];
 
-vi.mock('@thumbcode/state', () => ({
+vi.mock('@/state', () => ({
   useCredentialStore: (selector: (state: Record<string, unknown>) => unknown) =>
     selector({
       credentials: mockCredentials,
@@ -32,7 +32,7 @@ vi.mock('@thumbcode/state', () => ({
     }),
 }));
 
-vi.mock('@thumbcode/config', () => ({
+vi.mock('@/config', () => ({
   PROVIDER_REGISTRY: [
     {
       providerId: 'openai',

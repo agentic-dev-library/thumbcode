@@ -6,7 +6,7 @@
  * Uses paint daube icons for brand consistency.
  */
 
-import type { ApprovalMessage } from '@thumbcode/state';
+import type { ApprovalMessage } from '@/state';
 import type React from 'react';
 import { useMemo } from 'react';
 import {

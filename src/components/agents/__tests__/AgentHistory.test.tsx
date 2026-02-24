@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import type { AgentTask } from '@thumbcode/state';
+import type { AgentTask } from '@/state';
 import { AgentHistory } from '../AgentHistory';
 
 vi.mock('@/components/display', () => ({

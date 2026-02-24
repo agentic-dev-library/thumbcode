@@ -6,8 +6,8 @@
  * and content sorting (directories first, then alphabetical).
  */
 
-import type { GitHubContent } from '@thumbcode/core';
-import { GitHubApiService } from '@thumbcode/core';
+import type { GitHubContent } from '@/core';
+import { GitHubApiService } from '@/core';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export interface RepoInfo {

@@ -6,7 +6,7 @@
  * as a MediaAttachment.
  */
 
-import type { MediaAttachment } from '@thumbcode/state';
+import type { MediaAttachment } from '@/state';
 import { useCallback, useState } from 'react';
 import { Text } from '@/components/ui';
 import { useCameraCapture } from '@/hooks/use-camera-capture';

@@ -7,7 +7,7 @@
  * Uses organic daube styling per brand guidelines.
  */
 
-import type { MediaAttachment, VoiceMessage } from '@thumbcode/state';
+import type { MediaAttachment, VoiceMessage } from '@/state';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Text } from '@/components/ui';
 

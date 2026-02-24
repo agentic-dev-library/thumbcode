@@ -5,7 +5,7 @@
  */
 
 import { fireEvent, render, screen } from '@testing-library/react';
-import type { DocumentOutputMessage } from '@thumbcode/state';
+import type { DocumentOutputMessage } from '@/state';
 import { DocumentCard } from '../DocumentCard';
 
 vi.mock('@/components/ui', () => ({

@@ -7,7 +7,7 @@
  * Supports camera capture and voice input via Web APIs.
  */
 
-import type { MediaAttachment, MessageSender } from '@thumbcode/state';
+import type { MediaAttachment, MessageSender } from '@/state';
 import { useCallback, useState } from 'react';
 import { Text } from '@/components/ui';
 import { logger } from '@/lib/logger';

@@ -11,7 +11,7 @@ import type {
   ImageMessage as ImageMessageType,
   Message,
   VoiceMessage,
-} from '@thumbcode/state';
+} from '@/state';
 import { Text } from '@/components/ui';
 import { formatTime, getSenderInfo } from '@/lib/chat-utils';
 import { ApprovalCard } from './ApprovalCard';

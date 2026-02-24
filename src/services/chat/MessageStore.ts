@@ -5,8 +5,8 @@
  * Delegates to the Zustand chat store for persistence.
  */
 
-import type { ChatThread, Message, MessageSender } from '@thumbcode/state';
-import { useChatStore } from '@thumbcode/state';
+import type { ChatThread, Message, MessageSender } from '@/state';
+import { useChatStore } from '@/state';
 import type { StreamHandler } from './StreamHandler';
 import type { SendMessageOptions } from './types';
 
