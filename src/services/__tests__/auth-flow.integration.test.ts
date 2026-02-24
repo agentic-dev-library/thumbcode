@@ -6,9 +6,9 @@
  */
 
 import { BiometricAuth } from '@aparajita/capacitor-biometric-auth';
-import { CredentialService } from '@/core';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import type { Mock } from 'vitest';
+import { CredentialService } from '@/core';
 
 // In-memory store to simulate Capacitor Secure Storage
 const secureStoreMap = new Map<string, string>();

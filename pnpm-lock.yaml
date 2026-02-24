@@ -12,6 +12,39 @@ importers:
 
   .:
     dependencies:
+      '@ai-sdk/amazon-bedrock':
+        specifier: ^4.0.63
+        version: 4.0.63(zod@3.25.76)
+      '@ai-sdk/anthropic':
+        specifier: ^3.0.46
+        version: 3.0.46(zod@3.25.76)
+      '@ai-sdk/azure':
+        specifier: ^3.0.32
+        version: 3.0.32(zod@3.25.76)
+      '@ai-sdk/cohere':
+        specifier: ^3.0.21
+        version: 3.0.21(zod@3.25.76)
+      '@ai-sdk/deepseek':
+        specifier: ^2.0.20
+        version: 2.0.20(zod@3.25.76)
+      '@ai-sdk/google':
+        specifier: ^3.0.30
+        version: 3.0.30(zod@3.25.76)
+      '@ai-sdk/groq':
+        specifier: ^3.0.24
+        version: 3.0.24(zod@3.25.76)
+      '@ai-sdk/mcp':
+        specifier: ^1.0.21
+        version: 1.0.21(zod@3.25.76)
+      '@ai-sdk/mistral':
+        specifier: ^3.0.20
+        version: 3.0.20(zod@3.25.76)
+      '@ai-sdk/openai':
+        specifier: ^3.0.31
+        version: 3.0.31(zod@3.25.76)
+      '@ai-sdk/xai':
+        specifier: ^3.0.57
+        version: 3.0.57(zod@3.25.76)
       '@anthropic-ai/sdk':
         specifier: ^0.32.0
         version: 0.32.1
@@ -33,24 +66,9 @@ importers:
       '@capacitor/ios':
         specifier: ^8.1.0
         version: 8.1.0(@capacitor/core@8.1.0)
-      '@thumbcode/agent-intelligence':
-        specifier: workspace:*
-        version: link:packages/agent-intelligence
-      '@thumbcode/config':
-        specifier: workspace:*
-        version: link:packages/config
-      '@thumbcode/core':
-        specifier: workspace:*
-        version: link:packages/core
-      '@thumbcode/state':
-        specifier: workspace:*
-        version: link:packages/state
-      '@thumbcode/types':
-        specifier: workspace:*
-        version: link:packages/types
-      '@thumbcode/ui':
-        specifier: workspace:*
-        version: link:packages/ui
+      ai:
+        specifier: ^6.0.97
+        version: 6.0.97(zod@3.25.76)
       capacitor-secure-storage-plugin:
         specifier: ^0.13.0
         version: 0.13.0(@capacitor/core@8.1.0)
@@ -187,159 +205,6 @@ importers:
       sharp:
         specifier: ^0.33.0
         version: 0.33.5
-
-  packages/agent-intelligence:
-    dependencies:
-      '@ai-sdk/amazon-bedrock':
-        specifier: ^4.0.63
-        version: 4.0.63(zod@3.25.76)
-      '@ai-sdk/anthropic':
-        specifier: ^3.0.46
-        version: 3.0.46(zod@3.25.76)
-      '@ai-sdk/azure':
-        specifier: ^3.0.32
-        version: 3.0.32(zod@3.25.76)
-      '@ai-sdk/cohere':
-        specifier: ^3.0.21
-        version: 3.0.21(zod@3.25.76)
-      '@ai-sdk/deepseek':
-        specifier: ^2.0.20
-        version: 2.0.20(zod@3.25.76)
-      '@ai-sdk/google':
-        specifier: ^3.0.30
-        version: 3.0.30(zod@3.25.76)
-      '@ai-sdk/groq':
-        specifier: ^3.0.24
-        version: 3.0.24(zod@3.25.76)
-      '@ai-sdk/mcp':
-        specifier: ^1.0.21
-        version: 1.0.21(zod@3.25.76)
-      '@ai-sdk/mistral':
-        specifier: ^3.0.20
-        version: 3.0.20(zod@3.25.76)
-      '@ai-sdk/openai':
-        specifier: ^3.0.31
-        version: 3.0.31(zod@3.25.76)
-      '@ai-sdk/xai':
-        specifier: ^3.0.57
-        version: 3.0.57(zod@3.25.76)
-      '@anthropic-ai/sdk':
-        specifier: ^0.32.0
-        version: 0.32.1
-      '@thumbcode/state':
-        specifier: workspace:*
-        version: link:../state
-      '@thumbcode/types':
-        specifier: workspace:*
-        version: link:../types
-      ai:
-        specifier: ^6.0.97
-        version: 6.0.97(zod@3.25.76)
-      openai:
-        specifier: ^4.73.0
-        version: 4.104.0(ws@8.19.0)(zod@3.25.76)
-      react:
-        specifier: 18.3.1
-        version: 18.3.1
-      zustand:
-        specifier: ^5.0.0
-        version: 5.0.11(@types/react@18.3.28)(immer@10.2.0)(react@18.3.1)(use-sync-external-store@1.6.0(react@18.3.1))
-    devDependencies:
-      '@types/react':
-        specifier: ~18.3.0
-        version: 18.3.28
-      typescript:
-        specifier: ^5.3.0
-        version: 5.6.3
-
-  packages/config:
-    dependencies:
-      react:
-        specifier: '>=18.0.0'
-        version: 18.3.1
-
-  packages/core:
-    dependencies:
-      '@aparajita/capacitor-biometric-auth':
-        specifier: ^10.0.0
-        version: 10.0.0
-      '@capacitor/device':
-        specifier: ^8.0.0
-        version: 8.0.1(@capacitor/core@8.1.0)
-      '@capacitor/filesystem':
-        specifier: ^8.1.1
-        version: 8.1.2(@capacitor/core@8.1.0)
-      '@thumbcode/config':
-        specifier: workspace:*
-        version: link:../config
-      '@thumbcode/types':
-        specifier: workspace:*
-        version: link:../types
-      capacitor-secure-storage-plugin:
-        specifier: ^0.13.0
-        version: 0.13.0(@capacitor/core@8.1.0)
-      diff:
-        specifier: ^8.0.3
-        version: 8.0.3
-      isomorphic-git:
-        specifier: ^1.27.0
-        version: 1.37.1
-      react:
-        specifier: '>=18.0.0'
-        version: 18.3.1
-      zod:
-        specifier: ^3.23.0
-        version: 3.25.76
-    devDependencies:
-      '@types/diff':
-        specifier: ^6.0.0
-        version: 6.0.0
-
-  packages/dev-tools:
-    dependencies:
-      sharp:
-        specifier: ~0.34.0
-        version: 0.34.5
-    devDependencies:
-      '@mdhnpm/color-contrast-ratio-calculator':
-        specifier: ^1.0.4
-        version: 1.0.4
-      tsx:
-        specifier: ^4.19.2
-        version: 4.21.0
-      typescript:
-        specifier: ~5.6.0
-        version: 5.6.3
-
-  packages/state:
-    dependencies:
-      '@thumbcode/config':
-        specifier: workspace:*
-        version: link:../config
-      immer:
-        specifier: ^10.2.0
-        version: 10.2.0
-      react:
-        specifier: '>=18.0.0'
-        version: 18.3.1
-      zustand:
-        specifier: ^5.0.0
-        version: 5.0.11(@types/react@18.3.28)(immer@10.2.0)(react@18.3.1)(use-sync-external-store@1.6.0(react@18.3.1))
-
-  packages/types:
-    devDependencies:
-      typescript:
-        specifier: ~5.6.0
-        version: 5.6.3
-
-  packages/ui:
-    dependencies:
-      lucide-react:
-        specifier: ^0.563.0
-        version: 0.563.0(react@18.3.1)
-      react:
-        specifier: '>=18.0.0'
-        version: 18.3.1
 
 packages:
 
@@ -1632,12 +1497,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
-
-  '@mdhnpm/color-contrast-ratio-calculator@1.0.4':
-    resolution: {integrity: sha512-Bo10feMsg0aVd4Hm1lwOogQZI9Sng5BIHms7Y0FVjosmGU8IirsmUOtC+zHMFMjEXnivGT8Qzhc+ZwCS+V6VGA==}
-
-  '@mdhnpm/rgb-hex-converter@1.2.0':
-    resolution: {integrity: sha512-/tSC3owWlZSuZMDnR797DoJ2ZVH59+dUKv5rHJ0tO18MOebc+oZ2FtyMOrN5QqC5yG/sgXYfPLmMPf5EGiibzw==}
 
   '@mdx-js/mdx@3.1.1':
     resolution: {integrity: sha512-f6ZO2ifpwAQIpzGWaBQT2TXxPv6z3RBzQKpVftEWN78Vl/YweF1uwussDx8ECAXVtr3Rs89fKyG9YlzUs9DyGQ==}
@@ -6080,7 +5939,8 @@ snapshots:
       '@shikijs/types': 3.21.0
       '@shikijs/vscode-textmate': 10.0.2
 
-  '@img/colour@1.0.0': {}
+  '@img/colour@1.0.0':
+    optional: true
 
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:
@@ -6383,12 +6243,6 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
-
-  '@mdhnpm/color-contrast-ratio-calculator@1.0.4':
-    dependencies:
-      '@mdhnpm/rgb-hex-converter': 1.2.0
-
-  '@mdhnpm/rgb-hex-converter@1.2.0': {}
 
   '@mdx-js/mdx@3.1.1':
     dependencies:
@@ -7910,6 +7764,7 @@ snapshots:
   get-tsconfig@4.13.0:
     dependencies:
       resolve-pkg-maps: 1.0.0
+    optional: true
 
   git-raw-commits@4.0.0:
     dependencies:
@@ -9644,7 +9499,8 @@ snapshots:
 
   resolve-from@5.0.0: {}
 
-  resolve-pkg-maps@1.0.0: {}
+  resolve-pkg-maps@1.0.0:
+    optional: true
 
   resolve@1.22.11:
     dependencies:
@@ -9829,6 +9685,7 @@ snapshots:
       '@img/sharp-win32-arm64': 0.34.5
       '@img/sharp-win32-ia32': 0.34.5
       '@img/sharp-win32-x64': 0.34.5
+    optional: true
 
   shebang-command@2.0.0:
     dependencies:
@@ -10126,6 +9983,7 @@ snapshots:
       get-tsconfig: 4.13.0
     optionalDependencies:
       fsevents: 2.3.3
+    optional: true
 
   type-fest@4.41.0: {}
 

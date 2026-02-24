@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { GitHubAuthService } from '@/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { GitHubAuthService } from '@/core';
 import GitHubAuthPage from '../github-auth';
 
 // Mock @thumbcode/core

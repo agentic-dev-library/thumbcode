@@ -7,13 +7,13 @@
  * Migrated from React Native: app/(onboarding)/api-keys.tsx
  */
 
-import { CredentialService } from '@/core';
-import { type CredentialProvider, useCredentialStore } from '@/state';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
 import { LightbulbIcon, SecurityIcon } from '@/components/icons';
+import { CredentialService } from '@/core';
 import { useAppRouter } from '@/hooks/use-app-router';
 import { logger } from '@/lib/logger';
+import { type CredentialProvider, useCredentialStore } from '@/state';
 import { APIKeyInput } from './components/APIKeyInput';
 
 interface APIKeyState {

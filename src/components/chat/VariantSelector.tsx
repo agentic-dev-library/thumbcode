@@ -7,11 +7,11 @@
  * Uses organic daube styling.
  */
 
-import type { VariantSetMessage } from '@/state';
 import { useCallback, useMemo, useState } from 'react';
 import { PreviewPanel } from '@/components/preview';
 import { Text } from '@/components/ui';
 import { createPreviewHtml } from '@/lib/preview-sandbox';
+import type { VariantSetMessage } from '@/state';
 
 /** Provider brand color map */
 const PROVIDER_COLORS: Record<string, { bg: string; text: string }> = {

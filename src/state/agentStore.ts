@@ -5,10 +5,10 @@
  * Agents include: Architect, Implementer, Reviewer, Tester
  */
 
-import { AGENT_CONFIG } from '@/config';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import { AGENT_CONFIG } from '@/config';
 
 // Agent role types matching ThumbCode's multi-agent system
 export type AgentRole = 'architect' | 'implementer' | 'reviewer' | 'tester';

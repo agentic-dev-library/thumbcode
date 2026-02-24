@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { CredentialService } from '@/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { CredentialService } from '@/core';
 import ApiKeysPage from '../api-keys';
 
 // Mock CredentialService

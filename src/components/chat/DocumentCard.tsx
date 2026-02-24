@@ -6,8 +6,8 @@
  * Uses organic daube styling per brand guidelines.
  */
 
-import type { DocumentOutputMessage } from '@/state';
 import { Text } from '@/components/ui';
+import type { DocumentOutputMessage } from '@/state';
 
 /** Props for the DocumentCard component */
 interface DocumentCardProps {

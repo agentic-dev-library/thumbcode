@@ -5,9 +5,9 @@
  * Handles loading states and cancellation on unmount/dependency change.
  */
 
+import { useEffect, useState } from 'react';
 import type { GitHubCommit } from '@/core';
 import { GitHubApiService } from '@/core';
-import { useEffect, useState } from 'react';
 import type { RepoInfo } from './use-project-files';
 
 export interface UseProjectCommitsResult {

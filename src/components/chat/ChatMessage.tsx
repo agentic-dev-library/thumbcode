@@ -5,6 +5,8 @@
  * Uses organic daube styling per brand guidelines.
  */
 
+import { Text } from '@/components/ui';
+import { formatTime, getSenderInfo } from '@/lib/chat-utils';
 import type {
   ApprovalMessage,
   DocumentOutputMessage,
@@ -12,8 +14,6 @@ import type {
   Message,
   VoiceMessage,
 } from '@/state';
-import { Text } from '@/components/ui';
-import { formatTime, getSenderInfo } from '@/lib/chat-utils';
 import { ApprovalCard } from './ApprovalCard';
 import { AudioMessage } from './AudioMessage';
 import { CodeBlock } from './CodeBlock';

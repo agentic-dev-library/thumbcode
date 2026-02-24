@@ -5,16 +5,11 @@
  * Uses organic styling with visual indicators for unread messages.
  */
 
-import {
-  type ChatThread,
-  selectPinnedThreads,
-  selectRecentThreads,
-  useChatStore,
-} from '@/state';
 import { useShallow } from 'zustand/react/shallow';
 import { Badge } from '@/components/display';
 import { Text } from '@/components/ui';
 import { formatRelativeTime, getParticipantColor } from '@/lib/chat-utils';
+import { type ChatThread, selectPinnedThreads, selectRecentThreads, useChatStore } from '@/state';
 
 /** Props for the ThreadList component */
 interface ThreadListProps {

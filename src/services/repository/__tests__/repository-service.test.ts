@@ -1,6 +1,6 @@
+import { describe, expect, it, vi } from 'vitest';
 import { GitHubApiService } from '@/core';
 import type { Repository } from '@/types';
-import { describe, expect, it, vi } from 'vitest';
 import {
   classifyError,
   createRepository,

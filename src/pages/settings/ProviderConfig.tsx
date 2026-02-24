@@ -6,6 +6,9 @@
  * capability badges color-coded by category.
  */
 
+import { ArrowLeft, Check, ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   type CapabilitySupport,
   PROVIDER_REGISTRY,
@@ -13,9 +16,6 @@ import {
   type ProviderCapabilityEntry,
 } from '@/config';
 import { useCredentialStore } from '@/state';
-import { ArrowLeft, Check, ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 /**
  * Capability category for color coding.

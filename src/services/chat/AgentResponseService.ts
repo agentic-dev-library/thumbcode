@@ -7,6 +7,7 @@
  * chat event infrastructure.
  */
 
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import type { AgentContext } from '@/services/agents';
 import type { Message as AIMessage, AIProvider, StreamEvent } from '@/services/ai';
 import { createAIClient, getDefaultModel } from '@/services/ai';
@@ -20,7 +21,6 @@ import type { ToolExecutionBridge } from '@/services/tools';
 import type { Message, MessageSender } from '@/state';
 import { useAgentStore, useChatStore, useCredentialStore } from '@/state';
 import type { AgentRole } from '@/types';
-import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import { getAgentSystemPrompt } from './AgentPrompts';
 import type { MessageStore } from './MessageStore';
 import type { StreamHandler } from './StreamHandler';

@@ -7,11 +7,11 @@
  * Migrated from React Native: app/(onboarding)/github-auth.tsx
  */
 
-import { env, GITHUB_OAUTH } from '@/config';
-import { GitHubAuthService } from '@/core';
 import { useEffect, useRef, useState } from 'react';
 import { StepsProgress } from '@/components/feedback/Progress';
 import { LinkIcon, SuccessIcon } from '@/components/icons';
+import { env, GITHUB_OAUTH } from '@/config';
+import { GitHubAuthService } from '@/core';
 import { useAppRouter } from '@/hooks/use-app-router';
 
 /** Spinner component for loading states */

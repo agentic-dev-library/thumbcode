@@ -5,13 +5,13 @@
  * All data logic lives in useAgentList; this file is layout only.
  */
 
-import type { Agent as StoreAgent } from '@/state';
 import { CheckCircle, Eye, Search, Star, Users, Zap } from 'lucide-react';
 import type React from 'react';
 import { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProgressBar } from '@/components/feedback/Progress';
 import { useAgentList } from '@/hooks';
+import type { Agent as StoreAgent } from '@/state';
 
 function getStatusBadgeVariant(status: StoreAgent['status']): {
   bg: string;

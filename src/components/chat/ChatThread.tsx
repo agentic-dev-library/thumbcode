@@ -5,11 +5,11 @@
  * Includes typing indicators and auto-scroll to bottom.
  */
 
-import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@/state';
 import { useCallback, useEffect, useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { Text } from '@/components/ui';
 import { ChatService } from '@/services/chat';
+import { selectThreadMessages, selectTypingIndicators, useChatStore } from '@/state';
 import { ChatMessage } from './ChatMessage';
 
 /** Props for the ChatThread component */

@@ -6,8 +6,8 @@
  * focused on layout only.
  */
 
-import { type Agent, type AgentTask, selectAgents, useAgentStore } from '@/state';
 import { useCallback, useMemo, useState } from 'react';
+import { type Agent, type AgentTask, selectAgents, useAgentStore } from '@/state';
 
 export interface AgentMetrics {
   completedTasks: number;

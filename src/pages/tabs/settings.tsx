@@ -5,13 +5,6 @@
  * Migrated from React Native to web React with Tailwind CSS.
  */
 
-import {
-  selectCredentialByProvider,
-  selectGitHubProfile,
-  selectSettings,
-  useCredentialStore,
-  useUserStore,
-} from '@/state';
 import type { LucideIcon } from 'lucide-react';
 import {
   Bell,
@@ -31,6 +24,13 @@ import {
   Vibrate,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  selectCredentialByProvider,
+  selectGitHubProfile,
+  selectSettings,
+  useCredentialStore,
+  useUserStore,
+} from '@/state';
 
 /** Reusable settings row */
 interface SettingsItemProps {

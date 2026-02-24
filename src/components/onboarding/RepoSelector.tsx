@@ -4,10 +4,10 @@
  * Displays a searchable list of GitHub repositories with the ability to create new ones.
  */
 
-import type { Repository } from '@/types';
 import { FolderIcon, SecurityIcon, StarIcon, SuccessIcon } from '@/components/icons';
 import { VStack } from '@/components/layout';
 import { Input, Text } from '@/components/ui';
+import type { Repository } from '@/types';
 
 export interface RepoListItem extends Repository {
   /** Stable key for list rendering */

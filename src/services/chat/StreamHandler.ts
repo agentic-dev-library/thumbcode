@@ -5,8 +5,8 @@
  * for the chat service.
  */
 
-import type { MessageSender } from '@/state';
 import { logger } from '@/lib/logger';
+import type { MessageSender } from '@/state';
 import type { ChatEvent, ChatEventListener } from './types';
 
 export class StreamHandler {

@@ -5,7 +5,6 @@
  * Delegates data operations to repository-service and validation to validation module.
  */
 
-import { useProjectStore } from '@/state';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { RepoListItem } from '@/components/onboarding';
 import { useAppRouter } from '@/hooks/use-app-router';
@@ -17,6 +16,7 @@ import {
   fetchRepositories,
   filterRepositories,
 } from '@/services/repository';
+import { useProjectStore } from '@/state';
 
 export function useCreateProject() {
   const router = useAppRouter();

@@ -11,8 +11,8 @@
  * - Transport selection (stdio / HTTP / SSE)
  */
 
-import type { McpServerConfig } from '@/state';
 import { type MockInstance, vi } from 'vitest';
+import type { McpServerConfig } from '@/state';
 import { McpClient } from '../McpClient';
 
 // Mock the AI SDK MCP module

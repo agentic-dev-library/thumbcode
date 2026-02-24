@@ -5,9 +5,9 @@
  * in the project detail screen.
  */
 
+import { ChevronRight, FileText, GitCommitHorizontal, ListTodo, Loader2 } from 'lucide-react';
 import type { GitHubCommit } from '@/core';
 import type { AgentTask } from '@/state';
-import { ChevronRight, FileText, GitCommitHorizontal, ListTodo, Loader2 } from 'lucide-react';
 
 /* ─── Commits ─────────────────────────────────── */
 

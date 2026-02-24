@@ -3,8 +3,8 @@
  */
 
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { GitHubApiService } from '@/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { GitHubApiService } from '@/core';
 import { parseRepoInfo, useProjectFiles } from '../use-project-files';
 
 vi.mock('@/core', () => ({

@@ -5,9 +5,9 @@
  * Extracted from create-project.tsx to keep page components thin.
  */
 
+import type { RepoListItem } from '@/components/onboarding';
 import { GitHubApiService } from '@/core';
 import type { Repository } from '@/types';
-import type { RepoListItem } from '@/components/onboarding';
 
 /** Maps a Repository from the API to a RepoListItem for the UI */
 export function toRepoListItem(r: Repository): RepoListItem {

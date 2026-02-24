@@ -6,9 +6,9 @@
  * so the page component stays focused on layout.
  */
 
-import { useProjectStore } from '@/state';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useProjectStore } from '@/state';
 
 export interface UseProjectActionsResult {
   deleteProject: (projectId: string) => void;

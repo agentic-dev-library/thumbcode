@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { GitHubApiService } from '@/core';
 import type { Repository } from '@/types';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import CreateProjectPage from '../create-project';
 
 // Mock GitHubApiService

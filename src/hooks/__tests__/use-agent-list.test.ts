@@ -3,8 +3,8 @@
  */
 
 import { act, renderHook } from '@testing-library/react';
-import type { Agent } from '@/state';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { Agent } from '@/state';
 import { useAgentList } from '../use-agent-list';
 
 const mockAgents: Agent[] = [

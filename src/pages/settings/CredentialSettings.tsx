@@ -10,12 +10,12 @@
  * in a future update.
  */
 
-import { CredentialService } from '@/core';
-import type { CredentialMetadata } from '@/state';
-import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@/state';
 import { ArrowLeft, Check, Link as LinkIcon, Loader2, Shield, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CredentialService } from '@/core';
+import type { CredentialMetadata } from '@/state';
+import { selectCredentialByProvider, useCredentialStore, useUserStore } from '@/state';
 
 interface ApiKeyInputProps {
   label: string;

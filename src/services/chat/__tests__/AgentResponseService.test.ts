@@ -5,9 +5,9 @@
  * mocked AI client, abort/cancel, and approval request/response workflows.
  */
 
-import { useChatStore, useCredentialStore } from '@/state';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import type { Mock } from 'vitest';
+import { useChatStore, useCredentialStore } from '@/state';
 
 import { AgentResponseService } from '../AgentResponseService';
 import { MessageStore } from '../MessageStore';

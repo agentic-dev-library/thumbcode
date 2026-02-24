@@ -7,9 +7,9 @@
  * Uses organic daube styling per brand guidelines.
  */
 
-import type { MediaAttachment, VoiceMessage } from '@/state';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Text } from '@/components/ui';
+import type { MediaAttachment, VoiceMessage } from '@/state';
 
 /** Props for the AudioMessage component */
 interface AudioMessageProps {

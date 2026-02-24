@@ -6,6 +6,7 @@
  * Uses organic daube styling per brand guidelines.
  */
 
+import { Text } from '@/components/ui';
 import type {
   DocumentOutputMessage,
   ImageMessage as ImageMessageType,
@@ -13,7 +14,6 @@ import type {
   Message,
   VoiceMessage,
 } from '@/state';
-import { Text } from '@/components/ui';
 import { AudioMessage } from './AudioMessage';
 import { DocumentCard } from './DocumentCard';
 import { ImageMessage } from './ImageMessage';

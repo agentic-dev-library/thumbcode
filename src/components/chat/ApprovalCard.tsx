@@ -6,7 +6,6 @@
  * Uses paint daube icons for brand consistency.
  */
 
-import type { ApprovalMessage } from '@/state';
 import type React from 'react';
 import { useMemo } from 'react';
 import {
@@ -18,6 +17,7 @@ import {
   LightningIcon,
 } from '@/components/icons';
 import { Text } from '@/components/ui';
+import type { ApprovalMessage } from '@/state';
 import { getColor } from '@/utils/design-tokens';
 
 /** Action icon component type */

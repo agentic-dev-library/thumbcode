@@ -6,8 +6,6 @@
  * and a form to add custom servers.
  */
 
-import type { McpCategory, McpServerConfig } from '@/state';
-import { CURATED_SUGGESTIONS, selectServers, useMcpStore } from '@/state';
 import {
   ArrowLeft,
   BookOpen,
@@ -22,6 +20,8 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { McpCategory, McpServerConfig } from '@/state';
+import { CURATED_SUGGESTIONS, selectServers, useMcpStore } from '@/state';
 
 const CATEGORY_LABELS: Record<McpCategory, string> = {
   docs: 'Docs',

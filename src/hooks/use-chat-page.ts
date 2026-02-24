@@ -5,9 +5,9 @@
  * and thread metadata. Keeps the chat page a thin composition layer.
  */
 
-import { useChatStore } from '@/state';
 import { useCallback } from 'react';
 import { ChatService } from '@/services/chat';
+import { useChatStore } from '@/state';
 
 export interface UseChatPageResult {
   activeThreadId: string | null;
