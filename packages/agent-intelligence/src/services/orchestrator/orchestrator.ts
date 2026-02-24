@@ -225,8 +225,12 @@ export class AgentOrchestrator {
           maxTokens: 4096,
           systemPrompt,
         });
-      } catch {
-        // If a provider fails, return an error variant
+      } catch (error) {
+        // Log failure for debugging, return an error variant to the user
+        console.warn(
+          `[Orchestrator] Variant generation failed for provider=${provider} model=${model}:`,
+          error instanceof Error ? error.message : error
+        );
         return {
           id: `variant-${requestId}-${index}`,
           name: promptVariation.name,

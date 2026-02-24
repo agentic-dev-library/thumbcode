@@ -49,7 +49,7 @@ const GOOGLE_FONTS_URL =
 export function createPreviewHtml(code: string, config?: PreviewConfig): string {
   const darkMode = config?.darkMode ?? true;
   const title = config?.title ?? 'ThumbCode Component Preview';
-  const customCss = config?.customCss ?? '';
+  const customCss = sanitizeCss(config?.customCss ?? '');
 
   const bgColor = darkMode ? '#151820' : '#F8FAFC';
   const textColor = darkMode ? '#F8FAFC' : '#151820';
@@ -85,6 +85,29 @@ export function createPreviewHtml(code: string, config?: PreviewConfig): string 
 }
 
 /**
+ * Sanitize CSS to prevent style-tag breakout and CSS injection attacks.
+ *
+ * Prevents injection of closing style tags, script blocks, and
+ * dangerous CSS functions like expression() and url(javascript:).
+ */
+export function sanitizeCss(css: string): string {
+  // Prevent breaking out of <style> block
+  let sanitized = css.replace(/<\/?style\b[^>]*>/gi, '');
+
+  // Remove any HTML tags that could have been injected
+  sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+  sanitized = sanitized.replace(/<[^>]+>/g, '');
+
+  // Remove CSS expression() (IE-specific XSS vector)
+  sanitized = sanitized.replace(/expression\s*\(/gi, '');
+
+  // Remove javascript: URLs in CSS url()
+  sanitized = sanitized.replace(/url\s*\(\s*(['"]?)javascript:/gi, 'url($1');
+
+  return sanitized;
+}
+
+/**
  * Sanitize HTML content to prevent XSS attacks.
  *
  * Strips dangerous tags and attributes from user-provided HTML.
@@ -96,26 +119,27 @@ export function sanitizeHtml(html: string): string {
   let sanitized = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
   // Remove event handler attributes (onclick, onerror, onload, etc.)
-  sanitized = sanitized.replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '');
+  // Handles quoted, single-quoted, backtick-quoted, and unquoted values
+  sanitized = sanitized.replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi, '');
 
-  // Remove javascript: protocol in href/src attributes
+  // Remove javascript: protocol in href/src attributes (quoted and unquoted)
   sanitized = sanitized.replace(
-    /(href|src|action)\s*=\s*(?:"javascript:[^"]*"|'javascript:[^']*')/gi,
+    /(href|src|action)\s*=\s*(?:"javascript:[^"]*"|'javascript:[^']*'|javascript:[^\s>]*)/gi,
     '$1=""'
   );
 
   // Remove data: protocol in src attributes (potential XSS vector)
   sanitized = sanitized.replace(
-    /src\s*=\s*(?:"data:text\/html[^"]*"|'data:text\/html[^']*')/gi,
+    /src\s*=\s*(?:"data:text\/html[^"]*"|'data:text\/html[^']*'|data:text\/html[^\s>]*)/gi,
     'src=""'
   );
 
   // Remove iframe, object, embed tags
   sanitized = sanitized.replace(/<\/?(?:iframe|object|embed|applet|form)\b[^>]*>/gi, '');
 
-  // Remove style attributes containing expressions or url()
+  // Remove style attributes containing expressions or url() (quoted and single-quoted)
   sanitized = sanitized.replace(
-    /style\s*=\s*"[^"]*(?:expression|url\s*\()[^"]*"/gi,
+    /style\s*=\s*(?:"[^"]*(?:expression|url\s*\()[^"]*"|'[^']*(?:expression|url\s*\()[^']*')/gi,
     'style=""'
   );
 

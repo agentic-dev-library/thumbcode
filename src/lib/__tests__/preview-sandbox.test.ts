@@ -4,7 +4,7 @@
  * Tests for createPreviewHtml and sanitizeHtml functions.
  */
 
-import { createPreviewHtml, sanitizeHtml } from '../preview-sandbox';
+import { createPreviewHtml, sanitizeCss, sanitizeHtml } from '../preview-sandbox';
 
 describe('createPreviewHtml', () => {
   it('generates a complete HTML document with Tailwind CDN', () => {
@@ -65,6 +65,23 @@ describe('createPreviewHtml', () => {
 
     expect(html).toContain('.custom { color: red; }');
   });
+
+  it('sanitizes customCss to prevent style-tag breakout', () => {
+    const html = createPreviewHtml('test', {
+      customCss: '</style><script>alert("xss")</script><style>',
+    });
+
+    expect(html).not.toContain('<script>alert');
+    expect(html).not.toContain('</style><script>');
+  });
+
+  it('strips CSS expression() from customCss', () => {
+    const html = createPreviewHtml('test', {
+      customCss: 'body { width: expression(document.body.clientWidth); }',
+    });
+
+    expect(html).not.toContain('expression(');
+  });
 });
 
 describe('sanitizeHtml', () => {
@@ -119,5 +136,66 @@ describe('sanitizeHtml', () => {
     expect(result).not.toContain('<script>');
     expect(result).not.toContain('iframe');
     expect(result).toContain('text');
+  });
+
+  it('removes backtick-quoted event handlers', () => {
+    const result = sanitizeHtml('<div onmouseover=`alert(1)`>text</div>');
+
+    expect(result).not.toContain('onmouseover');
+    expect(result).toContain('text');
+  });
+
+  it('removes unquoted javascript: protocol', () => {
+    const result = sanitizeHtml('<a href=javascript:alert(1)>link</a>');
+
+    expect(result).not.toContain('javascript:');
+  });
+
+  it('removes unquoted data: protocol from src', () => {
+    const result = sanitizeHtml('<img src=data:text/html,<script>alert(1)</script>>');
+
+    expect(result).not.toContain('data:text/html');
+  });
+
+  it('removes style attributes with expressions in single quotes', () => {
+    const result = sanitizeHtml("<div style='width: expression(alert(1))'>text</div>");
+
+    expect(result).not.toContain('expression');
+    expect(result).toContain('text');
+  });
+});
+
+describe('sanitizeCss', () => {
+  it('removes closing style tags to prevent breakout', () => {
+    const result = sanitizeCss('</style><script>alert("xss")</script><style>');
+
+    expect(result).not.toContain('</style>');
+    expect(result).not.toContain('<script>');
+  });
+
+  it('removes CSS expression() calls', () => {
+    const result = sanitizeCss('body { width: expression(document.body.clientWidth); }');
+
+    expect(result).not.toContain('expression(');
+  });
+
+  it('removes javascript: from CSS url()', () => {
+    const result = sanitizeCss("body { background: url('javascript:alert(1)'); }");
+
+    expect(result).not.toContain('javascript:');
+  });
+
+  it('strips injected HTML tags', () => {
+    const result = sanitizeCss('.x { color: red } <img src=x onerror=alert(1)>');
+
+    expect(result).not.toContain('<img');
+    expect(result).toContain('.x { color: red }');
+  });
+
+  it('preserves valid CSS unchanged', () => {
+    const css = '.container { display: flex; gap: 8px; }';
+    const result = sanitizeCss(css);
+
+    expect(result).toBe(css);
   });
 });

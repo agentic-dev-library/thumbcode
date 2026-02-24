@@ -52,14 +52,6 @@ export class McpClient {
    * Disconnect from an MCP server and clean up resources.
    */
   disconnect(serverId: string): void {
-    const connection = this.connections.get(serverId);
-    if (connection) {
-      this.connections.set(serverId, {
-        ...connection,
-        status: 'disconnected',
-        tools: [],
-      });
-    }
     this.connections.delete(serverId);
   }
 

@@ -291,7 +291,7 @@ export class AgentResponseService {
    */
   private toAIMessages(messages: Message[]): AIMessage[] {
     return messages
-      .filter((m) => m.sender === 'user' || m.sender !== 'system')
+      .filter((m) => m.sender !== 'system')
       .map((m) => ({
         role: (m.sender === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
         content: m.content,
