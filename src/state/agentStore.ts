@@ -5,7 +5,7 @@
  * Agents include: Architect, Implementer, Reviewer, Tester
  */
 
-import { AGENT_CONFIG } from '@thumbcode/config';
+import { AGENT_CONFIG } from '@/config';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
