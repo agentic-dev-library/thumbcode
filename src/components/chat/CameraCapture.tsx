@@ -24,11 +24,8 @@ export function CameraCapture({ onCapture, onCancel }: Readonly<CameraCapturePro
 
   const handleStart = useCallback(async () => {
     await startCapture();
-    // Only mark as started if capture actually succeeded (no error and stream active)
-    if (!error && isCapturing) {
-      setHasStarted(true);
-    }
-  }, [startCapture, error, isCapturing]);
+    setHasStarted(true);
+  }, [startCapture]);
 
   const handleCapture = useCallback(() => {
     const dataUrl = takePhoto();

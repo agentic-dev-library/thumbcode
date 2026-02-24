@@ -399,28 +399,18 @@ export class FrontendSkill implements AgentSkill {
  * ${description}
  */
 
-import { Pressable, Text, View } from 'react-native';
+import { Text } from '@/components/ui';
 
 ${propsInterface}
 
 export function ${name}({ ...props }: ${name}Props) {
   return (
-    <View
-      className="bg-surface-elevated p-4"
-      style={{
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 18,
-        borderBottomRightRadius: 22,
-        borderBottomLeftRadius: 16,
-        shadowColor: 'rgba(13, 148, 136, 0.08)',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 1,
-        shadowRadius: 24,
-        transform: [{ rotate: '-0.3deg' }],
-      }}
+    <div
+      className="bg-surface-elevated p-4 rounded-organic-card shadow-organic-card"
+      style={{ transform: 'rotate(-0.3deg)' }}
     >
       {/* TODO: Implement ${description} */}
-    </View>
+    </div>
   );
 }
 `;
@@ -696,29 +686,23 @@ export function ${name}({ ...props }: ${name}Props) {
  * ${styleComment}
  */
 
-import { Text, View } from 'react-native';
+import { Text } from '@/components/ui';
 
 ${propsInterface}
 
 export function ${componentName}({ ...props }: ${name}Props) {
   return (
-    <View
+    <div
       className="${styles.containerClasses}"
       style={{
-        borderTopLeftRadius: ${styles.borderRadius[0]},
-        borderTopRightRadius: ${styles.borderRadius[1]},
-        borderBottomRightRadius: ${styles.borderRadius[2]},
-        borderBottomLeftRadius: ${styles.borderRadius[3]},
-        shadowColor: '${styles.shadowColor}',
-        shadowOffset: { width: 0, height: ${styles.shadowHeight} },
-        shadowOpacity: 1,
-        shadowRadius: ${styles.shadowRadius},
-        transform: [{ rotate: '${styles.rotation}' }],
+        borderRadius: '${styles.borderRadius[0]}px ${styles.borderRadius[1]}px ${styles.borderRadius[2]}px ${styles.borderRadius[3]}px',
+        boxShadow: '0 ${styles.shadowHeight}px ${styles.shadowRadius}px ${styles.shadowColor}',
+        transform: 'rotate(${styles.rotation})',
       }}
     >
       {/* TODO: Implement ${description} */}
       {/* Style hints: ${preset.styleHints} */}
-    </View>
+    </div>
   );
 }
 `;

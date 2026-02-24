@@ -231,10 +231,12 @@ export class AgentOrchestrator {
         });
       } catch (error) {
         // Log failure for debugging, return an error variant to the user
-        console.warn(
-          `[Orchestrator] Variant generation failed for provider=${provider} model=${model}:`,
-          error instanceof Error ? error.message : error
-        );
+        if (import.meta.env.DEV) {
+          console.warn(
+            `[Orchestrator] Variant generation failed for provider=${provider} model=${model}:`,
+            error instanceof Error ? error.message : error
+          );
+        }
         return {
           id: `variant-${requestId}-${index}`,
           name: promptVariation.name,

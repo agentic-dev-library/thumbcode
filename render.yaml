@@ -24,7 +24,7 @@ services:
         value: max-age=31536000; includeSubDomains
       - path: /*
         name: Permissions-Policy
-        value: camera=(), microphone=(), geolocation=()
+        value: camera=(self), microphone=(self), geolocation=()
       # Cache static assets aggressively (hashed filenames)
       # NOTE: Specific paths must come BEFORE /* to avoid nondeterministic matching
       - path: /assets/*

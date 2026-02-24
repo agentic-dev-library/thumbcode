@@ -42,10 +42,12 @@ class CertificatePinningService {
 
     // On web, certificate pinning is handled by the browser's TLS layer.
     // Log the configuration for debugging purposes.
-    console.debug(
-      'CertificatePinningService: Web platform detected. ' +
-        `TLS pinning managed by browser for ${Object.keys(PINNING_CONFIG).length} domains.`
-    );
+    if (import.meta.env.DEV) {
+      console.debug(
+        'CertificatePinningService: Web platform detected. ' +
+          `TLS pinning managed by browser for ${Object.keys(PINNING_CONFIG).length} domains.`
+      );
+    }
     this.isInitialized = true;
   }
 }

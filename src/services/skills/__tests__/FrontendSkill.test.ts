@@ -224,7 +224,7 @@ describe('FrontendSkill tools', () => {
       expect(data.fileName).toBe('status-badge.tsx');
       expect(data.targetDir).toBe('src/components/ui');
       expect(data.code).toContain('StatusBadge');
-      expect(data.code).toContain('borderTopLeftRadius');
+      expect(data.code).toContain('rounded-organic-card');
     });
 
     it('generates in correct variant directory', async () => {
@@ -430,8 +430,7 @@ describe('FrontendSkill tools', () => {
 
       for (const variant of data.variants) {
         // All variants should have organic (asymmetric) border radius
-        expect(variant.code).toContain('borderTopLeftRadius');
-        expect(variant.code).toContain('borderBottomRightRadius');
+        expect(variant.code).toContain('borderRadius:');
       }
     });
 
@@ -505,7 +504,7 @@ describe('FrontendSkill tools', () => {
       });
       const data = JSON.parse(result.output);
       const minimalVariant = data.variants[0];
-      expect(minimalVariant.code).toContain("shadowColor: 'transparent'");
+      expect(minimalVariant.code).toContain("boxShadow: '0 0px 0px transparent'");
     });
 
     it('playful variant has larger rotation', async () => {
@@ -516,7 +515,7 @@ describe('FrontendSkill tools', () => {
       });
       const data = JSON.parse(result.output);
       const playfulVariant = data.variants[0];
-      expect(playfulVariant.code).toContain("rotate: '-1deg'");
+      expect(playfulVariant.code).toContain("rotate(-1deg)");
     });
   });
 

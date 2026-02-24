@@ -122,9 +122,11 @@ export class PollingService {
           const maxConsecutiveErrors = 3;
 
           if (this.consecutiveErrors < maxConsecutiveErrors) {
-            console.warn(
-              `Poll attempt failed (${this.consecutiveErrors}/${maxConsecutiveErrors}). Retrying...`
-            );
+            if (import.meta.env.DEV) {
+              console.warn(
+                `Poll attempt failed (${this.consecutiveErrors}/${maxConsecutiveErrors}). Retrying...`
+              );
+            }
             this.pollTimeoutId = setTimeout(poll, this.pollInterval);
             return;
           }

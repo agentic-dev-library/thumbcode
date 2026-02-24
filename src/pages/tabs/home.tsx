@@ -170,6 +170,7 @@ export default function HomePage() {
             <h2 className="font-body font-semibold text-white text-lg">Recent Activity</h2>
             <button
               type="button"
+              onClick={() => navigate('/chat')}
               className="text-sm font-body text-coral-500 hover:text-coral-400 transition-colors tap-feedback"
               aria-label="See all recent activity"
             >
