@@ -66,8 +66,8 @@
       "!**/playwright-report",
       "!**/test-results",
       "!**/.astro",
-      "!ios/App/App/public/**",
-      "!android/app/src/main/assets/public/**"
+      "!ios/App/App/public",
+      "!android/app/src/main/assets/public"
     ]
   }
 }

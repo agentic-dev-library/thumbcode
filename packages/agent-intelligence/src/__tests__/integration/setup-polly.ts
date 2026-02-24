@@ -18,7 +18,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { HttpResponse, bypass, http } from 'msw';
+import { bypass, HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 
 const FIXTURES_DIR = path.join(import.meta.dirname, 'fixtures');

@@ -21,8 +21,6 @@ import { createVCR, getApiKey } from './setup-polly';
 /** Simple prompt that every provider can handle cheaply. */
 const TEST_PROMPT = 'Respond with exactly: "Hello from ThumbCode". Nothing else.';
 
-const isRecordMode = process.env.POLLY_MODE === 'record';
-
 /** Check if an error is an auth/key error (stale key in Doppler). */
 function isAuthError(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
@@ -64,10 +62,10 @@ describe('AI Provider Integration (VCR)', () => {
     const client = createAISDKClient('anthropic', apiKey);
 
     it('complete: returns valid response', async () => {
-      const response = await client.complete(
-        [{ role: 'user', content: TEST_PROMPT }],
-        { model: 'claude-haiku-4-5-20251001', maxTokens: 50 }
-      );
+      const response = await client.complete([{ role: 'user', content: TEST_PROMPT }], {
+        model: 'claude-haiku-4-5-20251001',
+        maxTokens: 50,
+      });
 
       assertValidResponse(response);
       expect(response.content[0].type).toBe('text');
@@ -95,10 +93,10 @@ describe('AI Provider Integration (VCR)', () => {
 
     it('complete: returns valid response', async () => {
       try {
-        const response = await client.complete(
-          [{ role: 'user', content: TEST_PROMPT }],
-          { model: 'gpt-4o-mini', maxTokens: 50 }
-        );
+        const response = await client.complete([{ role: 'user', content: TEST_PROMPT }], {
+          model: 'gpt-4o-mini',
+          maxTokens: 50,
+        });
         assertValidResponse(response);
       } catch (error: unknown) {
         if (isAuthError(error)) {
@@ -115,10 +113,10 @@ describe('AI Provider Integration (VCR)', () => {
     const client = createAISDKClient('google', apiKey);
 
     it('complete: returns valid response', async () => {
-      const response = await client.complete(
-        [{ role: 'user', content: TEST_PROMPT }],
-        { model: 'gemini-2.5-flash', maxTokens: 50 }
-      );
+      const response = await client.complete([{ role: 'user', content: TEST_PROMPT }], {
+        model: 'gemini-2.5-flash',
+        maxTokens: 50,
+      });
 
       assertValidResponse(response);
     });
@@ -130,10 +128,10 @@ describe('AI Provider Integration (VCR)', () => {
 
     it('complete: returns valid response', async () => {
       try {
-        const response = await client.complete(
-          [{ role: 'user', content: TEST_PROMPT }],
-          { model: 'llama-3.1-8b-instant', maxTokens: 50 }
-        );
+        const response = await client.complete([{ role: 'user', content: TEST_PROMPT }], {
+          model: 'llama-3.1-8b-instant',
+          maxTokens: 50,
+        });
         assertValidResponse(response);
       } catch (error: unknown) {
         if (isAuthError(error)) {
