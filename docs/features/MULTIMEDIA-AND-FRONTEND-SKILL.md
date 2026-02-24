@@ -138,7 +138,7 @@ npx cap sync
 
 #### 1.3.1 Current Message Type System
 
-The existing `ContentBlock` type in `packages/agent-intelligence/src/services/ai/types.ts` supports:
+The existing `ContentBlock` type in `src/services/ai/types.ts` supports:
 
 ```typescript
 export type ContentType = 'text' | 'tool_use' | 'tool_result';
@@ -271,7 +271,7 @@ if (block.type === 'image' && block.source) {
 
 #### 1.4.1 Extended Message Store Types
 
-The `MessageContentType` in `packages/state/src/chatStore.ts` needs expansion:
+The `MessageContentType` in `src/state/chatStore.ts` needs expansion:
 
 ```typescript
 // Current
@@ -551,7 +551,7 @@ The current agent architecture has four roles: Architect, Implementer, Reviewer,
 
 #### 2.1.1 Skill Interface
 
-Location: `packages/agent-intelligence/src/services/skills/types.ts`
+Location: `src/services/skills/types.ts`
 
 ```typescript
 /**
@@ -639,7 +639,7 @@ export interface ComponentInfo {
 
 #### 2.1.2 Skill Registry
 
-Location: `packages/agent-intelligence/src/services/skills/SkillRegistry.ts`
+Location: `src/services/skills/SkillRegistry.ts`
 
 ```typescript
 export class SkillRegistry {
@@ -733,7 +733,7 @@ protected async executeTool(
 
 ### 2.2 Frontend Skill Implementation
 
-Location: `packages/agent-intelligence/src/services/skills/FrontendSkill.ts`
+Location: `src/services/skills/FrontendSkill.ts`
 
 #### 2.2.1 Design System Context Injection
 
@@ -1035,7 +1035,7 @@ When an agent generates a component, the `ChatMessage` renderer detects code blo
 
 ### 2.4 ToolExecutionBridge Extensions
 
-The existing `ToolExecutionBridge` in `packages/agent-intelligence/src/services/tools/ToolExecutionBridge.ts` handles file operations. The Frontend Skill's tools need to be registered:
+The existing `ToolExecutionBridge` in `src/services/tools/ToolExecutionBridge.ts` handles file operations. The Frontend Skill's tools need to be registered:
 
 ```typescript
 // Extended tool routing in ToolExecutionBridge.execute()
@@ -1170,23 +1170,23 @@ However, the cleaner approach is the Skill system's `executeTool` method, which 
 | `src/components/chat/DocumentAttachment.tsx` | File attachment chip component |
 | `src/components/chat/AttachmentPreview.tsx` | Preview strip for pending attachments |
 | `src/components/chat/ComponentPreview.tsx` | Sandboxed iframe for live component preview |
-| `packages/agent-intelligence/src/services/skills/types.ts` | AgentSkill, SkillContext, TokenBudget interfaces |
-| `packages/agent-intelligence/src/services/skills/SkillRegistry.ts` | Skill registration and routing |
-| `packages/agent-intelligence/src/services/skills/FrontendSkill.ts` | Design-system-aware frontend skill |
-| `packages/agent-intelligence/src/services/skills/index.ts` | Barrel export |
+| `src/services/skills/types.ts` | AgentSkill, SkillContext, TokenBudget interfaces |
+| `src/services/skills/SkillRegistry.ts` | Skill registration and routing |
+| `src/services/skills/FrontendSkill.ts` | Design-system-aware frontend skill |
+| `src/services/skills/index.ts` | Barrel export |
 
 #### Modified Files
 
 | Path | Change |
 |------|--------|
-| `packages/agent-intelligence/src/services/ai/types.ts` | Add `image`, `document`, `audio` to ContentType; add ImageSource interface |
-| `packages/agent-intelligence/src/services/ai/anthropic-client.ts` | Handle image content blocks in formatContentBlocks() |
-| `packages/agent-intelligence/src/services/ai/openai-client.ts` | Handle image_url content in message formatting |
-| `packages/agent-intelligence/src/services/agents/base-agent.ts` | Add skills array, skill-aware getSystemPrompt/getTools/executeTool |
-| `packages/agent-intelligence/src/services/agents/implementer-agent.ts` | Attach FrontendSkill by default |
-| `packages/agent-intelligence/src/services/agents/types.ts` | Extend AgentContext with optional designTokens, componentInventory |
-| `packages/agent-intelligence/src/index.ts` | Export skills module |
-| `packages/state/src/chatStore.ts` | Add MessageContentType values, new message interfaces |
+| `src/services/ai/types.ts` | Add `image`, `document`, `audio` to ContentType; add ImageSource interface |
+| `src/services/ai/anthropic-client.ts` | Handle image content blocks in formatContentBlocks() |
+| `src/services/ai/openai-client.ts` | Handle image_url content in message formatting |
+| `src/services/agents/base-agent.ts` | Add skills array, skill-aware getSystemPrompt/getTools/executeTool |
+| `src/services/agents/implementer-agent.ts` | Attach FrontendSkill by default |
+| `src/services/agents/types.ts` | Extend AgentContext with optional designTokens, componentInventory |
+| `src/index.ts` | Export skills module |
+| `src/state/chatStore.ts` | Add MessageContentType values, new message interfaces |
 | `src/components/chat/ChatInput.tsx` | Add MediaActionBar, attachment support |
 | `src/components/chat/ChatMessage.tsx` | Add render paths for image, mixed_media, voice_transcript, document |
 | `src/components/chat/index.ts` | Export new components |

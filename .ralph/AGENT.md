@@ -6,8 +6,8 @@
 - **Styling:** Tailwind CSS 3.x
 - **State:** Zustand 5 + Immer
 - **Testing:** Vitest (unit/integration) + Playwright (E2E)
-- **Linting:** Biome 2.3
-- **Monorepo:** pnpm workspaces (7 packages under packages/)
+- **Linting:** Biome 2.4.4
+- **Structure:** Flat src/ with @/* path aliases (packages flattened as of 2026-02)
 - **AI:** @anthropic-ai/sdk, openai SDK
 
 ## Build Instructions
@@ -57,8 +57,11 @@ pnpm dev
 ```
 
 ## Key Directories
-- `src/` — Main application code (pages, components, services, hooks)
-- `packages/` — Workspace packages (state, core, config, types, ui, agent-intelligence, dev-tools)
+- `src/` — Main application code (pages, components, services, hooks, state, types, ui, core, config)
+- `tools/` — Build-time scripts (token generator, icon generator)
+- `docs/` — Architecture decisions, memory bank, brand guidelines
+- `android/` — Capacitor Android project
+- `ios/` — Capacitor iOS project
 - `design-system/` — Design tokens and generated CSS
 - `e2e/` — Playwright E2E test specs
 - `.ralph/` — Ralph configuration

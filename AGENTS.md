@@ -179,7 +179,7 @@ For complex features, agents work in sequence with approval gates:
    |
 7. USER APPROVAL GATE (final review)
    |
-8. Git commit via @thumbcode/core
+8. Git commit via src/core/git
 ```
 
 ### Git Isolation

@@ -167,7 +167,7 @@ ThumbCode is built BY agents FOR agents. When generating code:
 
 ### Before Writing Code
 
-1. **Check design tokens** — Use values from `/design-tokens/tokens.json`
+1. **Check design tokens** — Use values from `design-system/tokens.json`
 2. **Follow file structure** — Put files where they belong
 3. **Use existing components** — Check `/src/components/` first
 4. **Match the style** — Organic daubes, not gradients
@@ -185,14 +185,14 @@ interface AgentCardProps {
 
 export function AgentCard({ agent, onSelect }: AgentCardProps) {
   return (
-    <Pressable
-      onPress={() => onSelect(agent.id)}
-      className="bg-surface-elevated p-4 rounded-organic shadow-organic"
-      style={{ transform: [{ rotate: '-0.3deg' }] }}
+    <button
+      onClick={() => onSelect(agent.id)}
+      className="bg-surface-elevated p-4 shadow-organic text-left"
+      style={{ borderRadius: '20px 18px 22px 16px / 16px 20px 18px 22px', transform: 'rotate(-0.3deg)' }}
     >
-      <Text className="font-display text-coral-500">{agent.name}</Text>
-      <Text className="font-body text-neutral-400">{agent.status}</Text>
-    </Pressable>
+      <span className="block font-display text-coral-500">{agent.name}</span>
+      <span className="block font-body text-neutral-400">{agent.status}</span>
+    </button>
   );
 }
 
@@ -231,7 +231,7 @@ Institutional memory lives in `docs/memory-bank/`. Read these before proposing c
 - **techContext.md** — Current tech stack and build pipeline
 - **activeContext.md** — Current sprint focus and recent changes
 
-See also: `docs/development/`, `docs/agents/`, `docs/brand/` for deeper reference.
+See also: `docs/development/`, `docs/architecture/`, `docs/brand/` for deeper reference.
 
 ---
 

@@ -140,4 +140,4 @@ pnpm test:e2e:web
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the MIT License.
+By contributing, you agree that your contributions will be licensed under the project's existing license terms. ThumbCode is proprietary software — Copyright © 2026 jbcom, All Rights Reserved. See [LICENSE](LICENSE) for full terms, including the contribution license grant in Section 3.

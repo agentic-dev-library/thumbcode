@@ -51,7 +51,7 @@
 - **Severity:** P0 - Page completely broken
 - **Route:** `/chat`
 - **Error:** `Maximum update depth exceeded` at `ThreadList.tsx:134`
-- **Root cause:** `selectPinnedThreads` and `selectRecentThreads` selectors in `packages/state/src/chatStore.ts` use `.filter()` and `.sort()` which create new array references:
+- **Root cause:** `selectPinnedThreads` and `selectRecentThreads` selectors in `src/state/chatStore.ts` use `.filter()` and `.sort()` which create new array references:
   ```ts
   // Line 293 - creates new array every call
   export const selectPinnedThreads = (state: ChatState) => state.threads.filter((t) => t.isPinned);
@@ -101,7 +101,7 @@
 ### ISSUE-005: Potentially dangerous selectors elsewhere in state package
 
 - **Severity:** P2 - Latent bugs
-- **Locations in `packages/state/src/`:**
+- **Locations in `src/state/`:**
   - `selectAgentsByRole` / `selectAgentsByStatus` / `selectWorkingAgents` / `selectPendingTasks` / `selectAgentTasks` — all use `.filter()`
   - `selectValidCredentials` / `selectInvalidCredentials` / `selectCredentialsNeedingValidation` — likely use `.filter()`
   - `selectRecentProjects` — likely uses `.filter()` + `.sort()`

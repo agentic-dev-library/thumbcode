@@ -300,14 +300,16 @@ ThumbCode is **not yet publicly available** as a mobile app. We're currently in 
 - ✅ GitHub Actions CI/CD with Claude integration
 - ✅ Automated issue triage and PR creation
 - ✅ Web deployment via Vite + GitHub Pages
+- ✅ Onboarding flow with GitHub Device Flow authentication
+- ✅ Secure credential storage (iOS Keychain / Android Keystore)
+- ✅ Full git workflow (clone, branch, commit, push, merge)
+- ✅ Chat interface with streaming agent responses
 
 ### What We're Building
 
-- 🚧 Complete onboarding flow with GitHub authentication
-- 🚧 Secure credential storage with biometric unlock
-- 🚧 Full git workflow (clone, branch, commit, push, merge)
-- 🚧 Chat interface with streaming agent responses
 - 🚧 Code diff review and approval UI
+- 🚧 Agent worktree isolation and merge workflows
+- 🚧 MCP tool server integrations
 
 ### The Vision
 
@@ -413,10 +415,20 @@ thumbcode/
 │   ├── components/              # React components
 │   │   ├── ui/                  # Design system primitives
 │   │   ├── agents/              # Agent-specific UI
-│   │   ├── workspace/           # File tree, code viewer
-│   │   └── chat/                # Chat interface
+│   │   ├── chat/                # Chat interface
+│   │   ├── code/                # Code display and editing
+│   │   ├── display/             # Generic display components
+│   │   ├── error/               # Error boundary and states
+│   │   ├── feedback/            # Toasts, alerts, loaders
+│   │   ├── form/                # Form inputs and controls
+│   │   ├── icons/               # Icon components
+│   │   ├── layout/              # Layout primitives
+│   │   ├── onboarding/          # Onboarding step components
+│   │   ├── preview/             # Preview and diff viewers
+│   │   ├── project/             # Project management UI
+│   │   └── settings/            # Settings panel components
 │   ├── services/                # Git, GitHub, AI, credentials
-│   ├── stores/                  # Zustand state management
+│   ├── state/                   # Zustand state management
 │   ├── hooks/                   # Custom React hooks
 │   └── lib/                     # Utilities and helpers
 ├── design-system/

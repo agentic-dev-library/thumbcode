@@ -364,7 +364,7 @@ interface CreateProjectState {
 ### Zustand Store Slice
 
 ```typescript
-// stores/onboardingStore.ts
+// src/state/onboardingStore.ts
 
 interface OnboardingStore {
   // State

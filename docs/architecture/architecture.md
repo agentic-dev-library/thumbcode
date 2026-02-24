@@ -30,9 +30,8 @@ ThumbCode is a web-first React application wrapped in Capacitor for native iOS/A
 thumbcode/
 ├── src/                          # Main application source
 │   ├── components/               # React components
-│   │   ├── ui/                   # Re-exports from @thumbcode/ui
+│   │   ├── ui/                   # Re-exports from src/ui/
 │   │   ├── agents/               # Agent-related components
-│   │   ├── workspace/            # Code workspace components
 │   │   ├── chat/                 # Chat interface components
 │   │   └── project/              # Project management components
 │   ├── hooks/                    # Custom React hooks
@@ -45,16 +44,8 @@ thumbcode/
 │   ├── services/                 # External service integrations
 │   │   ├── chat/                 # Chat/agent response service
 │   │   └── ...
-│   ├── stores/                   # Zustand state stores
+│   ├── state/                    # Zustand state stores
 │   └── layouts/                  # Layout components
-├── packages/                     # Workspace packages
-│   ├── agent-intelligence/       # AI agent logic, orchestrator
-│   ├── core/                     # Git, credentials, auth services
-│   ├── config/                   # Environment config, feature flags
-│   ├── state/                    # Zustand stores (shared)
-│   ├── types/                    # Shared TypeScript types
-│   ├── ui/                       # Shared UI components
-│   └── dev-tools/                # Token/icon generators
 ├── design-system/                # Design tokens (JSON, TS, CSS)
 ├── docs/                         # Documentation
 
@@ -226,7 +217,7 @@ if (!hasCompletedOnboarding) {
 ## Build & Deploy
 
 ```
-Source (src/ + packages/) -> Vite Build -> dist/ -> Capacitor Sync -> iOS/Android
+Source (src/) -> Vite Build -> dist/ -> Capacitor Sync -> iOS/Android
                                                  -> Web deploy (Netlify)
 ```
 
