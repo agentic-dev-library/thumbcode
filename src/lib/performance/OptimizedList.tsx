@@ -5,7 +5,7 @@
  * Replaces React Native's FlatList for web.
  */
 
-import React, { memo, useCallback } from 'react';
+import React, { memo } from 'react';
 
 export interface OptimizedListProps<T> {
   /** Data to render */
@@ -36,27 +36,24 @@ function OptimizedListInner<T>(
 ) {
   const { data, renderItem, keyExtractor: customKeyExtractor, className, style } = props;
 
-  const keyExtractor = useCallback(
-    (item: T, index: number) => {
-      if (customKeyExtractor) {
-        return customKeyExtractor(item, index);
-      }
-      const itemObj = item as Record<string, unknown>;
-      if (typeof itemObj.id === 'string' || typeof itemObj.id === 'number') {
-        return String(itemObj.id);
-      }
-      if (typeof itemObj.key === 'string' || typeof itemObj.key === 'number') {
-        return String(itemObj.key);
-      }
-      return String(index);
-    },
-    [customKeyExtractor]
-  );
+  function getKey(item: T, index: number): string {
+    if (customKeyExtractor) {
+      return customKeyExtractor(item, index);
+    }
+    const itemObj = item as Record<string, unknown>;
+    if (typeof itemObj.id === 'string' || typeof itemObj.id === 'number') {
+      return String(itemObj.id);
+    }
+    if (typeof itemObj.key === 'string' || typeof itemObj.key === 'number') {
+      return String(itemObj.key);
+    }
+    return String(index);
+  }
 
   return (
     <div ref={ref} className={className} style={{ overflowY: 'auto', ...style }}>
       {(data ?? []).map((item, index) => (
-        <div key={keyExtractor(item, index)}>{renderItem({ item, index })}</div>
+        <div key={getKey(item, index)}>{renderItem({ item, index })}</div>
       ))}
     </div>
   );
