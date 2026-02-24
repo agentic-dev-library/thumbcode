@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - 2026-01-18
 
+> **Note:** Package names below (e.g. `@thumbcode/agent-intelligence`) reflect the original monorepo structure. As of February 2026, all packages were flattened into `src/` subdirectories. See `docs/architecture/decisions.md` DEC-011 for details.
+
 ### Added
 
 **Monorepo Architecture**

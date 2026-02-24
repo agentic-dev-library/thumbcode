@@ -210,7 +210,7 @@ Tailwind CSS is the only styling approach. The earlier dual approach (JS objects
 | Unit tests | Vitest + Testing Library | `src/**/*.test.ts(x)` |
 | E2E tests | Playwright | `e2e/*.spec.ts` |
 | Type checking | TypeScript `tsc --noEmit` | All `tsconfig.json` |
-| Linting | Biome | `biome.json` (covers all packages) |
+| Linting | Biome | `biome.json` (covers all source files) |
 | SAST | Semgrep CE | CI container job |
 | Duplication | jscpd | `.jscpd.json` |
 

@@ -6,7 +6,7 @@
 - **Styling:** Tailwind CSS 3.x
 - **State:** Zustand 5 + Immer
 - **Testing:** Vitest (unit/integration) + Playwright (E2E)
-- **Linting:** Biome 2.3
+- **Linting:** Biome 2.4.4
 - **Structure:** Flat src/ with @/* path aliases (packages flattened as of 2026-02)
 - **AI:** @anthropic-ai/sdk, openai SDK
 

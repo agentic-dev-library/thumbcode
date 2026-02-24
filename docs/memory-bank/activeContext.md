@@ -15,8 +15,8 @@ The work is tracked via `tasks/prd.json` with 24 user stories organized by prior
 | Story | Title | Summary |
 |-------|-------|---------|
 | **US-001** | Modernize agent-intelligence for web | Removed React Native deps, migrated to Vitest |
-| **US-002** | Replace src/services/ai/ with agent-intelligence | Deleted duplicate AI clients, app uses @thumbcode/agent-intelligence |
-| **US-007** | Establish packages/ui/ as canonical component library | src/components/ui/ re-exports from @thumbcode/ui |
+| **US-002** | Replace src/services/ai/ with agent-intelligence | Deleted duplicate AI clients, app uses src/services/ai/ |
+| **US-007** | Establish src/ui/ as canonical component library | src/components/ui/ re-exports from src/ui/ |
 | **US-009** | Refactor create-project.tsx | Extracted useCreateProject hook, page reduced to ~100 lines |
 | **US-010** | Refactor ProjectDetail.tsx | Extracted useProjectFiles, useProjectActions, useProjectCommits hooks |
 | **US-012** | Refactor tab pages | Extracted useHomeDashboard, useProjectList, useAgentList hooks |

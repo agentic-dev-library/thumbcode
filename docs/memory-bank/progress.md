@@ -8,7 +8,7 @@
 - Chat interface with threaded conversations
 - Agent selection in chat (Architect, Implementer, Reviewer, Tester)
 - Message sending and display with typing indicators
-- AI response streaming via @thumbcode/agent-intelligence
+- AI response streaming via src/services/ai/
 - Simulated/mock AI responses for development
 - Thread management (create, select, list)
 
@@ -46,7 +46,7 @@
 - Organic paint daub styling (asymmetric border-radius, layered shadows)
 - Fraunces/Cabin/JetBrains Mono typography
 - Dark mode first with light mode support
-- @thumbcode/ui canonical component library (Box, Text, Button, Card, Input, Switch, Spinner, Alert, ScrollArea, List, Image)
+- src/ui/ canonical component library (Box, Text, Button, Card, Input, Switch, Spinner, Alert, ScrollArea, List, Image)
 - Tailwind CSS with brand tokens
 - Programmatic design token generation
 

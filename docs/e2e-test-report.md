@@ -101,7 +101,7 @@
 ### ISSUE-005: Potentially dangerous selectors elsewhere in state package
 
 - **Severity:** P2 - Latent bugs
-- **Locations in `packages/state/src/`:**
+- **Locations in `src/state/`:**
   - `selectAgentsByRole` / `selectAgentsByStatus` / `selectWorkingAgents` / `selectPendingTasks` / `selectAgentTasks` — all use `.filter()`
   - `selectValidCredentials` / `selectInvalidCredentials` / `selectCredentialsNeedingValidation` — likely use `.filter()`
   - `selectRecentProjects` — likely uses `.filter()` + `.sort()`

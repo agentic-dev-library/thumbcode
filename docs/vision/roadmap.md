@@ -9,7 +9,7 @@ The v1.0 release transforms ThumbCode from a polished shell with mock AI into a 
 
 ### Core Deliverables
 
-1. **Real AI integration** -- Replace mock responses with Anthropic/OpenAI streaming via @thumbcode/agent-intelligence
+1. **Real AI integration** -- Replace mock responses with Anthropic/OpenAI streaming via src/services/ai/
 2. **Multi-agent orchestration** -- Architect -> Implementer -> Reviewer -> Tester pipeline
 3. **End-to-end git workflow** -- AI agents commit code via isomorphic-git with user approval
 4. **Credential validation** -- Live API call validation on key entry
@@ -31,7 +31,7 @@ The v1.0 release transforms ThumbCode from a polished shell with mock AI into a 
 | Story | Title | Status |
 |-------|-------|--------|
 | US-001 | Modernize agent-intelligence for web | Done |
-| US-007 | Establish packages/ui/ as canonical library | Done |
+| US-007 | Establish src/ui/ as canonical library | Done |
 | US-014 | Create memory bank foundation files | Done |
 | US-017 | Update config files, remove Expo vestiges | Done |
 

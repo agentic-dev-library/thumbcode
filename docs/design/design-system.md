@@ -8,7 +8,7 @@
 1. **`CLAUDE.md`** -- Brand constraints (no gradients, P3 palette, typography, organic shapes)
 2. **`design-system/tokens.json`** -- Canonical color/spacing/typography values
 3. **`tailwind.config.ts`** -- Derived token mappings for Tailwind CSS
-4. **`@thumbcode/ui`** -- Canonical component library
+4. **`src/ui/`** -- Canonical component library
 
 If these disagree, fix the disagreement -- don't pick one ad hoc.
 
