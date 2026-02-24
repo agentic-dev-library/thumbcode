@@ -24,6 +24,7 @@
  */
 
 import { Route, Routes } from 'react-router-dom';
+import { ErrorBoundary } from '@/components/error';
 import { OnboardingLayout } from '@/layouts/OnboardingLayout';
 import { RootLayout } from '@/layouts/RootLayout';
 import { TabLayout } from '@/layouts/TabLayout';
@@ -56,7 +57,13 @@ export function AppRoutes() {
     <Routes>
       <Route element={<RootLayout />}>
         {/* Main app with tab navigation */}
-        <Route element={<TabLayout />}>
+        <Route
+          element={
+            <ErrorBoundary>
+              <TabLayout />
+            </ErrorBoundary>
+          }
+        >
           <Route index element={<HomePage />} />
           <Route path="projects" element={<ProjectsPage />} />
           <Route path="agents" element={<AgentsPage />} />
@@ -65,18 +72,74 @@ export function AppRoutes() {
         </Route>
 
         {/* Settings sub-routes (outside tabs, own header) */}
-        <Route path="settings/agents" element={<AgentSettings />} />
-        <Route path="settings/credentials" element={<CredentialSettings />} />
-        <Route path="settings/editor" element={<EditorSettings />} />
-        <Route path="settings/mcp" element={<McpSettings />} />
-        <Route path="settings/providers" element={<ProviderConfig />} />
+        <Route
+          path="settings/agents"
+          element={
+            <ErrorBoundary>
+              <AgentSettings />
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="settings/credentials"
+          element={
+            <ErrorBoundary>
+              <CredentialSettings />
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="settings/editor"
+          element={
+            <ErrorBoundary>
+              <EditorSettings />
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="settings/mcp"
+          element={
+            <ErrorBoundary>
+              <McpSettings />
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="settings/providers"
+          element={
+            <ErrorBoundary>
+              <ProviderConfig />
+            </ErrorBoundary>
+          }
+        />
 
         {/* Detail pages (outside tabs, own header) */}
-        <Route path="project/:id" element={<ProjectDetail />} />
-        <Route path="agent/:id" element={<AgentDetail />} />
+        <Route
+          path="project/:id"
+          element={
+            <ErrorBoundary>
+              <ProjectDetail />
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="agent/:id"
+          element={
+            <ErrorBoundary>
+              <AgentDetail />
+            </ErrorBoundary>
+          }
+        />
 
         {/* Onboarding flow */}
-        <Route path="onboarding" element={<OnboardingLayout />}>
+        <Route
+          path="onboarding"
+          element={
+            <ErrorBoundary>
+              <OnboardingLayout />
+            </ErrorBoundary>
+          }
+        >
           <Route path="welcome" element={<WelcomePage />} />
           <Route path="github-auth" element={<GitHubAuthPage />} />
           <Route path="api-keys" element={<ApiKeysPage />} />
