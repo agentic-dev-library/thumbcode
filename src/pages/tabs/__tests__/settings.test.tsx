@@ -22,6 +22,7 @@ const mockUpdateNotificationPreferences = vi.fn();
 const mockSetTheme = vi.fn();
 
 vi.mock('@/state', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
   useUserStore: (selector: (state: unknown) => unknown) => {
     const state = {
       githubProfile: { name: 'Jane Doe', login: 'janedoe' },

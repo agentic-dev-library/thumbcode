@@ -32,6 +32,7 @@ let mockServers: Array<{
 }> = [];
 
 vi.mock('@/state', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
   CURATED_SUGGESTIONS: [
     {
       id: 'context7',

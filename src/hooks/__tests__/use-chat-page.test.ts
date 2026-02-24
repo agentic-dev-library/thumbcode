@@ -5,6 +5,7 @@ const mockSetActiveThread = vi.fn();
 const mockCreateThread = vi.fn().mockReturnValue('new-thread-id');
 
 vi.mock('@/state', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
   useChatStore: vi.fn((selector: (state: Record<string, unknown>) => unknown) =>
     selector({
       activeThreadId: 'thread-1',

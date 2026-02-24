@@ -33,6 +33,7 @@ const mockProject = {
 const mockInitWorkspace = vi.fn();
 
 vi.mock('@/state', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
   useProjectStore: vi.fn((selector) => {
     const state = {
       projects: [mockProject],

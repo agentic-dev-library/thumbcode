@@ -20,6 +20,7 @@ vi.mock('@/core', async () => {
 const mockAddProject = vi.fn(() => 'project-123');
 
 vi.mock('@/state', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
   useProjectStore: vi.fn((selector) => {
     const state = { addProject: mockAddProject };
     if (typeof selector === 'function') return selector(state);

@@ -26,6 +26,7 @@ const mockRemoveCredential = vi.fn();
 const mockSetCredentialStatus = vi.fn();
 
 vi.mock('@/state', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
   selectCredentialByProvider: (provider: string) => (state: Record<string, unknown>) =>
     state[`${provider}Credential`],
   useCredentialStore: vi.fn((selector: (state: Record<string, unknown>) => unknown) => {

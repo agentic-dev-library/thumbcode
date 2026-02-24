@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { ThreadList } from '../ThreadList';
 
 vi.mock('@/state', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
   useChatStore: vi.fn(),
   selectPinnedThreads: vi.fn(),
   selectRecentThreads: vi.fn(),

@@ -19,6 +19,7 @@ const mockAddCredential = vi.fn(() => 'test-cred-id');
 const mockSetValidationResult = vi.fn();
 
 vi.mock('@/state', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
   useCredentialStore: vi.fn((selector) => {
     const state = {
       addCredential: mockAddCredential,

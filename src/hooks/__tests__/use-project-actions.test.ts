@@ -15,6 +15,7 @@ const mockRemoveProject = vi.fn();
 const mockUpdateProject = vi.fn();
 
 vi.mock('@/state', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
   useProjectStore: Object.assign(
     (selector: (state: Record<string, unknown>) => unknown) => {
       const state = {

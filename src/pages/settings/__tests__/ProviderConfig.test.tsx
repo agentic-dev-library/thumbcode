@@ -25,6 +25,7 @@ let mockCredentials: Array<{
 }> = [];
 
 vi.mock('@/state', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
   useCredentialStore: (selector: (state: Record<string, unknown>) => unknown) =>
     selector({
       credentials: mockCredentials,

@@ -17,6 +17,10 @@ vi.mock('@/services/chat', () => ({
   },
 }));
 
+vi.mock('@/state', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
+}));
+
 describe('ChatInput', () => {
   it('renders with default placeholder', () => {
     render(<ChatInput threadId="thread-1" />);

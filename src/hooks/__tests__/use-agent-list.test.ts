@@ -73,6 +73,7 @@ const mockTasks = [
 ];
 
 vi.mock('@/state', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
   useAgentStore: (selector: (state: Record<string, unknown>) => unknown) => {
     const state = { agents: mockAgents, tasks: mockTasks };
     return selector(state);

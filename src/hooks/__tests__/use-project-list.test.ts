@@ -30,6 +30,7 @@ const mockProjects = [
 ];
 
 vi.mock('@/state', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
   useProjectStore: (selector: (state: Record<string, unknown>) => unknown) => {
     const state = { projects: mockProjects };
     return selector(state);

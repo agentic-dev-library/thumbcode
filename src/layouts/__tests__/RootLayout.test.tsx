@@ -19,6 +19,7 @@ vi.mock('@/hooks/use-app-router', () => ({
 }));
 
 vi.mock('@/state', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
   selectTheme: (state: { theme: string }) => state.theme,
   useUserStore: (selector: (state: { theme: string }) => string) => selector({ theme: 'dark' }),
 }));
