@@ -30,6 +30,24 @@ export const organicBorderRadius = {
     borderBottomRightRadius: 8,
     borderBottomLeftRadius: 12,
   } as React.CSSProperties,
+  chatBubbleUser: {
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 6,
+    borderBottomRightRadius: 16,
+    borderBottomLeftRadius: 14,
+  } as React.CSSProperties,
+  chatBubbleAgent: {
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 16,
+    borderBottomRightRadius: 16,
+    borderBottomLeftRadius: 14,
+  } as React.CSSProperties,
+  codeBlock: {
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 12,
+    borderBottomLeftRadius: 8,
+  } as React.CSSProperties,
 } as const;
 
 export const organicShadow = {

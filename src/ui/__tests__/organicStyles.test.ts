@@ -19,6 +19,18 @@ describe('organicBorderRadius', () => {
   it('has input border radius', () => {
     expect(organicBorderRadius.input.borderTopLeftRadius).toBe(8);
   });
+
+  it('has chat bubble user border radius', () => {
+    expect(organicBorderRadius.chatBubbleUser.borderTopLeftRadius).toBe(16);
+  });
+
+  it('has chat bubble agent border radius', () => {
+    expect(organicBorderRadius.chatBubbleAgent.borderTopLeftRadius).toBe(6);
+  });
+
+  it('has code block border radius', () => {
+    expect(organicBorderRadius.codeBlock.borderTopLeftRadius).toBe(12);
+  });
 });
 
 describe('organicShadow', () => {
