@@ -25,8 +25,11 @@ export function CodeBlock({ code, language, filename }: Readonly<CodeBlockProps>
   const tokenizedLines = useMemo(() => tokenize(code, language), [code, language]);
 
   const handleCopy = async () => {
-    // In React Native, we'd use Clipboard API
-    // For now, just show feedback
+    try {
+      await navigator.clipboard.writeText(code);
+    } catch {
+      // Fallback for environments without clipboard API (e.g. non-HTTPS)
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

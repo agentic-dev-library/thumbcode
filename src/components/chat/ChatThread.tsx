@@ -37,14 +37,14 @@ function TypingIndicator({ senders }: { senders: string[] }) {
   const label = names.length === 1 ? `${names[0]} is typing` : `${names.join(', ')} are typing`;
 
   return (
-    <div className="flex flex-row items-center px-4 py-2">
-      <div className="flex flex-row mr-2">
+    <output className="flex flex-row items-center px-4 py-2" aria-live="polite" aria-label={label}>
+      <div className="flex flex-row mr-2" aria-hidden="true">
         <div className="w-2 h-2 bg-neutral-400 rounded-full mr-1" />
         <div className="w-2 h-2 bg-neutral-500 rounded-full mr-1" />
         <div className="w-2 h-2 bg-neutral-600 rounded-full" />
       </div>
       <Text className="text-xs text-neutral-400 font-body italic">{label}...</Text>
-    </div>
+    </output>
   );
 }
 

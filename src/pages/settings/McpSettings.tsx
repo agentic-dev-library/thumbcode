@@ -347,7 +347,14 @@ export function McpSettings() {
                 Add Custom Server
               </button>
             ) : (
-              <div className="space-y-3" data-testid="custom-server-form">
+              <form
+                className="space-y-3"
+                data-testid="custom-server-form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleAddCustom();
+                }}
+              >
                 <div>
                   <label
                     htmlFor="custom-name"
@@ -426,8 +433,7 @@ export function McpSettings() {
 
                 <div className="flex gap-2">
                   <button
-                    type="button"
-                    onClick={handleAddCustom}
+                    type="submit"
                     className="flex-1 py-2.5 bg-teal-600 text-white font-body font-medium text-sm rounded-organic-button hover:bg-teal-700 transition-colors"
                     data-testid="save-custom-server"
                   >
@@ -445,7 +451,7 @@ export function McpSettings() {
                     Cancel
                   </button>
                 </div>
-              </div>
+              </form>
             )}
           </div>
         </div>

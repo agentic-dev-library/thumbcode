@@ -51,6 +51,9 @@ function ApiKeyInput({
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && value.trim() && !isSaving) onSave();
+          }}
           className="flex-1 bg-charcoal border border-neutral-700 text-white font-mono text-sm px-3 py-2 rounded-organic-input placeholder:text-neutral-600 focus:outline-none focus:border-coral-500 transition-colors"
           data-testid={`api-key-input-${label.toLowerCase().replace(/\s+/g, '-')}`}
         />
