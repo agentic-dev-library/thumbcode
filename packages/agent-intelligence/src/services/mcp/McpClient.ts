@@ -1,102 +1,142 @@
 /**
  * MCP Client
  *
- * Manages connections to MCP (Model Context Protocol) servers.
- * Tracks server connections, available tools, and routes tool execution
- * through the appropriate server.
+ * Manages connections to MCP (Model Context Protocol) servers via the
+ * Vercel AI SDK (@ai-sdk/mcp). Handles transport creation, tool discovery,
+ * and tool execution for stdio, HTTP, and SSE transports.
  *
- * Currently implements a mock/stub transport layer. The interface is
- * designed for future integration with the actual MCP SDK stdio transport.
+ * The SDK client handles the MCP protocol details — this class manages
+ * the connection lifecycle and converts results to our internal format.
  */
 
+import type { ListToolsResult, MCPClient, MCPClientConfig } from '@ai-sdk/mcp';
+import { createMCPClient } from '@ai-sdk/mcp';
 import type { McpServerConfig } from '@thumbcode/state';
-import type { McpConnection, McpTool, McpToolResult, McpTransportConfig } from './types';
+import type { McpConnection, McpToolResult } from './types';
+
+/**
+ * Internal connection state including SDK references.
+ * The public McpConnection is exposed via getConnection/getConnections.
+ */
+interface InternalConnection {
+  connection: McpConnection;
+  sdkClient: MCPClient | null;
+  sdkTools: Record<string, { execute: (args: unknown) => Promise<unknown> }>;
+  rawToolDefs: ListToolsResult['tools'];
+}
 
 export class McpClient {
-  private connections: Map<string, McpConnection> = new Map();
+  private connections: Map<string, InternalConnection> = new Map();
 
   /**
    * Connect to an MCP server using its configuration.
-   * Establishes a transport connection and discovers available tools.
+   * Creates the appropriate transport (stdio/HTTP/SSE), initializes the
+   * SDK client, and discovers available tools.
    */
   async connect(config: McpServerConfig): Promise<void> {
-    const transportConfig: McpTransportConfig = {
-      type: 'stdio',
-      command: config.command,
-      args: config.args,
-      env: config.env,
-    };
+    const transportType = config.transport ?? 'stdio';
 
     try {
-      // Discover tools from the server
-      const tools = await this.discoverTools(transportConfig);
+      const transport = await this.createTransport(transportType, config);
+      const sdkClient = await createMCPClient({ transport });
+
+      const [sdkTools, toolList] = await Promise.all([sdkClient.tools(), sdkClient.listTools()]);
 
       this.connections.set(config.id, {
-        serverId: config.id,
-        status: 'connected',
-        tools,
-        connectedAt: new Date().toISOString(),
+        connection: {
+          serverId: config.id,
+          status: 'connected',
+          toolNames: toolList.tools.map((t) => t.name),
+          connectedAt: new Date().toISOString(),
+        },
+        sdkClient,
+        sdkTools: sdkTools as unknown as Record<
+          string,
+          { execute: (args: unknown) => Promise<unknown> }
+        >,
+        rawToolDefs: toolList.tools,
       });
     } catch (error) {
       this.connections.set(config.id, {
-        serverId: config.id,
-        status: 'error',
-        tools: [],
-        error: error instanceof Error ? error.message : 'Connection failed',
+        connection: {
+          serverId: config.id,
+          status: 'error',
+          toolNames: [],
+          error: error instanceof Error ? error.message : 'Connection failed',
+        },
+        sdkClient: null,
+        sdkTools: {},
+        rawToolDefs: [],
       });
       throw error;
     }
   }
 
   /**
-   * Disconnect from an MCP server and clean up resources.
+   * Disconnect from an MCP server and clean up SDK resources.
    */
   disconnect(serverId: string): void {
+    const internal = this.connections.get(serverId);
+    if (internal?.sdkClient) {
+      internal.sdkClient.close().catch(() => {});
+    }
     this.connections.delete(serverId);
   }
 
   /**
-   * List tools available from a connected server.
+   * List tool names available from a connected server.
    */
-  listTools(serverId: string): McpTool[] {
-    const connection = this.connections.get(serverId);
-    if (!connection || connection.status !== 'connected') {
+  listTools(serverId: string): string[] {
+    const internal = this.connections.get(serverId);
+    if (!internal || internal.connection.status !== 'connected') {
       return [];
     }
-    return [...connection.tools];
+    return [...internal.connection.toolNames];
   }
 
   /**
-   * List tools from all connected servers.
+   * List tool names from all connected servers.
    */
-  listAllTools(): McpTool[] {
-    const tools: McpTool[] = [];
-    for (const connection of this.connections.values()) {
-      if (connection.status === 'connected') {
-        tools.push(...connection.tools);
+  listAllTools(): string[] {
+    const toolNames: string[] = [];
+    for (const internal of this.connections.values()) {
+      if (internal.connection.status === 'connected') {
+        toolNames.push(...internal.connection.toolNames);
       }
     }
-    return tools;
+    return toolNames;
   }
 
   /**
-   * Execute a tool on a connected MCP server.
+   * Get the raw MCP tool definitions for a server.
+   * Used by McpToolBridge to convert into agent ToolDefinitions.
+   */
+  getServerTools(serverId: string): ListToolsResult['tools'] {
+    const internal = this.connections.get(serverId);
+    if (!internal || internal.connection.status !== 'connected') {
+      return [];
+    }
+    return [...internal.rawToolDefs];
+  }
+
+  /**
+   * Execute a tool on a connected MCP server via the SDK.
    */
   async executeTool(
     serverId: string,
     toolName: string,
     args: Record<string, unknown>
   ): Promise<McpToolResult> {
-    const connection = this.connections.get(serverId);
-    if (!connection) {
+    const internal = this.connections.get(serverId);
+    if (!internal) {
       return { success: false, content: null, error: `Server not found: ${serverId}` };
     }
 
-    if (connection.status !== 'connected') {
+    if (internal.connection.status !== 'connected') {
       return { success: false, content: null, error: `Server not connected: ${serverId}` };
     }
 
-    const tool = connection.tools.find((t) => t.name === toolName);
+    const tool = internal.sdkTools[toolName];
     if (!tool) {
       return {
         success: false,
@@ -106,8 +146,8 @@ export class McpClient {
     }
 
     try {
-      const result = await this.invokeServerTool(serverId, toolName, args);
-      return result;
+      const result = await tool.execute(args);
+      return this.convertCallToolResult(result);
     } catch (error) {
       return {
         success: false,
@@ -121,33 +161,33 @@ export class McpClient {
    * Get the connection status of a server.
    */
   getStatus(serverId: string): 'connected' | 'disconnected' | 'error' {
-    const connection = this.connections.get(serverId);
-    if (!connection) {
+    const internal = this.connections.get(serverId);
+    if (!internal) {
       return 'disconnected';
     }
-    return connection.status;
+    return internal.connection.status;
   }
 
   /**
-   * Get connection details for a server.
+   * Get public connection details for a server.
    */
   getConnection(serverId: string): McpConnection | undefined {
-    return this.connections.get(serverId);
+    return this.connections.get(serverId)?.connection;
   }
 
   /**
-   * Get all active connections.
+   * Get all public connections.
    */
   getConnections(): McpConnection[] {
-    return [...this.connections.values()];
+    return [...this.connections.values()].map((ic) => ic.connection);
   }
 
   /**
    * Check if any servers are connected.
    */
   hasConnections(): boolean {
-    for (const connection of this.connections.values()) {
-      if (connection.status === 'connected') {
+    for (const internal of this.connections.values()) {
+      if (internal.connection.status === 'connected') {
         return true;
       }
     }
@@ -158,41 +198,74 @@ export class McpClient {
    * Disconnect all servers and clean up.
    */
   disconnectAll(): void {
-    for (const serverId of this.connections.keys()) {
-      this.disconnect(serverId);
+    for (const internal of this.connections.values()) {
+      if (internal.sdkClient) {
+        internal.sdkClient.close().catch(() => {});
+      }
     }
     this.connections.clear();
   }
 
   /**
-   * Discover available tools from an MCP server.
-   * Stub implementation - returns mock tools based on the transport config.
-   * Will be replaced with actual MCP SDK tool discovery.
+   * Create the appropriate transport based on configuration.
+   * Stdio transport is dynamically imported to avoid Node.js dependencies
+   * in browser/Capacitor environments.
    */
-  private async discoverTools(_config: McpTransportConfig): Promise<McpTool[]> {
-    // Stub: simulate async tool discovery
-    await Promise.resolve();
+  private async createTransport(
+    transportType: string,
+    config: McpServerConfig
+  ): Promise<MCPClientConfig['transport']> {
+    if (transportType === 'http' || transportType === 'sse') {
+      if (!config.url) {
+        throw new Error(`URL required for ${transportType} transport`);
+      }
+      return { type: transportType, url: config.url };
+    }
 
-    // Return empty tools by default. Real implementation will query the server.
-    return [];
+    // Default: stdio — dynamically import to avoid bundling Node.js modules
+    const { Experimental_StdioMCPTransport } = await import('@ai-sdk/mcp/mcp-stdio');
+    return new Experimental_StdioMCPTransport({
+      command: config.command,
+      args: config.args,
+      env: config.env,
+    });
   }
 
   /**
-   * Invoke a tool on an MCP server.
-   * Stub implementation - simulates tool execution.
-   * Will be replaced with actual MCP SDK tool invocation.
+   * Convert a CallToolResult from the SDK into our McpToolResult format.
+   * The SDK returns either { content: [...], isError? } or { toolResult: unknown }.
    */
-  private async invokeServerTool(
-    _serverId: string,
-    toolName: string,
-    args: Record<string, unknown>
-  ): Promise<McpToolResult> {
-    // Stub: simulate async tool invocation
-    await Promise.resolve();
+  private convertCallToolResult(result: unknown): McpToolResult {
+    if (result === null || result === undefined) {
+      return { success: true, content: null };
+    }
 
-    return {
-      success: true,
-      content: { tool: toolName, args, message: 'Stub execution result' },
-    };
+    const res = result as Record<string, unknown>;
+
+    // Handle { toolResult: unknown } variant
+    if ('toolResult' in res) {
+      return { success: true, content: res.toolResult };
+    }
+
+    // Handle { content: [...], isError?: boolean } variant
+    if ('content' in res && Array.isArray(res.content)) {
+      const textContent = (res.content as Array<{ type: string; text?: string }>)
+        .filter((c) => c.type === 'text' && c.text)
+        .map((c) => c.text)
+        .join('\n');
+
+      if (res.isError) {
+        return {
+          success: false,
+          content: res.content,
+          error: textContent || 'Tool execution returned error',
+        };
+      }
+
+      return { success: true, content: textContent || res.content };
+    }
+
+    // Fallback: return raw result
+    return { success: true, content: result };
   }
 }

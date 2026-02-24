@@ -1,13 +1,14 @@
 /**
  * MCP Tool Bridge
  *
- * Converts MCP tools into the agent tool format (ToolDefinition).
- * Creates tool handlers that route execution through the McpClient.
+ * Converts MCP server tools into the agent tool format (ToolDefinition).
+ * Creates tool handlers that route execution through the McpClient,
+ * which delegates to the Vercel AI SDK for actual MCP communication.
  */
 
+import type { ListToolsResult } from '@ai-sdk/mcp';
 import type { ToolDefinition, ToolProperty } from '../ai/types';
 import type { McpClient } from './McpClient';
-import type { McpTool, McpToolProperty } from './types';
 
 /**
  * An MCP tool converted to agent format with routing metadata.
@@ -18,11 +19,18 @@ export interface BridgedMcpTool {
   originalName: string;
 }
 
+/** A single raw tool definition from the MCP server. */
+type ServerToolDef = ListToolsResult['tools'][number];
+
 /**
  * Converts MCP tools from a specific server into agent ToolDefinitions.
+ * Takes the raw tool definitions from the SDK and adds name prefixing.
  */
-export function convertMcpTools(mcpTools: McpTool[], serverId: string): BridgedMcpTool[] {
-  return mcpTools.map((tool) => ({
+export function convertMcpTools(
+  serverTools: ListToolsResult['tools'],
+  serverId: string
+): BridgedMcpTool[] {
+  return serverTools.map((tool) => ({
     definition: mcpToolToDefinition(tool, serverId),
     serverId,
     originalName: tool.name,
@@ -36,7 +44,8 @@ export function convertAllMcpTools(client: McpClient): BridgedMcpTool[] {
   const bridged: BridgedMcpTool[] = [];
   for (const connection of client.getConnections()) {
     if (connection.status === 'connected') {
-      bridged.push(...convertMcpTools(connection.tools, connection.serverId));
+      const serverTools = client.getServerTools(connection.serverId);
+      bridged.push(...convertMcpTools(serverTools, connection.serverId));
     }
   }
   return bridged;
@@ -81,36 +90,34 @@ export function isMcpTool(bridgedTools: BridgedMcpTool[], toolName: string): boo
 }
 
 /**
- * Convert a single MCP tool to an agent ToolDefinition.
+ * Convert a single MCP server tool definition to an agent ToolDefinition.
  * Prefixes the tool name with "mcp_<serverId>_" to avoid collisions.
+ * Properties are extracted from the JSON Schema inputSchema provided by the MCP server.
  */
-function mcpToolToDefinition(tool: McpTool, serverId: string): ToolDefinition {
+function mcpToolToDefinition(tool: ServerToolDef, serverId: string): ToolDefinition {
   const sanitizedServerId = serverId.replace(/[^a-zA-Z0-9]/g, '_');
   const prefixedName = `mcp_${sanitizedServerId}_${tool.name}`;
 
   const properties: Record<string, ToolProperty> = {};
-  for (const [key, prop] of Object.entries(tool.inputSchema.properties)) {
-    properties[key] = mcpPropertyToToolProperty(prop);
+  const rawProps = (tool.inputSchema.properties ?? {}) as Record<string, Record<string, unknown>>;
+
+  for (const [key, prop] of Object.entries(rawProps)) {
+    properties[key] = {
+      type: (prop.type as string) ?? 'string',
+      description: (prop.description as string) ?? '',
+      ...(prop.enum ? { enum: prop.enum as string[] } : {}),
+    };
   }
+
+  const schema = tool.inputSchema as { required?: string[] };
 
   return {
     name: prefixedName,
-    description: `[MCP] ${tool.description}`,
+    description: `[MCP] ${tool.description ?? tool.name}`,
     input_schema: {
       type: 'object',
       properties,
-      required: tool.inputSchema.required,
+      required: schema.required,
     },
-  };
-}
-
-/**
- * Convert an MCP property schema to a ToolProperty.
- */
-function mcpPropertyToToolProperty(prop: McpToolProperty): ToolProperty {
-  return {
-    type: prop.type,
-    description: prop.description,
-    ...(prop.enum ? { enum: prop.enum } : {}),
   };
 }

@@ -296,10 +296,10 @@ The multi-agent orchestration system is **fully wired for real tool execution**.
 - Real file I/O via ToolExecutionBridge (reads, writes, diffs, search)
 - Event emission and subscription
 - Metrics tracking
-- MCP tool routing (client interface ready; real transport requires server-side MCP SDK)
+- MCP tool routing via Vercel AI SDK (stdio, HTTP, and SSE transports)
 
 ### Architecture note
-MCP (Model Context Protocol) uses a stub transport layer. Real MCP requires stdio or WebSocket transport to external tool servers, which is planned for a future release when server-side infrastructure is available. The interface and bridge are production-ready.
+MCP (Model Context Protocol) is wired through `@ai-sdk/mcp` from the Vercel AI SDK. The `McpClient` creates real transport connections (stdio for local tool servers, HTTP/SSE for remote), discovers tools via the SDK, and executes them natively. The `McpToolBridge` converts SDK tool definitions into the agent `ToolDefinition` format with name prefixing for collision avoidance. Tool execution flows through `base-agent.ts`'s routing chain: MCP tools are checked first, then skills, then the ToolExecutionBridge, then agent-specific tools.
 
 ---
 

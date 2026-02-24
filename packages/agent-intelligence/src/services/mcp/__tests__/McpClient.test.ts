@@ -3,15 +3,38 @@
  *
  * Verifies:
  * - Connection lifecycle (connect, disconnect)
- * - Tool discovery and listing
- * - Tool execution routing
+ * - Tool discovery via AI SDK
+ * - Tool execution routing through SDK tools
  * - Status tracking
  * - Error handling
  * - Multi-server management
+ * - Transport selection (stdio / HTTP / SSE)
  */
 
 import type { McpServerConfig } from '@thumbcode/state';
+import { type MockInstance, vi } from 'vitest';
 import { McpClient } from '../McpClient';
+
+// Mock the AI SDK MCP module
+const mockTools = vi.fn();
+const mockListTools = vi.fn();
+const mockClose = vi.fn().mockResolvedValue(undefined);
+
+vi.mock('@ai-sdk/mcp', () => ({
+  createMCPClient: vi.fn().mockImplementation(() =>
+    Promise.resolve({
+      tools: mockTools,
+      listTools: mockListTools,
+      close: mockClose,
+    })
+  ),
+}));
+
+// Mock the stdio transport module
+const MockStdioTransport = vi.fn();
+vi.mock('@ai-sdk/mcp/mcp-stdio', () => ({
+  Experimental_StdioMCPTransport: MockStdioTransport,
+}));
 
 function createMockServerConfig(overrides?: Partial<McpServerConfig>): McpServerConfig {
   return {
@@ -29,11 +52,59 @@ function createMockServerConfig(overrides?: Partial<McpServerConfig>): McpServer
   };
 }
 
+/** Set up mock SDK responses with two tools. */
+function setupMockToolResponses() {
+  const mockExecuteReadDocs = vi.fn().mockResolvedValue({
+    content: [{ type: 'text', text: 'Documentation for react v18' }],
+  });
+  const mockExecuteSearchCode = vi.fn().mockResolvedValue({
+    content: [{ type: 'text', text: 'Found 3 matches' }],
+  });
+
+  mockTools.mockResolvedValue({
+    read_docs: { execute: mockExecuteReadDocs },
+    search_code: { execute: mockExecuteSearchCode },
+  });
+
+  mockListTools.mockResolvedValue({
+    tools: [
+      {
+        name: 'read_docs',
+        description: 'Read documentation for a library',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            library: { type: 'string', description: 'Library name' },
+            version: { type: 'string', description: 'Version number' },
+          },
+          required: ['library'],
+        },
+      },
+      {
+        name: 'search_code',
+        description: 'Search code in a repository',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: { type: 'string', description: 'Search query' },
+            language: { type: 'string', description: 'Language filter', enum: ['ts', 'js', 'py'] },
+          },
+          required: ['query'],
+        },
+      },
+    ],
+  });
+
+  return { mockExecuteReadDocs, mockExecuteSearchCode };
+}
+
 describe('McpClient', () => {
   let client: McpClient;
 
   beforeEach(() => {
     client = new McpClient();
+    vi.clearAllMocks();
+    setupMockToolResponses();
   });
 
   describe('connect', () => {
@@ -58,9 +129,66 @@ describe('McpClient', () => {
       const config = createMockServerConfig();
       await client.connect(config);
 
-      const tools = client.listTools(config.id);
-      // Stub returns empty tools
-      expect(tools).toEqual([]);
+      const toolNames = client.listTools(config.id);
+      expect(toolNames).toEqual(['read_docs', 'search_code']);
+    });
+
+    it('uses StdioMCPTransport for stdio transport (default)', async () => {
+      const config = createMockServerConfig();
+      await client.connect(config);
+
+      expect(MockStdioTransport).toHaveBeenCalledWith({
+        command: 'npx',
+        args: ['-y', '@test/mcp-server'],
+        env: {},
+      });
+    });
+
+    it('uses HTTP transport config when transport is http', async () => {
+      const { createMCPClient } = await import('@ai-sdk/mcp');
+
+      const config = createMockServerConfig({
+        transport: 'http',
+        url: 'https://mcp.example.com/api',
+      });
+      await client.connect(config);
+
+      expect(createMCPClient).toHaveBeenCalledWith({
+        transport: { type: 'http', url: 'https://mcp.example.com/api' },
+      });
+    });
+
+    it('uses SSE transport config when transport is sse', async () => {
+      const { createMCPClient } = await import('@ai-sdk/mcp');
+
+      const config = createMockServerConfig({
+        transport: 'sse',
+        url: 'https://mcp.example.com/sse',
+      });
+      await client.connect(config);
+
+      expect(createMCPClient).toHaveBeenCalledWith({
+        transport: { type: 'sse', url: 'https://mcp.example.com/sse' },
+      });
+    });
+
+    it('throws when HTTP/SSE transport has no URL', async () => {
+      const config = createMockServerConfig({ transport: 'http' });
+      await expect(client.connect(config)).rejects.toThrow('URL required for http transport');
+    });
+
+    it('sets error status on connection failure', async () => {
+      const { createMCPClient } = await import('@ai-sdk/mcp');
+      (createMCPClient as unknown as MockInstance).mockRejectedValueOnce(
+        new Error('Connection refused')
+      );
+
+      const config = createMockServerConfig();
+      await expect(client.connect(config)).rejects.toThrow('Connection refused');
+
+      expect(client.getStatus(config.id)).toBe('error');
+      const conn = client.getConnection(config.id);
+      expect(conn?.error).toBe('Connection refused');
     });
   });
 
@@ -82,6 +210,14 @@ describe('McpClient', () => {
       expect(client.getConnection(config.id)).toBeUndefined();
     });
 
+    it('calls close() on the SDK client', async () => {
+      const config = createMockServerConfig();
+      await client.connect(config);
+
+      client.disconnect(config.id);
+      expect(mockClose).toHaveBeenCalled();
+    });
+
     it('handles disconnecting a non-existent server gracefully', () => {
       expect(() => client.disconnect('nonexistent')).not.toThrow();
     });
@@ -92,20 +228,21 @@ describe('McpClient', () => {
       expect(client.listTools('nonexistent')).toEqual([]);
     });
 
-    it('returns tools from connected server', async () => {
+    it('returns tool names from connected server', async () => {
       const config = createMockServerConfig();
       await client.connect(config);
       const tools = client.listTools(config.id);
-      expect(Array.isArray(tools)).toBe(true);
+      expect(tools).toEqual(['read_docs', 'search_code']);
     });
 
-    it('returns a copy of tools array (not the internal reference)', async () => {
+    it('returns a copy of tool names (not the internal reference)', async () => {
       const config = createMockServerConfig();
       await client.connect(config);
 
       const tools1 = client.listTools(config.id);
       const tools2 = client.listTools(config.id);
       expect(tools1).not.toBe(tools2);
+      expect(tools1).toEqual(tools2);
     });
   });
 
@@ -117,11 +254,28 @@ describe('McpClient', () => {
       await client.connect(config2);
 
       const allTools = client.listAllTools();
-      expect(Array.isArray(allTools)).toBe(true);
+      expect(allTools).toEqual(['read_docs', 'search_code', 'read_docs', 'search_code']);
     });
 
     it('returns empty array when no servers connected', () => {
       expect(client.listAllTools()).toEqual([]);
+    });
+  });
+
+  describe('getServerTools', () => {
+    it('returns raw tool definitions from connected server', async () => {
+      const config = createMockServerConfig();
+      await client.connect(config);
+
+      const serverTools = client.getServerTools(config.id);
+      expect(serverTools).toHaveLength(2);
+      expect(serverTools[0].name).toBe('read_docs');
+      expect(serverTools[0].description).toBe('Read documentation for a library');
+      expect(serverTools[0].inputSchema.type).toBe('object');
+    });
+
+    it('returns empty array for disconnected server', () => {
+      expect(client.getServerTools('nonexistent')).toEqual([]);
     });
   });
 
@@ -149,6 +303,89 @@ describe('McpClient', () => {
       const result = await client.executeTool(config.id, 'nonexistent_tool', {});
       expect(result.success).toBe(false);
       expect(result.error).toContain('Tool not found');
+    });
+
+    it('executes a tool and returns text content', async () => {
+      const config = createMockServerConfig();
+      await client.connect(config);
+
+      const result = await client.executeTool(config.id, 'read_docs', { library: 'react' });
+      expect(result.success).toBe(true);
+      expect(result.content).toBe('Documentation for react v18');
+    });
+
+    it('handles tool execution errors', async () => {
+      const mockExecute = vi.fn().mockRejectedValue(new Error('Timeout'));
+      mockTools.mockResolvedValueOnce({
+        failing_tool: { execute: mockExecute },
+      });
+      mockListTools.mockResolvedValueOnce({
+        tools: [
+          {
+            name: 'failing_tool',
+            description: 'A tool that fails',
+            inputSchema: { type: 'object', properties: {} },
+          },
+        ],
+      });
+
+      const config = createMockServerConfig({ id: 'fail-server' });
+      await client.connect(config);
+
+      const result = await client.executeTool('fail-server', 'failing_tool', {});
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Timeout');
+    });
+
+    it('handles isError flag in SDK response', async () => {
+      const mockExecute = vi.fn().mockResolvedValue({
+        content: [{ type: 'text', text: 'Something went wrong' }],
+        isError: true,
+      });
+      mockTools.mockResolvedValueOnce({
+        error_tool: { execute: mockExecute },
+      });
+      mockListTools.mockResolvedValueOnce({
+        tools: [
+          {
+            name: 'error_tool',
+            description: 'Returns an error',
+            inputSchema: { type: 'object', properties: {} },
+          },
+        ],
+      });
+
+      const config = createMockServerConfig({ id: 'err-server' });
+      await client.connect(config);
+
+      const result = await client.executeTool('err-server', 'error_tool', {});
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Something went wrong');
+    });
+
+    it('handles toolResult variant from SDK', async () => {
+      const mockExecute = vi.fn().mockResolvedValue({
+        toolResult: { count: 42, items: ['a', 'b'] },
+      });
+      mockTools.mockResolvedValueOnce({
+        struct_tool: { execute: mockExecute },
+      });
+      mockListTools.mockResolvedValueOnce({
+        tools: [
+          {
+            name: 'struct_tool',
+            description: 'Returns structured data',
+            inputSchema: { type: 'object', properties: {} },
+          },
+        ],
+      });
+
+      const config = createMockServerConfig({ id: 'struct-server' });
+      await client.connect(config);
+
+      const result = await client.executeTool('struct-server', 'struct_tool', {});
+      expect(result.success).toBe(true);
+      expect(result.content).toEqual({ count: 42, items: ['a', 'b'] });
     });
   });
 

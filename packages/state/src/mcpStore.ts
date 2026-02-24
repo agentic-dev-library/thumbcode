@@ -29,6 +29,10 @@ export interface McpServerConfig {
   icon?: string;
   category: McpCategory;
   createdAt: string;
+  /** Transport type — defaults to 'stdio' for backward compatibility. */
+  transport?: 'stdio' | 'http' | 'sse';
+  /** URL for HTTP/SSE transports. Required when transport is 'http' or 'sse'. */
+  url?: string;
 }
 
 // Suggested MCP server for one-tap setup
