@@ -100,11 +100,7 @@ describe('AgentRouter', () => {
   describe('fallback chain', () => {
     it('should include fallback providers in the decision', () => {
       const task = createMockTask({ type: 'feature' });
-      const decision = router.routeTask(
-        task,
-        ['anthropic', 'openai', 'google'],
-        'architect'
-      );
+      const decision = router.routeTask(task, ['anthropic', 'openai', 'google'], 'architect');
 
       // With 3 providers, there should be fallbacks
       expect(decision.fallbackChain.length).toBeGreaterThanOrEqual(1);
@@ -127,16 +123,10 @@ describe('AgentRouter', () => {
 
     it('should have a primary provider with higher confidence than fallbacks', () => {
       const task = createMockTask({ type: 'feature' });
-      const decision = router.routeTask(
-        task,
-        ['anthropic', 'openai', 'groq'],
-        'architect'
-      );
+      const decision = router.routeTask(task, ['anthropic', 'openai', 'groq'], 'architect');
 
       if (decision.fallbackChain.length > 0) {
-        expect(decision.confidence).toBeGreaterThanOrEqual(
-          decision.fallbackChain[0].confidence
-        );
+        expect(decision.confidence).toBeGreaterThanOrEqual(decision.fallbackChain[0].confidence);
       }
     });
   });

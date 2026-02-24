@@ -47,7 +47,7 @@ export function CameraCapture({ onCapture, onCancel }: Readonly<CameraCapturePro
     if (!capturedImage) return;
 
     const attachment: MediaAttachment = {
-      id: `photo-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+      id: `photo-${crypto.randomUUID()}`,
       type: 'image',
       uri: capturedImage,
       mimeType: 'image/jpeg',
@@ -78,7 +78,7 @@ export function CameraCapture({ onCapture, onCancel }: Readonly<CameraCapturePro
         <div>
           <img
             src={capturedImage}
-            alt="Captured photo"
+            alt="Captured snapshot"
             className="w-full rounded-organic-input mb-3"
           />
           <div className="flex gap-2">

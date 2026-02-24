@@ -18,7 +18,15 @@ vi.mock('react-router-dom', () => ({
 }));
 
 vi.mock('@/components/agents', () => ({
-  AgentMetrics: ({ completed, failed, successRate }: { completed: number; failed: number; successRate: number | null }) => (
+  AgentMetrics: ({
+    completed,
+    failed,
+    successRate,
+  }: {
+    completed: number;
+    failed: number;
+    successRate: number | null;
+  }) => (
     <div data-testid="agent-metrics">
       <span>{completed} completed</span>
       <span>{failed} failed</span>
@@ -60,7 +68,12 @@ vi.mock('@/hooks', () => ({
           config: { provider: 'anthropic', model: 'claude-3' },
         },
         tasks: [
-          { id: 'task-1', agentId: 'agent-2', description: 'Implement feature', status: 'in_progress' },
+          {
+            id: 'task-1',
+            agentId: 'agent-2',
+            description: 'Implement feature',
+            status: 'in_progress',
+          },
           { id: 'task-2', agentId: 'agent-2', description: 'Fix bug', status: 'completed' },
         ],
         currentTask: { id: 'task-1', description: 'Implement feature', status: 'in_progress' },

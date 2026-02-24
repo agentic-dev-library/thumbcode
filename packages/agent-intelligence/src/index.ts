@@ -10,18 +10,13 @@
 export * from './services/agents';
 // AI Services
 export * from './services/ai';
-
-// Orchestrator
-export * from './services/orchestrator';
-
-// Tool Execution Bridge
-export * from './services/tools';
-
-// Agent Skills
-export * from './services/skills';
-
-// Agent Routing
-export * from './services/routing';
-
 // MCP Services
 export * from './services/mcp';
+// Orchestrator
+export * from './services/orchestrator';
+// Agent Routing
+export * from './services/routing';
+// Agent Skills
+export * from './services/skills';
+// Tool Execution Bridge
+export * from './services/tools';

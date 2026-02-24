@@ -85,13 +85,7 @@ describe('ProjectFileExplorer', () => {
   });
 
   it('shows parent directory (..) when not at root', () => {
-    render(
-      <ProjectFileExplorer
-        {...defaultProps}
-        currentPath="src/components"
-        parentPath="src"
-      />
-    );
+    render(<ProjectFileExplorer {...defaultProps} currentPath="src/components" parentPath="src" />);
     expect(screen.getByText('..')).toBeInTheDocument();
   });
 

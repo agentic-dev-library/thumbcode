@@ -29,9 +29,19 @@ vi.mock('@/hooks/use-chat-page', () => ({
 }));
 
 vi.mock('@/components/chat', () => ({
-  ThreadList: ({ onSelectThread, onCreateThread }: { onSelectThread: (id: string) => void; onCreateThread: () => void }) => (
+  ThreadList: ({
+    onSelectThread,
+    onCreateThread,
+  }: {
+    onSelectThread: (id: string) => void;
+    onCreateThread: () => void;
+  }) => (
     <div data-testid="thread-list">
-      <button type="button" data-testid="select-thread-btn" onClick={() => onSelectThread('thread-1')}>
+      <button
+        type="button"
+        data-testid="select-thread-btn"
+        onClick={() => onSelectThread('thread-1')}
+      >
         Select Thread
       </button>
       <button type="button" data-testid="create-thread-btn" onClick={() => onCreateThread()}>

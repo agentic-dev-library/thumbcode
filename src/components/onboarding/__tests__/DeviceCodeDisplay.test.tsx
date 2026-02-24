@@ -48,9 +48,7 @@ describe('DeviceCodeDisplay', () => {
     });
 
     it('shows spinner when authenticating', () => {
-      const { container } = render(
-        <DeviceCodeDisplay {...defaultProps} isAuthenticating={true} />
-      );
+      const { container } = render(<DeviceCodeDisplay {...defaultProps} isAuthenticating={true} />);
       expect(container.querySelector('.animate-spin')).toBeInTheDocument();
     });
   });
@@ -81,9 +79,7 @@ describe('DeviceCodeDisplay', () => {
     });
 
     it('disables check button when authenticating', () => {
-      render(
-        <DeviceCodeDisplay {...propsWithCode} isAuthenticating={true} />
-      );
+      render(<DeviceCodeDisplay {...propsWithCode} isAuthenticating={true} />);
       const buttons = screen.getAllByRole('button');
       const checkBtn = buttons.find((b) => b.classList.contains('bg-teal-600'));
       expect(checkBtn).toBeDisabled();

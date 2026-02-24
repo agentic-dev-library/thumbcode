@@ -96,9 +96,7 @@ function ThreadItem({ thread, onPress }: Readonly<ThreadItemProps>) {
 
         {/* Unread badge */}
         {hasUnread && (
-          <div
-            className="bg-coral-500 px-2 py-0.5 min-w-[20px] flex items-center justify-center rounded-organic-input"
-          >
+          <div className="bg-coral-500 px-2 py-0.5 min-w-[20px] flex items-center justify-center rounded-organic-input">
             <Text size="xs" weight="semibold" className="text-white">
               {thread.unreadCount > 99 ? '99+' : thread.unreadCount}
             </Text>

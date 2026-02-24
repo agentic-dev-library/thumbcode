@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { RepoSelector } from '../RepoSelector';
 import type { RepoListItem } from '../RepoSelector';
+import { RepoSelector } from '../RepoSelector';
 
 vi.mock('@/components/icons', () => ({
   FolderIcon: () => <span data-testid="folder-icon" />,
@@ -101,9 +101,7 @@ describe('RepoSelector', () => {
   });
 
   it('shows error message in empty state', () => {
-    render(
-      <RepoSelector {...defaultProps} filteredRepos={[]} errorMessage="Failed to load" />
-    );
+    render(<RepoSelector {...defaultProps} filteredRepos={[]} errorMessage="Failed to load" />);
     expect(screen.getByText('Failed to load')).toBeInTheDocument();
   });
 
@@ -167,9 +165,7 @@ describe('RepoSelector', () => {
     });
 
     it('shows error message in create mode', () => {
-      render(
-        <RepoSelector {...createProps} errorMessage="Name already taken" />
-      );
+      render(<RepoSelector {...createProps} errorMessage="Name already taken" />);
       expect(screen.getByText('Name already taken')).toBeInTheDocument();
     });
   });

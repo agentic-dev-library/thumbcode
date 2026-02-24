@@ -102,7 +102,12 @@ describe('ImageMessage', () => {
     const msg = createImageMessage(
       {
         attachments: [
-          { id: 'att-1', type: 'image', uri: 'https://example.com/attach.png', mimeType: 'image/png' },
+          {
+            id: 'att-1',
+            type: 'image',
+            uri: 'https://example.com/attach.png',
+            mimeType: 'image/png',
+          },
         ],
       },
       { imageUrl: '' }

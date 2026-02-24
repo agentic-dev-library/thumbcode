@@ -78,9 +78,7 @@ describe('AgentSettings', () => {
   it('renders the tip info box', () => {
     render(<AgentSettings />);
     expect(screen.getByText('Tip')).toBeInTheDocument();
-    expect(
-      screen.getByText(/Start with "Require Approval" for all actions/)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Start with "Require Approval" for all actions/)).toBeInTheDocument();
   });
 
   it('toggles auto-review switch', () => {

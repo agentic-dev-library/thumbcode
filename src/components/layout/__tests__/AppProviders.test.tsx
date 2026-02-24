@@ -6,7 +6,9 @@ vi.mock('@/components/error', () => ({
 }));
 
 vi.mock('@/contexts/onboarding', () => ({
-  OnboardingProvider: ({ children }: any) => <div data-testid="onboarding-provider">{children}</div>,
+  OnboardingProvider: ({ children }: any) => (
+    <div data-testid="onboarding-provider">{children}</div>
+  ),
 }));
 
 describe('AppProviders', () => {

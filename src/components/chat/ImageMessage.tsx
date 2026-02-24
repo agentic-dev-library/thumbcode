@@ -6,8 +6,8 @@
  * Uses organic daube styling per brand guidelines.
  */
 
-import { useCallback, useState } from 'react';
 import type { ImageMessage as ImageMessageType, MediaAttachment } from '@thumbcode/state';
+import { useCallback, useState } from 'react';
 import { Text } from '@/components/ui';
 
 /** Props for the ImageMessage component */
@@ -92,6 +92,7 @@ function Lightbox({
         alt={alt}
         className="max-w-[90vw] max-h-[90vh] object-contain rounded-organic-card"
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.key === 'Escape' && onClose()}
       />
     </div>
   );
@@ -101,7 +102,9 @@ export function ImageMessage({ message }: Readonly<ImageMessageProps>) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const imageUrl =
-    message.metadata?.imageUrl || message.attachments?.find((a: MediaAttachment) => a.type === 'image')?.uri || '';
+    message.metadata?.imageUrl ||
+    message.attachments?.find((a: MediaAttachment) => a.type === 'image')?.uri ||
+    '';
   const caption = message.metadata?.caption || message.content || '';
   const alt = caption || 'Image attachment';
 
@@ -115,9 +118,7 @@ export function ImageMessage({ message }: Readonly<ImageMessageProps>) {
     >
       <ImageThumbnail src={imageUrl} alt={alt} onClick={openLightbox} />
 
-      {caption && (
-        <Text className="font-body text-sm text-neutral-300 mt-2">{caption}</Text>
-      )}
+      {caption && <Text className="font-body text-sm text-neutral-300 mt-2">{caption}</Text>}
 
       {lightboxOpen && <Lightbox src={imageUrl} alt={alt} onClose={closeLightbox} />}
     </div>

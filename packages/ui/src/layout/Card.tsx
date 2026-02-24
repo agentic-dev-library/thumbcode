@@ -1,4 +1,3 @@
-
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'elevated';
 }

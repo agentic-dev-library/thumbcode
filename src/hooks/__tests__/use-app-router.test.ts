@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { useAppRouter, useRouteParams, useRouteSegments } from '../use-app-router';
 
 const mockNavigate = vi.fn();

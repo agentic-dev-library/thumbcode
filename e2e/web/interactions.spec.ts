@@ -75,7 +75,7 @@ test.describe('User Interactions - Full Flow', () => {
     await clickByText(page, 'Skip for Now');
     await page.waitForTimeout(500);
     await expect(
-      page.getByText(/Create.*Project|First Project|Select Repository/i).first(),
+      page.getByText(/Create.*Project|First Project|Select Repository/i).first()
     ).toBeVisible();
   });
 

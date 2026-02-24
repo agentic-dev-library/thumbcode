@@ -26,9 +26,7 @@ describe('ProjectCommits', () => {
   ];
 
   it('shows error when repoInfo is null', () => {
-    render(
-      <ProjectCommits repoInfo={null} commits={[]} isLoading={false} error={null} />
-    );
+    render(<ProjectCommits repoInfo={null} commits={[]} isLoading={false} error={null} />);
     expect(screen.getByText('Could not parse repository info from URL.')).toBeInTheDocument();
   });
 
@@ -47,20 +45,13 @@ describe('ProjectCommits', () => {
   });
 
   it('shows empty state when no commits', () => {
-    render(
-      <ProjectCommits repoInfo={repoInfo} commits={[]} isLoading={false} error={null} />
-    );
+    render(<ProjectCommits repoInfo={repoInfo} commits={[]} isLoading={false} error={null} />);
     expect(screen.getByText('No commits found.')).toBeInTheDocument();
   });
 
   it('renders commit list with messages', () => {
     render(
-      <ProjectCommits
-        repoInfo={repoInfo}
-        commits={mockCommits}
-        isLoading={false}
-        error={null}
-      />
+      <ProjectCommits repoInfo={repoInfo} commits={mockCommits} isLoading={false} error={null} />
     );
     expect(screen.getByText('feat: add login page')).toBeInTheDocument();
     expect(screen.getByText('fix: resolve auth issue')).toBeInTheDocument();

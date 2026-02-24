@@ -90,10 +90,7 @@ export function ChatInput({
       {/* Camera overlay */}
       {showCamera && (
         <div className="px-3 py-2 border-t border-neutral-700 bg-surface">
-          <CameraCapture
-            onCapture={handleCameraCapture}
-            onCancel={() => setShowCamera(false)}
-          />
+          <CameraCapture onCapture={handleCameraCapture} onCancel={() => setShowCamera(false)} />
         </div>
       )}
 

@@ -43,17 +43,13 @@ describe('ChatBubble', () => {
   });
 
   it('applies user styling for user sender', () => {
-    const { container } = render(
-      <ChatBubble message={{ ...baseMessage, sender: 'user' }} />
-    );
+    const { container } = render(<ChatBubble message={{ ...baseMessage, sender: 'user' }} />);
     const bubble = container.firstChild as HTMLElement;
     expect(bubble.className).toContain('self-end');
   });
 
   it('applies agent styling for agent sender', () => {
-    const { container } = render(
-      <ChatBubble message={{ ...baseMessage, sender: 'architect' }} />
-    );
+    const { container } = render(<ChatBubble message={{ ...baseMessage, sender: 'architect' }} />);
     const bubble = container.firstChild as HTMLElement;
     expect(bubble.className).toContain('self-start');
   });

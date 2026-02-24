@@ -50,11 +50,7 @@ describe('SettingsItem', () => {
   it('renders toggle checkbox when toggle prop provided', () => {
     const onValueChange = vi.fn();
     render(
-      <SettingsItem
-        Icon={MockIcon}
-        title="Dark Mode"
-        toggle={{ value: true, onValueChange }}
-      />
+      <SettingsItem Icon={MockIcon} title="Dark Mode" toggle={{ value: true, onValueChange }} />
     );
     const checkbox = screen.getByRole('checkbox');
     expect(checkbox).toBeChecked();

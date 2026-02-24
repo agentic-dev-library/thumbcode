@@ -53,9 +53,7 @@ describe('Stack', () => {
   });
 
   it('applies inline style', () => {
-    const { container } = render(
-      <Stack style={{ backgroundColor: 'red' }}>Content</Stack>
-    );
+    const { container } = render(<Stack style={{ backgroundColor: 'red' }}>Content</Stack>);
     const el = container.firstChild as HTMLElement;
     expect(el.style.backgroundColor).toBe('red');
   });

@@ -8,19 +8,12 @@
 
 import {
   type CapabilitySupport,
+  PROVIDER_REGISTRY,
   type ProviderCapability,
   type ProviderCapabilityEntry,
-  PROVIDER_REGISTRY,
 } from '@thumbcode/config';
 import { useCredentialStore } from '@thumbcode/state';
-import {
-  ArrowLeft,
-  Check,
-  ChevronDown,
-  ChevronUp,
-  Eye,
-  EyeOff,
-} from 'lucide-react';
+import { ArrowLeft, Check, ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

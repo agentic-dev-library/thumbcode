@@ -213,5 +213,4 @@ describe('Theme', () => {
       expect(themeTokens.spacing.md).toBe('16px');
     });
   });
-
 });

@@ -26,7 +26,10 @@ describe('secureFetch', () => {
 
   it('signs requests to MCP server host', async () => {
     mockSignRequest.mockResolvedValue({ 'X-Signature': 'sig123' });
-    await secureFetch('https://mcp.thumbcode.com/api/v1/data', { method: 'POST', body: '{"key":"value"}' });
+    await secureFetch('https://mcp.thumbcode.com/api/v1/data', {
+      method: 'POST',
+      body: '{"key":"value"}',
+    });
     expect(mockSignRequest).toHaveBeenCalledWith(
       'https://mcp.thumbcode.com/api/v1/data',
       'POST',
@@ -60,11 +63,7 @@ describe('secureFetch', () => {
   it('uses GET as default method for MCP requests', async () => {
     mockSignRequest.mockResolvedValue(null);
     await secureFetch('https://mcp.thumbcode.com/api');
-    expect(mockSignRequest).toHaveBeenCalledWith(
-      'https://mcp.thumbcode.com/api',
-      'GET',
-      undefined
-    );
+    expect(mockSignRequest).toHaveBeenCalledWith('https://mcp.thumbcode.com/api', 'GET', undefined);
   });
 
   it('handles non-string body by JSON.stringifying', async () => {

@@ -115,7 +115,11 @@ export class AgentOrchestrator {
    * Route a task to the best available provider for the given agent role.
    * Falls back to the configured default provider if routing fails.
    */
-  routeTask(taskId: string, agentRole: AgentRole, availableProviders: AIProvider[]): RoutingDecision {
+  routeTask(
+    taskId: string,
+    agentRole: AgentRole,
+    availableProviders: AIProvider[]
+  ): RoutingDecision {
     const task = this.taskAssigner.getTask(taskId);
     if (!task) {
       return {
@@ -192,7 +196,7 @@ export class AgentOrchestrator {
     availableProviders?: Array<{ provider: AIProvider; apiKey: string }>
   ): Promise<VariantResult> {
     const count = Math.min(request.variantCount, VARIANT_SYSTEM_PROMPTS.length);
-    const requestId = `variant-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const requestId = `variant-${crypto.randomUUID()}`;
     const prompts = VARIANT_SYSTEM_PROMPTS.slice(0, count);
 
     const variantPromises = prompts.map(async (promptVariation, index) => {
@@ -351,7 +355,7 @@ export class AgentOrchestrator {
     stages?: PipelineStage[];
   }): Pipeline {
     const stages = options.stages ?? AgentOrchestrator.DEFAULT_PIPELINE_STAGES;
-    const pipelineId = `pipeline-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const pipelineId = `pipeline-${crypto.randomUUID()}`;
     const now = new Date().toISOString();
 
     const taskIds: string[] = [];

@@ -6,11 +6,11 @@
  * availability. Implements graceful degradation with fallback chains.
  */
 
-import type { AgentRole, TaskAssignment } from '@thumbcode/types';
 import type { ProviderCapability } from '@thumbcode/config';
 import { getProvider } from '@thumbcode/config';
-import { getDefaultModel } from '../ai';
+import type { AgentRole, TaskAssignment } from '@thumbcode/types';
 import type { AIProvider } from '../ai';
+import { getDefaultModel } from '../ai';
 import type {
   AgentCapabilityMap,
   AgentRouterConfig,
@@ -77,10 +77,7 @@ export class AgentRouter {
   private readonly capabilityMap: AgentCapabilityMap;
   private readonly customRules: RoutingRule[] = [];
 
-  constructor(
-    config: Partial<AgentRouterConfig> = {},
-    capabilityMap?: AgentCapabilityMap
-  ) {
+  constructor(config: Partial<AgentRouterConfig> = {}, capabilityMap?: AgentCapabilityMap) {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.capabilityMap = capabilityMap ?? DEFAULT_CAPABILITY_MAP;
   }
@@ -191,7 +188,7 @@ export class AgentRouter {
       // Base score: ratio of matched capabilities
       const matchRatio = matchCount / requiredCapabilities.length;
       // Bonus for full support vs partial
-      const fullBonus = fullMatchCount / requiredCapabilities.length * 0.1;
+      const fullBonus = (fullMatchCount / requiredCapabilities.length) * 0.1;
       // Tier weight: higher tier providers get a small boost
       const tierBoost = this.normalizedTier(entry.tier) * 0.2;
 

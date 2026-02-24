@@ -117,7 +117,7 @@ export const useProjectStore = create<ProjectState>()(
         error: null,
 
         addProject: (project) => {
-          const projectId = `project-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+          const projectId = `project-${crypto.randomUUID()}`;
           const now = new Date().toISOString();
           set((state) => {
             state.projects.push({

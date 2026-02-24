@@ -64,6 +64,24 @@ export {
   useCredentialStore,
 } from './credentialStore';
 export type {
+  McpCategory,
+  McpServerConfig,
+  McpServerStatus,
+  McpSuggestion,
+} from './mcpStore';
+// MCP store
+export {
+  CURATED_SUGGESTIONS,
+  selectConnectedServers,
+  selectDisconnectedServers,
+  selectErrorServers,
+  selectMcpError,
+  selectServerCount,
+  selectServers,
+  selectServersByCategory,
+  useMcpStore,
+} from './mcpStore';
+export type {
   Branch,
   Commit,
   FileNode,
@@ -85,24 +103,6 @@ export {
   selectWorkspace,
   useProjectStore,
 } from './projectStore';
-export type {
-  McpCategory,
-  McpServerConfig,
-  McpServerStatus,
-  McpSuggestion,
-} from './mcpStore';
-// MCP store
-export {
-  CURATED_SUGGESTIONS,
-  selectConnectedServers,
-  selectDisconnectedServers,
-  selectErrorServers,
-  selectMcpError,
-  selectServerCount,
-  selectServers,
-  selectServersByCategory,
-  useMcpStore,
-} from './mcpStore';
 export type {
   AgentPreferences,
   EditorPreferences,

@@ -61,7 +61,9 @@ describe('ThreadList', () => {
     setupStore([], []);
     render(<ThreadList onSelectThread={onSelectThread} onCreateThread={onCreateThread} />);
     expect(screen.getByText('No conversations yet')).toBeInTheDocument();
-    expect(screen.getByText('Start a new thread to collaborate with AI agents')).toBeInTheDocument();
+    expect(
+      screen.getByText('Start a new thread to collaborate with AI agents')
+    ).toBeInTheDocument();
   });
 
   it('shows new thread button in empty state', () => {

@@ -87,7 +87,7 @@ export const useCredentialStore = create<CredentialState>()(
         lastError: null,
 
         addCredential: (credential) => {
-          const credentialId = `cred-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+          const credentialId = `cred-${crypto.randomUUID()}`;
           set((state) => {
             // Remove existing credential for same provider if it exists
             state.credentials = state.credentials.filter((c) => c.provider !== credential.provider);

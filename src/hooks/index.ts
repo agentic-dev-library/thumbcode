@@ -4,9 +4,6 @@
  * Reusable hooks for common patterns.
  */
 
-// Camera and voice input hooks
-export { type UseCameraCaptureResult, useCameraCapture } from './use-camera-capture';
-export { type UseVoiceInputResult, useVoiceInput } from './use-voice-input';
 // Agent hooks
 export {
   type AgentDetailMetrics,
@@ -23,6 +20,10 @@ export {
   type UseAgentListResult,
   useAgentList,
 } from './use-agent-list';
+// Navigation
+export { useAppRouter, useRouteParams, useRouteSegments } from './use-app-router';
+// Camera and voice input hooks
+export { type UseCameraCaptureResult, useCameraCapture } from './use-camera-capture';
 // Tab page hooks
 export {
   type ActivityItem,
@@ -47,5 +48,4 @@ export {
   useProjectFiles,
 } from './use-project-files';
 export { type UseProjectListResult, useProjectList } from './use-project-list';
-// Navigation
-export { useAppRouter, useRouteParams, useRouteSegments } from './use-app-router';
+export { type UseVoiceInputResult, useVoiceInput } from './use-voice-input';

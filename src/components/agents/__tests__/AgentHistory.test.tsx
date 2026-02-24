@@ -3,7 +3,11 @@ import type { AgentTask } from '@thumbcode/state';
 import { AgentHistory } from '../AgentHistory';
 
 vi.mock('@/components/display', () => ({
-  Badge: ({ children, ...props }: any) => <span data-testid="badge" {...props}>{children}</span>,
+  Badge: ({ children, ...props }: any) => (
+    <span data-testid="badge" {...props}>
+      {children}
+    </span>
+  ),
 }));
 
 vi.mock('@/components/layout', () => ({

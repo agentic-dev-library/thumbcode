@@ -179,7 +179,7 @@ export const useAgentStore = create<AgentState>()(
           }),
 
         addTask: (task) => {
-          const taskId = `task-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+          const taskId = `task-${crypto.randomUUID()}`;
           set((state) => {
             state.tasks.push({
               ...task,

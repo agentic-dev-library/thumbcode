@@ -61,9 +61,7 @@ describe('PreviewPanel', () => {
   });
 
   it('sets data-language attribute on the code element', () => {
-    render(
-      <PreviewPanel code={sampleCode} previewHtml={sampleHtml} language="typescript" />
-    );
+    render(<PreviewPanel code={sampleCode} previewHtml={sampleHtml} language="typescript" />);
 
     const codeEl = screen.getByText(sampleCode);
     expect(codeEl).toHaveAttribute('data-language', 'typescript');
@@ -106,9 +104,7 @@ describe('PreviewPanel', () => {
   });
 
   it('renders the title when provided', () => {
-    render(
-      <PreviewPanel code={sampleCode} previewHtml={sampleHtml} title="My Component" />
-    );
+    render(<PreviewPanel code={sampleCode} previewHtml={sampleHtml} title="My Component" />);
 
     // Title appears in both the panel header and the LivePreview toolbar
     const titleElements = screen.getAllByText('My Component');

@@ -7,8 +7,8 @@
  * Uses organic daube styling per brand guidelines.
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
 import type { MediaAttachment, VoiceMessage } from '@thumbcode/state';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Text } from '@/components/ui';
 
 /** Props for the AudioMessage component */
@@ -25,7 +25,10 @@ function formatDuration(seconds: number): string {
 }
 
 /** Static waveform bar heights (pseudo-random pattern) */
-const WAVEFORM_BARS = [0.3, 0.6, 0.8, 0.5, 0.9, 0.4, 0.7, 1.0, 0.6, 0.3, 0.7, 0.5, 0.8, 0.4, 0.6, 0.9, 0.5, 0.7, 0.3, 0.8];
+const WAVEFORM_BARS = [
+  0.3, 0.6, 0.8, 0.5, 0.9, 0.4, 0.7, 1.0, 0.6, 0.3, 0.7, 0.5, 0.8, 0.4, 0.6, 0.9, 0.5, 0.7, 0.3,
+  0.8,
+];
 
 export function AudioMessage({ message }: Readonly<AudioMessageProps>) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -127,6 +130,12 @@ export function AudioMessage({ message }: Readonly<AudioMessageProps>) {
           <div
             className="flex items-end gap-[2px] h-8 cursor-pointer"
             onClick={handleProgressClick}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                togglePlayPause();
+              }
+            }}
             role="progressbar"
             aria-label="Audio progress"
             aria-valuenow={Math.round(currentTime)}
@@ -151,9 +160,7 @@ export function AudioMessage({ message }: Readonly<AudioMessageProps>) {
             <Text className="font-mono text-xs text-neutral-400">
               {formatDuration(currentTime)}
             </Text>
-            <Text className="font-mono text-xs text-neutral-400">
-              {formatDuration(duration)}
-            </Text>
+            <Text className="font-mono text-xs text-neutral-400">{formatDuration(duration)}</Text>
           </div>
         </div>
       </div>

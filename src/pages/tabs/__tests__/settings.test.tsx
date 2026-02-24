@@ -48,7 +48,9 @@ vi.mock('@thumbcode/state', () => ({
   selectSettings: (state: { settings: unknown }) => state.settings,
   selectCredentialByProvider:
     (provider: string) =>
-    (state: { credentials: { provider: string; status: string; metadata: Record<string, string> }[] }) =>
+    (state: {
+      credentials: { provider: string; status: string; metadata: Record<string, string> }[];
+    }) =>
       state.credentials.find((c: { provider: string }) => c.provider === provider) ?? null,
 }));
 

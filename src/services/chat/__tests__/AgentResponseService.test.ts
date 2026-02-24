@@ -270,16 +270,14 @@ describe('AgentResponseService', () => {
 
     it('should successfully route agent messages with orchestrator available', async () => {
       const mockClient = {
-        completeStream: vi
-          .fn()
-          .mockImplementation(async (_msgs: any, _opts: any, onEvent: any) => {
-            onEvent({
-              type: 'content_block_delta',
-              index: 0,
-              delta: { type: 'text', text: 'Architect response' },
-            });
-            return mockCompletionResponse('Architect response');
-          }),
+        completeStream: vi.fn().mockImplementation(async (_msgs: any, _opts: any, onEvent: any) => {
+          onEvent({
+            type: 'content_block_delta',
+            index: 0,
+            delta: { type: 'text', text: 'Architect response' },
+          });
+          return mockCompletionResponse('Architect response');
+        }),
       };
       mockCreateAIClient.mockReturnValue(mockClient);
 
@@ -329,49 +327,49 @@ describe('AgentResponseService', () => {
       expect(completeCalls[1][0].sender).toBe('implementer');
     });
 
-    it.each(['architect', 'implementer', 'reviewer', 'tester'] as const)(
-      'should route %s messages through the orchestrator',
-      async (agentRole) => {
-        const mockClient = {
-          completeStream: vi
-            .fn()
-            .mockImplementation(async (_msgs: any, _opts: any, onEvent: any) => {
-              onEvent({
-                type: 'content_block_delta',
-                index: 0,
-                delta: { type: 'text', text: `Response from ${agentRole}` },
-              });
-              return mockCompletionResponse(`Response from ${agentRole}`);
-            }),
-        };
-        mockCreateAIClient.mockReturnValue(mockClient);
+    it.each([
+      'architect',
+      'implementer',
+      'reviewer',
+      'tester',
+    ] as const)('should route %s messages through the orchestrator', async (agentRole) => {
+      const mockClient = {
+        completeStream: vi.fn().mockImplementation(async (_msgs: any, _opts: any, onEvent: any) => {
+          onEvent({
+            type: 'content_block_delta',
+            index: 0,
+            delta: { type: 'text', text: `Response from ${agentRole}` },
+          });
+          return mockCompletionResponse(`Response from ${agentRole}`);
+        }),
+      };
+      mockCreateAIClient.mockReturnValue(mockClient);
 
-        const threadId = useChatStore.getState().createThread({
-          title: 'Test',
-          participants: ['user'],
-          isPinned: false,
-        });
+      const threadId = useChatStore.getState().createThread({
+        title: 'Test',
+        participants: ['user'],
+        isPinned: false,
+      });
 
-        await service.requestAgentResponse(threadId, 'msg-1', agentRole);
+      await service.requestAgentResponse(threadId, 'msg-1', agentRole);
 
-        // Should emit message events for this agent
-        expect(streamHandler.emitTypingStart).toHaveBeenCalledWith(threadId, agentRole);
-        expect(streamHandler.emit).toHaveBeenCalledWith(
-          expect.objectContaining({ type: 'message_start', sender: agentRole })
-        );
-        expect(streamHandler.emit).toHaveBeenCalledWith(
-          expect.objectContaining({
-            type: 'message_delta',
-            delta: `Response from ${agentRole}`,
-            sender: agentRole,
-          })
-        );
-        expect(streamHandler.emit).toHaveBeenCalledWith(
-          expect.objectContaining({ type: 'message_complete', sender: agentRole })
-        );
-        expect(streamHandler.emitTypingEnd).toHaveBeenCalledWith(threadId, agentRole);
-      }
-    );
+      // Should emit message events for this agent
+      expect(streamHandler.emitTypingStart).toHaveBeenCalledWith(threadId, agentRole);
+      expect(streamHandler.emit).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'message_start', sender: agentRole })
+      );
+      expect(streamHandler.emit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'message_delta',
+          delta: `Response from ${agentRole}`,
+          sender: agentRole,
+        })
+      );
+      expect(streamHandler.emit).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'message_complete', sender: agentRole })
+      );
+      expect(streamHandler.emitTypingEnd).toHaveBeenCalledWith(threadId, agentRole);
+    });
 
     it('should not initialize orchestrator for non-agent senders', async () => {
       const mockClient = {

@@ -118,7 +118,12 @@ describe('AudioMessage', () => {
     const msg = createVoiceMessage(
       {
         attachments: [
-          { id: 'att-1', type: 'audio', uri: 'https://example.com/voice.ogg', mimeType: 'audio/ogg' },
+          {
+            id: 'att-1',
+            type: 'audio',
+            uri: 'https://example.com/voice.ogg',
+            mimeType: 'audio/ogg',
+          },
         ],
       },
       { audioUrl: undefined }

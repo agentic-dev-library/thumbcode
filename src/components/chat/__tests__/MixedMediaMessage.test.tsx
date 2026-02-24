@@ -34,10 +34,7 @@ vi.mock('../DocumentCard', () => ({
   ),
 }));
 
-function createMixedMessage(
-  attachments: MediaAttachment[],
-  content = ''
-): Message {
+function createMixedMessage(attachments: MediaAttachment[], content = ''): Message {
   return {
     id: 'msg-mixed-1',
     threadId: 'thread-1',
@@ -106,9 +103,7 @@ describe('MixedMediaMessage', () => {
   });
 
   it('renders audio attachments as audio players', () => {
-    const msg = createMixedMessage([
-      audioAttachment('aud-1', 'https://example.com/voice.mp3'),
-    ]);
+    const msg = createMixedMessage([audioAttachment('aud-1', 'https://example.com/voice.mp3')]);
     render(<MixedMediaMessage message={msg} />);
     expect(screen.getByTestId('audio-message')).toBeTruthy();
   });
@@ -139,9 +134,7 @@ describe('MixedMediaMessage', () => {
   });
 
   it('does not render text section when content is empty', () => {
-    const msg = createMixedMessage([
-      imageAttachment('img-1', 'https://example.com/1.jpg'),
-    ]);
+    const msg = createMixedMessage([imageAttachment('img-1', 'https://example.com/1.jpg')]);
     const { container } = render(<MixedMediaMessage message={msg} />);
     const card = container.firstElementChild as HTMLElement;
     // First child should be the image grid, not a text span
@@ -149,9 +142,7 @@ describe('MixedMediaMessage', () => {
   });
 
   it('applies organic card styling', () => {
-    const msg = createMixedMessage([
-      imageAttachment('img-1', 'https://example.com/1.jpg'),
-    ]);
+    const msg = createMixedMessage([imageAttachment('img-1', 'https://example.com/1.jpg')]);
     const { container } = render(<MixedMediaMessage message={msg} />);
     const card = container.firstElementChild as HTMLElement;
     expect(card.className).toContain('rounded-organic-card');

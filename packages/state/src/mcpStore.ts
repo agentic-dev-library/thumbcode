@@ -134,7 +134,7 @@ export const useMcpStore = create<McpState>()(
         lastError: null,
 
         addServer: (server) => {
-          const serverId = `mcp-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+          const serverId = `mcp-${crypto.randomUUID()}`;
           set((state) => {
             state.servers.push({
               ...server,
@@ -200,9 +200,8 @@ export const useMcpStore = create<McpState>()(
 
 // Selectors for optimal re-renders
 export const selectServers = (state: McpState) => state.servers;
-export const selectServersByCategory =
-  (category: McpCategory) => (state: McpState) =>
-    state.servers.filter((s) => s.category === category);
+export const selectServersByCategory = (category: McpCategory) => (state: McpState) =>
+  state.servers.filter((s) => s.category === category);
 export const selectConnectedServers = (state: McpState) =>
   state.servers.filter((s) => s.status === 'connected');
 export const selectDisconnectedServers = (state: McpState) =>

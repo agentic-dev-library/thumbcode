@@ -194,13 +194,16 @@ export function PreviewPanel({
 
         {/* Resizable divider */}
         {isSideBySide && (
-          <div
-            className="w-1 bg-neutral-700 hover:bg-teal-600 cursor-col-resize transition-colors flex-shrink-0"
+          <hr
+            className="w-1 h-auto m-0 border-none bg-neutral-700 hover:bg-teal-600 cursor-col-resize transition-colors flex-shrink-0"
             onMouseDown={handleMouseDown}
             data-testid="preview-panel-divider"
-            role="separator"
+            tabIndex={0}
             aria-orientation="vertical"
             aria-label="Resize code and preview panels"
+            aria-valuenow={Math.round(splitRatio)}
+            aria-valuemin={20}
+            aria-valuemax={80}
           />
         )}
 

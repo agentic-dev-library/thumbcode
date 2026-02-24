@@ -195,7 +195,7 @@ export const useChatStore = create<ChatState>()(
         isTyping: {},
 
         createThread: (thread) => {
-          const threadId = `thread-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+          const threadId = `thread-${crypto.randomUUID()}`;
           const now = new Date().toISOString();
           set((state) => {
             state.threads.push({
@@ -256,7 +256,7 @@ export const useChatStore = create<ChatState>()(
           }),
 
         addMessage: (message) => {
-          const messageId = `msg-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+          const messageId = `msg-${crypto.randomUUID()}`;
           set((state) => {
             const fullMessage: Message = {
               ...message,

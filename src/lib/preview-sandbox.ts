@@ -62,9 +62,9 @@ export function createPreviewHtml(code: string, config?: PreviewConfig): string 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${sanitizeHtml(title)}</title>
-  <script src="https://cdn.tailwindcss.com"><\/script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link href="${GOOGLE_FONTS_URL}" rel="stylesheet">
-  <script>tailwind.config = ${TAILWIND_CONFIG};<\/script>
+  <script>tailwind.config = ${TAILWIND_CONFIG};</script>
   <style>
     body {
       background: ${bgColor};

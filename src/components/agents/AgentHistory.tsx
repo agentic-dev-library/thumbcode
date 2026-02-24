@@ -30,10 +30,7 @@ export function AgentHistory({ tasks }: Readonly<AgentHistoryProps>) {
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   return (
-    <VStack
-      spacing="none"
-      className="bg-surface rounded-organic-card overflow-hidden"
-    >
+    <VStack spacing="none" className="bg-surface rounded-organic-card overflow-hidden">
       <div className="px-4 py-3 border-b border-neutral-700">
         <Text size="sm" weight="semibold" className="text-neutral-400">
           TASK HISTORY

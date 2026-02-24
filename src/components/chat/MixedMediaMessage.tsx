@@ -6,12 +6,17 @@
  * Uses organic daube styling per brand guidelines.
  */
 
-import type { MediaAttachment, Message } from '@thumbcode/state';
+import type {
+  DocumentOutputMessage,
+  ImageMessage as ImageMessageType,
+  MediaAttachment,
+  Message,
+  VoiceMessage,
+} from '@thumbcode/state';
 import { Text } from '@/components/ui';
-import { ImageMessage } from './ImageMessage';
 import { AudioMessage } from './AudioMessage';
 import { DocumentCard } from './DocumentCard';
-import type { ImageMessage as ImageMessageType, VoiceMessage, DocumentOutputMessage } from '@thumbcode/state';
+import { ImageMessage } from './ImageMessage';
 
 /** Props for the MixedMediaMessage component */
 interface MixedMediaMessageProps {
@@ -52,9 +57,16 @@ function toVoiceMessage(attachment: MediaAttachment, baseMessage: Message): Voic
 }
 
 /** Create a synthetic DocumentOutputMessage for rendering a document attachment */
-function toDocumentMessage(attachment: MediaAttachment, baseMessage: Message): DocumentOutputMessage {
+function toDocumentMessage(
+  attachment: MediaAttachment,
+  baseMessage: Message
+): DocumentOutputMessage {
   const ext = attachment.filename?.split('.').pop() || 'pdf';
-  const format = (['docx', 'pptx', 'xlsx', 'pdf'].includes(ext) ? ext : 'pdf') as 'docx' | 'pptx' | 'xlsx' | 'pdf';
+  const format = (['docx', 'pptx', 'xlsx', 'pdf'].includes(ext) ? ext : 'pdf') as
+    | 'docx'
+    | 'pptx'
+    | 'xlsx'
+    | 'pdf';
   return {
     ...baseMessage,
     contentType: 'document_output',
@@ -81,36 +93,28 @@ export function MixedMediaMessage({ message }: Readonly<MixedMediaMessageProps>)
       style={{ transform: 'rotate(-0.3deg)' }}
     >
       {/* Text content */}
-      {hasText && (
-        <Text className="font-body text-sm text-neutral-200">{message.content}</Text>
-      )}
+      {hasText && <Text className="font-body text-sm text-neutral-200">{message.content}</Text>}
 
       {/* Image grid */}
       {imageAttachments.length > 0 && (
-        <div className={`grid ${getImageGridClass(imageAttachments.length)} gap-2`} data-testid="image-grid">
+        <div
+          className={`grid ${getImageGridClass(imageAttachments.length)} gap-2`}
+          data-testid="image-grid"
+        >
           {imageAttachments.map((attachment) => (
-            <ImageMessage
-              key={attachment.id}
-              message={toImageMessage(attachment, message)}
-            />
+            <ImageMessage key={attachment.id} message={toImageMessage(attachment, message)} />
           ))}
         </div>
       )}
 
       {/* Audio players */}
       {audioAttachments.map((attachment) => (
-        <AudioMessage
-          key={attachment.id}
-          message={toVoiceMessage(attachment, message)}
-        />
+        <AudioMessage key={attachment.id} message={toVoiceMessage(attachment, message)} />
       ))}
 
       {/* Document cards */}
       {documentAttachments.map((attachment) => (
-        <DocumentCard
-          key={attachment.id}
-          message={toDocumentMessage(attachment, message)}
-        />
+        <DocumentCard key={attachment.id} message={toDocumentMessage(attachment, message)} />
       ))}
     </div>
   );

@@ -16,7 +16,11 @@ describe('StreamHandler', () => {
       const listener = vi.fn();
       handler.onEvent(listener);
       handler.emit({ type: 'typing_start', threadId: 't-1', sender: 'user' });
-      expect(listener).toHaveBeenCalledWith({ type: 'typing_start', threadId: 't-1', sender: 'user' });
+      expect(listener).toHaveBeenCalledWith({
+        type: 'typing_start',
+        threadId: 't-1',
+        sender: 'user',
+      });
     });
 
     it('supports multiple listeners', () => {
@@ -38,7 +42,9 @@ describe('StreamHandler', () => {
     });
 
     it('catches listener errors without crashing', () => {
-      const badListener = vi.fn(() => { throw new Error('boom'); });
+      const badListener = vi.fn(() => {
+        throw new Error('boom');
+      });
       const goodListener = vi.fn();
       handler.onEvent(badListener);
       handler.onEvent(goodListener);

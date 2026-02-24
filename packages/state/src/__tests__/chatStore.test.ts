@@ -308,12 +308,14 @@ describe('ChatStore', () => {
         useChatStore.getState().setTyping(threadId, 'architect', true);
       });
       act(() => useChatStore.getState().setTyping(threadId!, 'architect', true));
-      expect(useChatStore.getState().isTyping[threadId!].filter((s) => s === 'architect')).toHaveLength(1);
+      expect(
+        useChatStore.getState().isTyping[threadId!].filter((s) => s === 'architect')
+      ).toHaveLength(1);
     });
   });
 
   describe('bulk operations', () => {
-    it('clears a thread\'s messages', () => {
+    it("clears a thread's messages", () => {
       let threadId: string;
       act(() => {
         threadId = useChatStore.getState().createThread({
@@ -439,8 +441,12 @@ describe('ChatStore', () => {
         });
         // Messages from agents to inactive threads
         useChatStore.getState().setActiveThread(null);
-        useChatStore.getState().addMessage({ threadId: t1, content: 'a', contentType: 'text', sender: 'architect' });
-        useChatStore.getState().addMessage({ threadId: t2, content: 'b', contentType: 'text', sender: 'implementer' });
+        useChatStore
+          .getState()
+          .addMessage({ threadId: t1, content: 'a', contentType: 'text', sender: 'architect' });
+        useChatStore
+          .getState()
+          .addMessage({ threadId: t2, content: 'b', contentType: 'text', sender: 'implementer' });
       });
       expect(selectUnreadCount(useChatStore.getState())).toBe(2);
     });

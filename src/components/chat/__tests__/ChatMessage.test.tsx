@@ -30,8 +30,12 @@ vi.mock('../ApprovalCard', () => ({
   ApprovalCard: ({ message, onApprove, onReject }: any) => (
     <div>
       <span>{message.content}</span>
-      <button type="button" onClick={onApprove}>Approve</button>
-      <button type="button" onClick={onReject}>Reject</button>
+      <button type="button" onClick={onApprove}>
+        Approve
+      </button>
+      <button type="button" onClick={onReject}>
+        Reject
+      </button>
     </div>
   ),
 }));

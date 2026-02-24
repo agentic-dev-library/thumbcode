@@ -4,8 +4,8 @@
  * Types for capability-aware agent routing and graceful degradation.
  */
 
-import type { AgentRole, TaskType } from '@thumbcode/types';
 import type { ProviderCapability } from '@thumbcode/config';
+import type { AgentRole, TaskType } from '@thumbcode/types';
 import type { AIProvider } from '../ai';
 
 /**

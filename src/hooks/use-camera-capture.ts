@@ -59,7 +59,9 @@ export function useCameraCapture(): UseCameraCaptureResult {
     } catch (err) {
       if (err instanceof DOMException) {
         if (err.name === 'NotAllowedError') {
-          setError('Camera permission was denied. Please allow camera access in your browser settings.');
+          setError(
+            'Camera permission was denied. Please allow camera access in your browser settings.'
+          );
         } else if (err.name === 'NotFoundError') {
           setError('No camera found on this device.');
         } else if (err.name === 'NotReadableError') {

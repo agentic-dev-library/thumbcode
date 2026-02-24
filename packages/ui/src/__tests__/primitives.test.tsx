@@ -25,7 +25,11 @@ describe('Box', () => {
 
   it('handles onClick and adds button role', () => {
     const onClick = vi.fn();
-    render(<Box onClick={onClick} testID="clickable">Click me</Box>);
+    render(
+      <Box onClick={onClick} testID="clickable">
+        Click me
+      </Box>
+    );
     const el = screen.getByTestId('clickable');
     expect(el).toHaveAttribute('role', 'button');
     expect(el).toHaveAttribute('tabIndex', '0');
@@ -35,14 +39,22 @@ describe('Box', () => {
 
   it('handles keyboard Enter for onClick', () => {
     const onClick = vi.fn();
-    render(<Box onClick={onClick} testID="keyboard">Text</Box>);
+    render(
+      <Box onClick={onClick} testID="keyboard">
+        Text
+      </Box>
+    );
     fireEvent.keyDown(screen.getByTestId('keyboard'), { key: 'Enter' });
     expect(onClick).toHaveBeenCalledOnce();
   });
 
   it('handles keyboard Space for onClick', () => {
     const onClick = vi.fn();
-    render(<Box onClick={onClick} testID="keyboard">Text</Box>);
+    render(
+      <Box onClick={onClick} testID="keyboard">
+        Text
+      </Box>
+    );
     fireEvent.keyDown(screen.getByTestId('keyboard'), { key: ' ' });
     expect(onClick).toHaveBeenCalledOnce();
   });

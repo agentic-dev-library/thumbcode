@@ -5,6 +5,7 @@ describe('PaintDaubeFilter', () => {
   it('renders SVG filter with given id', () => {
     const { container } = render(
       <svg>
+        <title>Test filter SVG</title>
         <PaintDaubeFilter id="test-filter" turbulence={0.5} />
       </svg>
     );
@@ -16,6 +17,7 @@ describe('PaintDaubeFilter', () => {
   it('applies turbulence to feTurbulence baseFrequency', () => {
     const { container } = render(
       <svg>
+        <title>Turbulence test SVG</title>
         <PaintDaubeFilter id="turb" turbulence={0.25} />
       </svg>
     );
@@ -26,6 +28,7 @@ describe('PaintDaubeFilter', () => {
   it('applies turbulence to displacement scale', () => {
     const { container } = render(
       <svg>
+        <title>Displacement test SVG</title>
         <PaintDaubeFilter id="disp" turbulence={1.0} />
       </svg>
     );
