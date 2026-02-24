@@ -96,11 +96,13 @@
   "pnpm": {
     "overrides": {
       "tar": ">=7.5.8",
-      "minimatch": ">=10.2.1"
+      "minimatch": ">=10.2.1",
+      "ajv": ">=8.18.0"
     },
     "overrideComments": {
       "tar": "@capacitor/cli@8.1.0 pins tar@7.5.7 — no upstream fix yet",
-      "minimatch": "exceljs@4.4.0 transitives pin minimatch@3/5 — no upstream fix yet"
+      "minimatch": "exceljs@4.4.0 transitives pin minimatch@3/5 — no upstream fix yet",
+      "ajv": "@commitlint/config-validator pins ajv@8.17.1 — ReDoS fix in 8.18.0"
     }
   },
   "private": true
