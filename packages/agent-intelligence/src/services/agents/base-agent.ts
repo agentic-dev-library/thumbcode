@@ -18,6 +18,7 @@ import {
   isMcpTool,
 } from '../mcp/McpToolBridge';
 import type { AgentSkill, SkillToolDefinition } from '../skills/types';
+import type { ToolExecutionBridge } from '../tools/ToolExecutionBridge';
 import { parseExecutionResult } from './Committable';
 import { formatTaskMessage } from './Promptable';
 import { executeTask, executeTaskStream } from './Reviewable';
@@ -39,6 +40,7 @@ export abstract class BaseAgent {
   protected temperature: number;
   protected skills: AgentSkill[] = [];
   protected mcpClient?: McpClient;
+  protected toolBridge?: ToolExecutionBridge;
   private mcpBridgedTools: BridgedMcpTool[] = [];
   protected eventCallbacks: AgentEventCallback[] = [];
   protected conversationHistory: Message[] = [];
@@ -52,6 +54,7 @@ export abstract class BaseAgent {
     maxTokens?: number;
     temperature?: number;
     mcpClient?: McpClient;
+    toolBridge?: ToolExecutionBridge;
   }) {
     this.id = config.id;
     this.role = config.role;
@@ -62,6 +65,7 @@ export abstract class BaseAgent {
     this.maxTokens = config.maxTokens || 4096;
     this.temperature = config.temperature || 0.7;
     this.mcpClient = config.mcpClient;
+    this.toolBridge = config.toolBridge;
   }
 
   /**
@@ -209,19 +213,25 @@ export abstract class BaseAgent {
   }
 
   /**
-   * Execute a tool, routing to MCP, skills, or the base agent
+   * Execute a tool, routing to MCP, skills, tool bridge, or the agent fallback.
+   *
+   * Priority order:
+   * 1. MCP tools (external tool servers)
+   * 2. Skill tools (attached skill modules)
+   * 3. ToolExecutionBridge (file I/O, diffs, search, documents)
+   * 4. Agent-specific tools (role-specific logic like create_spec, approve_changes)
    */
   protected async executeToolWithSkills(
     name: string,
     input: Record<string, unknown>,
     context: AgentContext
   ): Promise<string> {
-    // Check if this is an MCP tool
+    // 1. Check if this is an MCP tool
     if (this.mcpClient && isMcpTool(this.mcpBridgedTools, name)) {
       return executeMcpTool(this.mcpClient, this.mcpBridgedTools, name, input);
     }
 
-    // Check if any skill owns this tool
+    // 2. Check if any skill owns this tool
     for (const skill of this.skills) {
       const skillToolNames = skill.getTools().map((t) => t.name);
       if (skillToolNames.includes(name)) {
@@ -230,7 +240,16 @@ export abstract class BaseAgent {
       }
     }
 
-    // Fall back to the agent's own tool execution
+    // 3. Try the ToolExecutionBridge for file/workspace operations
+    if (this.toolBridge) {
+      const result = await this.toolBridge.execute(name, input, context.workspaceDir);
+      // Bridge returns "Unknown tool: X" for tools it doesn't handle
+      if (!result.error?.startsWith('Unknown tool:')) {
+        return result.success ? result.output : `Error: ${result.error ?? 'Tool execution failed'}`;
+      }
+    }
+
+    // 4. Fall back to the agent's own tool execution
     return this.executeTool(name, input, context);
   }
 

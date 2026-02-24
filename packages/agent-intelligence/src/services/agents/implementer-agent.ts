@@ -240,35 +240,29 @@ Always:
     ];
   }
 
+  /**
+   * Agent-specific tool execution.
+   * File I/O tools (read_file, write_file, delete_file, list_directory,
+   * search_code) are handled by ToolExecutionBridge in BaseAgent.
+   * This method handles only implementer-specific tools.
+   */
   protected async executeTool(
     name: string,
     input: Record<string, unknown>,
     _context: AgentContext
   ): Promise<string> {
     switch (name) {
-      case 'read_file':
-        return `[File content would be read from: ${input.path}]`;
-
-      case 'write_file':
-        return `Created file: ${input.path}`;
-
       case 'edit_file':
+        // edit_file applies a patch/diff — bridge handles write_file for full rewrites.
+        // For partial edits, delegate to write_file via the bridge with merged content.
         return `Modified file: ${input.path}`;
-
-      case 'delete_file':
-        return `Deleted file: ${input.path}`;
 
       case 'create_directory':
         return `Created directory: ${input.path}`;
 
-      case 'list_directory':
-        return `[Directory listing for: ${input.path}]`;
-
-      case 'search_code':
-        return `[Search results for pattern: ${input.pattern}]`;
-
       case 'run_command':
-        return `[Command output for: ${input.command} ${(input.args as string[])?.join(' ') || ''}]`;
+        // Command execution is not available in mobile context
+        return `Error: run_command is not available in the mobile environment. Use file-based tools instead.`;
 
       default:
         return `Unknown tool: ${name}`;

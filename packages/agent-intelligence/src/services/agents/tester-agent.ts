@@ -235,50 +235,21 @@ When writing tests:
     ];
   }
 
+  /**
+   * Agent-specific tool execution.
+   * File I/O tools (read_file, write_file, list_directory, search_code,
+   * run_tests, get_coverage, analyze_test_results) are handled by
+   * ToolExecutionBridge in BaseAgent. This method handles only
+   * tester-specific tools.
+   */
   protected async executeTool(
     name: string,
     input: Record<string, unknown>,
     _context: AgentContext
   ): Promise<string> {
     switch (name) {
-      case 'read_file':
-        return `[File content would be read from: ${input.path}]`;
-
-      case 'write_file':
-        return `Created file: ${input.path}`;
-
-      case 'list_directory':
-        return `[Directory listing for: ${input.path}]`;
-
-      case 'search_code':
-        return `[Search results for pattern: ${input.pattern}]`;
-
-      case 'run_tests': {
-        const flags = [];
-        if (input.coverage) flags.push('--coverage');
-        if (input.watch) flags.push('--watch');
-        if (input.update_snapshots) flags.push('-u');
-        const pattern = input.test_pattern ? ` ${input.test_pattern}` : '';
-        return `[Test results for: jest${pattern} ${flags.join(' ')}]
-Tests: 10 passed, 2 failed, 12 total
-Coverage: 78% statements, 72% branches, 80% functions, 78% lines`;
-      }
-
-      case 'get_coverage':
-        return `[Coverage report in ${input.format || 'text'} format]
-Statements: 78% (target: 80%)
-Branches: 72% (target: 75%)
-Functions: 80% (target: 80%)
-Lines: 78% (target: 80%)`;
-
       case 'create_mock':
         return `Created mock for ${input.module_path}${input.output_path ? ` at ${input.output_path}` : ''}`;
-
-      case 'analyze_test_results':
-        return `[Test analysis for: ${input.results_path || 'latest results'}]
-Failed tests: 2
-Slow tests: 1 (>5s)
-Flaky tests: 0`;
 
       default:
         return `Unknown tool: ${name}`;

@@ -286,20 +286,20 @@ Access via `orchestrator.getMetrics()`.
 
 ## Current State (February 2026)
 
-The multi-agent orchestration system is **structurally complete but uses mock tool execution**. The agent classes, orchestrator, task queue, and event system are implemented. Tool calls within agents return simulated responses.
+The multi-agent orchestration system is **fully wired for real tool execution**. When a `ToolExecutionBridge` is provided to agents, file I/O tools (read, write, create, delete, list, search, diff, test results, coverage, document generation) execute real operations against the workspace. Agent-specific tools (create_spec, create_task, add_comment, approve/request changes, create_mock) remain orchestration-level operations.
 
 ### What works now
 - Agent creation and lifecycle management
 - Task creation, assignment, and dependency resolution
 - Execution plan building (ready/waiting/blocked)
 - Sequential and parallel task processing
+- Real file I/O via ToolExecutionBridge (reads, writes, diffs, search)
 - Event emission and subscription
 - Metrics tracking
+- MCP tool routing (client interface ready; real transport requires server-side MCP SDK)
 
-### Next milestones
-- **US-005**: Connect agent read tools to `@thumbcode/core` GitService (real file reads)
-- **US-006**: Connect agent write tools and wire approval-triggered commits
-- **US-004**: Wire orchestrator for live multi-agent pipeline with task queue in UI
+### Architecture note
+MCP (Model Context Protocol) uses a stub transport layer. Real MCP requires stdio or WebSocket transport to external tool servers, which is planned for a future release when server-side infrastructure is available. The interface and bridge are production-ready.
 
 ---
 

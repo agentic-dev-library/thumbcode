@@ -201,20 +201,18 @@ Always provide actionable recommendations that other agents can implement.`;
     ];
   }
 
+  /**
+   * Agent-specific tool execution.
+   * File I/O tools (read_file, list_directory, search_code) are handled
+   * by ToolExecutionBridge in BaseAgent. This method handles only
+   * architect-specific tools.
+   */
   protected async executeTool(
     name: string,
     input: Record<string, unknown>,
     _context: AgentContext
   ): Promise<string> {
-    // In a real implementation, these would interact with the file system
-    // For now, we return mock responses that can be replaced
     switch (name) {
-      case 'read_file':
-        return `[File content would be read from: ${input.path}]`;
-
-      case 'list_directory':
-        return `[Directory listing for: ${input.path}]`;
-
       case 'analyze_dependencies':
         return `[Dependency analysis for scope: ${input.scope}, target: ${input.target || 'all'}]`;
 

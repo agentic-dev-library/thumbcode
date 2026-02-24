@@ -228,24 +228,18 @@ When reviewing:
     ];
   }
 
+  /**
+   * Agent-specific tool execution.
+   * File I/O tools (read_file, list_directory, get_diff, search_code) are
+   * handled by ToolExecutionBridge in BaseAgent. This method handles only
+   * reviewer-specific tools.
+   */
   protected async executeTool(
     name: string,
     input: Record<string, unknown>,
     _context: AgentContext
   ): Promise<string> {
     switch (name) {
-      case 'read_file':
-        return `[File content would be read from: ${input.path}]`;
-
-      case 'list_directory':
-        return `[Directory listing for: ${input.path}]`;
-
-      case 'get_diff':
-        return `[Diff for: ${input.path || 'all files'} against ${input.base_ref || 'HEAD'}]`;
-
-      case 'search_code':
-        return `[Search results for pattern: ${input.pattern}]`;
-
       case 'add_comment': {
         const location = input.line ? `:${input.line}` : '';
         return `Added ${input.severity} comment on ${input.path}${location}: ${input.message}`;
