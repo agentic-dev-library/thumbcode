@@ -337,13 +337,13 @@ export function ProviderConfig() {
     .filter((g) => g.providers.length > 0);
 
   return (
-    <div className="flex-1 bg-charcoal min-h-screen">
+    <div className="flex-1 bg-charcoal min-h-screen animate-page-enter">
       {/* Back navigation */}
-      <div className="px-4 py-3 border-b border-neutral-800">
+      <div className="px-4 py-3 border-b border-white/5 glass">
         <button
           type="button"
           onClick={() => navigate('/settings')}
-          className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body"
+          className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-body tap-feedback"
           aria-label="Back to settings"
         >
           <ArrowLeft size={18} />
@@ -359,7 +359,7 @@ export function ProviderConfig() {
         </p>
       </div>
 
-      <div className="overflow-y-auto flex-1 px-6 py-6">
+      <div className="overflow-y-auto flex-1 px-6 py-6 hide-scrollbar">
         {tierGroups.map((group) => (
           <div key={group.tier} className="mb-6">
             <div className="bg-surface rounded-organic-card shadow-organic-card overflow-hidden">
