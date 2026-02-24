@@ -24,9 +24,9 @@
     "cap:open:android": "cap open android",
     "cap:build": "vite build && cap sync",
     "serve:web": "vite preview",
-    "generate:tokens": "pnpm --filter @thumbcode/dev-tools run generate:tokens",
-    "generate:icons": "pnpm --filter @thumbcode/dev-tools run generate:icons",
-    "generate:all": "pnpm --filter @thumbcode/dev-tools run generate:all",
+    "generate:tokens": "npx tsx tools/generate-tokens.ts",
+    "generate:icons": "npx tsx tools/generate-icons.ts",
+    "generate:all": "npx tsx tools/generate-tokens.ts && npx tsx tools/generate-icons.ts",
     "audit:prod": "pnpm audit --prod --audit-level=moderate"
   },
   "dependencies": {
