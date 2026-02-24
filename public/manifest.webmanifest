@@ -1,0 +1,31 @@
+{
+  "name": "ThumbCode",
+  "short_name": "ThumbCode",
+  "description": "Code with your thumbs. Decentralized multi-agent mobile development platform.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#151820",
+  "theme_color": "#FF7059",
+  "categories": ["developer", "productivity"],
+  "icons": [
+    {
+      "src": "/assets/icons/app/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/app/favicon-organic.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/icons/app/ThumbCode_AppIcon_1024.svg",
+      "sizes": "1024x1024",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

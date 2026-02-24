@@ -26,7 +26,7 @@ export const ANTHROPIC_MODELS = {
 /**
  * Process a single Anthropic stream event and emit the corresponding StreamEvent
  */
-function processAnthropicStreamEvent(
+export function processAnthropicStreamEvent(
   // biome-ignore lint/suspicious/noExplicitAny: Anthropic SDK stream events have dynamic properties
   event: { type: string; [key: string]: any },
   blockIndex: number,
