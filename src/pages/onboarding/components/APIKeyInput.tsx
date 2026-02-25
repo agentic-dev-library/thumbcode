@@ -58,7 +58,29 @@ export function APIKeyInput({
 
       {error && <span className="font-body text-sm text-coral-500">{error}</span>}
 
-      <span className="font-body text-xs text-neutral-500">{helperText}</span>
+      <span className="font-body text-xs text-neutral-500">
+        {helperText.includes('console.anthropic.com') ? (
+          <a
+            href="https://console.anthropic.com/settings/keys"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-teal-400 underline"
+          >
+            {helperText}
+          </a>
+        ) : helperText.includes('platform.openai.com') ? (
+          <a
+            href="https://platform.openai.com/api-keys"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-teal-400 underline"
+          >
+            {helperText}
+          </a>
+        ) : (
+          helperText
+        )}
+      </span>
     </div>
   );
 }
