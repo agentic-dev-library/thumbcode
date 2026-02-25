@@ -90,7 +90,7 @@ function createEnvConfig(): EnvironmentConfig {
   return {
     appEnv,
     enableDevTools: import.meta.env.VITE_ENABLE_DEV_TOOLS === 'true' || appEnv !== 'production',
-    githubClientId: import.meta.env.VITE_GITHUB_CLIENT_ID || '',
+    githubClientId: import.meta.env.VITE_GITHUB_CLIENT_ID || 'Ov23lirOBw57fWA9xNRS',
     easProjectId: import.meta.env.VITE_PROJECT_ID || '',
     easOwner: import.meta.env.VITE_PROJECT_OWNER || 'thumbcode',
     isDev: appEnv === 'development',

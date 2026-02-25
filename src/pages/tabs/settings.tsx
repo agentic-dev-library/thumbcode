@@ -24,6 +24,7 @@ import {
   Vibrate,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { env } from '@/config';
 import {
   selectCredentialByProvider,
   selectGitHubProfile,
@@ -138,8 +139,6 @@ export default function SettingsPage() {
   const profile = useUserStore(selectGitHubProfile);
   const settings = useUserStore(selectSettings);
   const updateNotificationPreferences = useUserStore((s) => s.updateNotificationPreferences);
-  const setTheme = useUserStore((s) => s.setTheme);
-
   const githubCredential = useCredentialStore(selectCredentialByProvider('github'));
   const anthropicCredential = useCredentialStore(selectCredentialByProvider('anthropic'));
   const openaiCredential = useCredentialStore(selectCredentialByProvider('openai'));
@@ -147,9 +146,6 @@ export default function SettingsPage() {
   const githubBadge = githubCredential?.status === 'valid' ? 'Connected' : undefined;
   const anthropicBadge = anthropicCredential?.status === 'valid' ? 'Active' : undefined;
   const openaiBadge = openaiCredential?.status === 'valid' ? 'Active' : undefined;
-
-  const themeLabelMap: Record<string, string> = { system: 'System', dark: 'Dark', light: 'Light' };
-  const themeLabel = themeLabelMap[settings.theme] ?? 'System';
 
   const displayName = profile?.name || profile?.login || 'ThumbCode User';
 
@@ -220,16 +216,8 @@ export default function SettingsPage() {
             Icon={Palette}
             iconClassName="text-gold-400"
             title="Appearance"
-            value={themeLabel}
-            onClick={() => {
-              const next =
-                settings.theme === 'system'
-                  ? 'dark'
-                  : settings.theme === 'dark'
-                    ? 'light'
-                    : 'system';
-              setTheme(next);
-            }}
+            value="Dark"
+            showArrow={false}
           />
           <HorizontalDivider />
           <SettingsItemRow
@@ -300,23 +288,25 @@ export default function SettingsPage() {
           <SettingsItemRow
             Icon={Book}
             title="Documentation"
-            onClick={() => window.open('https://thumbcode.dev/docs', '_blank')}
+            onClick={() => window.open('https://github.com/thumbcode/thumbcode', '_blank')}
           />
           <HorizontalDivider />
           <SettingsItemRow
             Icon={Smartphone}
             iconClassName="text-coral-500"
             title="Support"
-            onClick={() => window.open('https://thumbcode.dev/support', '_blank')}
+            onClick={() => window.open('https://github.com/thumbcode/thumbcode/issues', '_blank')}
           />
           <HorizontalDivider />
           <SettingsItemRow
             Icon={Scale}
             title="Terms & Privacy"
-            onClick={() => window.open('https://thumbcode.dev/legal', '_blank')}
+            onClick={() =>
+              window.open('https://github.com/thumbcode/thumbcode/blob/main/LICENSE', '_blank')
+            }
           />
           <HorizontalDivider />
-          <SettingsItemRow Icon={Info} title="Version" value="1.0.0" showArrow={false} />
+          <SettingsItemRow Icon={Info} title="Version" value={env.version} showArrow={false} />
         </SettingsSectionGroup>
 
         {/* Danger Zone */}

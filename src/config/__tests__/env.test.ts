@@ -50,10 +50,10 @@ describe('Environment Configuration', () => {
       expect(Array.isArray(result.warnings)).toBe(true);
     });
 
-    it('warns about missing GitHub client ID', () => {
+    it('has no warning when GitHub client ID has default value', () => {
       const result = validateEnvironment();
-      // In test env, githubClientId is empty, so there should be a warning
-      expect(result.warnings.some((w) => w.includes('GITHUB_CLIENT_ID'))).toBe(true);
+      // Default client ID is embedded, so no warning expected
+      expect(result.warnings.some((w) => w.includes('GITHUB_CLIENT_ID'))).toBe(false);
     });
   });
 });

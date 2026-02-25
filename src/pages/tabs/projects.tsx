@@ -45,6 +45,7 @@ export default function ProjectsPage() {
     >
       {/* Search */}
       <div className="p-4">
+        <h1 className="font-display text-2xl font-bold text-white mb-3">Projects</h1>
         <div className="bg-surface flex items-center px-4 py-3 rounded-organic-card tap-feedback">
           <Search size={20} className="text-neutral-400 mr-3" aria-hidden="true" />
           <input
@@ -143,14 +144,16 @@ export default function ProjectsPage() {
       </div>
 
       {/* FAB */}
-      <button
-        type="button"
-        onClick={() => navigate('/onboarding/create-project')}
-        className="fixed bottom-24 right-6 w-14 h-14 bg-coral-500 flex items-center justify-center rounded-organic-button shadow-organic-float hover:bg-coral-600 transition-colors z-10 tap-feedback"
-        aria-label="Create new project"
-      >
-        <Plus size={24} className="text-white" />
-      </button>
+      {filteredProjects.length > 0 && (
+        <button
+          type="button"
+          onClick={() => navigate('/onboarding/create-project')}
+          className="fixed bottom-24 right-6 w-14 h-14 bg-coral-500 flex items-center justify-center rounded-organic-button shadow-organic-float hover:bg-coral-600 transition-colors z-10 tap-feedback"
+          aria-label="Create new project"
+        >
+          <Plus size={24} className="text-white" />
+        </button>
+      )}
     </div>
   );
 }

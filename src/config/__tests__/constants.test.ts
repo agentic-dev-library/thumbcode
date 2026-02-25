@@ -35,11 +35,11 @@ describe('Constants', () => {
 
   describe('GITHUB_OAUTH', () => {
     it('defines device code URL', () => {
-      expect(GITHUB_OAUTH.deviceCodeUrl).toContain('github.com');
+      expect(GITHUB_OAUTH.deviceCodeUrl).toContain('/login/device/code');
     });
 
     it('defines access token URL', () => {
-      expect(GITHUB_OAUTH.accessTokenUrl).toContain('github.com');
+      expect(GITHUB_OAUTH.accessTokenUrl).toContain('/login/oauth/access_token');
     });
 
     it('has reasonable poll interval (at least 1 second)', () => {

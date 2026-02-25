@@ -26,5 +26,13 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    proxy: {
+      // Proxy GitHub OAuth endpoints in dev (Capacitor native HTTP handles this in production)
+      '/github-oauth': {
+        target: 'https://github.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/github-oauth/, ''),
+      },
+    },
   },
 });

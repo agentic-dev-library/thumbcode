@@ -10,6 +10,7 @@ import type React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProgressBar } from '@/components/feedback/Progress';
 import { useHomeDashboard } from '@/hooks';
+import { selectProjects, useProjectStore } from '@/state';
 
 function getStatusColor(status: string): string {
   switch (status) {
@@ -51,6 +52,8 @@ function getInitials(name: string): string {
 export default function HomePage() {
   const navigate = useNavigate();
   const { stats, agents, recentActivity } = useHomeDashboard();
+  const projects = useProjectStore(selectProjects);
+  const isFirstTime = projects.length === 0 && stats.runningAgents === 0;
 
   return (
     <div className="flex-1 overflow-y-auto bg-charcoal hide-scrollbar" data-testid="home-screen">
@@ -58,7 +61,9 @@ export default function HomePage() {
         {/* Welcome */}
         <div className="flex items-baseline gap-2 mb-4">
           <h1 className="font-display text-2xl font-bold text-white">Dashboard</h1>
-          <span className="text-sm font-body text-neutral-400">Welcome back</span>
+          <span className="text-sm font-body text-neutral-400">
+            {isFirstTime ? 'Welcome!' : 'Welcome back'}
+          </span>
         </div>
 
         {/* Quick Stats */}
@@ -103,10 +108,33 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* First-time Setup CTA */}
+        {stats.projectCount === 0 && (
+          <div
+            className="bg-surface p-6 mb-4 rounded-organic-card shadow-organic-card text-center"
+            style={{ transform: 'rotate(-0.2deg)' }}
+          >
+            <FolderOpen size={40} className="text-coral-500 mx-auto mb-3" />
+            <h2 className="font-display text-lg font-semibold text-white mb-2">
+              Create your first project
+            </h2>
+            <p className="font-body text-sm text-neutral-400 mb-4">
+              Connect a repository to start building with AI agents.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate('/projects')}
+              className="bg-coral-500 px-6 py-3 rounded-organic-button font-body font-semibold text-white hover:bg-coral-600 transition-colors tap-feedback"
+            >
+              Go to Projects
+            </button>
+          </div>
+        )}
+
         {/* Agent Status */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="font-body font-semibold text-white text-lg">Agent Team</h2>
+            <h2 className="font-display font-semibold text-white text-lg">Agent Team</h2>
             <button
               type="button"
               onClick={() => navigate('/agents')}
@@ -167,7 +195,7 @@ export default function HomePage() {
         {/* Recent Activity */}
         <div>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="font-body font-semibold text-white text-lg">Recent Activity</h2>
+            <h2 className="font-display font-semibold text-white text-lg">Recent Activity</h2>
             <button
               type="button"
               onClick={() => navigate('/chat')}

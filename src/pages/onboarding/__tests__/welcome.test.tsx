@@ -22,32 +22,20 @@ describe('WelcomePage', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders all four feature cards', () => {
+  it('renders three feature pills', () => {
     render(<WelcomePage />);
 
-    expect(screen.getByText('AI Agent Teams')).toBeInTheDocument();
-    expect(screen.getByText('Mobile-First Git')).toBeInTheDocument();
-    expect(screen.getByText('Your Keys, Your Control')).toBeInTheDocument();
-    expect(screen.getByText('Zero Server Costs')).toBeInTheDocument();
+    expect(screen.getByText(/AI Agent Teams/)).toBeInTheDocument();
+    expect(screen.getByText(/Mobile-First Git/)).toBeInTheDocument();
+    expect(screen.getByText(/Your Keys, Your Device/)).toBeInTheDocument();
   });
 
-  it('renders feature descriptions', () => {
-    render(<WelcomePage />);
-
-    expect(
-      screen.getByText('Architect, Implementer, Reviewer, and Tester agents work in parallel')
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('Full git workflow from your phone with isomorphic-git')
-    ).toBeInTheDocument();
-  });
-
-  it('navigates to github-auth on Get Started click', () => {
+  it('navigates to setup on Get Started click', () => {
     render(<WelcomePage />);
 
     fireEvent.click(screen.getByTestId('get-started-button'));
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/github-auth');
+    expect(mockPush).toHaveBeenCalledWith('/onboarding/setup');
   });
 
   it('has the welcome-screen test id', () => {

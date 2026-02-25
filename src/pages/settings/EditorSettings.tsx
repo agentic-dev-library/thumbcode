@@ -149,7 +149,7 @@ export function EditorSettings() {
       </div>
 
       <div className="px-6 py-4 border-b border-neutral-800">
-        <h1 className="text-xl font-bold text-white font-body">Editor Settings</h1>
+        <h1 className="text-xl font-bold text-white font-display">Editor Settings</h1>
       </div>
 
       <div className="overflow-y-auto flex-1 px-6 py-6 hide-scrollbar">

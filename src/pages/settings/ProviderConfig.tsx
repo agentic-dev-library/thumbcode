@@ -151,8 +151,10 @@ function ProviderCard({
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-white font-body font-medium">{provider.displayName}</span>
+          <div className="flex flex-wrap items-center gap-1">
+            <span className="text-white font-body font-medium truncate">
+              {provider.displayName}
+            </span>
             <span className={`text-xs font-body font-medium ${tierColor}`}>{tierLabel}</span>
             {hasApiKey && (
               <span className="text-xs font-body font-medium text-teal-400 bg-teal-600/20 px-1.5 py-0.5 rounded-organic-badge">
@@ -160,7 +162,9 @@ function ProviderCard({
               </span>
             )}
           </div>
-          <span className="text-xs text-neutral-500 font-mono">{provider.packageName}</span>
+          <span className="text-xs text-neutral-500 font-mono truncate block">
+            {provider.packageName}
+          </span>
         </div>
 
         <label className="relative inline-flex items-center cursor-pointer mr-2">
@@ -354,7 +358,7 @@ export function ProviderConfig() {
 
       {/* Header */}
       <div className="px-6 py-4 border-b border-neutral-800">
-        <h1 className="text-xl font-bold text-white font-body">AI Providers</h1>
+        <h1 className="text-xl font-bold text-white font-display">AI Providers</h1>
         <p className="text-sm text-neutral-500 font-body mt-1">
           Configure AI provider API keys and capabilities
         </p>

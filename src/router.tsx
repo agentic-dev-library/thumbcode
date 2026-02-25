@@ -17,10 +17,8 @@ const ProjectDetail = lazy(() =>
   import('@/pages/detail/ProjectDetail').then((m) => ({ default: m.ProjectDetail }))
 );
 const WelcomePage = lazy(() => import('@/pages/onboarding/welcome'));
-const GitHubAuthPage = lazy(() => import('@/pages/onboarding/github-auth'));
-const ApiKeysPage = lazy(() => import('@/pages/onboarding/api-keys'));
+const SetupPage = lazy(() => import('@/pages/onboarding/setup'));
 const CreateProjectPage = lazy(() => import('@/pages/onboarding/create-project'));
-const CompletePage = lazy(() => import('@/pages/onboarding/complete'));
 const AgentSettings = lazy(() =>
   import('@/pages/settings/AgentSettings').then((m) => ({ default: m.AgentSettings }))
 );
@@ -169,10 +167,8 @@ export function AppRoutes() {
             }
           >
             <Route path="welcome" element={<WelcomePage />} />
-            <Route path="github-auth" element={<GitHubAuthPage />} />
-            <Route path="api-keys" element={<ApiKeysPage />} />
+            <Route path="setup" element={<SetupPage />} />
             <Route path="create-project" element={<CreateProjectPage />} />
-            <Route path="complete" element={<CompletePage />} />
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />
