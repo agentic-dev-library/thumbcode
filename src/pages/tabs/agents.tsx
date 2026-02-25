@@ -193,9 +193,6 @@ export default function AgentsPage() {
                       <span className="block font-body font-semibold text-white text-lg">
                         {agent.name}
                       </span>
-                      <span className="text-sm font-body text-neutral-400 capitalize">
-                        {agent.role}
-                      </span>
                     </div>
                   </div>
                   <span
