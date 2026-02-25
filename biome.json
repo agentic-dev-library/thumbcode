@@ -45,6 +45,12 @@
       "quoteStyle": "single"
     }
   },
+  "css": {
+    "parser": {
+      "cssModules": false,
+      "tailwindDirectives": true
+    }
+  },
   "json": {
     "formatter": {
       "enabled": true,

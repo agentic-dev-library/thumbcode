@@ -1,11 +1,15 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Load existing theme config (colors, fonts, shadows, border-radius) */
+@config "./tailwind.config.ts";
 
 /* ============================================
    ThumbCode Global Styles — Native Mobile Feel
    Capacitor app targeting iOS & Android stores
    ============================================ */
+
+/* Dark mode via class strategy (Tailwind v4) */
+@custom-variant dark (&:where(.dark *));
 
 @layer base {
   /* Font smoothing — antialiased rendering */

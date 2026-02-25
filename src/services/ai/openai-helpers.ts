@@ -95,6 +95,8 @@ export function parseOpenAIContent(
 
   if (message.tool_calls) {
     for (const toolCall of message.tool_calls) {
+      if (toolCall.type !== 'function') continue;
+
       let parsedInput: Record<string, unknown> = {};
       try {
         parsedInput = JSON.parse(toolCall.function.arguments);
