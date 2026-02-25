@@ -31,7 +31,7 @@
     "audit:prod": "pnpm audit --prod --audit-level=moderate"
   },
   "dependencies": {
-    "@ai-sdk/amazon-bedrock": "^4.0.63",
+    "@ai-sdk/amazon-bedrock": "^4.0.64",
     "@ai-sdk/anthropic": "^3.0.46",
     "@ai-sdk/azure": "^3.0.32",
     "@ai-sdk/cohere": "^3.0.21",
@@ -42,7 +42,7 @@
     "@ai-sdk/mistral": "^3.0.20",
     "@ai-sdk/openai": "^3.0.31",
     "@ai-sdk/xai": "^3.0.57",
-    "@anthropic-ai/sdk": "^0.32.0",
+    "@anthropic-ai/sdk": "^0.78.0",
     "@aparajita/capacitor-biometric-auth": "^10.0.0",
     "@capacitor/android": "^8.1.0",
     "@capacitor/core": "^8.1.0",
@@ -59,7 +59,7 @@
     "isomorphic-git": "^1.27.0",
     "jspdf": "^4.2.0",
     "lodash-es": "^4.17.23",
-    "lucide-react": "^0.563.0",
+    "lucide-react": "^0.575.0",
     "openai": "^4.70.0",
     "pptxgenjs": "^4.0.1",
     "react": "18.3.1",
@@ -88,7 +88,7 @@
     "jsdom": "^28.0.0",
     "msw": "^2.12.10",
     "postcss": "^8.5.6",
-    "typescript": "~5.6.0",
+    "typescript": "~5.9.3",
     "vite": "^7.3.1",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.0.18"
