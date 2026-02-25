@@ -25,6 +25,10 @@ jobs:
           release-type: node
           package-name: thumbcode
 
+      - name: Checkout code
+        if: steps.release.outputs.prs_created == 'true'
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
       - name: Approve release PR
         if: steps.release.outputs.prs_created == 'true'
         env:
