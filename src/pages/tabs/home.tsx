@@ -10,6 +10,7 @@ import type React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProgressBar } from '@/components/feedback/Progress';
 import { useHomeDashboard } from '@/hooks';
+import { selectProjects, useProjectStore } from '@/state';
 
 function getStatusColor(status: string): string {
   switch (status) {
@@ -51,6 +52,8 @@ function getInitials(name: string): string {
 export default function HomePage() {
   const navigate = useNavigate();
   const { stats, agents, recentActivity } = useHomeDashboard();
+  const projects = useProjectStore(selectProjects);
+  const isFirstTime = projects.length === 0 && stats.runningAgents === 0;
 
   return (
     <div className="flex-1 overflow-y-auto bg-charcoal hide-scrollbar" data-testid="home-screen">
@@ -58,7 +61,9 @@ export default function HomePage() {
         {/* Welcome */}
         <div className="flex items-baseline gap-2 mb-4">
           <h1 className="font-display text-2xl font-bold text-white">Dashboard</h1>
-          <span className="text-sm font-body text-neutral-400">Welcome back</span>
+          <span className="text-sm font-body text-neutral-400">
+            {isFirstTime ? 'Welcome!' : 'Welcome back'}
+          </span>
         </div>
 
         {/* Quick Stats */}
