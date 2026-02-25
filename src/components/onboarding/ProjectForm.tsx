@@ -47,7 +47,7 @@ export function ProjectFormActions({
 }: Readonly<ProjectFormActionsProps>) {
   return (
     <div
-      className="border-t border-neutral-800 px-6 py-4 flex-row gap-4"
+      className="border-t border-neutral-800 px-6 py-4 flex flex-row gap-4"
       style={{ paddingBottom: bottomInset + 16 }}
     >
       <button

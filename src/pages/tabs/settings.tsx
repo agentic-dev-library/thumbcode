@@ -24,6 +24,7 @@ import {
   Vibrate,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { env } from '@/config';
 import {
   selectCredentialByProvider,
   selectGitHubProfile,
@@ -31,7 +32,6 @@ import {
   useCredentialStore,
   useUserStore,
 } from '@/state';
-import { env } from '@/config';
 
 /** Reusable settings row */
 interface SettingsItemProps {
@@ -301,7 +301,9 @@ export default function SettingsPage() {
           <SettingsItemRow
             Icon={Scale}
             title="Terms & Privacy"
-            onClick={() => window.open('https://github.com/thumbcode/thumbcode/blob/main/LICENSE', '_blank')}
+            onClick={() =>
+              window.open('https://github.com/thumbcode/thumbcode/blob/main/LICENSE', '_blank')
+            }
           />
           <HorizontalDivider />
           <SettingsItemRow Icon={Info} title="Version" value={env.version} showArrow={false} />

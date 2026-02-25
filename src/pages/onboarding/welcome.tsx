@@ -25,10 +25,7 @@ export default function WelcomePage() {
   }, []);
 
   return (
-    <div
-      className="flex flex-col min-h-screen bg-charcoal"
-      data-testid="welcome-screen"
-    >
+    <div className="flex flex-col min-h-screen bg-charcoal" data-testid="welcome-screen">
       <div className="flex-1 flex flex-col items-center justify-center px-6 pb-32">
         {/* Animated Logo */}
         <div
@@ -47,9 +44,7 @@ export default function WelcomePage() {
             isVisible ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <h1 className="font-display text-4xl font-bold text-coral-500 text-center">
-            ThumbCode
-          </h1>
+          <h1 className="font-display text-4xl font-bold text-coral-500 text-center">ThumbCode</h1>
           <p className="font-body text-lg text-neutral-400 text-center max-w-[300px]">
             Code with your thumbs. Ship apps from your phone.
           </p>

@@ -9,8 +9,8 @@ import { ChevronDown, ChevronUp, HelpCircle } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { SecurityIcon, SuccessIcon } from '@/components/icons';
 import { env, GITHUB_OAUTH, PROVIDER_REGISTRY } from '@/config';
-import { CredentialService, GitHubAuthService } from '@/core';
 import { useOnboarding } from '@/contexts/onboarding';
+import { CredentialService, GitHubAuthService } from '@/core';
 import { useAppRouter } from '@/hooks/use-app-router';
 import { logger } from '@/lib/logger';
 import { type CredentialProvider, useCredentialStore } from '@/state';
@@ -85,6 +85,7 @@ function SetupSection({
   );
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: unified setup page with GitHub auth flow + provider key management
 export default function SetupPage() {
   const router = useAppRouter();
   const { completeOnboarding } = useOnboarding();
@@ -141,6 +142,7 @@ export default function SetupPage() {
     }
   };
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: auth polling with cancellation and error handling
   const checkAuth = async () => {
     setIsAuthenticating(true);
     setGithubError(null);
@@ -175,6 +177,7 @@ export default function SetupPage() {
   };
 
   const validateAndSaveKey = useCallback(
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: credential validation with store updates
     async (providerId: string) => {
       const key = providerKeys[providerId]?.trim();
       if (!key) return;
@@ -231,8 +234,8 @@ export default function SetupPage() {
         <div className="flex flex-col gap-2 mb-8">
           <h1 className="font-display text-3xl font-bold text-white">Set Up ThumbCode</h1>
           <p className="font-body text-neutral-400">
-            Connect your accounts to get the most out of ThumbCode. You can skip and configure
-            these later in Settings.
+            Connect your accounts to get the most out of ThumbCode. You can skip and configure these
+            later in Settings.
           </p>
         </div>
 
@@ -270,9 +273,7 @@ export default function SetupPage() {
                   </div>
                   <button
                     type="button"
-                    onClick={() =>
-                      window.open(verificationUri, '_blank', 'noopener,noreferrer')
-                    }
+                    onClick={() => window.open(verificationUri, '_blank', 'noopener,noreferrer')}
                     className="bg-neutral-800 py-3 rounded-organic-button font-body text-white text-center hover:bg-neutral-700 transition-colors tap-feedback"
                     data-testid="open-github-button"
                   >
@@ -283,9 +284,7 @@ export default function SetupPage() {
                     onClick={checkAuth}
                     disabled={isAuthenticating}
                     className={`bg-teal-600 py-3 rounded-organic-button font-body font-semibold text-white text-center transition-colors tap-feedback ${
-                      isAuthenticating
-                        ? 'opacity-70 cursor-not-allowed'
-                        : 'hover:bg-teal-700'
+                      isAuthenticating ? 'opacity-70 cursor-not-allowed' : 'hover:bg-teal-700'
                     }`}
                     data-testid="check-auth-button"
                   >
@@ -336,9 +335,7 @@ export default function SetupPage() {
                       <SuccessIcon size={14} color="teal" turbulence={0.15} />
                     )}
                   </div>
-                  <span className="text-xs font-body text-neutral-500">
-                    Tier {provider.tier}
-                  </span>
+                  <span className="text-xs font-body text-neutral-500">Tier {provider.tier}</span>
                 </div>
                 {!validatedProviders.has(provider.providerId) && (
                   <div className="flex gap-2">
@@ -346,9 +343,7 @@ export default function SetupPage() {
                       type="password"
                       placeholder={provider.authEnvVar}
                       value={providerKeys[provider.providerId] ?? ''}
-                      onChange={(e) =>
-                        handleProviderKeyChange(provider.providerId, e.target.value)
-                      }
+                      onChange={(e) => handleProviderKeyChange(provider.providerId, e.target.value)}
                       className="flex-1 bg-surface border border-neutral-700 text-white font-mono text-xs px-3 py-2 rounded-organic-input placeholder:text-neutral-600 focus:outline-none focus:border-teal-500 transition-colors"
                       data-testid={`setup-key-${provider.providerId}`}
                       autoComplete="off"
