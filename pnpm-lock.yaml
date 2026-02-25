@@ -21,7 +21,7 @@ importers:
         version: 3.0.46(zod@3.25.76)
       '@ai-sdk/azure':
         specifier: ^3.0.32
-        version: 3.0.32(zod@3.25.76)
+        version: 3.0.33(zod@3.25.76)
       '@ai-sdk/cohere':
         specifier: ^3.0.21
         version: 3.0.21(zod@3.25.76)
@@ -42,10 +42,10 @@ importers:
         version: 3.0.20(zod@3.25.76)
       '@ai-sdk/openai':
         specifier: ^3.0.31
-        version: 3.0.31(zod@3.25.76)
+        version: 3.0.32(zod@3.25.76)
       '@ai-sdk/xai':
         specifier: ^3.0.57
-        version: 3.0.57(zod@3.25.76)
+        version: 3.0.58(zod@3.25.76)
       '@anthropic-ai/sdk':
         specifier: ^0.32.0
         version: 0.32.1
@@ -69,7 +69,7 @@ importers:
         version: 8.1.0(@capacitor/core@8.1.0)
       ai:
         specifier: ^6.0.97
-        version: 6.0.97(zod@3.25.76)
+        version: 6.0.98(zod@3.25.76)
       capacitor-secure-storage-plugin:
         specifier: ^0.13.0
         version: 0.13.0(@capacitor/core@8.1.0)
@@ -81,7 +81,7 @@ importers:
         version: 8.0.3
       docx:
         specifier: ^9.5.3
-        version: 9.5.3
+        version: 9.6.0
       exceljs:
         specifier: ^4.4.0
         version: 4.4.0
@@ -90,7 +90,7 @@ importers:
         version: 10.2.0
       isomorphic-git:
         specifier: ^1.27.0
-        version: 1.37.1
+        version: 1.37.2
       jspdf:
         specifier: ^4.2.0
         version: 4.2.0
@@ -114,7 +114,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       react-router-dom:
         specifier: ^7.13.0
-        version: 7.13.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 7.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwindcss:
         specifier: ^3.4.0
         version: 3.4.19(tsx@4.21.0)(yaml@2.8.2)
@@ -147,8 +147,8 @@ importers:
         specifier: ^16.3.2
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@18.3.7(@types/react@18.3.28))(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/diff':
-        specifier: ^6.0.0
-        version: 6.0.0
+        specifier: ^8.0.0
+        version: 8.0.0
       '@types/lodash-es':
         specifier: ^4.17.0
         version: 4.17.12
@@ -212,8 +212,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/azure@3.0.32':
-    resolution: {integrity: sha512-5yKCps3ao1wgfvz5Ej/pggr8PKdyhrTKL4R0R9SKBlQ4p9lSpTZWYMghclA+/rWM4tFoYCcDN3GYldx5dtvWUg==}
+  '@ai-sdk/azure@3.0.33':
+    resolution: {integrity: sha512-veESZqzZtB0f0wXWeiTYmp3YhuZr2vIy7N8hwFlGH4ZaYXep0fzVHzDtxaVf59vn4P55hmkVTPGCtzWBONesTw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -230,8 +230,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/gateway@3.0.53':
-    resolution: {integrity: sha512-QT3FEoNARMRlk8JJVR7L98exiK9C8AGfrEJVbRxBT1yIXKs/N19o/+PsjTRVsARgDJNcy9JbJp1FspKucEat0Q==}
+  '@ai-sdk/gateway@3.0.54':
+    resolution: {integrity: sha512-zA4NHCQTY9iCHwQfjLliT9BxBGBCUIj4d7dD2R8uIzXcj5doYGNR8TwEbJmOOnub9namarsN00nteqgmC2X0Sg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -266,8 +266,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/openai@3.0.31':
-    resolution: {integrity: sha512-61DmKNdwi2S83YZO80tCUibcOq0nNKa+vF9m+3VlD0b6bZ8FSe7GrO0bCCZaBeucu79OxWPx7Q1u0v3hxb91mQ==}
+  '@ai-sdk/openai@3.0.32':
+    resolution: {integrity: sha512-e6qqK9C+SCB1pHczRAGhVKpapzRbmKhZLip3zmwETvNBrKjDNfPugWTYb9B+cFq2+enaDRFs+9A+6R1POpv0GA==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -282,8 +282,8 @@ packages:
     resolution: {integrity: sha512-oGMAgGoQdBXbZqNG0Ze56CHjDZ1IDYOwGYxYjO5KLSlz5HiNQ9udIXsPZ61VWaHGZ5XW/jyjmr6t2xz2jGVwbQ==}
     engines: {node: '>=18'}
 
-  '@ai-sdk/xai@3.0.57':
-    resolution: {integrity: sha512-fY8MpcU1akfQStB/vDAAjJqJRWWGfHpRsNa31GNMlLLwHvwdyNhQVW8NtmIMrHDE+38pz/b0aMENJ4cb75qGPA==}
+  '@ai-sdk/xai@3.0.58':
+    resolution: {integrity: sha512-13A3dbkAHYT7UgG4/zRnYfQ0bVel5PvYxDRIX09CcXBBEBih02EJz23LVxOgtuQ7YAoa0M2dhu6C4W+Y0NuD5w==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -1293,8 +1293,9 @@ packages:
   '@types/deep-eql@4.0.2':
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
 
-  '@types/diff@6.0.0':
-    resolution: {integrity: sha512-dhVCYGv3ZSbzmQaBSagrv1WJ6rXCdkyTcDyoNu1MD8JohI7pR7k8wdZEm+mvdxRKXyHVwckFzWU1vJc+Z29MlA==}
+  '@types/diff@8.0.0':
+    resolution: {integrity: sha512-o7jqJM04gfaYrdCecCVMbZhNdG6T1MHg/oQoRFdERLV+4d+V7FijhiEAbFu0Usww84Yijk9yH58U4Jk4HbtzZw==}
+    deprecated: This is a stub types definition. diff provides its own type definitions, so you do not need this installed.
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
@@ -1413,8 +1414,8 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  acorn@8.15.0:
-    resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
+  acorn@8.16.0:
+    resolution: {integrity: sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -1426,8 +1427,8 @@ packages:
     resolution: {integrity: sha512-kja8j7PjmncONqaTsB8fQ+wE2mSU2DJ9D4XKoJ5PFWIdRMa6SLSN1ff4mOr4jCbfRSsxR4keIiySJU0N9T5hIQ==}
     engines: {node: '>= 8.0.0'}
 
-  ai@6.0.97:
-    resolution: {integrity: sha512-eZIAcBymwGhBwncRH/v9pillZNMeRCDkc4BwcvwXerXd7sxjVxRis3ZNCNCpP02pVH4NLs81ljm4cElC4vbNcQ==}
+  ai@6.0.98:
+    resolution: {integrity: sha512-bHwggEe/cCvu+9GkAsSzIp+y5grL0N4se0QjUeHaiZ7rI4o2k4/d2zK/R8tun5kcX8tsw3HYkN+297rS2TYclw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -1863,8 +1864,8 @@ packages:
   doctypes@1.1.0:
     resolution: {integrity: sha512-LLBi6pEqS6Do3EKQ3J0NqHWV5hhb78Pi8vvESYwyOy2c31ZEZVdtitdzsQsKb7878PEERhzUk0ftqGhG6Mz+pQ==}
 
-  docx@9.5.3:
-    resolution: {integrity: sha512-uFVrYiN2WKx1an884SS6mRu4JuCO10fpnRGQLYmbYgMLVAqqjrKPc2qMXsGj9JuDVrzdntGRw+y84bSjBxXqew==}
+  docx@9.6.0:
+    resolution: {integrity: sha512-y6EaJJMDvt4P7wgGQB9KsZf4wsRkQMJfkc9LlNufRshggI5BT35hGNkXBCAeEoI3MLMwApKguxzjdqqVcBCqNA==}
     engines: {node: '>=10'}
 
   dom-accessibility-api@0.5.16:
@@ -2083,8 +2084,8 @@ packages:
     resolution: {integrity: sha512-nBF+F1rAZVCu/p7rjzgA+Yb4lfYXrpl7a6VmJrU8wF9I1CKvP/QwPNZHnOlwbTkY6dvtFIzFMSyQXbLoTQPRpA==}
     engines: {node: '>=8'}
 
-  get-tsconfig@4.13.0:
-    resolution: {integrity: sha512-1VKTZJCwBrvbd+Wn3AOgQP/2Av+TfTCOlE4AcRJE72W1ksZXbAx8PPBR9RzgTeSPzlPMHrbANMH3LbltH73wxQ==}
+  get-tsconfig@4.13.6:
+    resolution: {integrity: sha512-shZT/QMiSHc/YBLxxOkMtgSid5HFoauqCE3/exfsEcwg1WkeqjG+V40yBbBrsD+jW2HDXcs28xOfcbm2jI8Ddw==}
 
   git-raw-commits@4.0.0:
     resolution: {integrity: sha512-ICsMM1Wk8xSGMowkOmPrzo2Fgmfo4bMHLNX6ytHjajRJUqvHOw/TFapQ+QG75c3X/tTDDhOSRPGC52dDbNM8FQ==}
@@ -2307,8 +2308,8 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  isomorphic-git@1.37.1:
-    resolution: {integrity: sha512-3r98kY+X24i6za2zwoNnISGobykIdc4aP7ScJGHpN3wbWSCbJZ2Kp/8WIsHJwvOCVUBjUHNkcB+4ty5iNv6RQA==}
+  isomorphic-git@1.37.2:
+    resolution: {integrity: sha512-HCQBBKmXIMPdHgYGstSBNp6MNmVcMQBbUqJF8xfywFmlpNseO4KKex59YlXqNxhRxmv3fUZwvNWvMyOdc1VvhA==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -2971,15 +2972,15 @@ packages:
     resolution: {integrity: sha512-QgT5//D3jfjJb6Gsjxv0Slpj23ip+HtOpnNgnb2S5zU3CB26G/IDPGoy4RJB42wzFE46DRsstbW6tKHoKbhAxw==}
     engines: {node: '>=0.10.0'}
 
-  react-router-dom@7.13.0:
-    resolution: {integrity: sha512-5CO/l5Yahi2SKC6rGZ+HDEjpjkGaG/ncEP7eWFTvFxbHP8yeeI0PxTDjimtpXYlR3b3i9/WIL4VJttPrESIf2g==}
+  react-router-dom@7.13.1:
+    resolution: {integrity: sha512-UJnV3Rxc5TgUPJt2KJpo1Jpy0OKQr0AjgbZzBFjaPJcFOb2Y8jA5H3LT8HUJAiRLlWrEXWHbF1Z4SCZaQjWDHw==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: '>=18'
       react-dom: '>=18'
 
-  react-router@7.13.0:
-    resolution: {integrity: sha512-PZgus8ETambRT17BUm/LL8lX3Of+oiLaPuVTRH3l1eLvSPpKO3AvhAEb5N7ihAFZQrYDqkvvWfFh9p0z9VsjLw==}
+  react-router@7.13.1:
+    resolution: {integrity: sha512-td+xP4X2/6BJvZoX6xw++A2DdEi++YypA69bJUV5oVvqf6/9/9nNlD70YO1e9d3MyamJEBQFEzk6mbfDYbqrSA==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: '>=18'
@@ -3667,9 +3668,9 @@ snapshots:
       '@ai-sdk/provider-utils': 4.0.15(zod@3.25.76)
       zod: 3.25.76
 
-  '@ai-sdk/azure@3.0.32(zod@3.25.76)':
+  '@ai-sdk/azure@3.0.33(zod@3.25.76)':
     dependencies:
-      '@ai-sdk/openai': 3.0.31(zod@3.25.76)
+      '@ai-sdk/openai': 3.0.32(zod@3.25.76)
       '@ai-sdk/provider': 3.0.8
       '@ai-sdk/provider-utils': 4.0.15(zod@3.25.76)
       zod: 3.25.76
@@ -3686,7 +3687,7 @@ snapshots:
       '@ai-sdk/provider-utils': 4.0.15(zod@3.25.76)
       zod: 3.25.76
 
-  '@ai-sdk/gateway@3.0.53(zod@3.25.76)':
+  '@ai-sdk/gateway@3.0.54(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 3.0.8
       '@ai-sdk/provider-utils': 4.0.15(zod@3.25.76)
@@ -3724,7 +3725,7 @@ snapshots:
       '@ai-sdk/provider-utils': 4.0.15(zod@3.25.76)
       zod: 3.25.76
 
-  '@ai-sdk/openai@3.0.31(zod@3.25.76)':
+  '@ai-sdk/openai@3.0.32(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 3.0.8
       '@ai-sdk/provider-utils': 4.0.15(zod@3.25.76)
@@ -3741,7 +3742,7 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/xai@3.0.57(zod@3.25.76)':
+  '@ai-sdk/xai@3.0.58(zod@3.25.76)':
     dependencies:
       '@ai-sdk/openai-compatible': 2.0.30(zod@3.25.76)
       '@ai-sdk/provider': 3.0.8
@@ -4714,7 +4715,9 @@ snapshots:
 
   '@types/deep-eql@4.0.2': {}
 
-  '@types/diff@6.0.0': {}
+  '@types/diff@8.0.0':
+    dependencies:
+      diff: 8.0.3
 
   '@types/estree@1.0.8': {}
 
@@ -4848,7 +4851,7 @@ snapshots:
 
   acorn@7.4.1: {}
 
-  acorn@8.15.0:
+  acorn@8.16.0:
     optional: true
 
   agent-base@7.1.4: {}
@@ -4857,9 +4860,9 @@ snapshots:
     dependencies:
       humanize-ms: 1.2.1
 
-  ai@6.0.97(zod@3.25.76):
+  ai@6.0.98(zod@3.25.76):
     dependencies:
-      '@ai-sdk/gateway': 3.0.53(zod@3.25.76)
+      '@ai-sdk/gateway': 3.0.54(zod@3.25.76)
       '@ai-sdk/provider': 3.0.8
       '@ai-sdk/provider-utils': 4.0.15(zod@3.25.76)
       '@opentelemetry/api': 1.9.0
@@ -5292,7 +5295,7 @@ snapshots:
 
   doctypes@1.1.0: {}
 
-  docx@9.5.3:
+  docx@9.6.0:
     dependencies:
       '@types/node': 25.2.3
       hash.js: 1.1.7
@@ -5580,7 +5583,7 @@ snapshots:
     dependencies:
       pump: 3.0.3
 
-  get-tsconfig@4.13.0:
+  get-tsconfig@4.13.6:
     dependencies:
       resolve-pkg-maps: 1.0.0
     optional: true
@@ -5781,7 +5784,7 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  isomorphic-git@1.37.1:
+  isomorphic-git@1.37.2:
     dependencies:
       async-lock: 1.4.1
       clean-git-ref: 2.0.1
@@ -6438,13 +6441,13 @@ snapshots:
 
   react-refresh@0.18.0: {}
 
-  react-router-dom@7.13.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-router-dom@7.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-router: 7.13.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-router: 7.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
-  react-router@7.13.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-router@7.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       cookie: 1.1.1
       react: 18.3.1
@@ -6765,7 +6768,7 @@ snapshots:
   terser@5.46.0:
     dependencies:
       '@jridgewell/source-map': 0.3.11
-      acorn: 8.15.0
+      acorn: 8.16.0
       commander: 2.20.3
       source-map-support: 0.5.21
     optional: true
@@ -6843,7 +6846,7 @@ snapshots:
   tsx@4.21.0:
     dependencies:
       esbuild: 0.27.3
-      get-tsconfig: 4.13.0
+      get-tsconfig: 4.13.6
     optionalDependencies:
       fsevents: 2.3.3
     optional: true
