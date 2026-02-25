@@ -354,7 +354,7 @@ export function ProviderConfig() {
 
       {/* Header */}
       <div className="px-6 py-4 border-b border-neutral-800">
-        <h1 className="text-xl font-bold text-white font-body">AI Providers</h1>
+        <h1 className="text-xl font-bold text-white font-display">AI Providers</h1>
         <p className="text-sm text-neutral-500 font-body mt-1">
           Configure AI provider API keys and capabilities
         </p>
