@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1](https://github.com/jbcom/thumbcode/compare/v1.0.0...v1.0.1) (2026-02-25)
+
+
+### Bug Fixes
+
+* **ci:** add workflow_dispatch trigger to release.yml ([#161](https://github.com/jbcom/thumbcode/issues/161)) ([7018be5](https://github.com/jbcom/thumbcode/commit/7018be5261e02f252c7adf28e4a73eac8890e843))
+
 ## 1.0.0 (2026-02-25)
 
 
