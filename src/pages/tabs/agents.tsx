@@ -114,6 +114,7 @@ export default function AgentsPage() {
       data-testid="agents-screen"
     >
       <div className="w-full p-4">
+        <h1 className="font-display text-2xl font-bold text-white mb-4">Agents</h1>
         {/* Overview */}
         <div className="flex gap-3 mb-4">
           <div

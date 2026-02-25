@@ -45,6 +45,7 @@ export default function ProjectsPage() {
     >
       {/* Search */}
       <div className="p-4">
+        <h1 className="font-display text-2xl font-bold text-white mb-3">Projects</h1>
         <div className="bg-surface flex items-center px-4 py-3 rounded-organic-card tap-feedback">
           <Search size={20} className="text-neutral-400 mr-3" aria-hidden="true" />
           <input
