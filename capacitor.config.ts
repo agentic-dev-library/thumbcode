@@ -8,6 +8,10 @@ const config: CapacitorConfig = {
     androidScheme: 'https',
   },
   plugins: {
+    CapacitorHttp: {
+      // Patch fetch/XMLHttpRequest to use native HTTP (bypasses CORS)
+      enabled: true,
+    },
     SecureStoragePlugin: {
       // capacitor-secure-storage-plugin: hardware-backed keychain/keystore
       accessibility: 'afterFirstUnlock',

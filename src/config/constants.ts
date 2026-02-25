@@ -17,9 +17,13 @@ export const API_URLS = {
 /**
  * GitHub OAuth configuration
  */
+// In dev mode, route GitHub OAuth through Vite proxy to avoid CORS.
+// In production (Capacitor), CapacitorHttp patches fetch to use native HTTP.
+const githubOAuthBase = import.meta.env.DEV ? '/github-oauth' : 'https://github.com';
+
 export const GITHUB_OAUTH = {
-  deviceCodeUrl: 'https://github.com/login/device/code',
-  accessTokenUrl: 'https://github.com/login/oauth/access_token',
+  deviceCodeUrl: `${githubOAuthBase}/login/device/code`,
+  accessTokenUrl: `${githubOAuthBase}/login/oauth/access_token`,
   verificationUri: 'https://github.com/login/device',
   scopes: 'repo,user,read:org',
   pollInterval: 5000, // 5 seconds

@@ -35,6 +35,8 @@ export default function GitHubAuthPage() {
   const [pollStatus, setPollStatus] = useState<{ attempt: number; max: number } | null>(null);
 
   useEffect(() => {
+    // Reset on mount (handles React Strict Mode double-mount cycle)
+    cancelledRef.current = false;
     return () => {
       cancelledRef.current = true;
       GitHubAuthService.cancel();
