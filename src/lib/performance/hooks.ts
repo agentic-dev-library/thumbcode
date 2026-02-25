@@ -156,7 +156,7 @@ export function useDebouncedCallback<T extends (...args: unknown[]) => void>(
  * Previous value - useful for comparing state changes
  */
 export function usePrevious<T>(value: T): T | undefined {
-  const ref = useRef<T>();
+  const ref = useRef<T | undefined>(undefined);
 
   useEffect(() => {
     ref.current = value;

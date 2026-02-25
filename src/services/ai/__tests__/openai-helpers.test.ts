@@ -283,8 +283,9 @@ describe('formatMessagesForOpenAI', () => {
         | OpenAI.Chat.Completions.ChatCompletionAssistantMessageParam
         | undefined;
 
-      expect(assistantMsg?.tool_calls?.[0].function.name).toBe('');
-      expect(assistantMsg?.tool_calls?.[0].function.arguments).toBe('{}');
+      const toolCall = assistantMsg?.tool_calls?.[0];
+      expect(toolCall?.type === 'function' && toolCall.function.name).toBe('');
+      expect(toolCall?.type === 'function' && toolCall.function.arguments).toBe('{}');
     });
 
     it('should not add tool_calls message for user messages with tool_use blocks', () => {

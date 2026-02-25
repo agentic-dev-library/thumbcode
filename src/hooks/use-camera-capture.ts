@@ -13,7 +13,7 @@ export interface UseCameraCaptureResult {
   stopCapture: () => void;
   takePhoto: () => string | null;
   isCapturing: boolean;
-  previewRef: React.RefObject<HTMLVideoElement>;
+  previewRef: React.RefObject<HTMLVideoElement | null>;
   error: string | null;
 }
 
