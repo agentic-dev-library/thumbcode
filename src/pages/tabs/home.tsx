@@ -108,6 +108,29 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* First-time Setup CTA */}
+        {stats.projectCount === 0 && (
+          <div
+            className="bg-surface p-6 mb-4 rounded-organic-card shadow-organic-card text-center"
+            style={{ transform: 'rotate(-0.2deg)' }}
+          >
+            <FolderOpen size={40} className="text-coral-500 mx-auto mb-3" />
+            <h2 className="font-display text-lg font-semibold text-white mb-2">
+              Create your first project
+            </h2>
+            <p className="font-body text-sm text-neutral-400 mb-4">
+              Connect a repository to start building with AI agents.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate('/projects')}
+              className="bg-coral-500 px-6 py-3 rounded-organic-button font-body font-semibold text-white hover:bg-coral-600 transition-colors tap-feedback"
+            >
+              Go to Projects
+            </button>
+          </div>
+        )}
+
         {/* Agent Status */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-4">
