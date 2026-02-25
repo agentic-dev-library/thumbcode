@@ -25,13 +25,24 @@ jobs:
           release-type: node
           package-name: thumbcode
 
-      - name: Enable auto-merge on release PR
-        if: steps.release.outputs.pr
+      - name: Approve release PR
+        if: steps.release.outputs.prs_created == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_JSON: ${{ steps.release.outputs.pr }}
         run: |
-          gh pr review "${{ steps.release.outputs.pr }}" --approve
-          gh pr merge "${{ steps.release.outputs.pr }}" --auto --squash
+          PR_NUMBER=$(echo "$PR_JSON" | jq -r '.number')
+          gh pr review "$PR_NUMBER" --approve
+        continue-on-error: true
+
+      - name: Enable auto-merge on release PR
+        if: steps.release.outputs.prs_created == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_JSON: ${{ steps.release.outputs.pr }}
+        run: |
+          PR_NUMBER=$(echo "$PR_JSON" | jq -r '.number')
+          gh pr merge "$PR_NUMBER" --auto --squash
 
   build-apk:
     name: Build Android Debug APK
