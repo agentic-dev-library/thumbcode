@@ -107,6 +107,7 @@ These are independent and can be executed simultaneously:
 3. **WS-3: Quick Fixes** — Version, links, meta tag, provider layout, footer overlap, chat empty state, API key links, dashboard conditional, agent role dedup
 4. **WS-4: Typography + Headings** — Font-display on all headings, add missing h1s
 5. **WS-5: Projects Page** — Fix FAB/empty state redundancy, move create-project inline
+6. **WS-6: Config Consolidation** — Delete orphaned `src/lib/env.ts` (duplicate of `src/config/env.ts`), consolidate `isFeatureEnabled` and `apiUrls` into single canonical `@/config` barrel export
 
 ## Success Criteria
 

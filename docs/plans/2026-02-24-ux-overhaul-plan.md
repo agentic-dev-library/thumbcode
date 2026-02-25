@@ -1375,9 +1375,112 @@ git commit -m "feat(dashboard): add first-time setup CTA when no projects exist"
 
 ---
 
+## Workstream 6: Config Consolidation
+
+There are two duplicate env modules: `src/config/env.ts` (canonical, has GitHub client ID default, version, buildNumber) and `src/lib/env.ts` (orphaned from pre-flatten era, no client ID default, has `isFeatureEnabled` and `apiUrls`). The `src/config/constants.ts` also duplicates `API_URLS`. This causes confusing test warnings (`[ENV] VITE_GITHUB_CLIENT_ID is not set`) from the orphaned module.
+
+### Task 20: Delete orphaned src/lib/env.ts and consolidate into src/config/
+
+**Files:**
+- Delete: `src/lib/env.ts`
+- Delete: `src/lib/__tests__/env.test.ts`
+- Modify: `src/config/env.ts` — add missing `isFeatureEnabled` function
+- Modify: `src/config/index.ts` — re-export `isFeatureEnabled`
+
+**Step 1: Check for imports of src/lib/env**
+
+The only import of `src/lib/env` is from its own test file. No other files import from `@/lib/env` — they all use `@/config`.
+
+**Step 2: Move `isFeatureEnabled` to src/config/env.ts**
+
+Add at the end of `src/config/env.ts` (before `export default env;`):
+
+```typescript
+/**
+ * Check if a specific feature is enabled based on environment
+ */
+export function isFeatureEnabled(feature: 'devTools' | 'analytics' | 'crashReporting'): boolean {
+  switch (feature) {
+    case 'devTools':
+      return env.enableDevTools;
+    case 'analytics':
+      return env.isProd;
+    case 'crashReporting':
+      return !env.isDev;
+    default:
+      return false;
+  }
+}
+```
+
+**Step 3: Update src/config/index.ts to export isFeatureEnabled from env.ts**
+
+The config/features.ts already exports an `isFeatureEnabled`. Check if they overlap — if features.ts is more comprehensive, skip this step. Otherwise, add to the env exports in index.ts:
+
+```typescript
+export {
+  type AppEnvironment,
+  type EnvironmentConfig,
+  env,
+  isFeatureEnabled,
+  type ValidationResult,
+  validateEnvironment,
+} from './env';
+```
+
+Note: If `src/config/features.ts` already exports `isFeatureEnabled`, there's a naming conflict. In that case, just delete the lib version without re-adding — the features.ts version is the canonical one.
+
+**Step 4: Delete the orphaned files**
+
+```bash
+rm src/lib/env.ts src/lib/__tests__/env.test.ts
+```
+
+**Step 5: Verify**
+
+Run: `pnpm test --run`
+Run: `pnpm exec tsc --noEmit`
+
+Expected: All tests still pass (we removed 10 tests from the orphaned file, but no production code depends on it). The `[ENV] VITE_GITHUB_CLIENT_ID is not set` warning should no longer appear in test output.
+
+**Step 6: Commit**
+```bash
+git add -A
+git commit -m "refactor(config): delete orphaned src/lib/env.ts, consolidate into src/config/"
+```
+
+---
+
+### Task 21: Remove duplicate API_URLS from constants.ts (already in lib/env apiUrls)
+
+**Files:**
+- Modify: `src/config/constants.ts` — verify `API_URLS` is the canonical source
+
+**Step 1: Verify no one imports `apiUrls` from lib/env anymore**
+
+After deleting `src/lib/env.ts` in Task 20, verify that `API_URLS` in `src/config/constants.ts` is the single source of truth. Check all imports:
+
+```bash
+grep -r "apiUrls" src/ --include="*.ts" --include="*.tsx"
+```
+
+If nothing references the old `apiUrls`, no further changes needed. The `API_URLS` in constants.ts is already the canonical version.
+
+**Step 2: Verify**
+
+Run: `pnpm exec tsc --noEmit`
+
+**Step 3: Commit** (if any changes needed)
+```bash
+git add src/config/constants.ts
+git commit -m "refactor(config): confirm API_URLS as single source of truth"
+```
+
+---
+
 ## Final Verification
 
-### Task 19: Full verification pass
+### Task 22: Full verification pass
 
 **Step 1: Run all tests**
 ```bash
@@ -1423,10 +1526,12 @@ Task 14 (WS4: Projects) is independent — run in parallel with above.
 
 Tasks 15-18 (WS5: Onboarding) must run sequentially (15 → 16 → 17 → 18).
 
-Task 19 runs last after all others complete.
+Tasks 20-21 (WS6: Config Consolidation) run sequentially (20 → 21), parallel with WS1-4.
+
+Task 22 runs last after all others complete.
 
 ```
-Parallel batch 1: Tasks 1-14 (all independent)
+Parallel batch 1: Tasks 1-14, 20-21 (all independent workstreams)
 Sequential batch 2: Tasks 15, 16, 17, 18 (onboarding flow)
-Final: Task 19 (verification)
+Final: Task 22 (verification)
 ```
