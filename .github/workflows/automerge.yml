@@ -14,7 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     if: >-
       github.actor == 'dependabot[bot]' ||
-      github.actor == 'release-please[bot]'
+      github.actor == 'release-please[bot]' ||
+      github.actor == 'github-actions[bot]'
     timeout-minutes: 5
 
     steps:

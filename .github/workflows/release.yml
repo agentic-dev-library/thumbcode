@@ -19,10 +19,19 @@ jobs:
 
     steps:
       - name: Run release-please
+        id: release
         uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
         with:
           release-type: node
           package-name: thumbcode
+
+      - name: Enable auto-merge on release PR
+        if: steps.release.outputs.pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr review "${{ steps.release.outputs.pr }}" --approve
+          gh pr merge "${{ steps.release.outputs.pr }}" --auto --squash
 
   build-apk:
     name: Build Android Debug APK
