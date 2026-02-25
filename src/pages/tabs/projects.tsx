@@ -144,14 +144,16 @@ export default function ProjectsPage() {
       </div>
 
       {/* FAB */}
-      <button
-        type="button"
-        onClick={() => navigate('/onboarding/create-project')}
-        className="fixed bottom-24 right-6 w-14 h-14 bg-coral-500 flex items-center justify-center rounded-organic-button shadow-organic-float hover:bg-coral-600 transition-colors z-10 tap-feedback"
-        aria-label="Create new project"
-      >
-        <Plus size={24} className="text-white" />
-      </button>
+      {filteredProjects.length > 0 && (
+        <button
+          type="button"
+          onClick={() => navigate('/onboarding/create-project')}
+          className="fixed bottom-24 right-6 w-14 h-14 bg-coral-500 flex items-center justify-center rounded-organic-button shadow-organic-float hover:bg-coral-600 transition-colors z-10 tap-feedback"
+          aria-label="Create new project"
+        >
+          <Plus size={24} className="text-white" />
+        </button>
+      )}
     </div>
   );
 }
