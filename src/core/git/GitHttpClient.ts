@@ -43,7 +43,7 @@ export const gitHttpClient = {
     const res = await secureFetch(url, {
       method,
       headers,
-      body: body ? new Blob(body) : undefined,
+      body: body ? new Blob(body as BlobPart[]) : undefined,
     });
 
     const responseHeaders: Record<string, string> = {};
