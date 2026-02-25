@@ -111,7 +111,7 @@ export default function HomePage() {
         {/* Agent Status */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="font-body font-semibold text-white text-lg">Agent Team</h2>
+            <h2 className="font-display font-semibold text-white text-lg">Agent Team</h2>
             <button
               type="button"
               onClick={() => navigate('/agents')}
@@ -172,7 +172,7 @@ export default function HomePage() {
         {/* Recent Activity */}
         <div>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="font-body font-semibold text-white text-lg">Recent Activity</h2>
+            <h2 className="font-display font-semibold text-white text-lg">Recent Activity</h2>
             <button
               type="button"
               onClick={() => navigate('/chat')}
